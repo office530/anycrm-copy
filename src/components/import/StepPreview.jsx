@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { base44 } from "@/api/base44Client";
+import { findBestMatch } from "./StepMapping";
 
 export default function StepPreview({ data, mapping, onBack, onImport }) {
   const [isImporting, setIsImporting] = useState(false);
@@ -17,20 +18,48 @@ export default function StepPreview({ data, mapping, onBack, onImport }) {
 
         Object.entries(mapping).forEach(([header, fieldKey]) => {
             let value = row[header];
+            if (!value) return;
 
             // Normalization Logic
             if (fieldKey === 'phone_number') {
                 // Remove dashes, spaces
                 value = value?.toString().replace(/[- ]/g, '') || "";
-                if (value.startsWith('05')) value = value; // standard
-            }
-            if (fieldKey === 'estimated_property_value' || fieldKey === 'age') {
+            } else if (fieldKey === 'estimated_property_value' || fieldKey === 'age') {
                 // Keep only numbers
                 value = value?.toString().replace(/[^0-9.]/g, '') || "";
-                value = Number(value);
+                value = value ? Number(value) : "";
             }
 
-            newRow[fieldKey] = value;
+            // Handle collision/merging (especially for notes)
+            if (newRow[fieldKey]) {
+                if (fieldKey === 'notes') {
+                    // Append to existing notes with a separator
+                    newRow[fieldKey] = `${newRow[fieldKey]} | ${header}: ${value}`;
+                } else if (fieldKey === 'phone_number') {
+                     // If phone already exists, maybe put this one in notes? 
+                     // For now, let's stick to "Last non-empty wins" or "Keep first"
+                     // Current implementation: Last one overwrites. 
+                     // Logic to keep first if exists:
+                     // if (!newRow[fieldKey]) newRow[fieldKey] = value;
+                     newRow[fieldKey] = value;
+                } else {
+                    newRow[fieldKey] = value;
+                }
+            } else {
+                // First value for this field
+                if (fieldKey === 'notes' && mapping[header] === 'notes' && findBestMatch(header, []) !== 'notes') {
+                     // If this was a fallback mapping to notes, prefix with header name for clarity
+                     // But only if it wasn't explicitly 'notes' column
+                     const isExplicitNotes = ['notes', 'הערות', 'comment'].some(s => header.toLowerCase().includes(s));
+                     if (!isExplicitNotes) {
+                         newRow[fieldKey] = `${header}: ${value}`;
+                     } else {
+                         newRow[fieldKey] = value;
+                     }
+                } else {
+                    newRow[fieldKey] = value;
+                }
+            }
         });
 
         // Validation

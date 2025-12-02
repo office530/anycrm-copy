@@ -31,19 +31,20 @@ const getLevenshteinDistance = (a, b) => {
   return matrix[b.length][a.length];
 };
 
-const findBestMatch = (header, fields) => {
+// Exporting for use in other files if needed, but kept internal here
+export const findBestMatch = (header, fields) => {
   let bestMatch = null;
   let minDistance = Infinity;
 
   // Aliases for smarter matching
   const aliases = {
-    'full_name': ['name', 'client', 'customer', 'שם', 'לקוח'],
-    'phone_number': ['phone', 'mobile', 'cell', 'tel', 'טלפון', 'נייד'],
+    'full_name': ['name', 'client', 'customer', 'שם', 'לקוח', 'שם הלקוח'],
+    'phone_number': ['phone', 'mobile', 'cell', 'tel', 'טלפון', 'נייד', 'טלפון 1', 'טלפון 2', 'Phone 1', 'Phone 2'],
     'city': ['address', 'location', 'town', 'עיר', 'כתובת'],
     'estimated_property_value': ['value', 'price', 'worth', 'property', 'שווי', 'נכס'],
     'age': ['old', 'years', 'גיל'],
     'email': ['mail', 'אימייל', 'דואר'],
-    'notes': ['comment', 'info', 'הערות', 'פרטים']
+    'notes': ['comment', 'info', 'הערות', 'פרטים', 'remarks']
   };
 
   fields.forEach(field => {
@@ -73,7 +74,13 @@ export default function StepMapping({ headers, onBack, onNext }) {
     const newMapping = {};
     headers.forEach(header => {
         const match = findBestMatch(header, CRM_FIELDS);
-        if (match) newMapping[header] = match;
+        if (match) {
+            newMapping[header] = match;
+        } else {
+            // Fallback: Map unidentified columns to 'notes'
+            // If 'notes' is already mapped, this effectively merges them in the next step
+            newMapping[header] = 'notes';
+        }
     });
     setMapping(newMapping);
   }, [headers]);
@@ -141,7 +148,12 @@ export default function StepMapping({ headers, onBack, onNext }) {
                             <SelectContent>
                                 <SelectItem value="ignore" className="text-slate-400">-- התעלם מעמודה זו --</SelectItem>
                                 {CRM_FIELDS.map(field => (
-                                    <SelectItem key={field.key} value={field.key} disabled={Object.values(mapping).includes(field.key) && mapping[header] !== field.key}>
+                                    <SelectItem 
+                                      key={field.key} 
+                                      value={field.key} 
+                                      // Allow 'notes' to be selected multiple times, disable others if unique
+                                      disabled={field.key !== 'notes' && Object.values(mapping).includes(field.key) && mapping[header] !== field.key}
+                                    >
                                         {field.label} {field.required && '*'}
                                     </SelectItem>
                                 ))}
