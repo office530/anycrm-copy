@@ -23,6 +23,7 @@ import {
 import LeadForm from "@/components/crm/LeadForm";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { processAutomation } from "@/utils/automationEngine";
 
 export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -43,9 +44,10 @@ export default function LeadsPage() {
   // Mutations
   const createLead = useMutation({
     mutationFn: (data) => base44.entities.Lead.create(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
+      processAutomation('Lead', 'create', data);
     }
   });
 
@@ -55,7 +57,18 @@ export default function LeadsPage() {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
       setEditingLead(null);
-      
+
+      // Process Automation
+      // We need to fetch the OLD data to compare? 
+      // The mutation doesn't return old data. 
+      // In a real app we might need to fetch before update or pass it.
+      // For now, we'll rely on 'editingLead' state if available, or just pass previous as null
+      // if we only care about current state match.
+      // However, 'editingLead' holds the state BEFORE the user started editing, 
+      // but 'variables.data' holds the NEW data requested.
+      // 'data' is the server response (new data).
+      processAutomation('Lead', 'update', data, editingLead);
+
       // Automation Logic
       if (variables.data.lead_status === 'Converted to Opportunity') {
         setConvertingLead(data);

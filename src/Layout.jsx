@@ -8,8 +8,9 @@ import {
   Menu, 
   X,
   Search,
-  Bell
-} from 'lucide-react';
+  Bell,
+  Zap
+  } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 export default function Layout({ children, currentPageName }) {
@@ -20,6 +21,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'לוח בקרה', path: 'Dashboard', icon: LayoutDashboard },
     { name: 'מאגר לידים', path: 'Leads', icon: Users },
     { name: 'הזדמנויות', path: 'Opportunities', icon: Briefcase },
+    { name: 'אוטומציות', path: 'Automation', icon: Zap },
   ];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
