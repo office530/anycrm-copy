@@ -49,60 +49,64 @@ export default function LeadsPage() {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
       processAutomation('Lead', 'create', data);
-
+      
       if (data.lead_status === 'Converted to Opportunity') {
-        // Automatically create opportunity for new lead if created with converted status
-        convertToOpportunity.mutate(data);
+         convertToOpportunity.mutate(data);
       }
     }
   });
 
   const updateLead = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
       setEditingLead(null);
-
       processAutomation('Lead', 'update', data, editingLead);
-
-      // If status changed to "Converted to Opportunity", trigger automatic conversion
-      if (variables.data.lead_status === 'Converted to Opportunity') {
-          // Check if it wasn't already converted to avoid duplicates (simple check)
-          if (editingLead && editingLead.lead_status !== 'Converted to Opportunity') {
-             convertToOpportunity.mutate(data);
-          } else if (!editingLead) {
-              // Should not happen for update but safe fallback
-              convertToOpportunity.mutate(data);
-          }
-      }
     }
   });
 
   const convertToOpportunity = useMutation({
-    mutationFn: async (lead) => {
-        // 1. Create the Opportunity automatically
+    mutationFn: async (leadData) => {
+        // Step 1: Update lead status first
+        await base44.entities.Lead.update(leadData.id, { 
+            lead_status: "Converted to Opportunity" 
+        });
+
+        // Step 2: Create Opportunity with mapped fields
         const newOpp = await base44.entities.Opportunity.create({
-            lead_id: lead.id,
-            lead_name: lead.full_name,
-            product_type: "Reverse Mortgage", // Default product
-            property_value: lead.estimated_property_value || 0,
+            lead_id: leadData.id,
+            lead_name: leadData.full_name,
+            phone_number: leadData.phone_number, // Mapped from Lead
+            email: leadData.email,               // Mapped from Lead (if exists)
+            
+            // Default Opportunity fields
+            product_type: "Reverse Mortgage", 
+            property_value: leadData.estimated_property_value || 0,
             loan_amount_requested: 0,
             deal_stage: "New (חדש)",
             probability: 10,
-            main_pain_point: "Supplement Monthly Income (השלמת הכנסה חודשית)", // Default
+            main_pain_point: "Supplement Monthly Income (השלמת הכנסה חודשית)",
             current_objection: "",
         });
-
-        // 2. Update Lead Status
-        await base44.entities.Lead.update(lead.id, { lead_status: "Converted to Opportunity" });
 
         return newOpp;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
       queryClient.invalidateQueries(['leads']);
+      
+      setShowLeadForm(false);
+      setEditingLead(null);
+      
+      // Notify user
+      alert("הליד הפך להזדמנות בהצלחה! (The lead was successfully converted to an opportunity)");
+      
       processAutomation('Opportunity', 'create', data);
+    },
+    onError: (error) => {
+        console.error("Failed to convert opportunity:", error);
+        alert("אירעה שגיאה בהמרת הליד להזדמנות (Error converting lead)");
     }
   });
 
@@ -129,11 +133,24 @@ export default function LeadsPage() {
     return matchesSearch && matchesYear && matchesStatus;
   });
 
-  const handleLeadSubmit = (data) => {
-    if (editingLead) {
-      updateLead.mutate({ id: editingLead.id, data });
+  const handleLeadSubmit = (formData) => {
+    // Check if user selected "Converted to Opportunity"
+    if (formData.lead_status === 'Converted to Opportunity') {
+        if (editingLead) {
+            // Merge old data with new form data to ensure we have all fields
+            const mergedData = { ...editingLead, ...formData };
+            convertToOpportunity.mutate(mergedData);
+        } else {
+            // Create new lead directly as opportunity
+            createLead.mutate(formData);
+        }
     } else {
-      createLead.mutate(data);
+        // Standard update/create
+        if (editingLead) {
+            updateLead.mutate({ id: editingLead.id, data: formData });
+        } else {
+            createLead.mutate(formData);
+        }
     }
   };
 
