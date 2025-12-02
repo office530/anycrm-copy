@@ -15,6 +15,7 @@ export default function ImportWizard() {
   const [parsedData, setParsedData] = useState([]);
   const [fileHeaders, setFileHeaders] = useState([]);
   const [mapping, setMapping] = useState({});
+  const [customLabels, setCustomLabels] = useState({});
   const [importResults, setImportResults] = useState(null);
 
   const handleDataParsed = (data, headers, file) => {
@@ -24,8 +25,9 @@ export default function ImportWizard() {
     setStep(2);
   };
 
-  const handleMappingComplete = (newMapping) => {
+  const handleMappingComplete = (newMapping, newCustomLabels) => {
     setMapping(newMapping);
+    setCustomLabels(newCustomLabels || {});
     setStep(3);
   };
 
@@ -100,7 +102,8 @@ export default function ImportWizard() {
             {step === 3 && (
                 <StepPreview 
                     data={parsedData} 
-                    mapping={mapping} 
+                    mapping={mapping}
+                    customLabels={customLabels}
                     onBack={() => setStep(2)}
                     onImport={handleImportComplete}
                 />

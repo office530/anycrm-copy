@@ -3,6 +3,7 @@ import { ArrowRight, ArrowLeft, AlertCircle, Check, RefreshCw } from 'lucide-rea
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 // CRM Fields Definition
 const CRM_FIELDS = [
@@ -68,21 +69,25 @@ export const findBestMatch = (header, fields) => {
 
 export default function StepMapping({ headers, onBack, onNext }) {
   const [mapping, setMapping] = useState({});
+  const [customLabels, setCustomLabels] = useState({});
 
   // Run Auto-Mapping on mount
   useEffect(() => {
     const newMapping = {};
+    const newCustomLabels = {};
     headers.forEach(header => {
         const match = findBestMatch(header, CRM_FIELDS);
         if (match) {
             newMapping[header] = match;
         } else {
             // Fallback: Map unidentified columns to 'notes'
-            // If 'notes' is already mapped, this effectively merges them in the next step
             newMapping[header] = 'notes';
         }
+        // Default custom label is the header itself
+        newCustomLabels[header] = header;
     });
     setMapping(newMapping);
+    setCustomLabels(newCustomLabels);
   }, [headers]);
 
   const handleMapChange = (header, fieldKey) => {
@@ -138,27 +143,44 @@ export default function StepMapping({ headers, onBack, onNext }) {
 
                     <div className="flex-1">
                         <Label className="text-xs text-slate-400 mb-1">שדה במערכת</Label>
-                        <Select 
-                            value={mapping[header] || "ignore"} 
-                            onValueChange={(val) => handleMapChange(header, val)}
-                        >
-                            <SelectTrigger className={`${isMapped(header) ? 'border-green-200 bg-green-50 text-green-800' : ''}`}>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="ignore" className="text-slate-400">-- התעלם מעמודה זו --</SelectItem>
-                                {CRM_FIELDS.map(field => (
-                                    <SelectItem 
-                                      key={field.key} 
-                                      value={field.key} 
-                                      // Allow 'notes' to be selected multiple times, disable others if unique
-                                      disabled={field.key !== 'notes' && Object.values(mapping).includes(field.key) && mapping[header] !== field.key}
-                                    >
-                                        {field.label} {field.required && '*'}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <div className="flex gap-2">
+                            <div className="flex-1">
+                                <Select 
+                                    value={mapping[header] || "ignore"} 
+                                    onValueChange={(val) => handleMapChange(header, val)}
+                                >
+                                    <SelectTrigger className={`${isMapped(header) ? 'border-green-200 bg-green-50 text-green-800' : ''}`}>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="ignore" className="text-slate-400">-- התעלם מעמודה זו --</SelectItem>
+                                        {CRM_FIELDS.map(field => (
+                                            <SelectItem 
+                                            key={field.key} 
+                                            value={field.key} 
+                                            // Allow 'notes' to be selected multiple times, disable others if unique
+                                            disabled={field.key !== 'notes' && Object.values(mapping).includes(field.key) && mapping[header] !== field.key}
+                                            >
+                                                {field.label} {field.required && '*'}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            
+                            {/* Custom Label Input for Notes */}
+                            {mapping[header] === 'notes' && (
+                                <div className="flex-1">
+                                    <Input 
+                                        placeholder="שם השדה בהערות"
+                                        value={customLabels[header] || header}
+                                        onChange={(e) => setCustomLabels({...customLabels, [header]: e.target.value})}
+                                        className="h-10 border-orange-200 bg-orange-50 text-orange-800 placeholder:text-orange-300"
+                                        title="השם שיופיע בתוך שדה ההערות"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             ))}
@@ -171,7 +193,7 @@ export default function StepMapping({ headers, onBack, onNext }) {
             חזרה
         </Button>
         <Button 
-            onClick={() => onNext(mapping)} 
+            onClick={() => onNext(mapping, customLabels)} 
             disabled={!canProceed}
             className={canProceed ? "bg-blue-600 hover:bg-blue-700" : ""}
         >

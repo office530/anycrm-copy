@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { base44 } from "@/api/base44Client";
 import { findBestMatch } from "./StepMapping";
 
-export default function StepPreview({ data, mapping, onBack, onImport }) {
+export default function StepPreview({ data, mapping, customLabels, onBack, onImport }) {
   const [isImporting, setIsImporting] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -31,28 +31,26 @@ export default function StepPreview({ data, mapping, onBack, onImport }) {
             }
 
             // Handle collision/merging (especially for notes)
+            const label = customLabels?.[header] || header;
+
             if (newRow[fieldKey]) {
                 if (fieldKey === 'notes') {
                     // Append to existing notes with a separator
-                    newRow[fieldKey] = `${newRow[fieldKey]} | ${header}: ${value}`;
+                    newRow[fieldKey] = `${newRow[fieldKey]} | ${label}: ${value}`;
                 } else if (fieldKey === 'phone_number') {
-                     // If phone already exists, maybe put this one in notes? 
-                     // For now, let's stick to "Last non-empty wins" or "Keep first"
-                     // Current implementation: Last one overwrites. 
-                     // Logic to keep first if exists:
-                     // if (!newRow[fieldKey]) newRow[fieldKey] = value;
                      newRow[fieldKey] = value;
                 } else {
                     newRow[fieldKey] = value;
                 }
             } else {
                 // First value for this field
-                if (fieldKey === 'notes' && mapping[header] === 'notes' && findBestMatch(header, []) !== 'notes') {
-                     // If this was a fallback mapping to notes, prefix with header name for clarity
-                     // But only if it wasn't explicitly 'notes' column
-                     const isExplicitNotes = ['notes', 'הערות', 'comment'].some(s => header.toLowerCase().includes(s));
+                if (fieldKey === 'notes') {
+                     // Always use label for notes to be clear, unless it's explicitly the "Notes" column itself
+                     // AND the label matches "notes" or "הערות" to avoid redundancy like "Notes: bla bla"
+                     const isExplicitNotes = ['notes', 'הערות', 'comment'].includes(label.toLowerCase());
+                     
                      if (!isExplicitNotes) {
-                         newRow[fieldKey] = `${header}: ${value}`;
+                         newRow[fieldKey] = `${label}: ${value}`;
                      } else {
                          newRow[fieldKey] = value;
                      }
