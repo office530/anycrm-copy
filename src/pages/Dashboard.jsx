@@ -111,14 +111,40 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 pb-10 max-w-7xl mx-auto">
+      
+      {/* Branding Hero Section */}
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex items-center justify-between overflow-hidden relative">
+          <div className="relative z-10 max-w-lg">
+              <h1 className="text-4xl font-bold text-slate-900 mb-2">ברוכים הבאים ל-Gishers</h1>
+              <p className="text-slate-500 text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
+              <div className="flex gap-3">
+                <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
+                    הוסף נתונים חדשים
+                </Button>
+                <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 rounded-full px-6">
+                    צפה בדוחות
+                </Button>
+              </div>
+          </div>
+          <div className="relative z-10">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692ea53ece3f48d4695254eb/413fe96bb_image.png" 
+                alt="Gishers Logo" 
+                className="h-32 object-contain"
+              />
+          </div>
+          {/* Decorative Background */}
+          <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-red-50 to-transparent opacity-50 pointer-events-none"></div>
+      </div>
+
       {/* Header & Filter */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
         <div>
-            <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">דשבורד ראשי</h1>
-            <p className="text-slate-500 dark:text-slate-400">סקירת ביצועים: {dateRangeLabel}</p>
+            <h2 className="text-2xl font-bold text-slate-800">סקירת ביצועים</h2>
+            <p className="text-slate-500">נתונים עבור: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[180px] bg-white dark:bg-slate-900">
+            <SelectTrigger className="w-[180px] bg-white border-red-100 focus:ring-red-200">
                 <Calendar className="w-4 h-4 ml-2 text-slate-500" />
                 <SelectValue placeholder="בחר טווח זמן" />
             </SelectTrigger>
@@ -156,20 +182,20 @@ export default function Dashboard() {
                         <AreaChart data={stats.trendData}>
                             <defs>
                                 <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/>
                                 </linearGradient>
                                 <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1}/>
-                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#b91c1c" stopOpacity={0}/>
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                             <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
                             <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
                             <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
-                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#3b82f6" fill="url(#colorLeads)" strokeWidth={2} />
-                            <Area type="monotone" dataKey="sales" name="מכירות" stroke="#10b981" fill="url(#colorSales)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#94a3b8" fill="url(#colorLeads)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="sales" name="מכירות" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
                         </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -187,7 +213,7 @@ export default function Dashboard() {
                             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10}} interval={0} />
                             <YAxis hide />
                             <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{borderRadius: '8px'}} />
-                            <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} barSize={40} />
+                            <Bar dataKey="value" fill="#b91c1c" radius={[4, 4, 0, 0]} barSize={40} />
                         </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -218,7 +244,7 @@ export default function Dashboard() {
                                   const isOverdue = moment(task.due_date).isBefore(moment(), 'day');
                                   
                                   return (
-                                      <div key={task.id} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group hover:border-teal-200 transition-colors">
+                                      <div key={task.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 group hover:border-red-200 transition-colors">
                                           <div className="flex justify-between items-start mb-1">
                                               <h4 className="font-medium text-sm line-clamp-1">{task.title}</h4>
                                               {isOverdue ? (
@@ -257,15 +283,15 @@ export default function Dashboard() {
                               <span>סגירה</span>
                           </div>
                           <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                              <div className="bg-teal-500 h-full rounded-full" style={{ width: `${(stats.wonOppsCount / (stats.totalOpps || 1)) * 100}%` }}></div>
+                              <div className="bg-red-500 h-full rounded-full" style={{ width: `${(stats.wonOppsCount / (stats.totalOpps || 1)) * 100}%` }}></div>
                           </div>
-                          <div className="text-right text-xs text-teal-400 mt-1">
+                          <div className="text-right text-xs text-red-400 mt-1">
                               {((stats.wonOppsCount / (stats.totalOpps || 1)) * 100).toFixed(0)}% הצלחה
                           </div>
                       </div>
                   </div>
                   {/* Decoration */}
-                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-teal-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-red-600/20 blur-3xl rounded-full pointer-events-none"></div>
               </Card>
           </div>
       </div>

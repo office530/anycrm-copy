@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,32 +24,31 @@ function LayoutContent({ children, currentPageName }) {
   ];
 
   // Dynamic Colors based on branding
-  const activeClass = `bg-${branding.primaryColor}-600 text-white shadow-lg shadow-${branding.primaryColor}-900/20`;
-  const iconClass = `bg-${branding.primaryColor}-500`;
-  const focusRing = `focus:ring-${branding.primaryColor}-500/20`;
+  // New "Clean Luxury Red" styling
+  const activeClass = `bg-red-50 text-red-700 font-bold`;
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 flex" dir="rtl">
+    <div className="min-h-screen bg-[#F8FAFC] font-heebo text-slate-900 flex" dir="rtl">
       
       {/* Sidebar Desktop */}
       <aside className={`
-        fixed inset-y-0 right-0 z-50 w-72 bg-[#0F172A] text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-2xl
+        fixed inset-y-0 right-0 z-50 w-72 bg-white text-slate-800 border-l border-slate-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-sm
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
             {/* Logo */}
-            <div className="p-8 border-b border-slate-800/50">
-                <div className="flex items-center gap-3 text-2xl font-bold tracking-tight text-white">
+            <div className="p-8 border-b border-slate-50">
+                <div className="flex items-center gap-3 text-2xl font-bold tracking-tight text-slate-900">
                     {branding.logoUrl ? (
                         <img src={branding.logoUrl} alt="Logo" className="w-10 h-10 object-contain bg-white rounded-lg p-1" />
                     ) : (
-                        <div className={`${iconClass} rounded-lg p-1.5`}>
-                            <Briefcase className="w-6 h-6 text-white" />
+                        <div className="bg-red-700 rounded-lg p-2 shadow-md shadow-red-900/20">
+                            <Database className="w-6 h-6 text-white" />
                         </div>
                     )}
                     <span className="truncate">{branding.companyName}</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-2 font-medium tracking-wide opacity-60">MORTGAGE CONSULTING</p>
+                <p className="text-xs text-slate-500 mt-2 font-medium tracking-wide opacity-80">OLD SALES DATABASE</p>
             </div>
 
             {/* Nav */}
@@ -65,12 +64,12 @@ function LayoutContent({ children, currentPageName }) {
                         group flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
                         ? activeClass
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+                        : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}
                     `}
                     >
-                    <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
+                    <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-red-700' : 'text-slate-400 group-hover:text-red-600'}`} />
                     <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white/20 rounded-r-full" />}
+                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-600 rounded-r-full" />}
                     </Link>
                 );
                 })}
@@ -83,7 +82,7 @@ function LayoutContent({ children, currentPageName }) {
                     onClick={() => setIsSidebarOpen(false)}
                     className={`
                         flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        ${currentPageName === 'Settings' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+                        ${currentPageName === 'Settings' ? 'bg-red-50 text-red-700 font-bold' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}
                     `}
                 >
                     <SettingsIcon className="w-5 h-5" />

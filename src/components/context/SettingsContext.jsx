@@ -26,9 +26,9 @@ export const defaultPipelineStages = [
 export const defaultStages = defaultPipelineStages;
 
 export const defaultBranding = {
-  companyName: "AgentCRM",
+  companyName: "Gishers",
   logoUrl: "", 
-  primaryColor: "teal",
+  primaryColor: "red",
   currency: "₪"
 };
 

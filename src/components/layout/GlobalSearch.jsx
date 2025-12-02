@@ -65,22 +65,23 @@ export default function GlobalSearch() {
     setIsOpen(false);
   };
 
-  const focusRing = `focus:ring-${branding?.primaryColor || 'teal'}-500/20`;
+  const focusRing = `focus:ring-red-100`;
 
   return (
-    <div className="relative w-full max-w-md" ref={wrapperRef}>
+    <div className="relative w-full max-w-xl" ref={wrapperRef}>
       <div className="relative group">
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none" />
+        <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-red-600 transition-colors pointer-events-none" />
         <input
           value={searchTerm}
           onChange={handleSearch}
-          onFocus={() => searchTerm.length >= 2 && setIsOpen(true)} className="bg-slate-50 text-slate-800 pr-10 pl-10 py-2.5 text-sm rounded-full dark:bg-slate-800 border-none w-64 focus:w-80 transition-all focus:ring-2 focus:ring-teal-500/20 focus:bg-white dark:focus:bg-slate-900 dark:text-slate-100 placeholder:text-slate-400 shadow-sm"
-
-          placeholder="חיפוש לידים, עסקאות..." />
+          onFocus={() => searchTerm.length >= 2 && setIsOpen(true)} 
+          className="bg-white text-slate-800 pr-12 pl-10 py-3 text-base rounded-full border border-slate-200 w-72 focus:w-96 transition-all focus:ring-4 focus:ring-red-100 focus:border-red-300 placeholder:text-slate-400 shadow-sm"
+          placeholder="חיפוש במאגר הנתונים..." 
+        />
 
         {searchTerm &&
-        <button onClick={clearSearch} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                <X className="w-3 h-3" />
+        <button onClick={clearSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-600">
+                <X className="w-4 h-4" />
             </button>
         }
       </div>
