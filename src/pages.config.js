@@ -6,7 +6,6 @@ import LeadDetails from './pages/LeadDetails';
 import ImportLeads from './pages/ImportLeads';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
-import LandingPage from './pages/LandingPage';
 import __Layout from './Layout.jsx';
 
 
@@ -19,7 +18,6 @@ export const PAGES = {
     "ImportLeads": ImportLeads,
     "Reports": Reports,
     "Settings": Settings,
-    "LandingPage": LandingPage,
 }
 
 export const pagesConfig = {
