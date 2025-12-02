@@ -158,23 +158,7 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label>סטטוס מקורי (צבע)</Label>
-            <Select 
-              defaultValue={lead?.original_status_color || "Green"} 
-              onValueChange={(val) => handleSelectChange("original_status_color", val)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="בחר צבע" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Green">ירוק (Green)</SelectItem>
-                <SelectItem value="Red">אדום (Red)</SelectItem>
-                <SelectItem value="Yellow">צהוב (Yellow)</SelectItem>
-                <SelectItem value="Orange">כתום (Orange)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div className="space-y-2">
             <Label>סטטוס ליד</Label>
@@ -254,16 +238,7 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
               />
             </div>
              
-             <div className="space-y-2">
-               <Label>טמפרטורת ליד (מחושב)</Label>
-               <div className={`p-2 rounded border text-center font-bold ${
-                 watch("lead_temperature")?.includes("Warm") ? "bg-orange-100 text-orange-800 border-orange-200" :
-                 watch("lead_temperature")?.includes("Hot") ? "bg-green-100 text-green-800 border-green-200" :
-                 "bg-blue-50 text-blue-800 border-blue-100"
-               }`}>
-                 {watch("lead_temperature") || "מחשב..."}
-               </div>
-             </div>
+
           </div>
         </div>
 
