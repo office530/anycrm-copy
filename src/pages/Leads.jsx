@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User, MessageCircle
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
@@ -188,15 +188,29 @@ export default function LeadsPage() {
                              </div>
                         </div>
 
-                        {/* Phone */}
-                        <div className="col-span-3 flex items-center text-slate-600">
-                            <Phone className="w-4 h-4 ml-2 text-slate-300" />
+                        {/* Phone & WhatsApp */}
+                        <div className="col-span-3 flex items-center text-slate-600 gap-2">
+                            <Phone className="w-4 h-4 text-slate-300" />
                             <InlineEdit 
                                 value={lead.phone_number}
                                 type="tel"
                                 onSave={(val) => updateLead.mutate({ id: lead.id, data: { phone_number: val } })}
                                 className="font-mono tracking-wide"
                             />
+                            {lead.phone_number && (
+                                <Button 
+                                  size="icon" 
+                                  variant="ghost" 
+                                  className="h-7 w-7 text-green-500 hover:bg-green-50 hover:text-green-600 rounded-full"
+                                  onClick={() => {
+                                      const cleanNum = lead.phone_number.replace(/\D/g, '').replace(/^0/, '');
+                                      window.open(`https://wa.me/972${cleanNum}`, '_blank');
+                                  }}
+                                  title="שלח הודעת וואטסאפ"
+                                >
+                                    <MessageCircle className="w-4 h-4" />
+                                </Button>
+                            )}
                         </div>
 
                         {/* Status - Smart Edit */}

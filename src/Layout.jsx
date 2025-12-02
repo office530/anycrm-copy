@@ -2,13 +2,15 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SettingsProvider, useSettings } from '@/context/SettingsContext';
 
-export default function Layout({ children, currentPageName }) {
+function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const { branding } = useSettings();
   
   // Exact paths
   const navigation = [
@@ -18,6 +20,11 @@ export default function Layout({ children, currentPageName }) {
     { name: 'דוחות', path: 'Reports', icon: BarChart3 },
     { name: 'אוטומציות', path: 'Automation', icon: Zap },
   ];
+
+  // Dynamic Colors based on branding
+  const activeClass = `bg-${branding.primaryColor}-600 text-white shadow-lg shadow-${branding.primaryColor}-900/20`;
+  const iconClass = `bg-${branding.primaryColor}-500`;
+  const focusRing = `focus:ring-${branding.primaryColor}-500/20`;
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] font-sans text-slate-900 flex" dir="rtl">
@@ -31,10 +38,14 @@ export default function Layout({ children, currentPageName }) {
             {/* Logo */}
             <div className="p-8 border-b border-slate-800/50">
                 <div className="flex items-center gap-3 text-2xl font-bold tracking-tight text-white">
-                    <div className="bg-teal-500 rounded-lg p-1.5">
-                        <Briefcase className="w-6 h-6 text-white" />
-                    </div>
-                    INGAGE
+                    {branding.logoUrl ? (
+                        <img src={branding.logoUrl} alt="Logo" className="w-10 h-10 object-contain bg-white rounded-lg p-1" />
+                    ) : (
+                        <div className={`${iconClass} rounded-lg p-1.5`}>
+                            <Briefcase className="w-6 h-6 text-white" />
+                        </div>
+                    )}
+                    <span className="truncate">{branding.companyName}</span>
                 </div>
                 <p className="text-xs text-slate-400 mt-2 font-medium tracking-wide opacity-60">MORTGAGE CONSULTING</p>
             </div>
@@ -51,7 +62,7 @@ export default function Layout({ children, currentPageName }) {
                     className={`
                         group flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
-                        ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/20' 
+                        ? activeClass
                         : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
                     `}
                     >
@@ -63,20 +74,34 @@ export default function Layout({ children, currentPageName }) {
                 })}
             </nav>
 
-            {/* User Profile */}
-            <div className="p-4 border-t border-slate-800/50 m-4 bg-slate-800/30 rounded-2xl">
-                <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border-2 border-slate-600">
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-white truncate">יוסי כהן</p>
-                        <p className="text-xs text-slate-400 truncate">מנהל מערכת</p>
+            {/* Settings & User Profile */}
+            <div className="p-4 m-4 space-y-2">
+                <Link
+                    to={createPageUrl('Settings')}
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`
+                        flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
+                        ${currentPageName === 'Settings' ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+                    `}
+                >
+                    <SettingsIcon className="w-5 h-5" />
+                    הגדרות מערכת
+                </Link>
+
+                <div className="border-t border-slate-800/50 pt-4 mt-2">
+                    <div className="bg-slate-800/30 rounded-2xl p-3 flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border-2 border-slate-600">
+                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarFallback>JD</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-white truncate">יוסי כהן</p>
+                            <p className="text-xs text-slate-400 truncate">מנהל מערכת</p>
+                        </div>
+                        <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white rounded-full">
+                            <LogOut className="w-4 h-4" />
+                        </Button>
                     </div>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white rounded-full">
-                        <LogOut className="w-4 h-4" />
-                    </Button>
                 </div>
             </div>
         </div>
@@ -86,7 +111,7 @@ export default function Layout({ children, currentPageName }) {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
         {/* Mobile Header */}
         <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-            <span className="font-bold text-lg">INGAGE CRM</span>
+            <span className="font-bold text-lg">{branding.companyName}</span>
             <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                 {isSidebarOpen ? <X /> : <Menu />}
             </Button>
@@ -95,13 +120,13 @@ export default function Layout({ children, currentPageName }) {
         {/* Topbar Desktop */}
         <header className="hidden lg:flex bg-white/80 backdrop-blur-md border-b border-slate-200/60 h-20 items-center justify-between px-8 sticky top-0 z-30">
             <h1 className="text-2xl font-bold text-slate-800">
-                {navigation.find(n => n.path === currentPageName)?.name || 'סקירה'}
+                {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
             </h1>
             <div className="flex items-center gap-4">
                 <div className="relative group">
                     <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                     <input 
-                        className="bg-slate-50 border-none rounded-full py-2.5 pr-10 pl-4 text-sm w-64 focus:ring-2 focus:ring-teal-500/20 focus:bg-white transition-all"
+                        className={`bg-slate-50 border-none rounded-full py-2.5 pr-10 pl-4 text-sm w-64 focus:ring-2 ${focusRing} focus:bg-white transition-all`}
                         placeholder="חיפוש מהיר..."
                     />
                 </div>
@@ -125,5 +150,13 @@ export default function Layout({ children, currentPageName }) {
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
       )}
     </div>
+  );
+}
+
+export default function Layout(props) {
+  return (
+    <SettingsProvider>
+      <LayoutContent {...props} />
+    </SettingsProvider>
   );
 }

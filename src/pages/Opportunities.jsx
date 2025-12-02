@@ -6,6 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, LayoutGrid, List as ListIcon, ArrowLeft, TrendingUp, Calendar, AlertCircle } from "lucide-react";
+import { useSettings } from "@/context/SettingsContext";
+import { triggerConfetti } from "@/utils/confetti";
+import { toast } from "sonner"; // Assuming Toast or similar availability, or alert logic
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
@@ -13,22 +16,15 @@ import OpportunityForm from "@/components/crm/OpportunityForm";
 import { InlineEdit } from "@/components/ui/InlineEdit";
 import moment from "moment";
 
-// הגדרת שלבים עם צבעים מותאמים לעיצוב החדש
-const STAGES = [
-  { id: "New (חדש)", label: "חדש", color: "bg-blue-500", light: "bg-blue-50 text-blue-700" },
-  { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "bg-indigo-500", light: "bg-indigo-50 text-indigo-700" },
-  { id: "Meeting Scheduled (נקבעת פגישה)", label: "נקבעת פגישה", color: "bg-purple-500", light: "bg-purple-50 text-purple-700" },
-  { id: "Documents Collection (איסוף מסמכים)", label: "איסוף מסמכים", color: "bg-orange-500", light: "bg-orange-50 text-orange-700" },
-  { id: "Request Sent to Harel (בקשה נשלחה להראל)", label: "נשלח להראל", color: "bg-sky-500", light: "bg-sky-50 text-sky-700" },
-  { id: "Closed Won (נחתם - בהצלחה)", label: "נסגר בהצלחה", color: "bg-emerald-500", light: "bg-emerald-50 text-emerald-700" },
-  { id: "Closed Lost (אבוד)", label: "אבוד", color: "bg-slate-500", light: "bg-slate-50 text-slate-700" }
-];
-
 export default function OpportunitiesPage() {
+  const { pipelineStages, branding } = useSettings();
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
   const queryClient = useQueryClient();
+  
+  // Fallback to ensure array if context isn't ready
+  const activeStages = pipelineStages || [];
 
   const { data: opportunities, isLoading } = useQuery({
     queryKey: ['opportunities'],
@@ -51,11 +47,26 @@ export default function OpportunitiesPage() {
     const { draggableId, destination } = result;
     const newStage = destination.droppableId;
     const opp = opportunities.find(o => o.id === draggableId);
+    
     if (opp && opp.deal_stage !== newStage) {
       updateOppMutation.mutate({
         id: draggableId,
         data: { ...opp, deal_stage: newStage }
       });
+
+      // Check for closed won celebration
+      if (newStage.includes('Closed Won') || newStage === 'Closed Won (נחתם - בהצלחה)') {
+          triggerConfetti();
+          // Use standard alert if toast not configured, or implement simple custom toast
+          const toastEl = document.createElement('div');
+          toastEl.className = "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
+          toastEl.innerHTML = `<span class="text-2xl">🎉</span> <div><div class="font-bold">ברכות!</div><div class="text-sm opacity-90">עסקה נוספת נסגרה בהצלחה!</div></div>`;
+          document.body.appendChild(toastEl);
+          setTimeout(() => {
+              toastEl.classList.add('opacity-0', 'transition-opacity');
+              setTimeout(() => document.body.removeChild(toastEl), 500);
+          }, 3000);
+      }
     }
   };
 
@@ -86,7 +97,7 @@ export default function OpportunitiesPage() {
       {viewMode === 'kanban' ? (
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex-1 flex gap-4 overflow-x-auto pb-6 h-full items-start">
-          {STAGES.map((stage) => {
+          {activeStages.map((stage) => {
             const stageOpps = getStageOpportunities(stage.id);
             const total = calculateTotal(stage.id);
             
@@ -95,15 +106,15 @@ export default function OpportunitiesPage() {
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light} border border-transparent`}>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-slate-100 text-slate-700'} border border-transparent`}>
                         {stage.label}
                     </span>
                     <span className="text-xs text-slate-400 font-medium">{stageOpps.length}</span>
                 </div>
                 <div className="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div className={`h-full ${stage.color}`} style={{ width: '100%' }}></div>
+                    <div className={`h-full ${stage.color || 'bg-slate-400'}`} style={{ width: '100%' }}></div>
                 </div>
-                {total > 0 && <div className="text-xs font-medium text-slate-500 mt-1 text-right">₪{total.toLocaleString()}</div>}
+                {total > 0 && <div className="text-xs font-medium text-slate-500 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
               </div>
 
               {/* Droppable Area */}
@@ -129,7 +140,7 @@ export default function OpportunitiesPage() {
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
-                            <div className={`absolute top-0 right-0 w-1 h-full ${stage.color}`} />
+                            <div className={`absolute top-0 right-0 w-1 h-full ${stage.color || 'bg-slate-300'}`} />
                             <CardContent className="p-4 pr-5 space-y-3">
                               
                               {/* שם הלקוח */}
@@ -150,7 +161,7 @@ export default function OpportunitiesPage() {
                                       <InlineEdit 
                                         value={opp.loan_amount_requested}
                                         type="number"
-                                        formatDisplay={(val) => `₪${Number(val || 0).toLocaleString()}`}
+                                        formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
                                         className="font-bold text-slate-700 justify-end h-6 bg-white shadow-sm"
                                       />
