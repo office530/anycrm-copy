@@ -12,8 +12,7 @@ import {
   Phone, 
   MoreHorizontal,
   ArrowLeft,
-  Calendar,
-  UploadCloud
+  Calendar
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -201,18 +200,10 @@ export default function LeadsPage() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex gap-2 w-full md:w-auto">
-          <Link to={createPageUrl('ImportLeads')}>
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
-                  <UploadCloud className="w-4 h-4 ml-2" />
-                  ייבוא קובץ 2023
-              </Button>
-          </Link>
-          <Button onClick={() => setShowLeadForm(true)} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-4 h-4 ml-2" />
-              הוסף ליד
-          </Button>
-        </div>
+        <Button onClick={() => setShowLeadForm(true)} className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto">
+          <Plus className="w-4 h-4 ml-2" />
+          הוסף ליד
+        </Button>
       </div>
 
       {/* Leads Table */}
