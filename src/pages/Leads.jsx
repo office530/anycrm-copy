@@ -5,29 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
-  Plus, 
-  Search, 
-  Phone, 
-  MoreHorizontal,
-  ArrowLeft,
-  Calendar,
-  Upload
-  } from "lucide-react";
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User
+} from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import LeadForm from "@/components/crm/LeadForm";
-import OpportunityForm from "@/components/crm/OpportunityForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { InlineEdit } from "@/components/ui/InlineEdit";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -36,24 +26,21 @@ export default function LeadsPage() {
 
   const queryClient = useQueryClient();
 
-  // Fetch Leads
+  // Data
   const { data: leads, isLoading } = useQuery({
     queryKey: ['leads'],
     queryFn: () => base44.entities.Lead.list(),
     initialData: []
   });
 
-  // Mutations
+  // --- Mutations ---
   const createLead = useMutation({
     mutationFn: (data) => base44.entities.Lead.create(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
       processAutomation('Lead', 'create', data);
-      
-      if (data.lead_status === 'Converted') {
-         convertToOpportunity.mutate(data);
-      }
+      if (data.lead_status === 'Converted') convertToOpportunity.mutate(data);
     }
   });
 
@@ -61,304 +48,214 @@ export default function LeadsPage() {
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries(['leads']);
-      setShowLeadForm(false);
-      setEditingLead(null);
-      processAutomation('Lead', 'update', data, editingLead);
+      // Future: Add global toast here
     }
   });
 
   const convertToOpportunity = useMutation({
     mutationFn: async (leadData) => {
-        // Step 1: Update lead status first
-        await base44.entities.Lead.update(leadData.id, { 
-            lead_status: "Converted" 
-        });
-
-        // Step 2: Create Opportunity with mapped fields
-        const newOpp = await base44.entities.Opportunity.create({
+        await base44.entities.Lead.update(leadData.id, { lead_status: "Converted" });
+        return await base44.entities.Opportunity.create({
             lead_id: leadData.id,
             lead_name: leadData.full_name,
-            phone_number: leadData.phone_number, // Mapped from Lead
-            email: leadData.email,               // Mapped from Lead (if exists)
-            
-            // Default Opportunity fields
+            phone_number: leadData.phone_number,
+            email: leadData.email,
             product_type: "Reverse Mortgage", 
             property_value: leadData.estimated_property_value || 0,
-            loan_amount_requested: 0,
             deal_stage: "New (חדש)",
             probability: 10,
-            main_pain_point: "Supplement Monthly Income (השלמת הכנסה חודשית)",
-            current_objection: "",
         });
-
-        return newOpp;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
       queryClient.invalidateQueries(['leads']);
-      
-      setShowLeadForm(false);
-      setEditingLead(null);
-      
-      // Notify user
-      alert("הליד הפך להזדמנות בהצלחה! (The lead was successfully converted to an opportunity)");
-      
       processAutomation('Opportunity', 'create', data);
-    },
-    onError: (error) => {
-        console.error("Failed to convert opportunity:", error);
-        alert("אירעה שגיאה בהמרת הליד להזדמנות (Error converting lead)");
+      alert("🎉 הליד הפך להזדמנות בהצלחה!");
     }
   });
 
-  // Filtering Logic
-  const filteredLeads = leads.filter(lead => {
-    // Revival List Logic
-    if (filters.status === "revival_2023") {
-      const isGreenOrYellow = lead.original_status_color === "Green" || lead.original_status_color === "Yellow";
-      // "Last Contact Date" is empty or old (let's say empty for strictly following request)
-      // Request says: "Last Contact Date" is empty.
-      const noRecentContact = !lead.last_contact_date;
-      return isGreenOrYellow && noRecentContact;
-    }
+  // --- Settings ---
+  const statusOptions = [
+    { value: "New", label: "חדש", color: "bg-blue-100 text-blue-700" },
+    { value: "Attempting Contact", label: "בטיפול", color: "bg-yellow-100 text-yellow-700" },
+    { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-orange-100 text-orange-700" },
+    { value: "Sales Ready", label: "בשל למכירה", color: "bg-purple-100 text-purple-700" },
+    { value: "Converted", label: "הומר להזדמנות", color: "bg-emerald-100 text-emerald-700" },
+    { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-gray-100 text-gray-600" }
+  ];
 
-    const matchesSearch = lead.full_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-                         lead.phone_number?.includes(filters.search) ||
-                         lead.city?.toLowerCase().includes(filters.search.toLowerCase());
-    const matchesYear = filters.year === "all" || lead.source_year === filters.year;
-    // Default: Exclude converted leads unless specifically asked for
-    const matchesStatus = filters.status === "all" 
-        ? lead.lead_status !== "Converted"
-        : lead.lead_status === filters.status;
-        
+  // --- Filtering ---
+  const filteredLeads = leads.filter(lead => {
+    if (filters.status === "revival_2023") {
+      return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
+    }
+    const matchesSearch = lead.full_name?.toLowerCase().includes(filters.search.toLowerCase()) || lead.phone_number?.includes(filters.search);
+    const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
+    const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
     return matchesSearch && matchesYear && matchesStatus;
   });
 
-  const handleLeadSubmit = (formData) => {
-    // Check if user selected "Converted"
-    if (formData.lead_status === 'Converted') {
-        if (editingLead) {
-            // Merge old data with new form data to ensure we have all fields
-            const mergedData = { ...editingLead, ...formData };
-            convertToOpportunity.mutate(mergedData);
-        } else {
-            // Create new lead directly as opportunity
-            createLead.mutate(formData);
-        }
-    } else {
-        // Standard update/create
-        if (editingLead) {
-            updateLead.mutate({ id: editingLead.id, data: formData });
-        } else {
-            createLead.mutate(formData);
-        }
-    }
-  };
-
-  const statusColors = {
-    "New": "bg-blue-100 text-blue-800",
-    "Attempting Contact": "bg-yellow-100 text-yellow-800",
-    "Contacted - Qualifying": "bg-orange-100 text-orange-800",
-    "Sales Ready": "bg-purple-100 text-purple-800",
-    "Lost / Unqualified": "bg-gray-100 text-gray-800",
-    "Converted": "bg-emerald-100 text-emerald-800"
-  };
-
-  const statusLabels = {
-    "New": "חדש",
-    "Attempting Contact": "בטיפול",
-    "Contacted - Qualifying": "בירור צרכים",
-    "Sales Ready": "בשל למכירה",
-    "Lost / Unqualified": "לא רלוונטי",
-    "Converted": "הומר להזדמנות"
-  };
-
-  const legacyColors = {
-    "Green": "bg-green-500",
-    "Red": "bg-red-500",
-    "Yellow": "bg-yellow-400",
-    "Orange": "bg-orange-500"
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Header Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex-1 w-full md:w-auto flex gap-2">
+    <div className="space-y-6 pb-20">
+      {/* Header & Actions */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+        <div className="flex-1 w-full md:w-auto flex flex-col md:flex-row gap-3">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input 
-              placeholder="חיפוש שם, טלפון, עיר..." 
-              className="pr-10 rounded-full border-slate-200 focus:ring-teal-500 focus:border-teal-500"
+              placeholder="חיפוש שם או טלפון..." 
+              className="pr-10 bg-slate-50 border-slate-200 focus:bg-white transition-all rounded-xl"
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
             />
           </div>
-          <Select value={filters.year} onValueChange={v => setFilters({...filters, year: v})}>
-            <SelectTrigger className="w-[120px] rounded-full border-slate-200">
-              <SelectValue placeholder="שנה" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">כל השנים</SelectItem>
-              <SelectItem value="2023">2023</SelectItem>
-              <SelectItem value="2024">2024</SelectItem>
-              <SelectItem value="2025">2025</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
-            <SelectTrigger className="w-[180px] rounded-full border-slate-200">
-              <SelectValue placeholder="סטטוס" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">כל הסטטוסים</SelectItem>
-              <SelectItem value="New">חדש</SelectItem>
-              <SelectItem value="Attempting Contact">בטיפול</SelectItem>
-              <SelectItem value="Contacted - Qualifying">בירור צרכים</SelectItem>
-              <SelectItem value="Sales Ready">בשל למכירה</SelectItem>
-              <SelectItem value="Converted">הומר להזדמנות</SelectItem>
-              <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה 2023</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button onClick={() => setShowLeadForm(true)} className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/20 rounded-full px-6 w-full md:w-auto transition-all hover:scale-105">
-          <Plus className="w-4 h-4 ml-2" />
-          הוסף ליד
-          </Button>
-          <Link to={createPageUrl('ImportLeads')}>
-          <Button variant="outline" className="w-full md:w-auto border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-teal-600 rounded-full px-6">
-              <Upload className="w-4 h-4 ml-2" />
-              ייבוא קובץ
-          </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
+                <SelectTrigger className="w-[160px] rounded-xl bg-slate-50 border-slate-200">
+                <Filter className="w-3.5 h-3.5 ml-2 text-slate-500" />
+                <SelectValue placeholder="סטטוס" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="all">כל הסטטוסים</SelectItem>
+                {statusOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
-
-      {/* Leads Table */}
-      <div className="overflow-hidden">
-        <Table className="border-separate border-spacing-y-3 -mt-3">
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[250px] text-right text-slate-400 font-medium pb-2">שם הלקוח</TableHead>
-              <TableHead className="text-right text-slate-400 font-medium pb-2">פרטי קשר</TableHead>
-              <TableHead className="text-right text-slate-400 font-medium pb-2">סטטוס</TableHead>
-              <TableHead className="text-right text-slate-400 font-medium pb-2">שנת מקור</TableHead>
-              <TableHead className="text-right text-slate-400 font-medium pb-2">קשר אחרון</TableHead>
-              <TableHead className="text-left text-slate-400 font-medium pb-2 pl-6">פעולות</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-               <TableRow>
-                 <TableCell colSpan={6} className="text-center py-12 text-slate-400">טוען נתונים...</TableCell>
-               </TableRow>
-            ) : filteredLeads.map((lead) => (
-              <TableRow 
-                key={lead.id} 
-                className="bg-white shadow-sm hover:shadow-md transition-all duration-200 group rounded-2xl border-none"
-              >
-                <TableCell className="rounded-r-2xl border-none py-4 pr-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-2.5 h-2.5 rounded-full ${legacyColors[lead.original_status_color] || 'bg-gray-300'} ring-4 ring-slate-50`} title={`Legacy Color: ${lead.original_status_color}`} />
-                    <div className="flex-1 min-w-0">
-                      <InlineEdit 
-                        value={lead.full_name}
-                        onSave={(val) => updateLead.mutate({ id: lead.id, data: { full_name: val } })}
-                        className="font-bold text-slate-800 hover:text-teal-600"
-                      />
-                      <p className="text-xs text-slate-400 mt-0.5 font-medium flex items-center gap-1">
-                        {lead.city} • בן {lead.age}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="border-none py-4">
-                  <div className="flex items-center text-slate-500 font-medium">
-                    <Phone className="w-3.5 h-3.5 ml-2 text-slate-300" />
-                    <InlineEdit 
-                        value={lead.phone_number}
-                        type="tel"
-                        onSave={(val) => updateLead.mutate({ id: lead.id, data: { phone_number: val } })}
-                    />
-                  </div>
-                </TableCell>
-                <TableCell className="border-none py-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Badge 
-                        variant="secondary" 
-                        className={`rounded-full px-3 py-1 shadow-sm font-semibold cursor-pointer hover:opacity-80 transition-opacity ${statusColors[lead.lead_status]}`}
-                      >
-                        {statusLabels[lead.lead_status] || lead.lead_status}
-                      </Badge>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center">
-                        {Object.entries(statusLabels).map(([key, label]) => (
-                             <DropdownMenuItem 
-                                key={key}
-                                onClick={() => {
-                                    if (key === 'Converted') {
-                                        convertToOpportunity.mutate(lead);
-                                    } else {
-                                        updateLead.mutate({ id: lead.id, data: { lead_status: key } });
-                                    }
-                                }}
-                                className="cursor-pointer"
-                             >
-                                {label}
-                             </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-                <TableCell className="border-none py-4">
-                    <div className="w-20">
-                        <InlineEdit 
-                            value={lead.source_year}
-                            onSave={(val) => updateLead.mutate({ id: lead.id, data: { source_year: val } })}
-                            className="bg-slate-100 text-slate-600 rounded-md text-xs font-medium px-2"
-                        />
-                    </div>
-                </TableCell>
-                <TableCell className="border-none py-4">
-                  <div className="flex items-center text-slate-500 text-sm font-medium">
-                    <Calendar className="w-3.5 h-3.5 ml-2 text-slate-300" />
-                    {lead.last_contact_date}
-                  </div>
-                </TableCell>
-                <TableCell className="text-left rounded-l-2xl border-none py-4 pl-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-slate-300 hover:text-teal-600 hover:bg-teal-50 rounded-full">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl shadow-xl border-slate-100">
-                      <DropdownMenuItem onClick={() => { setEditingLead(lead); setShowLeadForm(true); }} className="rounded-lg cursor-pointer">
-                        ערוך פרטים
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-teal-600 focus:text-teal-700 rounded-lg cursor-pointer"
-                        onClick={() => convertToOpportunity.mutate(lead)}
-                        disabled={convertToOpportunity.isPending}
-                      >
-                        {convertToOpportunity.isPending ? (
-                            <span className="flex items-center">מבצע המרה...</span>
-                        ) : (
-                            <>
-                            <ArrowLeft className="w-4 h-4 ml-2" />
-                            המר להזדמנות (אוטומטי)
-                            </>
-                        )}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        </div>
+        
+        <div className="flex gap-3 w-full md:w-auto">
+             <Link to={createPageUrl('ImportLeads')} className="w-full md:w-auto">
+                <Button variant="outline" className="w-full border-slate-200 hover:bg-slate-50 rounded-xl">
+                    <Upload className="w-4 h-4 ml-2" />
+                    ייבוא
+                </Button>
+            </Link>
+            <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-lg shadow-slate-900/20">
+            <Plus className="w-4 h-4 ml-2" />
+            ליד חדש
+            </Button>
+        </div>
       </div>
 
-      {/* Lead Form Dialog */}
+      {/* Leads List - Floating Cards */}
+      <div className="space-y-3">
+        {/* Column Headers (Desktop Only) */}
+        <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="col-span-3 text-right">לקוח</div>
+            <div className="col-span-3 text-right">פרטי קשר</div>
+            <div className="col-span-2 text-right">סטטוס</div>
+            <div className="col-span-2 text-right">שנה / מקור</div>
+            <div className="col-span-2 text-left pl-4">פעולות</div>
+        </div>
+
+        <AnimatePresence>
+            {isLoading ? (
+                <div className="text-center py-20 text-slate-400">טוען נתונים...</div>
+            ) : filteredLeads.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+                    <p className="text-slate-500">לא נמצאו לידים התואמים את הסינון</p>
+                </div>
+            ) : (
+                filteredLeads.map((lead, index) => (
+                    <motion.div 
+                        key={lead.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="group bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-teal-100 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                    >
+                        {/* Name & Details */}
+                        <div className="col-span-3 flex items-center gap-3">
+                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-slate-600 bg-slate-100 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors`}>
+                                {lead.full_name?.charAt(0) || <User className="w-5 h-5" />}
+                             </div>
+                             <div className="flex-1 min-w-0">
+                                <InlineEdit 
+                                    value={lead.full_name}
+                                    onSave={(val) => updateLead.mutate({ id: lead.id, data: { full_name: val } })}
+                                    className="font-bold text-slate-800 text-base"
+                                />
+                                <div className="flex items-center gap-2 text-xs text-slate-400">
+                                    <InlineEdit 
+                                        value={lead.city} 
+                                        placeholder="עיר"
+                                        onSave={(val) => updateLead.mutate({ id: lead.id, data: { city: val } })}
+                                    />
+                                    <span>•</span>
+                                    <span>בן {lead.age || '?'}</span>
+                                </div>
+                             </div>
+                        </div>
+
+                        {/* Phone */}
+                        <div className="col-span-3 flex items-center text-slate-600">
+                            <Phone className="w-4 h-4 ml-2 text-slate-300" />
+                            <InlineEdit 
+                                value={lead.phone_number}
+                                type="tel"
+                                onSave={(val) => updateLead.mutate({ id: lead.id, data: { phone_number: val } })}
+                                className="font-mono tracking-wide"
+                            />
+                        </div>
+
+                        {/* Status - Smart Edit */}
+                        <div className="col-span-2">
+                             <InlineEdit 
+                                type="select"
+                                value={lead.lead_status}
+                                options={statusOptions}
+                                onSave={(val) => {
+                                    if (val === 'Converted') convertToOpportunity.mutate(lead);
+                                    else updateLead.mutate({ id: lead.id, data: { lead_status: val } });
+                                }}
+                                formatDisplay={(val) => {
+                                    const status = statusOptions.find(o => o.value === val);
+                                    return (
+                                        <Badge variant="secondary" className={`${status?.color || 'bg-slate-100'} border-0 px-3 py-1`}>
+                                            {status?.label || val}
+                                        </Badge>
+                                    );
+                                }}
+                             />
+                        </div>
+
+                        {/* Year & Source */}
+                        <div className="col-span-2 flex flex-col justify-center text-sm text-slate-500">
+                            <span className="font-medium">{lead.source_year}</span>
+                            <span className="text-xs text-slate-400">{lead.last_contact_date || 'לא נוצר קשר'}</span>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="col-span-2 flex justify-end pl-2">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-slate-100">
+                                        <MoreHorizontal className="w-4 h-4 text-slate-400" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="rounded-xl border-slate-100 shadow-xl">
+                                    <DropdownMenuItem onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}>
+                                        ערוך פרטים מלאים
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem 
+                                        className="text-teal-600 focus:text-teal-700 font-medium"
+                                        onClick={() => convertToOpportunity.mutate(lead)}
+                                    >
+                                        <ArrowLeft className="w-4 h-4 ml-2" />
+                                        המר להזדמנות
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </motion.div>
+                ))
+            )}
+        </AnimatePresence>
+      </div>
+
+      {/* Edit/Create Modal */}
       <Dialog open={showLeadForm} onOpenChange={(open) => {
         setShowLeadForm(open);
         if (!open) setEditingLead(null);
@@ -366,14 +263,19 @@ export default function LeadsPage() {
         <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
           <LeadForm 
             lead={editingLead} 
-            onSubmit={handleLeadSubmit} 
+            onSubmit={(data) => {
+                if (data.lead_status === 'Converted') {
+                    if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
+                    else createLead.mutate(data); 
+                } else {
+                    editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
+                }
+            }}
             onCancel={() => setShowLeadForm(false)}
             isSubmitting={createLead.isPending || updateLead.isPending}
           />
         </DialogContent>
       </Dialog>
-
-      {/* Opportunity Form removed - Conversion is now automatic */}
     </div>
   );
 }
