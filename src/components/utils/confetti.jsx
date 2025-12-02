@@ -5,7 +5,6 @@ export function triggerConfetti() {
   };
 
   function fire(particleRatio, opts) {
-    // Check if confetti exists on window
     if (typeof window.confetti !== 'function') return;
     
     window.confetti({

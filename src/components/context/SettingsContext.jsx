@@ -21,13 +21,21 @@ export const defaultBranding = {
 
 export function SettingsProvider({ children }) {
   const [branding, setBranding] = useState(() => {
-    const saved = localStorage.getItem('crm_branding');
-    return saved ? JSON.parse(saved) : defaultBranding;
+    try {
+      const saved = localStorage.getItem('crm_branding');
+      return saved ? JSON.parse(saved) : defaultBranding;
+    } catch (e) {
+      return defaultBranding;
+    }
   });
 
   const [pipelineStages, setPipelineStages] = useState(() => {
-    const saved = localStorage.getItem('crm_stages');
-    return saved ? JSON.parse(saved) : defaultStages;
+    try {
+      const saved = localStorage.getItem('crm_stages');
+      return saved ? JSON.parse(saved) : defaultStages;
+    } catch (e) {
+      return defaultStages;
+    }
   });
 
   useEffect(() => {

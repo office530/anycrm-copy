@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2, LayoutGrid, List as ListIcon, ArrowLeft, TrendingUp, Calendar, AlertCircle } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
-import { toast } from "sonner"; // Assuming Toast or similar availability, or alert logic
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";

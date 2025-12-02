@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Briefcase, RefreshCcw, Save } from "lucide-react";
-import { toast } from "sonner"; // Assuming sonner or similar exists, otherwise fallback
 
 export default function SettingsPage() {
   const { branding, updateBranding, pipelineStages, updateStage, setPipelineStages } = useSettings();
