@@ -19,11 +19,34 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       original_status_color: "Green",
       lead_status: "New",
       last_contact_date: new Date().toISOString().split('T')[0],
-      notes: ""
+      notes: "",
+      marital_status: "Married",
+      estimated_property_value: "",
+      existing_mortgage_balance: "",
+      has_children: true,
+      lead_temperature: ""
     }
   });
 
   const leadStatus = watch("lead_status");
+  const lastContactDate = watch("last_contact_date");
+  const originalStatusColor = watch("original_status_color");
+
+  // Calculate Lead Temperature
+  React.useEffect(() => {
+    let temp = "Cold (קר)";
+    const daysSinceContact = lastContactDate 
+      ? Math.floor((new Date() - new Date(lastContactDate)) / (1000 * 60 * 60 * 24))
+      : 999;
+
+    if (daysSinceContact <= 30) {
+      temp = "Warm (חם)";
+    } else if (originalStatusColor === "Green") {
+      temp = "Hot History (היה חם בעבר)";
+    }
+
+    setValue("lead_temperature", temp);
+  }, [lastContactDate, originalStatusColor, setValue]);
 
   const handleSelectChange = (field, value) => {
     setValue(field, value);
@@ -129,6 +152,66 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
           <div className="space-y-2">
             <Label>תאריך יצירת קשר אחרון</Label>
             <Input type="date" {...register("last_contact_date")} />
+          </div>
+
+          <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6 mt-2">
+             <div className="space-y-2">
+              <Label>מצב משפחתי</Label>
+              <Select 
+                defaultValue={lead?.marital_status || "Married"} 
+                onValueChange={(val) => handleSelectChange("marital_status", val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="בחר סטטוס" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Married">נשוי/אה (Married)</SelectItem>
+                  <SelectItem value="Widowed">אלמן/ה (Widowed)</SelectItem>
+                  <SelectItem value="Divorced">גרוש/ה (Divorced)</SelectItem>
+                  <SelectItem value="Single">רווק/ה (Single)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+               <div className="flex items-center gap-2">
+                 <Label>יש ילדים?</Label>
+                 <input 
+                    type="checkbox" 
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    {...register("has_children")} 
+                 />
+               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>שווי נכס מוערך (₪)</Label>
+              <Input 
+                type="number" 
+                {...register("estimated_property_value", { valueAsNumber: true })} 
+                placeholder="0.00" 
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>יתרת משכנתא קיימת (₪)</Label>
+              <Input 
+                type="number" 
+                {...register("existing_mortgage_balance", { valueAsNumber: true })} 
+                placeholder="0.00" 
+              />
+            </div>
+             
+             <div className="space-y-2">
+               <Label>טמפרטורת ליד (מחושב)</Label>
+               <div className={`p-2 rounded border text-center font-bold ${
+                 watch("lead_temperature")?.includes("Warm") ? "bg-orange-100 text-orange-800 border-orange-200" :
+                 watch("lead_temperature")?.includes("Hot") ? "bg-green-100 text-green-800 border-green-200" :
+                 "bg-blue-50 text-blue-800 border-blue-100"
+               }`}>
+                 {watch("lead_temperature") || "מחשב..."}
+               </div>
+             </div>
           </div>
         </div>
 

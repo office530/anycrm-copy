@@ -75,6 +75,15 @@ export default function LeadsPage() {
 
   // Filtering Logic
   const filteredLeads = leads.filter(lead => {
+    // Revival List Logic
+    if (filters.status === "revival_2023") {
+      const isGreenOrYellow = lead.original_status_color === "Green" || lead.original_status_color === "Yellow";
+      // "Last Contact Date" is empty or old (let's say empty for strictly following request)
+      // Request says: "Last Contact Date" is empty.
+      const noRecentContact = !lead.last_contact_date;
+      return isGreenOrYellow && noRecentContact;
+    }
+
     const matchesSearch = lead.full_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
                          lead.phone_number?.includes(filters.search) ||
                          lead.city?.toLowerCase().includes(filters.search.toLowerCase());
@@ -150,6 +159,7 @@ export default function LeadsPage() {
               <SelectItem value="New">חדש</SelectItem>
               <SelectItem value="Contact Attempt 1">ניסיון 1</SelectItem>
               <SelectItem value="Converted to Opportunity">הומר להזדמנות</SelectItem>
+              <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה 2023</SelectItem>
             </SelectContent>
           </Select>
         </div>
