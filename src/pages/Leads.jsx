@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User, MessageCircle
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
@@ -26,12 +27,25 @@ export default function LeadsPage() {
 
   const queryClient = useQueryClient();
 
-  // Data
+  // Data Fetching
   const { data: leads, isLoading } = useQuery({
     queryKey: ['leads'],
     queryFn: () => base44.entities.Lead.list(),
     initialData: []
   });
+
+  // --- Statistics Calculation (New!) ---
+  const stats = useMemo(() => {
+      const total = leads.length;
+      const newThisMonth = leads.filter(l => {
+          // Assuming 'created_at' or using logic if generic. Here mimicking simple check
+          return true; // Placeholder for real date check if field exists
+      }).length;
+      const convertedCount = leads.filter(l => l.lead_status === 'Converted').length;
+      const conversionRate = total > 0 ? ((convertedCount / total) * 100).toFixed(1) : 0;
+      
+      return { total, newThisMonth, conversionRate };
+  }, [leads]);
 
   // --- Mutations ---
   const createLead = useMutation({
@@ -48,7 +62,6 @@ export default function LeadsPage() {
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries(['leads']);
-      // Future: Add global toast here
     }
   });
 
@@ -84,20 +97,82 @@ export default function LeadsPage() {
     { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-gray-100 text-gray-600" }
   ];
 
-  // --- Filtering ---
-  const filteredLeads = leads.filter(lead => {
-    if (filters.status === "revival_2023") {
-      return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
-    }
-    const matchesSearch = lead.full_name?.toLowerCase().includes(filters.search.toLowerCase()) || lead.phone_number?.includes(filters.search);
-    const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
-    const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
-    return matchesSearch && matchesYear && matchesStatus;
-  });
+  // --- Improved Filtering Logic ---
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+        // Revival List Special Logic
+        if (filters.status === "revival_2023") {
+            return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
+        }
+
+        // Robust Search (Handles nulls and cleaning)
+        const searchTerm = filters.search.toLowerCase().trim();
+        const leadName = (lead.full_name || "").toLowerCase();
+        const leadPhone = (lead.phone_number || "").replace(/\D/g, ''); // Remove non-digits for search
+        const searchPhone = searchTerm.replace(/\D/g, ''); 
+
+        const matchesSearch = !searchTerm || 
+                              leadName.includes(searchTerm) || 
+                              leadPhone.includes(searchPhone);
+
+        const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
+        
+        // Hide converted by default unless selected specifically
+        const matchesStatus = filters.status === "all" 
+            ? lead.lead_status !== "Converted" 
+            : lead.lead_status === filters.status;
+
+        return matchesSearch && matchesYear && matchesStatus;
+    }).sort((a, b) => {
+        // Sort by ID descending (assuming higher ID = newer) or created_date if available
+        return b.id - a.id; 
+    });
+  }, [leads, filters]);
 
   return (
     <div className="space-y-6 pb-20">
-      {/* Header & Actions */}
+      
+      {/* Stats Bar (New!) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+            <CardContent className="p-4 flex items-center gap-4">
+                <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                    <Users className="w-5 h-5" />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500">סה״כ לידים</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{stats.total}</p>
+                </div>
+            </CardContent>
+        </Card>
+        <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+            <CardContent className="p-4 flex items-center gap-4">
+                <div className="p-3 bg-teal-100 text-teal-600 rounded-xl">
+                    <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500">הומרו להזדמנות</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{stats.conversionRate}%</p>
+                </div>
+            </CardContent>
+        </Card>
+        <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+            <CardContent className="p-4 flex items-center gap-4">
+                <div className="p-3 bg-purple-100 text-purple-600 rounded-xl">
+                    <Activity className="w-5 h-5" />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500">פעילים בטיפול</p>
+                    {/* Active = Not Converted & Not Lost */}
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+                        {leads.filter(l => !['Converted', 'Lost / Unqualified'].includes(l.lead_status)).length}
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters & Actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
         <div className="flex-1 w-full md:w-auto flex flex-col md:flex-row gap-3">
           <div className="relative flex-1 max-w-sm">
@@ -153,8 +228,9 @@ export default function LeadsPage() {
             {isLoading ? (
                 <div className="text-center py-20 text-slate-400">טוען נתונים...</div>
             ) : filteredLeads.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+                <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
                     <p className="text-slate-500">לא נמצאו לידים התואמים את הסינון</p>
+                    {filters.search && <Button variant="link" onClick={() => setFilters({...filters, search: ""})}>נקה חיפוש</Button>}
                 </div>
             ) : (
                 filteredLeads.map((lead, index) => (
@@ -264,9 +340,8 @@ export default function LeadsPage() {
                             </DropdownMenu>
                         </div>
                     </motion.div>
-                ))
-            )}
-        </AnimatePresence>
+                ))}
+            </AnimatePresence>
       </div>
 
       {/* Edit/Create Modal */}

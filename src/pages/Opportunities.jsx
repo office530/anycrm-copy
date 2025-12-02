@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, LayoutGrid, List as ListIcon, ArrowLeft, TrendingUp, Calendar, AlertCircle } from "lucide-react";
+import { Loader2, LayoutGrid, List as ListIcon, TrendingUp, Calendar, AlertCircle, DollarSign, Briefcase, Trophy } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -22,7 +22,6 @@ export default function OpportunitiesPage() {
   const [viewMode, setViewMode] = useState('kanban');
   const queryClient = useQueryClient();
   
-  // Fallback to ensure array if context isn't ready
   const activeStages = pipelineStages || [];
 
   const { data: opportunities, isLoading } = useQuery({
@@ -30,6 +29,16 @@ export default function OpportunitiesPage() {
     queryFn: () => base44.entities.Opportunity.list(),
     initialData: []
   });
+
+  // --- Statistics Logic (New!) ---
+  const stats = useMemo(() => {
+    const totalPipeline = opportunities.reduce((acc, o) => acc + (o.loan_amount_requested || 0), 0);
+    const totalDeals = opportunities.length;
+    const wonDeals = opportunities.filter(o => o.deal_stage.includes('Won')).length;
+    const activeDeals = opportunities.filter(o => !o.deal_stage.includes('Won') && !o.deal_stage.includes('Lost')).length;
+    
+    return { totalPipeline, totalDeals, wonDeals, activeDeals };
+  }, [opportunities]);
 
   const updateOppMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Opportunity.update(id, data),
@@ -53,10 +62,9 @@ export default function OpportunitiesPage() {
         data: { ...opp, deal_stage: newStage }
       });
 
-      // Check for closed won celebration
-      if (newStage.includes('Closed Won') || newStage === 'Closed Won (נחתם - בהצלחה)') {
+      if (newStage.includes('Closed Won')) {
           triggerConfetti();
-          // Use standard alert if toast not configured, or implement simple custom toast
+          // Custom Toast Logic
           const toastEl = document.createElement('div');
           toastEl.className = "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
           toastEl.innerHTML = `<span class="text-2xl">🎉</span> <div><div class="font-bold">ברכות!</div><div class="text-sm opacity-90">עסקה נוספת נסגרה בהצלחה!</div></div>`;
@@ -76,21 +84,40 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">צנרת עסקאות</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">ניהול ותיעדוף הזדמנויות עסקיות</p>
-        </div>
-        
-        <div className="bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex gap-1">
-            <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
-                <LayoutGrid className="w-4 h-4 ml-2" /> לוח
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
-                <ListIcon className="w-4 h-4 ml-2" /> רשימה
-            </Button>
-        </div>
+      
+      {/* Stats Header (New!) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 shadow-sm">
+             <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><DollarSign className="w-5 h-5"/></div>
+             <div>
+                 <div className="text-xs text-slate-500">שווי צנרת כולל</div>
+                 <div className="font-bold text-lg dark:text-slate-100">{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
+             </div>
+          </div>
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 shadow-sm">
+             <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Briefcase className="w-5 h-5"/></div>
+             <div>
+                 <div className="text-xs text-slate-500">עסקאות פעילות</div>
+                 <div className="font-bold text-lg dark:text-slate-100">{stats.activeDeals}</div>
+             </div>
+          </div>
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 shadow-sm">
+             <div className="p-2 bg-purple-100 text-purple-600 rounded-lg"><Trophy className="w-5 h-5"/></div>
+             <div>
+                 <div className="text-xs text-slate-500">נסגרו בהצלחה</div>
+                 <div className="font-bold text-lg dark:text-slate-100">{stats.wonDeals}</div>
+             </div>
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <div className="bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex gap-1 h-fit">
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
+                    <LayoutGrid className="w-4 h-4 ml-2" /> לוח
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
+                    <ListIcon className="w-4 h-4 ml-2" /> רשימה
+                </Button>
+            </div>
+          </div>
       </div>
 
       {viewMode === 'kanban' ? (
@@ -202,8 +229,7 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-             {/* תצוגת טבלה פשוטה נשמרת למקרה הצורך, אפשר להעתיק מהקוד הקודם אם אתה משתמש בה */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
              <div className="p-10 text-center text-slate-500">תצוגת רשימה זמינה בגרסה הבאה</div>
         </div>
       )}
