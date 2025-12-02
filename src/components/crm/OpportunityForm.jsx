@@ -9,6 +9,7 @@ import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, Fi
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityLog from "./ActivityLog";
 import { base44 } from "@/api/base44Client";
+import FileUpload from "../common/FileUpload";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const [aiLoading, setAiLoading] = React.useState(false);
@@ -24,6 +25,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     defaultValues: opportunity || {
       lead_id: initialLead?.id || "",
       lead_name: initialLead?.full_name || "",
+      phone_number: initialLead?.phone_number || "",
+      email: initialLead?.email || "",
       product_type: "Reverse Mortgage",
       property_value: initialLead?.estimated_property_value || "",
       loan_amount_requested: "",
@@ -34,7 +37,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       main_pain_point: "",
       current_objection: "",
       ai_sales_strategy: "",
-      ai_objection_handler: ""
+      ai_objection_handler: "",
+      documents: []
     }
   });
 
@@ -184,6 +188,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
             <FileText className="w-4 h-4" />
             פרטי עסקה
           </TabsTrigger>
+          <TabsTrigger value="documents" className="flex items-center gap-2">
+            <Briefcase className="w-4 h-4" />
+            מסמכים
+          </TabsTrigger>
           <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!opportunity?.lead_id && !initialLead?.id}>
             <Activity className="w-4 h-4" />
             תיעוד פעילות
@@ -198,6 +206,34 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
+          <div className="space-y-2">
+            <Label>מספר טלפון</Label>
+            <Input 
+              {...register("phone_number", { 
+                pattern: {
+                  value: /^0[0-9]{1,2}-?[0-9]{7}$/,
+                  message: "מספר טלפון לא תקין"
+                }
+              })} 
+              placeholder="050-0000000" 
+            />
+            {errors.phone_number && <span className="text-red-500 text-sm">{errors.phone_number.message}</span>}
+          </div>
+
+          <div className="space-y-2">
+            <Label>אימייל</Label>
+            <Input 
+              {...register("email", {
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "כתובת אימייל לא תקינה"
+                }
+              })} 
+              placeholder="email@example.com" 
+            />
+            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+          </div>
+
           <div className="space-y-2">
             <Label>סוג מוצר</Label>
             <Select 
@@ -364,6 +400,24 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </Button>
         </div>
         </form>
+        </TabsContent>
+
+        <TabsContent value="documents" className="space-y-6">
+          <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+            <FileUpload 
+              files={watch("documents") || []}
+              onFilesChange={(newFiles) => setValue("documents", newFiles)}
+              label="מסמכי עסקה"
+            />
+          </div>
+          
+          <div className="flex justify-end gap-4 pt-4 border-t">
+             <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
+             <Button onClick={handleSubmit(handleFormSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+               שמור הזדמנות
+             </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="activity" className="h-[600px]">

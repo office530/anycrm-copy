@@ -94,7 +94,7 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
           </TabsList>
 
         <TabsContent value="details">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>שם מלא *</Label>
@@ -271,7 +271,15 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
           <Label>הערות</Label>
           <Textarea {...register("notes")} placeholder="הערות חשובות..." className="h-24" />
         </div>
-        </form>
+        
+        <div className="flex justify-end gap-4 pt-4 border-t">
+          <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
+          <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+            {lead ? "עדכן ליד" : "צור ליד"}
+          </Button>
+        </div>
+        </div>
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-6">
@@ -282,56 +290,6 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
             />
           </div>
           
-          {/* Re-add submit buttons here or duplicate them? 
-              Better to keep form buttons outside tabs or duplicate the logic. 
-              Actually, the original code had the buttons INSIDE the form tag which was INSIDE TabsContent value="details".
-              This means if I switch tabs, I might lose the submit button or it won't submit the form because it's outside.
-              
-              Wait, I closed the </form> tag in the "details" tab content replacement above.
-              So the "details" tab has its own form. But "documents" tab fields (FileUpload) updates the form state via setValue.
-              If the form tag only wraps the "details" content, submitting from "details" tab won't include validation of fields if they were outside?
-              No, useForm handles state globally for the component.
-              
-              However, to submit the form, I need a submit button that triggers handleFormSubmit.
-              Ideally, the <form> should wrap EVERYTHING including tabs, OR I use a button outside that triggers handleSubmit.
-              
-              The original code:
-              <TabsContent value="details">
-                <form ...>
-                   ... fields ...
-                   <Buttons ... />
-                </form>
-              </TabsContent>
-              
-              If I put FileUpload in another tab, and the user is on that tab, there is no Submit button visible if it's inside "details".
-              Also, if I am on "documents" tab, I can't submit the "details" form easily if the <form> tag is only in "details".
-              
-              I should move the <form> tag to wrap the Tabs or at least the TabsContent containers.
-              But Tabs requires TabsContent as direct children usually? No, TabsContent are children of Tabs.
-              
-              Best approach: Wrap the <Tabs> with <form>.
-              
-              Let's check the original structure again.
-              <Tabs ...>
-                 <TabsList ... />
-                 <TabsContent value="details">
-                    <form ...>
-                    ...
-                    </form>
-                 </TabsContent>
-                 ...
-              </Tabs>
-              
-              I need to refactor this. I will wrap the entire Tabs content in the form?
-              Or just add the buttons to each tab? Or move buttons outside tabs.
-              Moving buttons outside tabs is cleaner.
-              
-              But `form` tag needs to wrap the inputs to handle "Enter" key submission correctly, though less critical for complex forms.
-              
-              If I move `<form>` to wrap `<Tabs>`, then `TabsList` buttons (type="button") might trigger submit if not careful (default is submit for buttons in form). They are `TabsTrigger` which are buttons. Usually shadcn `TabsTrigger` prevents default.
-              
-              Let's try to wrap the whole Tabs area with form.
-          */}
           <div className="flex justify-end gap-4 pt-4 border-t">
              <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
              <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
@@ -339,28 +297,6 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
                {lead ? "עדכן ליד" : "צור ליד"}
              </Button>
           </div>
-        </TabsContent>
-
-        {/* We need to remove the old buttons from 'details' tab and ensure form context is preserved. 
-            Actually, I closed the </form> in the previous replace block for 'details'. 
-            And added buttons to 'documents' tab. 
-            But 'details' tab also needs buttons.
-            
-            Strategy:
-            1. Remove <form> tag from 'details' TabContent completely (start and end).
-            2. Wrap the whole content (or at least the Tabs part) in <form>.
-            
-            Let's use `find_replace` to change the structure.
-        */}
-          
-        <div className="flex justify-end gap-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-            {lead ? "עדכן ליד" : "צור ליד"}
-          </Button>
-        </div>
-        </form>
         </TabsContent>
 
         <TabsContent value="discovery">
