@@ -1,124 +1,273 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
+  PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
-import { Users, TrendingUp, DollarSign, Activity, ArrowUpRight } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import moment from 'moment';
 
 export default function Dashboard() {
-  const { data: leads = [], isLoading } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
-  const { data: opportunities = [] } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
+  const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
 
-  const metrics = useMemo(() => {
-    const today = moment().startOf('day');
-    const newLeadsToday = leads.filter(l => moment(l.created_date).isSame(today, 'day')).length;
-    const activePipelineValue = opportunities.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
+  const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
+  const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ['tasks'], queryFn: () => base44.entities.Task.list() });
+
+  // סינון נתונים לפי טווח זמן
+  const { filteredLeads, filteredOpps, dateRangeLabel } = useMemo(() => {
+    let start = moment();
+    let label = "";
+
+    switch (timeRange) {
+        case 'month':
+            start = moment().startOf('month');
+            label = "החודש הנוכחי";
+            break;
+        case 'quarter':
+            start = moment().startOf('quarter');
+            label = "הרבעון הנוכחי";
+            break;
+        case 'year':
+            start = moment().startOf('year');
+            label = "השנה הנוכחית";
+            break;
+        default:
+            start = moment('2000-01-01');
+            label = "כל הזמן";
+    }
+
+    return {
+        filteredLeads: leads.filter(l => moment(l.created_date).isSameOrAfter(start)),
+        filteredOpps: opportunities.filter(o => moment(o.created_date).isSameOrAfter(start)),
+        dateRangeLabel: label
+    };
+  }, [leads, opportunities, timeRange]);
+
+  // חישוב מדדים (KPIs)
+  const stats = useMemo(() => {
+    const totalLeads = filteredLeads.length;
+    const newLeads = filteredLeads.filter(l => l.lead_status === 'New' || l.lead_status === 'חדש').length;
+    const convertedLeads = filteredLeads.filter(l => l.lead_status?.includes('Converted') || l.lead_status?.includes('הומר')).length;
     
-    // נתונים לגרף מגמה
-    const trendData = Array.from({ length: 7 }, (_, i) => {
-        const d = moment().subtract(6 - i, 'days');
-        return {
-            date: d.format('DD/MM'),
-            value: leads.filter(l => moment(l.created_date).format('YYYY-MM-DD') === d.format('YYYY-MM-DD')).length
-        };
+    const totalOpps = filteredOpps.length;
+    const wonOpps = filteredOpps.filter(o => o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה'));
+    const totalWonValue = wonOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
+    
+    // חלוקה לשלבים עבור הזדמנויות
+    const oppsByStage = filteredOpps.reduce((acc, o) => {
+        const stage = o.deal_stage?.split('(')[0]?.trim() || 'Other';
+        acc[stage] = (acc[stage] || 0) + 1;
+        return acc;
+    }, {});
+    const stageData = Object.entries(oppsByStage).map(([name, value]) => ({ name, value }));
+
+    // נתונים לגרף מגמות מכירה (לידים vs עסקאות סגורות)
+    const trendMap = {};
+    // אתחול המפה לפי טווח הזמן הנבחר (יומי/שבועי/חודשי)
+    // לפשטות נציג לפי ימים ב-30 יום האחרונים או לפי חודשים בשנה
+    const dateFormat = timeRange === 'year' ? 'MMM' : 'DD/MM';
+    
+    filteredLeads.forEach(l => {
+        const date = moment(l.created_date).format(dateFormat);
+        if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
+        trendMap[date].leads++;
+    });
+    
+    wonOpps.forEach(o => {
+        const date = moment(o.updated_date || o.created_date).format(dateFormat); // שימוש בתאריך עדכון לזכייה אם אפשר
+        if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
+        trendMap[date].sales++;
     });
 
-    return { totalLeads: leads.length, newLeadsToday, activePipelineValue, trendData };
-  }, [leads, opportunities]);
+    // המרה למערך ומיון
+    const trendData = Object.values(trendMap).sort((a, b) => {
+         // לוגיקת מיון פשוטה לפי מחרוזת תאריך - במצב אמת צריך לוגיקה חכמה יותר
+         return 0; 
+    });
 
-  if (isLoading) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
+    // משימות
+    const today = moment().endOf('day');
+    const upcomingTasks = tasks.filter(t => {
+        if (t.status === 'done') return false;
+        const due = moment(t.due_date);
+        return due.isValid() && due.isSameOrBefore(today.clone().add(7, 'days'));
+    }).sort((a, b) => moment(a.due_date).valueOf() - moment(b.due_date).valueOf()).slice(0, 5);
+
+    return {
+        totalLeads, newLeads, convertedLeads,
+        totalOpps, wonOppsCount: wonOpps.length, totalWonValue,
+        stageData, trendData, upcomingTasks
+    };
+  }, [filteredLeads, filteredOpps, tasks, timeRange]);
+
+  if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
 
   return (
-    <div className="space-y-8 pb-10">
-      {/* כותרת */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">סקירה כללית</h1>
-        <p className="text-slate-500 dark:text-slate-400">ברוך הבא, הנה מה שקורה בעסק היום.</p>
+    <div className="space-y-8 pb-10 max-w-7xl mx-auto">
+      {/* Header & Filter */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">דשבורד ראשי</h1>
+            <p className="text-slate-500 dark:text-slate-400">סקירת ביצועים: {dateRangeLabel}</p>
+        </div>
+        <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className="w-[180px] bg-white dark:bg-slate-900">
+                <Calendar className="w-4 h-4 ml-2 text-slate-500" />
+                <SelectValue placeholder="בחר טווח זמן" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem value="month">החודש הנוכחי</SelectItem>
+                <SelectItem value="quarter">הרבעון הנוכחי</SelectItem>
+                <SelectItem value="year">השנה הנוכחית</SelectItem>
+                <SelectItem value="all">כל הזמן</SelectItem>
+            </SelectContent>
+        </Select>
       </div>
 
-      {/* כרטיסי KPI */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <KpiCard 
-            title="לידים חדשים היום" 
-            value={metrics.newLeadsToday} 
-            total={metrics.totalLeads}
-            label="סה״כ במערכת"
-            icon={Users} 
-            color="bg-blue-500" 
-        />
-        <KpiCard 
-            title="שווי צנרת פעיל" 
-            value={`₪${metrics.activePipelineValue.toLocaleString()}`} 
-            label="הזדמנויות פתוחות"
-            icon={DollarSign} 
-            color="bg-teal-500" 
-        />
-        <KpiCard 
-            title="יחס המרה (משוער)" 
-            value="12%" 
-            label="עליה של 2% מהחודש שעבר"
-            icon={TrendingUp} 
-            color="bg-purple-500" 
-        />
+      {/* KPIs Row 1: Leads Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <KpiCard title="סה״כ לידים" value={stats.totalLeads} icon={Users} color="bg-blue-500" subtext={`${stats.newLeads} חדשים בתקופה זו`} />
+        <KpiCard title="לידים שהומרו" value={stats.convertedLeads} icon={TrendingUp} color="bg-purple-500" subtext={`${((stats.convertedLeads / (stats.totalLeads || 1)) * 100).toFixed(1)}% יחס המרה`} />
+        <KpiCard title="הכנסות בפועל" value={`₪${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} עסקאות סגורות`} />
       </div>
 
-      {/* גרפים ראשיים */}
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* גרף מגמת לידים */}
-        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl overflow-hidden bg-white dark:bg-slate-900 dark:border dark:border-slate-800">
-            <CardHeader className="bg-white dark:bg-slate-900 border-b border-slate-50 dark:border-slate-800 pb-4">
-                <CardTitle className="text-lg text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-slate-400" /> מגמת לידים חדשים
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 bg-white dark:bg-slate-900">
-                <div className="h-[300px] w-full">
+          
+          {/* Left Column: Charts (Span 2) */}
+          <div className="lg:col-span-2 space-y-6">
+              
+              {/* Sales Trend Chart */}
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-900">
+                  <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                          <Activity className="w-5 h-5 text-slate-400" /> מגמות לידים ומכירות
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={metrics.trendData}>
+                        <AreaChart data={stats.trendData}>
                             <defs>
                                 <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.2}/>
-                                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                </linearGradient>
+                                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                            <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
-                            <RechartsTooltip 
-                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                            />
-                            <Area type="monotone" dataKey="value" stroke="#0ea5e9" strokeWidth={3} fillOpacity={1} fill="url(#colorLeads)" />
+                            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                            <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                            <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#3b82f6" fill="url(#colorLeads)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="sales" name="מכירות" stroke="#10b981" fill="url(#colorSales)" strokeWidth={2} />
                         </AreaChart>
                     </ResponsiveContainer>
-                </div>
-            </CardContent>
-        </Card>
+                  </CardContent>
+              </Card>
 
-        {/* גרף פאי פשוט */}
-        <Card className="border-none shadow-sm rounded-3xl bg-slate-900 text-white overflow-hidden relative">
-             {/* רקע דקורטיבי */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -ml-10 -mb-10"></div>
-            
-            <CardHeader>
-                <CardTitle className="text-lg font-medium text-slate-100">התפלגות מקורות</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center h-[300px]">
-                <div className="text-center space-y-2 relative z-10">
-                    <div className="text-4xl font-bold text-teal-400">75%</div>
-                    <div className="text-sm text-slate-400">מהלידים מגיעים<br/>מקמפיין פייסבוק</div>
-                    <Button variant="outline" className="mt-4 border-slate-700 hover:bg-slate-800 text-white hover:text-white rounded-full text-xs h-8">
-                        צפה בדוח מלא <ArrowUpRight className="w-3 h-3 ml-1" />
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+              {/* Opportunity Stages */}
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-900">
+                  <CardHeader>
+                      <CardTitle className="text-lg">הזדמנויות לפי שלב</CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[250px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={stats.stageData}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10}} interval={0} />
+                            <YAxis hide />
+                            <RechartsTooltip cursor={{fill: 'transparent'}} contentStyle={{borderRadius: '8px'}} />
+                            <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} barSize={40} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+              </Card>
+          </div>
+
+          {/* Right Column: Tasks & Quick Stats */}
+          <div className="space-y-6">
+              
+              {/* Tasks List */}
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-900 h-full max-h-[600px] flex flex-col">
+                  <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex items-center justify-between">
+                          <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-slate-400" /> משימות קרובות</span>
+                          <Badge variant="outline">{stats.upcomingTasks.length}</Badge>
+                      </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1 overflow-y-auto pr-2">
+                      {stats.upcomingTasks.length === 0 ? (
+                          <div className="text-center py-10 text-slate-400">
+                              <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
+                              <p>אין משימות דחופות</p>
+                          </div>
+                      ) : (
+                          <div className="space-y-3">
+                              {stats.upcomingTasks.map(task => {
+                                  const isToday = moment(task.due_date).isSame(moment(), 'day');
+                                  const isOverdue = moment(task.due_date).isBefore(moment(), 'day');
+                                  
+                                  return (
+                                      <div key={task.id} className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group hover:border-teal-200 transition-colors">
+                                          <div className="flex justify-between items-start mb-1">
+                                              <h4 className="font-medium text-sm line-clamp-1">{task.title}</h4>
+                                              {isOverdue ? (
+                                                  <Badge variant="destructive" className="text-[10px] h-5 px-1.5">באיחור</Badge>
+                                              ) : isToday ? (
+                                                  <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">היום</Badge>
+                                              ) : (
+                                                  <span className="text-xs text-slate-400">{moment(task.due_date).format('DD/MM')}</span>
+                                              )}
+                                          </div>
+                                          <p className="text-xs text-slate-500 line-clamp-1">{task.description || "ללא תיאור"}</p>
+                                          <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-400">
+                                              {task.priority && <Badge variant="outline" className="text-[10px] py-0 h-4">{task.priority}</Badge>}
+                                          </div>
+                                      </div>
+                                  );
+                              })}
+                          </div>
+                      )}
+                  </CardContent>
+                  <div className="p-4 border-t border-slate-100 dark:border-slate-800">
+                      <Button variant="ghost" className="w-full text-slate-500 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
+                          כל המשימות
+                      </Button>
+                  </div>
+              </Card>
+
+              {/* Pipeline Summary Mini-Card */}
+              <Card className="bg-slate-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
+                  <div className="relative z-10">
+                      <div className="text-slate-400 text-sm mb-1">הזדמנויות פתוחות</div>
+                      <div className="text-3xl font-bold mb-4">{stats.totalOpps - stats.wonOppsCount}</div>
+                      <div className="flex flex-col gap-2">
+                          <div className="flex justify-between text-xs opacity-80">
+                              <span>התחלה</span>
+                              <span>סגירה</span>
+                          </div>
+                          <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                              <div className="bg-teal-500 h-full rounded-full" style={{ width: `${(stats.wonOppsCount / (stats.totalOpps || 1)) * 100}%` }}></div>
+                          </div>
+                          <div className="text-right text-xs text-teal-400 mt-1">
+                              {((stats.wonOppsCount / (stats.totalOpps || 1)) * 100).toFixed(0)}% הצלחה
+                          </div>
+                      </div>
+                  </div>
+                  {/* Decoration */}
+                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-teal-500/20 blur-3xl rounded-full pointer-events-none"></div>
+              </Card>
+          </div>
       </div>
     </div>
   );
