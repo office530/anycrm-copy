@@ -219,33 +219,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          <div className="space-y-2">
-            <Label>מספר טלפון</Label>
-            <Input 
-              {...register("phone_number", { 
-                pattern: {
-                  value: /^0[0-9]{1,2}-?[0-9]{7}$/,
-                  message: "מספר טלפון לא תקין"
-                }
-              })} 
-              placeholder="050-0000000" 
-            />
-            {errors.phone_number && <span className="text-red-500 text-sm">{errors.phone_number.message}</span>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>אימייל</Label>
-            <Input 
-              {...register("email", {
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "כתובת אימייל לא תקינה"
-                }
-              })} 
-              placeholder="email@example.com" 
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-          </div>
+          {/* Phone and Email removed as they appear in Original Lead Details */}
 
           <div className="space-y-2">
             <Label>סוג מוצר</Label>
