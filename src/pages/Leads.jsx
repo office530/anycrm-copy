@@ -30,9 +30,7 @@ import { createPageUrl } from "@/utils";
 
 export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
-  const [showOppForm, setShowOppForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [convertingLead, setConvertingLead] = useState(null);
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all" });
 
   const queryClient = useQueryClient();
@@ -80,33 +78,29 @@ export default function LeadsPage() {
     }
   });
 
-  const createOpportunity = useMutation({
-    mutationFn: async (formData) => {
-        // Extract special flags
-        const { _createTask, _leadName, ...oppData } = formData;
-        
-        const newOpp = await base44.entities.Opportunity.create(oppData);
+  const convertToOpportunity = useMutation({
+    mutationFn: async (lead) => {
+        // 1. Create the Opportunity automatically
+        const newOpp = await base44.entities.Opportunity.create({
+            lead_id: lead.id,
+            lead_name: lead.full_name,
+            product_type: "Reverse Mortgage", // Default product
+            property_value: lead.estimated_property_value || 0,
+            loan_amount_requested: 0,
+            deal_stage: "New (חדש)",
+            probability: 10,
+            main_pain_point: "Supplement Monthly Income (השלמת הכנסה חודשית)", // Default
+            current_objection: "",
+        });
 
-        if (_createTask) {
-            const dueDate = new Date();
-            dueDate.setDate(dueDate.getDate() + 2); // Due in 2 days
-
-            await base44.entities.Task.create({
-                title: `פגישת המשך - ${_leadName || 'לקוח'}`,
-                description: "נוצר אוטומטית בעת המרת ליד להזדמנות. יש ליצור קשר לתיאום פגישה.",
-                status: "todo",
-                due_date: dueDate.toISOString().split('T')[0],
-                related_lead_id: oppData.lead_id,
-                related_opportunity_id: newOpp.id
-            });
-        }
+        // 2. Update Lead Status
+        await base44.entities.Lead.update(lead.id, { lead_status: "Converted to Opportunity" });
 
         return newOpp;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
-      setShowOppForm(false);
-      setConvertingLead(null);
+      queryClient.invalidateQueries(['leads']);
       processAutomation('Opportunity', 'create', data);
     }
   });
@@ -313,23 +307,7 @@ export default function LeadsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Opportunity Creation Prompt Dialog */}
-      <Dialog open={showOppForm} onOpenChange={(open) => {
-        setShowOppForm(open);
-        if (!open) setConvertingLead(null);
-      }}>
-         <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
-          {convertingLead && (
-            <OpportunityForm 
-              initialLead={convertingLead}
-              onSubmit={(data) => createOpportunity.mutate(data)}
-              onCancel={() => setShowOppForm(false)}
-              isSubmitting={createOpportunity.isPending}
-              title="כל הכבוד! בוא נפתח הזדמנות חדשה"
-            />
-          )}
-         </DialogContent>
-      </Dialog>
+      {/* Opportunity Form removed - Conversion is now automatic */}
     </div>
   );
 }
