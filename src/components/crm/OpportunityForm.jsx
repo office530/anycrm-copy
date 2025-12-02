@@ -191,7 +191,6 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           <Label>משימה הבאה</Label>
           <Input {...register("next_task")} placeholder="לדוגמה: לחזור ללקוח עם תשובה מהבנק..." />
         </div>
-        </div>
 
         {/* Sales Strategy Section */}
         <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
