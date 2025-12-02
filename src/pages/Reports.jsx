@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, TrendingUp, Users, CheckCircle2, Calendar } from "lucide-react";
 import SalesPerformance from '@/components/reports/SalesPerformance';
+import OpportunityAdvancedReport from '@/components/reports/OpportunityAdvancedReport';
 import ConversionReport from '@/components/reports/ConversionReport';
 import ActivityReport from '@/components/reports/ActivityReport';
 
@@ -64,12 +65,17 @@ export default function ReportsPage() {
         </Select>
       </div>
 
-      <Tabs defaultValue="sales" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-[600px]">
+      <Tabs defaultValue="advanced" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 max-w-[800px]">
+          <TabsTrigger value="advanced">דשבורד הזדמנויות</TabsTrigger>
           <TabsTrigger value="sales">ביצועי מכירות</TabsTrigger>
           <TabsTrigger value="conversion">יחסי המרה</TabsTrigger>
           <TabsTrigger value="activity">דוח פעילות</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="advanced" className="mt-6">
+            <OpportunityAdvancedReport leads={leads} opportunities={opportunities} />
+        </TabsContent>
 
         <TabsContent value="sales" className="mt-6">
           <SalesPerformance leads={leads} opportunities={opportunities} timeRange={timeRange} />
