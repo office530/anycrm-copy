@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
@@ -317,27 +317,25 @@ export default function LeadsPage() {
                         </div>
 
                         {/* Actions */}
-                        <div className="col-span-2 flex justify-end pl-2">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-slate-100">
-                                        <MoreHorizontal className="w-4 h-4 text-slate-400" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="rounded-xl border-slate-100 shadow-xl">
-                                    <DropdownMenuItem onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}>
-                                        ערוך פרטים מלאים
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem 
-                                        className="text-teal-600 focus:text-teal-700 font-medium"
-                                        onClick={() => convertToOpportunity.mutate(lead)}
-                                    >
-                                        <ArrowLeft className="w-4 h-4 ml-2" />
-                                        המר להזדמנות
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <div className="col-span-2 flex justify-end gap-2 pl-2">
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}
+                                title="ערוך פרטים מלאים"
+                            >
+                                <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
+                                onClick={() => convertToOpportunity.mutate(lead)}
+                                title="המר להזדמנות"
+                            >
+                                <Briefcase className="w-4 h-4" />
+                            </Button>
                         </div>
                     </motion.div>
                 )))}
