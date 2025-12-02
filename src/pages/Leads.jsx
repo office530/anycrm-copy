@@ -70,17 +70,15 @@ export default function LeadsPage() {
             email: leadData.email,
             product_type: "Reverse Mortgage", 
             property_value: leadData.estimated_property_value || 0,
-            deal_stage: "New (חדש)",
+            deal_stage: "New (חדש)", // ניתן להפוך גם את זה לדינמי בעתיד
             probability: 10,
-            documents: leadData.documents || [], // העתקת מסמכים
         });
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
       queryClient.invalidateQueries(['leads']);
       processAutomation('Opportunity', 'create', data);
-      // מעבר לדף ההזדמנויות (ניתן לשפר זאת לפתיחת הדיאלוג ישירות בעתיד)
-      window.location.href = createPageUrl('Opportunities');
+      alert("🎉 הליד הפך להזדמנות בהצלחה!");
     }
   });
 
@@ -98,7 +96,9 @@ export default function LeadsPage() {
         const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
         const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
         
-        const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
+        const matchesStatus = filters.status === "all" 
+            ? lead.lead_status !== "Converted" 
+            : lead.lead_status === filters.status;
 
         return matchesSearch && matchesYear && matchesStatus;
     }).sort((a, b) => b.id - a.id);
