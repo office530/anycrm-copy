@@ -49,6 +49,11 @@ export default function LeadsPage() {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
       processAutomation('Lead', 'create', data);
+
+      if (data.lead_status === 'Converted to Opportunity') {
+        // Automatically create opportunity for new lead if created with converted status
+        convertToOpportunity.mutate(data);
+      }
     }
   });
 
@@ -59,21 +64,17 @@ export default function LeadsPage() {
       setShowLeadForm(false);
       setEditingLead(null);
 
-      // Process Automation
-      // We need to fetch the OLD data to compare? 
-      // The mutation doesn't return old data. 
-      // In a real app we might need to fetch before update or pass it.
-      // For now, we'll rely on 'editingLead' state if available, or just pass previous as null
-      // if we only care about current state match.
-      // However, 'editingLead' holds the state BEFORE the user started editing, 
-      // but 'variables.data' holds the NEW data requested.
-      // 'data' is the server response (new data).
       processAutomation('Lead', 'update', data, editingLead);
 
-      // Automation Logic
+      // If status changed to "Converted to Opportunity", trigger automatic conversion
       if (variables.data.lead_status === 'Converted to Opportunity') {
-        setConvertingLead(data);
-        setShowOppForm(true);
+          // Check if it wasn't already converted to avoid duplicates (simple check)
+          if (editingLead && editingLead.lead_status !== 'Converted to Opportunity') {
+             convertToOpportunity.mutate(data);
+          } else if (!editingLead) {
+              // Should not happen for update but safe fallback
+              convertToOpportunity.mutate(data);
+          }
       }
     }
   });
