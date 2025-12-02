@@ -266,15 +266,15 @@ export default function Dashboard() {
 
 function StatsCard({ title, value, icon: Icon, description, color, bg }) {
   return (
-    <Card className="border-none shadow-sm hover:shadow-md transition-shadow">
+    <Card className="border-none shadow-lg shadow-slate-200/50 rounded-2xl hover:translate-y-[-4px] transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
-            <h3 className="text-2xl font-bold text-slate-900">{value}</h3>
-            {description && <p className="text-xs text-slate-400 mt-1">{description}</p>}
+            <p className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-1">{title}</p>
+            <h3 className="text-3xl font-extrabold text-slate-800 tracking-tight">{value}</h3>
+            {description && <p className="text-xs text-slate-400 mt-1 font-medium">{description}</p>}
           </div>
-          <div className={`p-3 rounded-full ${bg} ${color}`}>
+          <div className={`p-4 rounded-2xl ${bg} ${color}`}>
             <Icon className="w-6 h-6" />
           </div>
         </div>
