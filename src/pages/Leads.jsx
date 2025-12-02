@@ -24,6 +24,8 @@ import LeadForm from "@/components/crm/LeadForm";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -78,11 +80,33 @@ export default function LeadsPage() {
   });
 
   const createOpportunity = useMutation({
-    mutationFn: (data) => base44.entities.Opportunity.create(data),
-    onSuccess: () => {
+    mutationFn: async (formData) => {
+        // Extract special flags
+        const { _createTask, _leadName, ...oppData } = formData;
+        
+        const newOpp = await base44.entities.Opportunity.create(oppData);
+
+        if (_createTask) {
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 2); // Due in 2 days
+
+            await base44.entities.Task.create({
+                title: `פגישת המשך - ${_leadName || 'לקוח'}`,
+                description: "נוצר אוטומטית בעת המרת ליד להזדמנות. יש ליצור קשר לתיאום פגישה.",
+                status: "todo",
+                due_date: dueDate.toISOString().split('T')[0],
+                related_lead_id: oppData.lead_id,
+                related_opportunity_id: newOpp.id
+            });
+        }
+
+        return newOpp;
+    },
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
       setShowOppForm(false);
       setConvertingLead(null);
+      processAutomation('Opportunity', 'create', data);
     }
   });
 
@@ -206,7 +230,9 @@ export default function LeadsPage() {
                   <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${legacyColors[lead.original_status_color] || 'bg-gray-300'}`} title={`Legacy Color: ${lead.original_status_color}`} />
                     <div>
-                      <p className="font-medium text-slate-900">{lead.full_name}</p>
+                      <Link to={`${createPageUrl('LeadDetails')}?id=${lead.id}`} className="font-medium text-slate-900 hover:text-blue-600 hover:underline">
+                        {lead.full_name}
+                      </Link>
                       <p className="text-xs text-slate-500">{lead.city}, בן/בת {lead.age}</p>
                     </div>
                   </div>

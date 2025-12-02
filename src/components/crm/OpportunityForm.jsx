@@ -13,7 +13,14 @@ import { base44 } from "@/api/base44Client";
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const [aiLoading, setAiLoading] = React.useState(false);
   
-  const { register, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
+  // Conversion State
+  const [transferSettings, setTransferSettings] = React.useState({
+    contactDetails: true,
+    propertyDetails: true,
+    createTask: false
+  });
+
+  const { register, handleSubmit, setValue, watch, getValues, reset, formState: { errors } } = useForm({
     defaultValues: opportunity || {
       lead_id: initialLead?.id || "",
       lead_name: initialLead?.full_name || "",
@@ -30,6 +37,28 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       ai_objection_handler: ""
     }
   });
+
+  // Update form values when checkboxes change (only if initialLead exists)
+  React.useEffect(() => {
+    if (!initialLead) return;
+
+    if (transferSettings.propertyDetails) {
+        setValue("property_value", initialLead.estimated_property_value || "");
+    } else {
+        setValue("property_value", ""); // Clear if unchecked
+    }
+    
+    // You could add more fields here based on the checkboxes
+  }, [transferSettings, initialLead, setValue]);
+
+  const handleFormSubmit = (data) => {
+      // Pass the task creation flag along with the data
+      onSubmit({ 
+          ...data, 
+          _createTask: transferSettings.createTask,
+          _leadName: initialLead?.full_name // Helper for task title
+      });
+  };
 
   const generateAiInsights = async () => {
     setAiLoading(true);
@@ -111,6 +140,44 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </div>
       </div>
 
+      {initialLead && (
+        <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-lg p-4 space-y-3">
+            <h3 className="font-semibold text-emerald-800 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                הגדרות המרה מהירה
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        checked={transferSettings.contactDetails}
+                        onChange={e => setTransferSettings({...transferSettings, contactDetails: e.target.checked})}
+                        className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    העבר פרטי קשר
+                </label>
+                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        checked={transferSettings.propertyDetails}
+                        onChange={e => setTransferSettings({...transferSettings, propertyDetails: e.target.checked})}
+                        className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    העבר נתוני נכס (שווי)
+                </label>
+                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer font-medium">
+                    <input 
+                        type="checkbox" 
+                        checked={transferSettings.createTask}
+                        onChange={e => setTransferSettings({...transferSettings, createTask: e.target.checked})}
+                        className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    צור משימת מעקב אוטומטית
+                </label>
+            </div>
+        </div>
+      )}
+
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="details" className="flex items-center gap-2">
@@ -124,7 +191,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </TabsList>
 
         <TabsContent value="details">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         {/* Hidden fields for linking */}
         <input type="hidden" {...register("lead_id")} />
         <input type="hidden" {...register("lead_name")} />

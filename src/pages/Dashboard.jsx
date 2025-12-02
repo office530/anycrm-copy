@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { 
   Users, 
@@ -253,7 +255,9 @@ export default function Dashboard() {
                     {lead.full_name.charAt(0)}
                     </div>
                     <div>
-                    <p className="font-medium text-slate-900">{lead.full_name}</p>
+                    <Link to={`${createPageUrl('LeadDetails')}?id=${lead.id}`} className="font-medium text-slate-900 hover:text-blue-600 hover:underline">
+                        {lead.full_name}
+                    </Link>
                     <p className="text-sm text-slate-500">{lead.city || 'לא צוינה עיר'} • {lead.phone_number}</p>
                     </div>
                 </div>
