@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit } from "lucide-react";
+import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ActivityLog from "./ActivityLog";
 import { base44 } from "@/api/base44Client";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
@@ -95,13 +97,13 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       className="bg-white p-6 rounded-xl shadow-xl border border-slate-100"
       dir="rtl"
     >
-      <div className="mb-6 flex items-center gap-3 border-b pb-4">
+      <div className="mb-4 flex items-center gap-3 border-b pb-4">
         <div className="bg-blue-100 p-2 rounded-full">
           <Briefcase className="w-6 h-6 text-blue-600" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-slate-800">
-            {title || (opportunity ? "עריכת הזדמנות" : "הזדמנות חדשה")}
+            {title || (opportunity ? "ניהול הזדמנות" : "הזדמנות חדשה")}
           </h2>
           <p className="text-slate-500 text-sm">
             {initialLead ? `עבור לקוח: ${initialLead.full_name}` : "ניהול פרטי עסקה"}
@@ -109,7 +111,20 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <Tabs defaultValue="details" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="details" className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            פרטי עסקה
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!opportunity?.lead_id && !initialLead?.id}>
+            <Activity className="w-4 h-4" />
+            תיעוד פעילות
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="details">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Hidden fields for linking */}
         <input type="hidden" {...register("lead_id")} />
         <input type="hidden" {...register("lead_name")} />
@@ -144,12 +159,13 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                 <SelectValue placeholder="בחר שלב" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Discovery Call (שיחת בירור צרכים)">שיחת בירור צרכים (Discovery)</SelectItem>
+                <SelectItem value="Discovery Call (שיחת בירור צרכים)">שיחת בירור צרכים</SelectItem>
+                <SelectItem value="Meeting Scheduled (נקבעת פגישה)">נקבעת פגישה</SelectItem>
                 <SelectItem value="Simulation Sent (נשלחה סימולציה)">נשלחה סימולציה</SelectItem>
-                <SelectItem value="Negotiation (משא ומתן)">משא ומתן</SelectItem>
-                <SelectItem value="Underwriting (חיתום/תהליך בבנק)">חיתום / תהליך בבנק</SelectItem>
-                <SelectItem value="Closed Won (נחתם - בהצלחה)">נחתם - בהצלחה (Won)</SelectItem>
-                <SelectItem value="Closed Lost (אבוד)">אבוד (Lost)</SelectItem>
+                <SelectItem value="Documents Collection (איסוף מסמכים)">איסוף מסמכים</SelectItem>
+                <SelectItem value="Request Sent to Harel (בקשה נשלחה להראל)">בקשה נשלחה להראל (סופי)</SelectItem>
+                <SelectItem value="Closed Won (נחתם - בהצלחה)">נחתם - בהצלחה</SelectItem>
+                <SelectItem value="Closed Lost (אבוד)">אבוד</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -280,7 +296,19 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
             שמור הזדמנות
           </Button>
         </div>
-      </form>
-    </motion.div>
+        </form>
+        </TabsContent>
+
+        <TabsContent value="activity" className="h-[600px]">
+        {(opportunity?.lead_id || initialLead?.id) ? (
+        <ActivityLog leadId={opportunity?.lead_id || initialLead?.id} opportunityId={opportunity?.id} />
+        ) : (
+        <div className="text-center py-10 text-slate-500">
+          יש לשמור את ההזדמנות לפני שניתן להוסיף פעילויות
+        </div>
+        )}
+        </TabsContent>
+        </Tabs>
+        </motion.div>
   );
 }

@@ -139,10 +139,10 @@ export default function Dashboard() {
             <div className="space-y-4">
               {[
                 "Discovery Call (שיחת בירור צרכים)",
-                "Simulation Sent (נשלחה סימולציה)",
-                "Negotiation (משא ומתן)",
-                "Underwriting (חיתום/תהליך בבנק)"
-              ].map(stage => {
+                "Meeting Scheduled (נקבעת פגישה)",
+                "Documents Collection (איסוף מסמכים)",
+                "Request Sent to Harel (בקשה נשלחה להראל)"
+                ].map(stage => {
                 const count = opportunities.filter(o => o.deal_stage === stage).length;
                 const total = opportunities.length || 1; 
                 const percentage = Math.round((count / total) * 100);

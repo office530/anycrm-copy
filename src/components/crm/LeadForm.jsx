@@ -6,7 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { Loader2, Activity, User } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ActivityLog from "./ActivityLog";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -59,14 +61,27 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       className="bg-white p-6 rounded-xl shadow-lg border border-slate-100"
       dir="rtl"
     >
-      <div className="mb-6">
+      <div className="mb-4">
         <h2 className="text-2xl font-bold text-slate-800">
-          {lead ? "עריכת ליד" : "הוספת ליד חדש"}
+          {lead ? "תיק לקוח" : "הוספת ליד חדש"}
         </h2>
-        <p className="text-slate-500">הזן את פרטי הלקוח למטה</p>
+        <p className="text-slate-500">ניהול פרטים ופעילויות</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <Tabs defaultValue="details" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="details" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            פרטי ליד
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!lead}>
+            <Activity className="w-4 h-4" />
+            תיעוד פעילות
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="details">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>שם מלא *</Label>
@@ -227,7 +242,19 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
             {lead ? "עדכן ליד" : "צור ליד"}
           </Button>
         </div>
-      </form>
-    </motion.div>
+        </form>
+        </TabsContent>
+
+        <TabsContent value="activity" className="h-[600px]">
+        {lead ? (
+        <ActivityLog leadId={lead.id} />
+        ) : (
+        <div className="text-center py-10 text-slate-500">
+          יש לשמור את הליד לפני שניתן להוסיף פעילויות
+        </div>
+        )}
+        </TabsContent>
+        </Tabs>
+        </motion.div>
   );
 }
