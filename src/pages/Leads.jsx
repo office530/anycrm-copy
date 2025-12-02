@@ -71,6 +71,12 @@ export default function LeadsPage() {
       // but 'variables.data' holds the NEW data requested.
       // 'data' is the server response (new data).
       processAutomation('Lead', 'update', data, editingLead);
+
+      // Automation Logic
+      if (variables.data.lead_status === 'Converted to Opportunity') {
+        setConvertingLead(data);
+        setShowOppForm(true);
+      }
     }
   });
 
@@ -97,15 +103,8 @@ export default function LeadsPage() {
 
         return newOpp;
     },
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
-      
-      // Update the lead status ONLY after opportunity is created successfully
-      if (convertingLead) {
-          await base44.entities.Lead.update(convertingLead.id, { lead_status: "Converted to Opportunity" });
-          queryClient.invalidateQueries(['leads']);
-      }
-
       setShowOppForm(false);
       setConvertingLead(null);
       processAutomation('Opportunity', 'create', data);
@@ -281,8 +280,10 @@ export default function LeadsPage() {
                       <DropdownMenuItem 
                         className="text-emerald-600"
                         onClick={() => {
-                           setConvertingLead(lead);
-                           setShowOppForm(true);
+                           updateLead.mutate({ 
+                             id: lead.id, 
+                             data: { ...lead, lead_status: "Converted to Opportunity" } 
+                           });
                         }}
                       >
                         <ArrowLeft className="w-4 h-4 ml-2" />
