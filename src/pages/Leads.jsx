@@ -273,15 +273,17 @@ export default function LeadsPage() {
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="text-emerald-600"
-                        onClick={() => {
-                           updateLead.mutate({ 
-                             id: lead.id, 
-                             data: { ...lead, lead_status: "Converted to Opportunity" } 
-                           });
-                        }}
+                        onClick={() => convertToOpportunity.mutate(lead)}
+                        disabled={convertToOpportunity.isPending}
                       >
-                        <ArrowLeft className="w-4 h-4 ml-2" />
-                        המר להזדמנות
+                        {convertToOpportunity.isPending ? (
+                            <span className="flex items-center">מבצע המרה...</span>
+                        ) : (
+                            <>
+                            <ArrowLeft className="w-4 h-4 ml-2" />
+                            המר להזדמנות (אוטומטי)
+                            </>
+                        )}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
