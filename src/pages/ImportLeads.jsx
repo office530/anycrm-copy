@@ -16,32 +16,20 @@ export default function ImportLeadsPage() {
       setStatus('processing');
       setLogs(prev => [...prev, "מתחיל ניתוח קובץ PDF... זה עשוי לקחת דקה או שתיים..."]);
       
-      // Using the new file provided by the user (2023 leads with colors)
-      const fileUrl = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692ea53ece3f48d4695254eb/0eeca5cfd_xlsx-2023.pdf";
+      // Using the file provided by the user
+      const fileUrl = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692ea53ece3f48d4695254eb/3f21f7b82_xlsx-2023.pdf";
       
       const schema = {
         type: "array",
         items: {
           type: "object",
           properties: {
-            full_name: { type: "string", description: "From 'שם הלקוח' column" },
-            phone_numbers: { 
-                type: "array", 
-                items: { type: "string" }, 
-                description: "Extract all phone numbers from columns 'טלפון 1', 'טלפון 2', 'טלפון 3' (or A, B, C)" 
-            },
-            address: { type: "string", description: "From 'כתובת' column" },
-            last_contact_date: { type: "string", description: "From 'שיחה אחרונה' column" },
-            inquiry_number: { type: "string", description: "From 'מספר פניה' column" },
-            notes: { type: "string", description: "Content of the 'תוצאה/מעקב' column" },
-            row_color: { 
-                type: "string", 
-                enum: ["Green", "Red", "Yellow", "Orange", "White"], 
-                description: "The background color of the row in the visual table. CRITICAL: Identify if row is Red, Green, Yellow, Orange, or White." 
-            },
-            
-            // AI Extraction from notes
-            age: { type: "number", description: "Extract age from notes if available (e.g. 'בן 60')" },
+            full_name: { type: "string" },
+            phone_number: { type: "string" },
+            age: { type: "number" },
+            last_contact_date: { type: "string" },
+            notes: { type: "string", description: "Content of the 'Result' / 'תוצאה' column" },
+            city: { type: "string", description: "Extract city from the notes text if present" },
             estimated_property_value: { type: "number", description: "Extract property value number from notes (e.g. 3.1M -> 3100000, 2.5M -> 2500000, K580 -> 580000)" },
             
             // AI Brain Fields
@@ -60,7 +48,7 @@ export default function ImportLeadsPage() {
                 description: "Analyze notes: If 'יקר'/'ריבית'/'לחכות' -> 'High Interest/Timing'." 
             }
           },
-          required: ["full_name"]
+          required: ["full_name", "phone_number"]
         }
       };
 
@@ -80,39 +68,17 @@ export default function ImportLeadsPage() {
       
       // Clean and prepare data
       const validLeads = extractedData
-        .filter(l => (l.phone_numbers?.length > 0 || l.phone_number) && l.full_name)
-        .map(l => {
-            // Handle phone numbers logic
-            const phones = l.phone_numbers || [];
-            if (l.phone_number) phones.unshift(l.phone_number);
-            const primaryPhone = phones[0] || "";
-            const additionalPhones = phones.slice(1);
-
-            // Map colors
-            let statusColor = "White";
-            if (l.row_color) {
-                // Normalize color string just in case
-                const c = l.row_color.toLowerCase();
-                if (c.includes('green')) statusColor = 'Green';
-                else if (c.includes('red')) statusColor = 'Red';
-                else if (c.includes('yellow')) statusColor = 'Yellow';
-                else if (c.includes('orange')) statusColor = 'Orange';
-            }
-
-            return {
-                ...l,
-                phone_number: primaryPhone,
-                additional_phones: additionalPhones,
-                source_year: "2023",
-                lead_status: "New",
-                original_status_color: statusColor,
-                lead_temperature: "Cold (קר)", // Default
-                address: l.address || l.city || "" // Fallback to city if address is extracted there
-            };
-        });
+        .filter(l => l.phone_number && l.full_name)
+        .map(l => ({
+         ...l,
+         source_year: "2023",
+         lead_status: "New",
+         original_status_color: "Green", // Defaulting to Green as requested
+         lead_temperature: "Cold (קר)" // Default, will be updated by logic later if needed
+      }));
 
       if (validLeads.length === 0) {
-          throw new Error("No valid leads found (must have name and at least one phone number).");
+          throw new Error("No valid leads found with phone numbers.");
       }
 
       // Insert in chunks to be safe
@@ -157,10 +123,10 @@ export default function ImportLeadsPage() {
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm text-blue-800">
                     <p className="font-bold mb-2">הגדרות "המוח" (AI Brain):</p>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>זיהוי צבעי שורות (ירוק, אדום, צהוב, כתום) לשמירת סטטוס מקורי</li>
-                        <li>איחוד 3 עמודות טלפון לרשומה אחת</li>
-                        <li>זיהוי כתובת, מספר פניה ותאריך שיחה אחרונה</li>
-                        <li>ניתוח הערות AI: זיהוי התנגדויות, צרכים ושווי נכס</li>
+                        <li>זיהוי התנגדויות (יקר/ריבית) ← "High Interest/Timing"</li>
+                        <li>זיהוי צורך (חוב/מינוס) ← "Debt Consolidation"</li>
+                        <li>זיהוי משפחה (ילדים/בן/בת) ← "Family Assistance"</li>
+                        <li>המרה אוטומטית של 3.1M ל-3,100,000 ₪</li>
                     </ul>
                 </div>
 
