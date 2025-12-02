@@ -6,9 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityLog from "./ActivityLog";
+import DiscoveryScript from "./DiscoveryScript";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -69,10 +70,14 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       </div>
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="details" className="flex items-center gap-2">
             <User className="w-4 h-4" />
             פרטי ליד
+          </TabsTrigger>
+          <TabsTrigger value="discovery" className="flex items-center gap-2" disabled={!lead}>
+            <ClipboardList className="w-4 h-4" />
+            תסריט שיחה
           </TabsTrigger>
           <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!lead}>
             <Activity className="w-4 h-4" />
@@ -245,14 +250,26 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
         </form>
         </TabsContent>
 
+        <TabsContent value="discovery">
+          {lead ? (
+            <div className="h-[600px] overflow-y-auto pr-2">
+              <DiscoveryScript leadId={lead.id} />
+            </div>
+          ) : (
+            <div className="text-center py-10 text-slate-500">
+              יש לשמור את הליד לפני שניתן למלא תסריט שיחה
+            </div>
+          )}
+        </TabsContent>
+
         <TabsContent value="activity" className="h-[600px]">
-        {lead ? (
-        <ActivityLog leadId={lead.id} />
-        ) : (
-        <div className="text-center py-10 text-slate-500">
-          יש לשמור את הליד לפני שניתן להוסיף פעילויות
-        </div>
-        )}
+          {lead ? (
+            <ActivityLog leadId={lead.id} />
+          ) : (
+            <div className="text-center py-10 text-slate-500">
+              יש לשמור את הליד לפני שניתן להוסיף פעילויות
+            </div>
+          )}
         </TabsContent>
         </Tabs>
         </motion.div>
