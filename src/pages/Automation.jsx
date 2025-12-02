@@ -7,8 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus, Zap, Save, Loader2 } from "lucide-react";
+import { Trash2, Plus, Zap, Save, Loader2, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AutomationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -93,6 +94,9 @@ export default function AutomationPage() {
 
 function RuleForm({ onSuccess }) {
     const queryClient = useQueryClient();
+    const [aiPrompt, setAiPrompt] = useState("");
+    const [isGenerating, setIsGenerating] = useState(false);
+
     const [formData, setFormData] = useState({
         name: "",
         trigger_entity: "Lead",
@@ -118,6 +122,84 @@ function RuleForm({ onSuccess }) {
         }
     });
 
+    const generateWithAI = async () => {
+        if (!aiPrompt.trim()) return;
+        
+        setIsGenerating(true);
+        try {
+            const systemPrompt = `
+                You are an automation configuration assistant for a CRM. 
+                User Logic: "${aiPrompt}"
+                
+                Your goal is to output a JSON object to populate a form based on the logic.
+                
+                Input Schema mapping:
+                - trigger_entity: "Lead" or "Opportunity"
+                - trigger_event: "create" or "update"
+                - condition_field: "lead_status", "deal_stage", "source_year", etc.
+                - condition_value: translate Hebrew terms to exact English Enums below:
+                    Lead Statuses: "New", "Attempting Contact", "Contacted - Qualifying", "Sales Ready", "Converted", "Lost / Unqualified"
+                    Deal Stages: "New (חדש)", "Discovery Call (שיחת בירור צרכים)", "Meeting Scheduled (נקבעת פגישה)", "Closed Won (נחתם - בהצלחה)"
+                - action_type: "create_task" or "send_email"
+                - action_config: {
+                     email_to: string (use {{full_name}} or {{email}} placeholders),
+                     email_subject: string,
+                     email_body: string,
+                     task_title: string,
+                     task_description: string,
+                     task_due_days: number
+                }
+                - name: Suggest a short hebrew name for this rule
+    
+                Output strictly valid JSON only.
+            `;
+    
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: systemPrompt,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        name: { type: "string" },
+                        trigger_entity: { type: "string" },
+                        trigger_event: { type: "string" },
+                        condition_field: { type: "string" },
+                        condition_value: { type: "string" },
+                        action_type: { type: "string" },
+                        action_config: {
+                            type: "object",
+                            properties: {
+                                email_to: { type: "string" },
+                                email_subject: { type: "string" },
+                                email_body: { type: "string" },
+                                task_title: { type: "string" },
+                                task_description: { type: "string" },
+                                task_due_days: { type: "number" }
+                            }
+                        }
+                    }
+                }
+            });
+    
+            const aiData = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            // Merge AI data into current rule state
+            setFormData(prev => ({
+                ...prev,
+                ...aiData,
+                action_config: {
+                    ...prev.action_config,
+                    ...(aiData.action_config || {})
+                }
+            }));
+    
+        } catch (error) {
+            console.error("AI Generation failed", error);
+            alert("אירעה שגיאה ביצירת האוטומציה עם AI");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         createRule.mutate(formData);
@@ -125,6 +207,32 @@ function RuleForm({ onSuccess }) {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
+            
+            {/* AI Generator Section */}
+            <div className="bg-purple-50 border border-purple-100 p-4 rounded-lg space-y-3 mb-6">
+                <div className="flex items-center gap-2 text-purple-800 font-semibold">
+                    <Sparkles className="w-4 h-4" />
+                    <span>מחולל אוטומציות חכם (AI)</span>
+                </div>
+                <Label className="text-xs text-purple-600">תאר את האוטומציה בשפה חופשית (למשל: "כשליד הופך לחם צור לי משימה להתקשר מחר")</Label>
+                <div className="flex gap-2">
+                    <Textarea 
+                        value={aiPrompt}
+                        onChange={(e) => setAiPrompt(e.target.value)}
+                        placeholder="תאר כאן את ההיגיון..."
+                        className="bg-white resize-none h-16 text-sm"
+                    />
+                    <Button 
+                        type="button"
+                        onClick={generateWithAI}
+                        disabled={isGenerating || !aiPrompt}
+                        className="h-16 w-32 bg-purple-600 hover:bg-purple-700 shrink-0"
+                    >
+                        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : "✨ צור"}
+                    </Button>
+                </div>
+            </div>
+
             <div className="space-y-2">
                 <Label>שם החוק</Label>
                 <Input 
