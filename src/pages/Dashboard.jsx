@@ -38,8 +38,8 @@ export default function Dashboard() {
     <div className="space-y-8 pb-10">
       {/* כותרת */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">סקירה כללית</h1>
-        <p className="text-slate-500">ברוך הבא, הנה מה שקורה בעסק היום.</p>
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">סקירה כללית</h1>
+        <p className="text-slate-500 dark:text-slate-400">ברוך הבא, הנה מה שקורה בעסק היום.</p>
       </div>
 
       {/* כרטיסי KPI */}
@@ -71,13 +71,13 @@ export default function Dashboard() {
       {/* גרפים ראשיים */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* גרף מגמת לידים */}
-        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl overflow-hidden">
-            <CardHeader className="bg-white border-b border-slate-50 pb-4">
-                <CardTitle className="text-lg text-slate-700 flex items-center gap-2">
+        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl overflow-hidden bg-white dark:bg-slate-900 dark:border dark:border-slate-800">
+            <CardHeader className="bg-white dark:bg-slate-900 border-b border-slate-50 dark:border-slate-800 pb-4">
+                <CardTitle className="text-lg text-slate-700 dark:text-slate-200 flex items-center gap-2">
                     <Activity className="w-5 h-5 text-slate-400" /> מגמת לידים חדשים
                 </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 bg-white">
+            <CardContent className="p-6 bg-white dark:bg-slate-900">
                 <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={metrics.trendData}>
@@ -126,17 +126,17 @@ export default function Dashboard() {
 
 function KpiCard({ title, value, label, icon: Icon, color, total }) {
     return (
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all">
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600`}>
+                    <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-full">{total} סה״כ</span>}
+                    {total && <span className="text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-full">{total} סה״כ</span>}
                 </div>
-                <h3 className="text-3xl font-bold text-slate-800 mb-1">{value}</h3>
-                <p className="text-sm text-slate-500 font-medium">{title}</p>
-                <p className="text-xs text-slate-400 mt-2">{label}</p>
+                <h3 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-1">{value}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{title}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">{label}</p>
             </div>
         </div>
     );
