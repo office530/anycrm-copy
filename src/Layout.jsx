@@ -7,6 +7,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
+import GlobalSearch from '@/components/layout/GlobalSearch';
+import Notifications from '@/components/layout/Notifications';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -108,21 +110,14 @@ function LayoutContent({ children, currentPageName }) {
             <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
             </h1>
-            <div className="flex items-center gap-4">
-                <div className="relative group">
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
-                    <input 
-                        className={`bg-slate-50 dark:bg-slate-800 border-none rounded-full py-2.5 pr-10 pl-4 text-sm w-64 focus:ring-2 ${focusRing} focus:bg-white dark:focus:bg-slate-900 dark:text-slate-100 transition-all placeholder:text-slate-400`}
-                        placeholder="חיפוש מהיר..."
-                    />
+            <div className="flex items-center gap-2 md:gap-4">
+                <div className="hidden md:block">
+                  <GlobalSearch />
                 </div>
                 <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">
                     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
-                <Button variant="ghost" size="icon" className="rounded-full relative">
-                    <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                    <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-                </Button>
+                <Notifications />
             </div>
         </header>
 
