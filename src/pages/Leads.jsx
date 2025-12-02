@@ -293,7 +293,7 @@ export default function LeadsPage() {
                             </Button>
                         </div>
                     </motion.div>
-                ))}
+                )))}
             </AnimatePresence>
       </div>
 
