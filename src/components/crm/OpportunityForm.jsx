@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText } from "lucide-react";
+import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText, User } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityLog from "./ActivityLog";
 import { base44 } from "@/api/base44Client";
 import FileUpload from "../common/FileUpload";
+import { useQuery } from "@tanstack/react-query";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const [aiLoading, setAiLoading] = React.useState(false);
@@ -40,6 +41,14 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       ai_objection_handler: "",
       documents: []
     }
+  });
+
+  const leadId = opportunity?.lead_id || initialLead?.id;
+
+  const { data: originalLeadData, isLoading: isLoadingLead } = useQuery({
+    queryKey: ['lead', leadId],
+    queryFn: () => base44.entities.Lead.list().then(leads => leads.find(l => l.id === leadId)),
+    enabled: !!leadId,
   });
 
   // Update form values when checkboxes change (only if initialLead exists)
@@ -191,6 +200,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           <TabsTrigger value="documents" className="flex items-center gap-2">
             <Briefcase className="w-4 h-4" />
             מסמכים
+          </TabsTrigger>
+          <TabsTrigger value="originalLead" className="flex items-center gap-2" disabled={!opportunity?.lead_id && !initialLead?.id}>
+            <User className="w-4 h-4" />
+            פרטי ליד מקורי
           </TabsTrigger>
           <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!opportunity?.lead_id && !initialLead?.id}>
             <Activity className="w-4 h-4" />
@@ -417,6 +430,70 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
                שמור הזדמנות
              </Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="originalLead">
+          {isLoadingLead ? (
+            <div className="text-center py-10 text-slate-500"><Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" /> טוען פרטי ליד...</div>
+          ) : originalLeadData ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
+              <div className="space-y-2">
+                <Label className="text-xs text-slate-500">שם מלא</Label>
+                <p className="font-medium text-slate-800">{originalLeadData.full_name}</p>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs text-slate-500">מספר טלפון</Label>
+                <p className="font-medium text-slate-800">{originalLeadData.phone_number}</p>
+              </div>
+              {originalLeadData.email && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-500">אימייל</Label>
+                  <p className="font-medium text-slate-800">{originalLeadData.email}</p>
+                </div>
+              )}
+              {originalLeadData.age && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-500">גיל</Label>
+                  <p className="font-medium text-slate-800">{originalLeadData.age}</p>
+                </div>
+              )}
+              {originalLeadData.city && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-500">עיר</Label>
+                  <p className="font-medium text-slate-800">{originalLeadData.city}</p>
+                </div>
+              )}
+              {originalLeadData.marital_status && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-500">מצב משפחתי</Label>
+                  <p className="font-medium text-slate-800">{originalLeadData.marital_status}</p>
+                </div>
+              )}
+              {originalLeadData.estimated_property_value && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-slate-500">שווי נכס מוערך (₪)</Label>
+                  <p className="font-medium text-slate-800">{originalLeadData.estimated_property_value.toLocaleString()}</p>
+                </div>
+              )}
+              {originalLeadData.notes && (
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="text-xs text-slate-500">הערות</Label>
+                  <p className="font-medium text-slate-800 whitespace-pre-wrap">{originalLeadData.notes}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-10 text-slate-500">
+              אין פרטי ליד מקוריים זמינים עבור הזדמנות זו.
+            </div>
+          )}
+          <div className="flex justify-end gap-4 pt-4 border-t">
+            <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
+            <Button onClick={handleSubmit(handleFormSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+              שמור הזדמנות
+            </Button>
           </div>
         </TabsContent>
 
