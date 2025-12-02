@@ -9,10 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { 
   Plus, 
   Search, 
-  Filter, 
   Phone, 
   MoreHorizontal,
-  ArrowRight,
+  ArrowLeft,
   Calendar
 } from "lucide-react";
 import {
@@ -29,7 +28,7 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [showOppForm, setShowOppForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [convertingLead, setConvertingLead] = useState(null); // For the auto-prompt logic
+  const [convertingLead, setConvertingLead] = useState(null);
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all" });
 
   const queryClient = useQueryClient();
@@ -57,7 +56,7 @@ export default function LeadsPage() {
       setShowLeadForm(false);
       setEditingLead(null);
       
-      // Automation Logic: If converting to opportunity, prompt user
+      // Automation Logic
       if (variables.data.lead_status === 'Converted to Opportunity') {
         setConvertingLead(data);
         setShowOppForm(true);
@@ -101,6 +100,15 @@ export default function LeadsPage() {
     "Converted to Opportunity": "bg-emerald-100 text-emerald-800"
   };
 
+  const statusLabels = {
+    "New": "חדש",
+    "Contact Attempt 1": "ניסיון 1",
+    "Contact Attempt 2": "ניסיון 2",
+    "Nurturing": "טיפוח",
+    "Unqualified": "לא רלוונטי",
+    "Converted to Opportunity": "הומר להזדמנות"
+  };
+
   const legacyColors = {
     "Green": "bg-green-500",
     "Red": "bg-red-500",
@@ -114,20 +122,20 @@ export default function LeadsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex-1 w-full md:w-auto flex gap-2">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input 
-              placeholder="Search name, phone, city..." 
-              className="pl-9"
+              placeholder="חיפוש שם, טלפון, עיר..." 
+              className="pr-9"
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
             />
           </div>
           <Select value={filters.year} onValueChange={v => setFilters({...filters, year: v})}>
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Year" />
+              <SelectValue placeholder="שנה" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="all">כל השנים</SelectItem>
               <SelectItem value="2023">2023</SelectItem>
               <SelectItem value="2024">2024</SelectItem>
               <SelectItem value="2025">2025</SelectItem>
@@ -135,19 +143,19 @@ export default function LeadsPage() {
           </Select>
           <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder="סטטוס" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="New">New</SelectItem>
-              <SelectItem value="Contact Attempt 1">Attempt 1</SelectItem>
-              <SelectItem value="Converted to Opportunity">Converted</SelectItem>
+              <SelectItem value="all">כל הסטטוסים</SelectItem>
+              <SelectItem value="New">חדש</SelectItem>
+              <SelectItem value="Contact Attempt 1">ניסיון 1</SelectItem>
+              <SelectItem value="Converted to Opportunity">הומר להזדמנות</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Button onClick={() => setShowLeadForm(true)} className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Lead
+          <Plus className="w-4 h-4 ml-2" />
+          הוסף ליד
         </Button>
       </div>
 
@@ -156,18 +164,18 @@ export default function LeadsPage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-50">
-              <TableHead className="w-[250px]">Client Name</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Year</TableHead>
-              <TableHead>Last Contact</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[250px] text-right">שם הלקוח</TableHead>
+              <TableHead className="text-right">פרטי קשר</TableHead>
+              <TableHead className="text-right">סטטוס</TableHead>
+              <TableHead className="text-right">שנת מקור</TableHead>
+              <TableHead className="text-right">קשר אחרון</TableHead>
+              <TableHead className="text-left">פעולות</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
                <TableRow>
-                 <TableCell colSpan={6} className="text-center py-8">Loading...</TableCell>
+                 <TableCell colSpan={6} className="text-center py-8">טוען נתונים...</TableCell>
                </TableRow>
             ) : filteredLeads.map((lead) => (
               <TableRow key={lead.id} className="hover:bg-slate-50 transition-colors">
@@ -176,29 +184,29 @@ export default function LeadsPage() {
                     <div className={`w-2 h-2 rounded-full ${legacyColors[lead.original_status_color] || 'bg-gray-300'}`} title={`Legacy Color: ${lead.original_status_color}`} />
                     <div>
                       <p className="font-medium text-slate-900">{lead.full_name}</p>
-                      <p className="text-xs text-slate-500">{lead.city}, {lead.age}yo</p>
+                      <p className="text-xs text-slate-500">{lead.city}, בן/בת {lead.age}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center text-slate-600">
-                    <Phone className="w-3 h-3 mr-2" />
+                    <Phone className="w-3 h-3 ml-2" />
                     {lead.phone_number}
                   </div>
                 </TableCell>
                 <TableCell>
                   <Badge variant="secondary" className={statusColors[lead.lead_status]}>
-                    {lead.lead_status}
+                    {statusLabels[lead.lead_status] || lead.lead_status}
                   </Badge>
                 </TableCell>
                 <TableCell>{lead.source_year}</TableCell>
                 <TableCell>
                   <div className="flex items-center text-slate-500 text-sm">
-                    <Calendar className="w-3 h-3 mr-2" />
+                    <Calendar className="w-3 h-3 ml-2" />
                     {lead.last_contact_date}
                   </div>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-left">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
@@ -207,7 +215,7 @@ export default function LeadsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}>
-                        Edit Details
+                        ערוך פרטים
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="text-emerald-600"
@@ -218,8 +226,8 @@ export default function LeadsPage() {
                            });
                         }}
                       >
-                        <ArrowRight className="w-4 h-4 mr-2" />
-                        Convert to Opportunity
+                        <ArrowLeft className="w-4 h-4 ml-2" />
+                        המר להזדמנות
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -257,7 +265,7 @@ export default function LeadsPage() {
               onSubmit={(data) => createOpportunity.mutate(data)}
               onCancel={() => setShowOppForm(false)}
               isSubmitting={createOpportunity.isPending}
-              title="Great Job! Now Create the Opportunity"
+              title="כל הכבוד! בוא נפתח הזדמנות חדשה"
             />
           )}
          </DialogContent>

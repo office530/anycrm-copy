@@ -25,7 +25,6 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
 
   const leadStatus = watch("lead_status");
 
-  // Handle select changes manually since Select component doesn't integrate directly with register
   const handleSelectChange = (field, value) => {
     setValue(field, value);
   };
@@ -35,45 +34,46 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-6 rounded-xl shadow-lg border border-slate-100"
+      dir="rtl"
     >
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-slate-800">
-          {lead ? "Edit Lead" : "Add New Lead"}
+          {lead ? "עריכת ליד" : "הוספת ליד חדש"}
         </h2>
-        <p className="text-slate-500">Enter client details below</p>
+        <p className="text-slate-500">הזן את פרטי הלקוח למטה</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label>Full Name *</Label>
-            <Input {...register("full_name", { required: "Name is required" })} placeholder="e.g. David Cohen" />
+            <Label>שם מלא *</Label>
+            <Input {...register("full_name", { required: "שדה חובה" })} placeholder="לדוגמה: דוד כהן" />
             {errors.full_name && <span className="text-red-500 text-sm">{errors.full_name.message}</span>}
           </div>
           
           <div className="space-y-2">
-            <Label>Phone Number *</Label>
-            <Input {...register("phone_number", { required: "Phone is required" })} placeholder="050-0000000" />
+            <Label>מספר טלפון *</Label>
+            <Input {...register("phone_number", { required: "שדה חובה" })} placeholder="050-0000000" />
           </div>
 
           <div className="space-y-2">
-            <Label>Age</Label>
-            <Input type="number" {...register("age", { valueAsNumber: true })} placeholder="e.g. 68" />
+            <Label>גיל</Label>
+            <Input type="number" {...register("age", { valueAsNumber: true })} placeholder="לדוגמה: 68" />
           </div>
 
           <div className="space-y-2">
-            <Label>City</Label>
-            <Input {...register("city")} placeholder="e.g. Tel Aviv" />
+            <Label>עיר</Label>
+            <Input {...register("city")} placeholder="לדוגמה: תל אביב" />
           </div>
 
           <div className="space-y-2">
-            <Label>Source Year</Label>
+            <Label>שנת מקור</Label>
             <Select 
               defaultValue={lead?.source_year || "2024"} 
               onValueChange={(val) => handleSelectChange("source_year", val)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Year" />
+                <SelectValue placeholder="בחר שנה" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="2023">2023</SelectItem>
@@ -84,64 +84,64 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
           </div>
 
           <div className="space-y-2">
-            <Label>Original Status Color (Legacy)</Label>
+            <Label>סטטוס מקורי (צבע)</Label>
             <Select 
               defaultValue={lead?.original_status_color || "Green"} 
               onValueChange={(val) => handleSelectChange("original_status_color", val)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Color" />
+                <SelectValue placeholder="בחר צבע" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Green">Green</SelectItem>
-                <SelectItem value="Red">Red</SelectItem>
-                <SelectItem value="Yellow">Yellow</SelectItem>
-                <SelectItem value="Orange">Orange</SelectItem>
+                <SelectItem value="Green">ירוק (Green)</SelectItem>
+                <SelectItem value="Red">אדום (Red)</SelectItem>
+                <SelectItem value="Yellow">צהוב (Yellow)</SelectItem>
+                <SelectItem value="Orange">כתום (Orange)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Lead Status</Label>
+            <Label>סטטוס ליד</Label>
             <Select 
               defaultValue={lead?.lead_status || "New"} 
               onValueChange={(val) => handleSelectChange("lead_status", val)}
             >
               <SelectTrigger className={leadStatus === 'Converted to Opportunity' ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : ''}>
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder="סטטוס" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="New">New</SelectItem>
-                <SelectItem value="Contact Attempt 1">Contact Attempt 1</SelectItem>
-                <SelectItem value="Contact Attempt 2">Contact Attempt 2</SelectItem>
-                <SelectItem value="Nurturing">Nurturing</SelectItem>
-                <SelectItem value="Unqualified">Unqualified</SelectItem>
-                <SelectItem value="Converted to Opportunity" className="text-emerald-600 font-bold">Converted to Opportunity</SelectItem>
+                <SelectItem value="New">חדש (New)</SelectItem>
+                <SelectItem value="Contact Attempt 1">ניסיון יצירת קשר 1</SelectItem>
+                <SelectItem value="Contact Attempt 2">ניסיון יצירת קשר 2</SelectItem>
+                <SelectItem value="Nurturing">טיפוח (Nurturing)</SelectItem>
+                <SelectItem value="Unqualified">לא רלוונטי (Unqualified)</SelectItem>
+                <SelectItem value="Converted to Opportunity" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
               </SelectContent>
             </Select>
             {leadStatus === 'Converted to Opportunity' && (
               <p className="text-xs text-emerald-600 font-medium mt-1">
-                ✨ Saving this will prompt to create a new Opportunity
+                ✨ שמירה תוביל לפתיחת הזדמנות חדשה
               </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label>Last Contact Date</Label>
+            <Label>תאריך יצירת קשר אחרון</Label>
             <Input type="date" {...register("last_contact_date")} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label>Notes</Label>
-          <Textarea {...register("notes")} placeholder="Any important details..." className="h-24" />
+          <Label>הערות</Label>
+          <Textarea {...register("notes")} placeholder="הערות חשובות..." className="h-24" />
         </div>
 
         <div className="flex justify-end gap-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
           <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-            {lead ? "Update Lead" : "Create Lead"}
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+            {lead ? "עדכן ליד" : "צור ליד"}
           </Button>
         </div>
       </form>

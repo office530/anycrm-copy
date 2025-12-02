@@ -69,31 +69,31 @@ export default function Dashboard() {
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard 
-          title="Total Pipeline Value" 
+          title="שווי צנרת עסקאות" 
           value={`₪${stats.pipelineValue.toLocaleString()}`} 
           icon={DollarSign}
-          trend="+12% from last month"
+          trend="+12% מהחודש שעבר"
           color="bg-emerald-500"
         />
         <StatsCard 
-          title="Active Opportunities" 
+          title="הזדמנויות פעילות" 
           value={stats.activeOpps} 
           icon={TrendingUp}
-          trend="5 closing this month"
+          trend="5 צפויות להיסגר החודש"
           color="bg-blue-500"
         />
         <StatsCard 
-          title="New Leads" 
+          title="לידים חדשים" 
           value={stats.newLeads} 
           icon={Users}
-          trend={`${stats.conversionRate}% conversion rate`}
+          trend={`${stats.conversionRate}% אחוז המרה`}
           color="bg-orange-500"
         />
         <StatsCard 
-          title="Follow-ups Needed" 
+          title="דרוש מעקב (Follow-up)" 
           value={leads.filter(l => l.lead_status.includes('Attempt')).length} 
           icon={Clock}
-          trend="Due today"
+          trend="לטיפול היום"
           color="bg-purple-500"
         />
       </div>
@@ -101,7 +101,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Lead Activity</CardTitle>
+            <CardTitle>פעילות לידים אחרונה</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -133,7 +133,7 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Opportunity Stages</CardTitle>
+            <CardTitle>שלבי העסקאות</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -144,14 +144,17 @@ export default function Dashboard() {
                 "Underwriting (חיתום/תהליך בבנק)"
               ].map(stage => {
                 const count = opportunities.filter(o => o.deal_stage === stage).length;
-                const total = opportunities.length || 1; // avoid division by zero
+                const total = opportunities.length || 1; 
                 const percentage = Math.round((count / total) * 100);
+                
+                // Get Hebrew part for display
+                const displayStage = stage.split('(')[1]?.replace(')', '') || stage;
                 
                 return (
                   <div key={stage} className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-slate-700 font-medium truncate max-w-[70%]">{stage}</span>
-                      <span className="text-slate-500">{count} deals</span>
+                      <span className="text-slate-700 font-medium truncate max-w-[70%]">{displayStage}</span>
+                      <span className="text-slate-500">{count} עסקאות</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                       <div 

@@ -31,6 +31,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="bg-white p-6 rounded-xl shadow-xl border border-slate-100"
+      dir="rtl"
     >
       <div className="mb-6 flex items-center gap-3 border-b pb-4">
         <div className="bg-blue-100 p-2 rounded-full">
@@ -38,10 +39,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </div>
         <div>
           <h2 className="text-xl font-bold text-slate-800">
-            {title || (opportunity ? "Edit Opportunity" : "New Opportunity")}
+            {title || (opportunity ? "עריכת הזדמנות" : "הזדמנות חדשה")}
           </h2>
           <p className="text-slate-500 text-sm">
-            {initialLead ? `For Client: ${initialLead.full_name}` : "Manage deal details"}
+            {initialLead ? `עבור לקוח: ${initialLead.full_name}` : "ניהול פרטי עסקה"}
           </p>
         </div>
       </div>
@@ -54,45 +55,45 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           <div className="space-y-2">
-            <Label>Product Type</Label>
+            <Label>סוג מוצר</Label>
             <Select 
               defaultValue={opportunity?.product_type || "Reverse Mortgage"} 
               onValueChange={(val) => handleSelectChange("product_type", val)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Product" />
+                <SelectValue placeholder="בחר מוצר" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Reverse Mortgage">Reverse Mortgage</SelectItem>
-                <SelectItem value="Savings/Insurance">Savings/Insurance</SelectItem>
-                <SelectItem value="Loan">Loan</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
+                <SelectItem value="Reverse Mortgage">משכנתא הפוכה</SelectItem>
+                <SelectItem value="Savings/Insurance">חיסכון / ביטוח</SelectItem>
+                <SelectItem value="Loan">הלוואה</SelectItem>
+                <SelectItem value="Other">אחר</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Deal Stage</Label>
+            <Label>שלב בעסקה</Label>
             <Select 
               defaultValue={opportunity?.deal_stage || "Discovery Call (שיחת בירור צרכים)"} 
               onValueChange={(val) => handleSelectChange("deal_stage", val)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Stage" />
+                <SelectValue placeholder="בחר שלב" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Discovery Call (שיחת בירור צרכים)">Discovery Call (שיחת בירור צרכים)</SelectItem>
-                <SelectItem value="Simulation Sent (נשלחה סימולציה)">Simulation Sent (נשלחה סימולציה)</SelectItem>
-                <SelectItem value="Negotiation (משא ומתן)">Negotiation (משא ומתן)</SelectItem>
-                <SelectItem value="Underwriting (חיתום/תהליך בבנק)">Underwriting (חיתום/תהליך בבנק)</SelectItem>
-                <SelectItem value="Closed Won (נחתם - בהצלחה)">Closed Won (נחתם - בהצלחה)</SelectItem>
-                <SelectItem value="Closed Lost (אבוד)">Closed Lost (אבוד)</SelectItem>
+                <SelectItem value="Discovery Call (שיחת בירור צרכים)">שיחת בירור צרכים (Discovery)</SelectItem>
+                <SelectItem value="Simulation Sent (נשלחה סימולציה)">נשלחה סימולציה</SelectItem>
+                <SelectItem value="Negotiation (משא ומתן)">משא ומתן</SelectItem>
+                <SelectItem value="Underwriting (חיתום/תהליך בבנק)">חיתום / תהליך בבנק</SelectItem>
+                <SelectItem value="Closed Won (נחתם - בהצלחה)">נחתם - בהצלחה (Won)</SelectItem>
+                <SelectItem value="Closed Lost (אבוד)">אבוד (Lost)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>Property Value (₪)</Label>
+            <Label>שווי נכס (₪)</Label>
             <Input 
               type="number" 
               {...register("property_value", { valueAsNumber: true })} 
@@ -101,7 +102,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
 
           <div className="space-y-2">
-            <Label>Loan Amount Requested (₪)</Label>
+            <Label>סכום הלוואה מבוקש (₪)</Label>
             <Input 
               type="number" 
               {...register("loan_amount_requested", { valueAsNumber: true })} 
@@ -110,7 +111,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
 
           <div className="space-y-2">
-            <Label>Probability (%)</Label>
+            <Label>הסתברות סגירה (%)</Label>
             <Input 
               type="number" 
               min="0" max="100"
@@ -119,21 +120,21 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
 
           <div className="space-y-2">
-            <Label>Expected Close Date</Label>
+            <Label>תאריך סגירה צפוי</Label>
             <Input type="date" {...register("expected_close_date")} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label>Next Task / Step</Label>
-          <Input {...register("next_task")} placeholder="e.g. Follow up on documents..." />
+          <Label>משימה הבאה</Label>
+          <Input {...register("next_task")} placeholder="לדוגמה: לחזור ללקוח עם תשובה מהבנק..." />
         </div>
 
         <div className="flex justify-end gap-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
           <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-            Save Opportunity
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+            שמור הזדמנות
           </Button>
         </div>
       </form>

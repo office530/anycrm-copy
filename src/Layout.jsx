@@ -17,15 +17,15 @@ export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const navigation = [
-    { name: 'Dashboard', href: 'Dashboard', icon: LayoutDashboard },
-    { name: 'Leads Database', href: 'Leads', icon: Users },
-    { name: 'Opportunities', href: 'Opportunities', icon: Briefcase },
+    { name: 'לוח בקרה', path: 'Dashboard', icon: LayoutDashboard },
+    { name: 'מאגר לידים', path: 'Leads', icon: Users },
+    { name: 'הזדמנויות', path: 'Opportunities', icon: Briefcase },
   ];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900" dir="rtl">
       {/* Mobile Header */}
       <div className="lg:hidden bg-white border-b p-4 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-2 font-bold text-xl text-blue-900">
@@ -40,8 +40,8 @@ export default function Layout({ children, currentPageName }) {
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
         <div className={`
-          fixed inset-y-0 left-0 z-10 w-64 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
-          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          fixed inset-y-0 right-0 z-10 w-64 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
+          ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
         `}>
           <div className="flex items-center gap-2 p-6 font-bold text-2xl text-white border-b border-slate-800">
             <Briefcase className="w-8 h-8 text-blue-400" />
@@ -50,11 +50,11 @@ export default function Layout({ children, currentPageName }) {
 
           <nav className="flex-1 px-4 py-6 space-y-1">
             {navigation.map((item) => {
-              const isActive = currentPageName === item.name;
+              const isActive = currentPageName === item.path;
               return (
                 <Link
-                  key={item.name}
-                  to={createPageUrl(item.name)}
+                  key={item.path}
+                  to={createPageUrl(item.path)}
                   className={`
                     flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors
                     ${isActive 
@@ -75,7 +75,7 @@ export default function Layout({ children, currentPageName }) {
                 A
               </div>
               <div>
-                <p className="text-sm font-medium text-white">Agent User</p>
+                <p className="text-sm font-medium text-white">סוכן ביטוח</p>
                 <p className="text-xs text-slate-400">Independent Agent</p>
               </div>
             </div>
@@ -86,14 +86,16 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Desktop Header */}
           <header className="hidden lg:flex bg-white border-b h-16 items-center justify-between px-8">
-            <h1 className="text-xl font-bold text-slate-800">{currentPageName}</h1>
+            <h1 className="text-xl font-bold text-slate-800">
+              {navigation.find(n => n.path === currentPageName)?.name || currentPageName}
+            </h1>
             <div className="flex items-center gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <input 
                   type="text" 
-                  placeholder="Search..." 
-                  className="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64"
+                  placeholder="חיפוש..." 
+                  className="pr-10 pl-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64"
                 />
               </div>
               <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900">

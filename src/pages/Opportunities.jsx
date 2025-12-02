@@ -10,13 +10,20 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 
 const STAGES = [
-  { id: "Discovery Call (שיחת בירור צרכים)", label: "Discovery", color: "border-blue-500" },
-  { id: "Simulation Sent (נשלחה סימולציה)", label: "Simulation Sent", color: "border-purple-500" },
-  { id: "Negotiation (משא ומתן)", label: "Negotiation", color: "border-yellow-500" },
-  { id: "Underwriting (חיתום/תהליך בבנק)", label: "Underwriting", color: "border-orange-500" },
-  { id: "Closed Won (נחתם - בהצלחה)", label: "Won", color: "border-green-500" },
-  { id: "Closed Lost (אבוד)", label: "Lost", color: "border-red-500" }
+  { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "border-blue-500" },
+  { id: "Simulation Sent (נשלחה סימולציה)", label: "נשלחה סימולציה", color: "border-purple-500" },
+  { id: "Negotiation (משא ומתן)", label: "משא ומתן", color: "border-yellow-500" },
+  { id: "Underwriting (חיתום/תהליך בבנק)", label: "תהליך בבנק/חיתום", color: "border-orange-500" },
+  { id: "Closed Won (נחתם - בהצלחה)", label: "נסגר בהצלחה", color: "border-green-500" },
+  { id: "Closed Lost (אבוד)", label: "אבוד", color: "border-red-500" }
 ];
+
+const productLabels = {
+  "Reverse Mortgage": "משכנתא הפוכה",
+  "Savings/Insurance": "חיסכון/ביטוח",
+  "Loan": "הלוואה",
+  "Other": "אחר"
+};
 
 export default function OpportunitiesPage() {
   const [editingOpp, setEditingOpp] = useState(null);
@@ -44,10 +51,8 @@ export default function OpportunitiesPage() {
     const { draggableId, destination } = result;
     const newStage = destination.droppableId;
     
-    // Find the opportunity
     const opp = opportunities.find(o => o.id === draggableId);
     if (opp && opp.deal_stage !== newStage) {
-      // Optimistic update could go here, but for simplicity we'll just mutate
       updateOppMutation.mutate({
         id: draggableId,
         data: { ...opp, deal_stage: newStage }
@@ -69,20 +74,19 @@ export default function OpportunitiesPage() {
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-800">Deals Pipeline</h2>
-        {/* Note: We usually create opportunities from Leads, but could add a standalone button here if needed */}
+        <h2 className="text-2xl font-bold text-slate-800">צנרת עסקאות (Pipeline)</h2>
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex-1 flex gap-4 overflow-x-auto pb-4 h-full">
           {STAGES.map((stage) => (
             <div key={stage.id} className="flex-shrink-0 w-80 flex flex-col h-full bg-slate-100/50 rounded-xl p-2">
-              <div className={`flex flex-col gap-1 mb-3 px-2 border-l-4 ${stage.color} bg-white p-3 rounded shadow-sm`}>
-                <h3 className="font-bold text-slate-700 text-sm uppercase tracking-wide truncate" title={stage.id}>
+              <div className={`flex flex-col gap-1 mb-3 px-2 border-r-4 ${stage.color} bg-white p-3 rounded shadow-sm`}>
+                <h3 className="font-bold text-slate-700 text-sm truncate" title={stage.label}>
                   {stage.label}
                 </h3>
                 <div className="flex justify-between text-xs text-slate-500">
-                  <span>{getStageOpportunities(stage.id).length} deals</span>
+                  <span>{getStageOpportunities(stage.id).length} עסקאות</span>
                   <span className="font-medium">₪{calculateTotal(stage.id).toLocaleString()}</span>
                 </div>
               </div>
@@ -112,7 +116,7 @@ export default function OpportunitiesPage() {
                             <CardContent className="p-4 space-y-2">
                               <div className="flex justify-between items-start">
                                 <span className="font-bold text-sm text-slate-800 line-clamp-1">
-                                  {opp.lead_name || "Unknown Client"}
+                                  {opp.lead_name || "לקוח לא ידוע"}
                                 </span>
                                 <Badge variant="outline" className="text-[10px] h-5 px-1">
                                   {opp.probability}%
@@ -121,11 +125,11 @@ export default function OpportunitiesPage() {
                               
                               <div className="text-xs text-slate-500 space-y-1">
                                 <div className="flex justify-between">
-                                  <span>Type:</span>
-                                  <span className="font-medium">{opp.product_type}</span>
+                                  <span>מוצר:</span>
+                                  <span className="font-medium">{productLabels[opp.product_type] || opp.product_type}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span>Amount:</span>
+                                  <span>סכום:</span>
                                   <span className="font-medium text-slate-900">₪{opp.loan_amount_requested?.toLocaleString()}</span>
                                 </div>
                               </div>
