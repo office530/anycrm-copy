@@ -23,7 +23,7 @@ import {
 import LeadForm from "@/components/crm/LeadForm";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { processAutomation } from "@/components/automation/automationEngine";
+import { processAutomation } from "@/components/automation/rulesEngine";
 
 export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
