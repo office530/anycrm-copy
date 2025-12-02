@@ -1,303 +1,302 @@
 import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { 
-  Users, 
-  Briefcase, 
-  TrendingUp, 
-  DollarSign,
-  Clock,
-  Activity
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
-  Cell,
-  LineChart,
-  Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell, LineChart, Line
 } from 'recharts';
-import { format, isToday, parseISO, subDays } from 'date-fns';
-import { he } from 'date-fns/locale';
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+import { 
+  Users, 
+  TrendingUp, 
+  DollarSign, 
+  Activity, 
+  Calendar,
+  Briefcase
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import moment from 'moment';
 
 export default function Dashboard() {
-  // Fetch data
-  const { data: leads, isLoading: leadsLoading } = useQuery({
-    queryKey: ['leads', 'summary'],
+  // Fetch Data
+  const { data: leads = [], isLoading: isLoadingLeads } = useQuery({
+    queryKey: ['leads'],
     queryFn: () => base44.entities.Lead.list(),
-    initialData: []
   });
 
-  const { data: opportunities, isLoading: oppsLoading } = useQuery({
-    queryKey: ['opportunities', 'summary'],
+  const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({
+    queryKey: ['opportunities'],
     queryFn: () => base44.entities.Opportunity.list(),
-    initialData: []
   });
 
-  // Process Data for Charts & Stats
-  const analytics = useMemo(() => {
-    if (leadsLoading || oppsLoading) return null;
+  const { data: activities = [], isLoading: isLoadingActivities } = useQuery({
+    queryKey: ['activities'],
+    queryFn: () => base44.entities.Activity.list({ sort: { date: -1 }, limit: 5 }),
+  });
 
-    const today = new Date();
-    const newLeadsToday = leads.filter(l => l.created_date && isToday(parseISO(l.created_date))).length;
+  // Calculate Metrics
+  const metrics = useMemo(() => {
+    const today = moment().startOf('day');
     
-    // Pipeline Value
-    const pipelineValue = opportunities.reduce((sum, opp) => {
-      if (!opp.deal_stage.includes('Closed')) {
-        return sum + (opp.loan_amount_requested || 0);
-      }
-      return sum;
-    }, 0);
+    const newLeadsToday = leads.filter(l => moment(l.created_date).isSame(today, 'day')).length;
+    
+    const activePipelineValue = opportunities
+      .filter(o => !['Closed Lost', 'Closed Won'].includes(o.deal_stage))
+      .reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
 
-    // Leads by Status (Pie Chart)
-    const leadsByStatusMap = leads.reduce((acc, lead) => {
+    // Data for Charts
+    
+    // 1. Leads by Status (Pie)
+    const statusCounts = leads.reduce((acc, lead) => {
       acc[lead.lead_status] = (acc[lead.lead_status] || 0) + 1;
       return acc;
     }, {});
-    
-    const leadsByStatusData = Object.entries(leadsByStatusMap).map(([name, value]) => ({
-      name: name.replace(/\(.*\)/, '').trim(), // Clean Hebrew if mixed
-      value
+    const leadsByStatusData = Object.keys(statusCounts).map(status => ({
+      name: status,
+      value: statusCounts[status]
     }));
 
-    // Opportunities by Stage (Bar Chart)
-    const oppsByStageMap = opportunities.reduce((acc, opp) => {
-      const stage = opp.deal_stage.split('(')[0].trim(); // Shorten name
-      acc[stage] = (acc[stage] || 0) + 1;
+    // 2. Opportunities by Stage (Bar)
+    const stageCounts = opportunities.reduce((acc, opp) => {
+      acc[opp.deal_stage] = (acc[opp.deal_stage] || 0) + 1;
       return acc;
     }, {});
-
-    const oppsByStageData = Object.entries(oppsByStageMap).map(([name, value]) => ({
-      name,
-      value
+    const oppsByStageData = Object.keys(stageCounts).map(stage => ({
+      name: stage.split('(')[0].trim(), // Shorten name for chart
+      count: stageCounts[stage]
     }));
 
-    // Leads Trend (Line Chart - Last 7 Days)
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-        const d = subDays(today, 6 - i);
-        return format(d, 'yyyy-MM-dd');
-    });
-
-    const leadsTrendData = last7Days.map(dateStr => {
-        const count = leads.filter(l => l.created_date && l.created_date.startsWith(dateStr)).length;
-        return {
-            date: format(parseISO(dateStr), 'dd/MM', { locale: he }),
-            count
-        };
-    });
+    // 3. New Leads Trend - Last 7 Days (Line)
+    const last7Days = Array.from({ length: 7 }, (_, i) => moment().subtract(6 - i, 'days').format('YYYY-MM-DD'));
+    const leadsTrendData = last7Days.map(date => ({
+      date: moment(date).format('DD/MM'),
+      leads: leads.filter(l => moment(l.created_date).format('YYYY-MM-DD') === date).length
+    }));
 
     return {
       totalLeads: leads.length,
       newLeadsToday,
-      activeOpps: opportunities.filter(o => !o.deal_stage.includes('Closed')).length,
-      pipelineValue,
+      activePipelineValue,
       leadsByStatusData,
       oppsByStageData,
       leadsTrendData
     };
-  }, [leads, opportunities, leadsLoading, oppsLoading]);
+  }, [leads, opportunities]);
 
-  const recentActivities = leads
-    .sort((a, b) => new Date(b.updated_date) - new Date(a.updated_date))
-    .slice(0, 5);
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(value);
+  };
 
-  if (leadsLoading || oppsLoading || !analytics) {
-    return (
-      <div className="p-8 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32 w-full" />)}
-        </div>
-        <Skeleton className="h-96 w-full" />
-      </div>
-    );
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+  if (isLoadingLeads || isLoadingOpps || isLoadingActivities) {
+    return <DashboardSkeleton />;
   }
 
   return (
-    <div className="space-y-8 p-2" dir="rtl">
+    <div className="space-y-8 animate-in fade-in duration-500" dir="rtl">
+      <div>
+        <h1 className="text-3xl font-bold text-slate-800">לוח בקרה</h1>
+        <p className="text-slate-500">סקירה כללית של הפעילות העסקית</p>
+      </div>
+
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard 
-          title="סה״כ לידים" 
-          value={analytics.totalLeads} 
-          icon={Users}
-          trend="מאגר הלקוחות שלך"
-          color="bg-blue-500"
+          title="סך הכל לידים" 
+          value={metrics.totalLeads} 
+          icon={Users} 
+          description="כל הלידים במערכת"
+          color="text-blue-600"
+          bg="bg-blue-100"
         />
         <StatsCard 
           title="לידים חדשים היום" 
-          value={analytics.newLeadsToday} 
-          icon={Activity}
-          trend="הצטרפו ב-24 שעות אחרונות"
-          color="bg-green-500"
+          value={metrics.newLeadsToday} 
+          icon={Calendar} 
+          description="נוספו ב-24 שעות האחרונות"
+          color="text-emerald-600"
+          bg="bg-emerald-100"
         />
         <StatsCard 
-          title="הזדמנויות פעילות" 
-          value={analytics.activeOpps} 
-          icon={Briefcase}
-          trend="עסקאות בתהליך"
-          color="bg-purple-500"
+          title="שווי צנרת פעיל" 
+          value={formatCurrency(metrics.activePipelineValue)} 
+          icon={DollarSign} 
+          description="הזדמנויות פתוחות (סכום מבוקש)"
+          color="text-violet-600"
+          bg="bg-violet-100"
         />
         <StatsCard 
-          title="שווי צנרת" 
-          value={`₪${analytics.pipelineValue.toLocaleString()}`} 
-          icon={DollarSign}
-          trend="פוטנציאל הכנסות"
-          color="bg-emerald-600"
+          title="הזדמנויות פתוחות" 
+          value={opportunities.length} 
+          icon={Briefcase} 
+          description="סך כל העסקאות בתהליך"
+          color="text-orange-600"
+          bg="bg-orange-100"
         />
       </div>
 
-      {/* Charts Section */}
+      {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Leads by Status - Pie Chart */}
-        <Card>
+        {/* Leads Trend */}
+        <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle>התפלגות לידים לפי סטטוס</CardTitle>
-            <CardDescription>מצב נוכחי של כל הלידים במערכת</CardDescription>
+            <CardTitle className="text-lg font-semibold text-slate-700 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              מגמת לידים חדשים (7 ימים אחרונים)
+            </CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={analytics.leadsByStatusData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {analytics.leadsByStatusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Leads Trend - Line Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>מגמת הצטרפות לידים</CardTitle>
-            <CardDescription>7 ימים אחרונים</CardDescription>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={analytics.leadsTrendData}>
+              <LineChart data={metrics.leadsTrendData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="date" stroke="#888888" fontSize={12} />
-                <YAxis stroke="#888888" fontSize={12} allowDecimals={false} />
-                <Tooltip 
-                    contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                <XAxis dataKey="date" />
+                <YAxis allowDecimals={false} />
+                <RechartsTooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                 />
-                <Line type="monotone" dataKey="count" name="לידים חדשים" stroke="#2563eb" strokeWidth={2} activeDot={{ r: 8 }} />
+                <Line 
+                  type="monotone" 
+                  dataKey="leads" 
+                  name="לידים"
+                  stroke="#3b82f6" 
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 6 }} 
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Opportunities by Stage - Bar Chart */}
-        <Card className="lg:col-span-2">
+        {/* Leads by Status */}
+        <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle>הזדמנויות לפי שלב</CardTitle>
-            <CardDescription>כמות עסקאות בכל שלב בתהליך המכירה</CardDescription>
+            <CardTitle className="text-lg font-semibold text-slate-700 flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              התפלגות לידים לפי סטטוס
+            </CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analytics.oppsByStageData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                <XAxis type="number" stroke="#888888" fontSize={12} allowDecimals={false} />
-                <YAxis dataKey="name" type="category" stroke="#888888" fontSize={12} width={150} />
-                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                <Bar dataKey="value" name="כמות עסקאות" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={32}>
-                    {analytics.oppsByStageData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                </Bar>
+              <PieChart>
+                <Pie
+                  data={metrics.leadsByStatusData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                  nameKey="name"
+                >
+                  {metrics.leadsByStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <RechartsTooltip />
+                <Legend layout="vertical" verticalAlign="middle" align="right" />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row 2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Opportunities by Stage */}
+        <Card className="shadow-sm lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-slate-700 flex items-center gap-2">
+              <Briefcase className="w-5 h-5" />
+              הזדמנויות לפי שלב
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={metrics.oppsByStageData} layout="vertical" margin={{ left: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} />
+                <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 12 }} />
+                <RechartsTooltip cursor={{ fill: '#f1f5f9' }} />
+                <Bar dataKey="count" name="כמות" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={30} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-      </div>
-
-      {/* Recent Activity List */}
-      <Card>
-        <CardHeader>
-            <CardTitle>פעילות אחרונה במערכת</CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Recent Activity */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-slate-700 flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              פעילות אחרונה
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-4">
-            {recentActivities.map(lead => (
-                <div key={lead.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-                    lead.original_status_color === 'Green' ? 'bg-green-500' :
-                    lead.original_status_color === 'Red' ? 'bg-red-500' :
-                    lead.original_status_color === 'Orange' ? 'bg-orange-500' : 'bg-yellow-500'
+              {activities.length === 0 ? (
+                <p className="text-slate-400 text-center py-8">אין פעילות מתועדת</p>
+              ) : (
+                activities.map((activity) => (
+                  <div key={activity.id} className="flex items-start gap-3 pb-3 border-b last:border-0">
+                    <div className={`mt-1 p-1.5 rounded-full ${
+                      activity.type === 'Call' ? 'bg-blue-100 text-blue-600' :
+                      activity.type === 'Meeting' ? 'bg-purple-100 text-purple-600' :
+                      'bg-gray-100 text-gray-600'
                     }`}>
-                    {lead.full_name.charAt(0)}
+                      <Activity className="w-3 h-3" />
                     </div>
                     <div>
-                    <Link to={`${createPageUrl('LeadDetails')}?id=${lead.id}`} className="font-medium text-slate-900 hover:text-blue-600 hover:underline">
-                        {lead.full_name}
-                    </Link>
-                    <p className="text-sm text-slate-500">{lead.city || 'לא צוינה עיר'} • {lead.phone_number}</p>
+                      <p className="text-sm font-medium text-slate-800">{activity.summary || activity.type}</p>
+                      <p className="text-xs text-slate-500">
+                        {moment(activity.date).format('DD/MM HH:mm')} • {activity.status}
+                      </p>
                     </div>
-                </div>
-                <div className="text-right">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {lead.lead_status}
-                    </span>
-                    <p className="text-xs text-slate-400 mt-1">
-                        עודכן: {format(parseISO(lead.updated_date), 'dd/MM/yy HH:mm')}
-                    </p>
-                </div>
-                </div>
-            ))}
+                  </div>
+                ))
+              )}
             </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
 
-function StatsCard({ title, value, icon: Icon, trend, color }) {
+function StatsCard({ title, value, icon: Icon, description, color, bg }) {
   return (
-    <Card className="overflow-hidden border-t-4 border-t-transparent hover:border-t-blue-500 transition-all shadow-sm hover:shadow-md">
+    <Card className="border-none shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500">{title}</p>
-            <h3 className="text-3xl font-bold mt-2 text-slate-900">{value}</h3>
+            <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
+            <h3 className="text-2xl font-bold text-slate-900">{value}</h3>
+            {description && <p className="text-xs text-slate-400 mt-1">{description}</p>}
           </div>
-          <div className={`p-3 rounded-xl ${color} bg-opacity-10 text-white shadow-sm`}>
-            <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
+          <div className={`p-3 rounded-full ${bg} ${color}`}>
+            <Icon className="w-6 h-6" />
           </div>
         </div>
-        {trend && (
-          <div className="mt-4 flex items-center text-sm text-slate-600 bg-slate-50 p-2 rounded-lg">
-            <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
-            <span className="font-medium">{trend}</span>
-          </div>
-        )}
       </CardContent>
     </Card>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8 p-6" dir="rtl">
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-4 w-64" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {[1,2,3,4].map(i => <Skeleton key={i} className="h-32 w-full rounded-xl" />)}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Skeleton className="h-[350px] w-full rounded-xl" />
+        <Skeleton className="h-[350px] w-full rounded-xl" />
+      </div>
+    </div>
   );
 }
