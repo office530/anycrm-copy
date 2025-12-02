@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { processAutomation } from "@/components/automation/automationEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 
 const STAGES = [
@@ -38,9 +39,17 @@ export default function OpportunitiesPage() {
 
   const updateOppMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Opportunity.update(id, data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
       setShowForm(false);
+      // We can pass editingOpp as 'previousData' if we want change detection
+      // But editingOpp might be stale if updates happened elsewhere? 
+      // For drag and drop, 'editingOpp' is null usually (it's set on click).
+      // But for form edit, it is set.
+      // For drag and drop, we don't have the previous data easily available in 'onSuccess' 
+      // unless we captured it before mutation.
+      // But 'processAutomation' handles missing previousData by just checking current state.
+      processAutomation('Opportunity', 'update', data, editingOpp);
       setEditingOpp(null);
     }
   });
