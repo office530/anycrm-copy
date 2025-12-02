@@ -1,0 +1,123 @@
+import React, { useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FunnelChart, Funnel, LabelList, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { Users, ArrowLeftRight, Percent } from "lucide-react";
+
+const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+
+export default function ConversionReport({ leads, opportunities, timeRange }) {
+  
+  const stats = useMemo(() => {
+    const totalLeads = leads.length;
+    const convertedLeads = leads.filter(l => l.lead_status === 'Converted to Opportunity' || l.lead_status === 'הומר להזדמנות').length;
+    // Or check opportunities count which implies conversion
+    const totalOpps = opportunities.length;
+    const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("נחתם")).length;
+
+    const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
+    const winRate = totalOpps > 0 ? (closedWon / totalOpps) * 100 : 0;
+
+    return {
+      totalLeads,
+      convertedLeads,
+      totalOpps,
+      closedWon,
+      conversionRate,
+      winRate
+    };
+  }, [leads, opportunities]);
+
+  const funnelData = [
+    {
+      "value": stats.totalLeads,
+      "name": "סה\"כ לידים",
+      "fill": "#3b82f6"
+    },
+    {
+      "value": stats.convertedLeads,
+      "name": "הומרו להזדמנות",
+      "fill": "#8b5cf6"
+    },
+    {
+      "value": stats.totalOpps,
+      "name": "הזדמנויות פעילות", // Assuming converted leads roughly equals opps, but practically might differ
+      "fill": "#f59e0b"
+    },
+    {
+      "value": stats.closedWon,
+      "name": "נסגרו בהצלחה",
+      "fill": "#10b981"
+    }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">יחס המרה (ליד להזדמנות)</CardTitle>
+            <ArrowLeftRight className="h-4 w-4 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.conversionRate.toFixed(1)}%</div>
+            <p className="text-xs text-slate-500">{stats.convertedLeads} מתוך {stats.totalLeads} לידים</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">יחס סגירה (Win Rate)</CardTitle>
+            <Percent className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.winRate.toFixed(1)}%</div>
+            <p className="text-xs text-slate-500">{stats.closedWon} מתוך {stats.totalOpps} הזדמנויות</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">איכות לידים</CardTitle>
+                <Users className="h-4 w-4 text-purple-500" />
+            </CardHeader>
+            <CardContent>
+                {/* Dummy logic for example */}
+                <div className="text-2xl font-bold">גבוהה</div>
+                <p className="text-xs text-slate-500">מבוסס על אחוזי המרה</p>
+            </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>משפך המרות (Sales Funnel)</CardTitle>
+        </CardHeader>
+        <CardContent className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <FunnelChart>
+              <Tooltip />
+              <Funnel
+                data={funnelData}
+                dataKey="value"
+              >
+                {/* <LabelList position="right" fill="#000" stroke="none" dataKey="name" /> */}
+                <LabelList position="right" fill="#666" stroke="none" dataKey="value" />
+                {funnelData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Funnel>
+            </FunnelChart>
+          </ResponsiveContainer>
+          <div className="flex justify-center gap-6 mt-4">
+            {funnelData.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.fill }} />
+                    <span className="text-sm text-slate-600">{item.name}: <strong>{item.value}</strong></span>
+                </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

@@ -4,6 +4,7 @@ import Opportunities from './pages/Opportunities';
 import Automation from './pages/Automation';
 import LeadDetails from './pages/LeadDetails';
 import ImportLeads from './pages/ImportLeads';
+import Reports from './pages/Reports';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "Automation": Automation,
     "LeadDetails": LeadDetails,
     "ImportLeads": ImportLeads,
+    "Reports": Reports,
 }
 
 export const pagesConfig = {

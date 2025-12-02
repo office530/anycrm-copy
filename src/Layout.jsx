@@ -9,7 +9,8 @@ import {
   X,
   Search,
   Bell,
-  Zap
+  Zap,
+  BarChart3
   } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +22,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'לוח בקרה', path: 'Dashboard', icon: LayoutDashboard },
     { name: 'מאגר לידים', path: 'Leads', icon: Users },
     { name: 'הזדמנויות', path: 'Opportunities', icon: Briefcase },
+    { name: 'דוחות', path: 'Reports', icon: BarChart3 },
     { name: 'אוטומציות', path: 'Automation', icon: Zap },
   ];
 
