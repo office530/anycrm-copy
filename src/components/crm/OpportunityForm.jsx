@@ -229,7 +229,6 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                 <SelectItem value="New (חדש)">חדש</SelectItem>
                 <SelectItem value="Discovery Call (שיחת בירור צרכים)">שיחת בירור צרכים</SelectItem>
                 <SelectItem value="Meeting Scheduled (נקבעת פגישה)">נקבעת פגישה</SelectItem>
-                <SelectItem value="Simulation Sent (נשלחה סימולציה)">נשלחה סימולציה</SelectItem>
                 <SelectItem value="Documents Collection (איסוף מסמכים)">איסוף מסמכים</SelectItem>
                 <SelectItem value="Request Sent to Harel (בקשה נשלחה להראל)">בקשה נשלחה להראל (סופי)</SelectItem>
                 <SelectItem value="Closed Won (נחתם - בהצלחה)">נחתם - בהצלחה</SelectItem>

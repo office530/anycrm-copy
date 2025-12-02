@@ -16,7 +16,6 @@ const STAGES = [
   { id: "New (חדש)", label: "חדש", color: "border-slate-400" },
   { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "border-blue-500" },
   { id: "Meeting Scheduled (נקבעת פגישה)", label: "נקבעת פגישה", color: "border-indigo-500" },
-  { id: "Simulation Sent (נשלחה סימולציה)", label: "נשלחה סימולציה", color: "border-purple-500" },
   { id: "Documents Collection (איסוף מסמכים)", label: "איסוף מסמכים", color: "border-yellow-500" },
   { id: "Request Sent to Harel (בקשה נשלחה להראל)", label: "נשלח להראל", color: "border-orange-500" },
   { id: "Closed Won (נחתם - בהצלחה)", label: "נסגר בהצלחה", color: "border-green-500" },
