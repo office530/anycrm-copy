@@ -188,13 +188,13 @@ export default function LeadsPage() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input 
               placeholder="חיפוש שם, טלפון, עיר..." 
-              className="pr-9"
+              className="pr-10 rounded-full border-slate-200 focus:ring-teal-500 focus:border-teal-500"
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
             />
           </div>
           <Select value={filters.year} onValueChange={v => setFilters({...filters, year: v})}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px] rounded-full border-slate-200">
               <SelectValue placeholder="שנה" />
             </SelectTrigger>
             <SelectContent>
@@ -205,7 +205,7 @@ export default function LeadsPage() {
             </SelectContent>
           </Select>
           <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] rounded-full border-slate-200">
               <SelectValue placeholder="סטטוס" />
             </SelectTrigger>
             <SelectContent>
@@ -219,12 +219,12 @@ export default function LeadsPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setShowLeadForm(true)} className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto">
+        <Button onClick={() => setShowLeadForm(true)} className="bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/20 rounded-full px-6 w-full md:w-auto transition-all hover:scale-105">
           <Plus className="w-4 h-4 ml-2" />
           הוסף ליד
           </Button>
           <Link to={createPageUrl('ImportLeads')}>
-          <Button variant="outline" className="w-full md:w-auto border-slate-300 text-slate-700 hover:bg-slate-100">
+          <Button variant="outline" className="w-full md:w-auto border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-teal-600 rounded-full px-6">
               <Upload className="w-4 h-4 ml-2" />
               ייבוא קובץ
           </Button>
@@ -232,67 +232,74 @@ export default function LeadsPage() {
           </div>
 
       {/* Leads Table */}
-      <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-        <Table>
+      <div className="overflow-hidden">
+        <Table className="border-separate border-spacing-y-3 -mt-3">
           <TableHeader>
-            <TableRow className="bg-slate-50">
-              <TableHead className="w-[250px] text-right">שם הלקוח</TableHead>
-              <TableHead className="text-right">פרטי קשר</TableHead>
-              <TableHead className="text-right">סטטוס</TableHead>
-              <TableHead className="text-right">שנת מקור</TableHead>
-              <TableHead className="text-right">קשר אחרון</TableHead>
-              <TableHead className="text-left">פעולות</TableHead>
+            <TableRow className="hover:bg-transparent border-none">
+              <TableHead className="w-[250px] text-right text-slate-400 font-medium pb-2">שם הלקוח</TableHead>
+              <TableHead className="text-right text-slate-400 font-medium pb-2">פרטי קשר</TableHead>
+              <TableHead className="text-right text-slate-400 font-medium pb-2">סטטוס</TableHead>
+              <TableHead className="text-right text-slate-400 font-medium pb-2">שנת מקור</TableHead>
+              <TableHead className="text-right text-slate-400 font-medium pb-2">קשר אחרון</TableHead>
+              <TableHead className="text-left text-slate-400 font-medium pb-2 pl-6">פעולות</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
                <TableRow>
-                 <TableCell colSpan={6} className="text-center py-8">טוען נתונים...</TableCell>
+                 <TableCell colSpan={6} className="text-center py-12 text-slate-400">טוען נתונים...</TableCell>
                </TableRow>
             ) : filteredLeads.map((lead) => (
-              <TableRow key={lead.id} className="hover:bg-slate-50 transition-colors">
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${legacyColors[lead.original_status_color] || 'bg-gray-300'}`} title={`Legacy Color: ${lead.original_status_color}`} />
+              <TableRow 
+                key={lead.id} 
+                className="bg-white shadow-sm hover:shadow-md transition-all duration-200 group rounded-2xl border-none"
+              >
+                <TableCell className="rounded-r-2xl border-none py-4 pr-6">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-2.5 h-2.5 rounded-full ${legacyColors[lead.original_status_color] || 'bg-gray-300'} ring-4 ring-slate-50`} title={`Legacy Color: ${lead.original_status_color}`} />
                     <div>
-                      <Link to={`${createPageUrl('LeadDetails')}?id=${lead.id}`} className="font-medium text-slate-900 hover:text-blue-600 hover:underline">
+                      <Link to={`${createPageUrl('LeadDetails')}?id=${lead.id}`} className="font-bold text-slate-800 hover:text-teal-600 transition-colors">
                         {lead.full_name}
                       </Link>
-                      <p className="text-xs text-slate-500">{lead.city}, בן/בת {lead.age}</p>
+                      <p className="text-xs text-slate-400 mt-1 font-medium">{lead.city} • בן {lead.age}</p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-slate-600">
-                    <Phone className="w-3 h-3 ml-2" />
+                <TableCell className="border-none py-4">
+                  <div className="flex items-center text-slate-500 font-medium">
+                    <Phone className="w-3.5 h-3.5 ml-2 text-slate-300" />
                     {lead.phone_number}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <Badge variant="secondary" className={statusColors[lead.lead_status]}>
+                <TableCell className="border-none py-4">
+                  <Badge variant="secondary" className={`rounded-full px-3 py-1 shadow-sm font-semibold ${statusColors[lead.lead_status]}`}>
                     {statusLabels[lead.lead_status] || lead.lead_status}
                   </Badge>
                 </TableCell>
-                <TableCell>{lead.source_year}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-slate-500 text-sm">
-                    <Calendar className="w-3 h-3 ml-2" />
+                <TableCell className="border-none py-4">
+                    <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md text-xs font-medium">
+                        {lead.source_year}
+                    </span>
+                </TableCell>
+                <TableCell className="border-none py-4">
+                  <div className="flex items-center text-slate-500 text-sm font-medium">
+                    <Calendar className="w-3.5 h-3.5 ml-2 text-slate-300" />
                     {lead.last_contact_date}
                   </div>
                 </TableCell>
-                <TableCell className="text-left">
+                <TableCell className="text-left rounded-l-2xl border-none py-4 pl-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="w-4 h-4" />
+                      <Button variant="ghost" size="icon" className="text-slate-300 hover:text-teal-600 hover:bg-teal-50 rounded-full">
+                        <MoreHorizontal className="w-5 h-5" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}>
+                    <DropdownMenuContent align="end" className="rounded-xl shadow-xl border-slate-100">
+                      <DropdownMenuItem onClick={() => { setEditingLead(lead); setShowLeadForm(true); }} className="rounded-lg cursor-pointer">
                         ערוך פרטים
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        className="text-emerald-600"
+                        className="text-teal-600 focus:text-teal-700 rounded-lg cursor-pointer"
                         onClick={() => convertToOpportunity.mutate(lead)}
                         disabled={convertToOpportunity.isPending}
                       >

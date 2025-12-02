@@ -209,27 +209,43 @@ function RuleForm({ onSuccess }) {
         <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
             
             {/* AI Generator Section */}
-            <div className="bg-purple-50 border border-purple-100 p-4 rounded-lg space-y-3 mb-6">
-                <div className="flex items-center gap-2 text-purple-800 font-semibold">
-                    <Sparkles className="w-4 h-4" />
-                    <span>מחולל אוטומציות חכם (AI)</span>
-                </div>
-                <Label className="text-xs text-purple-600">תאר את האוטומציה בשפה חופשית (למשל: "כשליד הופך לחם צור לי משימה להתקשר מחר")</Label>
-                <div className="flex gap-2">
-                    <Textarea 
-                        value={aiPrompt}
-                        onChange={(e) => setAiPrompt(e.target.value)}
-                        placeholder="תאר כאן את ההיגיון..."
-                        className="bg-white resize-none h-16 text-sm"
-                    />
-                    <Button 
-                        type="button"
-                        onClick={generateWithAI}
-                        disabled={isGenerating || !aiPrompt}
-                        className="h-16 w-32 bg-purple-600 hover:bg-purple-700 shrink-0"
-                    >
-                        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : "✨ צור"}
-                    </Button>
+            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-6 rounded-2xl shadow-lg shadow-purple-900/20 mb-8 border border-white/10 relative overflow-hidden">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl"></div>
+
+                <div className="relative z-10 space-y-4">
+                    <div className="flex items-center gap-2 font-bold text-lg">
+                        <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
+                        <span>מחולל אוטומציות חכם (AI)</span>
+                    </div>
+                    <p className="text-indigo-100 text-sm opacity-90">
+                        תאר את האוטומציה בשפה חופשית, והבינה המלאכותית תבנה את החוק עבורך.
+                    </p>
+                    
+                    <div className="flex gap-3 pt-2">
+                        <div className="flex-1 relative">
+                            <Textarea 
+                                value={aiPrompt}
+                                onChange={(e) => setAiPrompt(e.target.value)}
+                                placeholder="למשל: כאשר ליד הופך ל'בשל למכירה', שלח לו מייל ברוכים הבאים..."
+                                className="bg-white/10 border-white/20 text-white placeholder:text-indigo-200/70 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-white/30 focus:bg-white/20 transition-all"
+                            />
+                        </div>
+                        <Button 
+                            type="button"
+                            onClick={generateWithAI}
+                            disabled={isGenerating || !aiPrompt}
+                            className="h-20 w-32 bg-white text-indigo-700 hover:bg-indigo-50 hover:scale-105 transition-all font-bold shadow-lg rounded-xl shrink-0 border-none"
+                        >
+                            {isGenerating ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                                <div className="flex flex-col items-center gap-1">
+                                    <Sparkles className="w-5 h-5" />
+                                    <span>צור חוק</span>
+                                </div>
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </div>
 

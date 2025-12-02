@@ -60,10 +60,10 @@ export default function Layout({ children, currentPageName }) {
                   key={item.path}
                   to={createPageUrl(item.path)}
                   className={`
-                    flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors
+                    flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
                     ${isActive 
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' 
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+                      ? 'bg-teal-500 text-white shadow-lg shadow-teal-900/20 translate-x-[-4px]' 
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-white hover:translate-x-[-2px]'}
                   `}
                 >
                   <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
@@ -89,28 +89,28 @@ export default function Layout({ children, currentPageName }) {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Desktop Header */}
-          <header className="hidden lg:flex bg-white border-b h-16 items-center justify-between px-8">
-            <h1 className="text-xl font-bold text-slate-800">
+          <header className="hidden lg:flex bg-white/80 backdrop-blur-md border-b border-slate-100 h-20 items-center justify-between px-8 sticky top-0 z-10">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
               {navigation.find(n => n.path === currentPageName)?.name || currentPageName}
             </h1>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <div className="flex items-center gap-6">
+              <div className="relative group">
+                <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 group-focus-within:text-teal-500 transition-colors" />
                 <input 
                   type="text" 
                   placeholder="חיפוש..." 
-                  className="pr-10 pl-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64"
+                  className="pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none w-72 transition-all shadow-sm"
                 />
               </div>
-              <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900">
+              <Button variant="ghost" size="icon" className="text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-full">
                 <Bell className="w-5 h-5" />
               </Button>
             </div>
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-slate-50/50">
-            <div className="max-w-7xl mx-auto">
+          <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-[#F8FAFC]">
+            <div className="max-w-7xl mx-auto space-y-8">
               {children}
             </div>
           </main>
