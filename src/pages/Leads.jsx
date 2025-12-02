@@ -340,7 +340,7 @@ export default function LeadsPage() {
                             </DropdownMenu>
                         </div>
                     </motion.div>
-                ))}
+                )))}
             </AnimatePresence>
       </div>
 
