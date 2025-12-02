@@ -5,7 +5,8 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, AlertCircle } from "lucide-react";
+import { Loader2, Plus, AlertCircle, LayoutGrid, List as ListIcon } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
@@ -29,6 +30,7 @@ const productLabels = {
 export default function OpportunitiesPage() {
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [viewMode, setViewMode] = useState('kanban');
   const queryClient = useQueryClient();
 
   const { data: opportunities, isLoading } = useQuery({
@@ -83,9 +85,33 @@ export default function OpportunitiesPage() {
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-800">צנרת עסקאות (Pipeline)</h2>
+        <h2 className="text-2xl font-bold text-slate-800">
+            {viewMode === 'kanban' ? 'צנרת עסקאות (Pipeline)' : 'מאגר הזדמנויות'}
+        </h2>
+        
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setViewMode('kanban')}
+                className={`${viewMode === 'kanban' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+                <LayoutGrid className="w-4 h-4 ml-2" />
+                לוח
+            </Button>
+            <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setViewMode('list')}
+                className={`${viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+                <ListIcon className="w-4 h-4 ml-2" />
+                רשימה
+            </Button>
+        </div>
       </div>
 
+      {viewMode === 'kanban' ? (
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex-1 flex gap-4 overflow-x-auto pb-4 h-full">
           {STAGES.map((stage) => (
@@ -162,6 +188,56 @@ export default function OpportunitiesPage() {
           ))}
         </div>
       </DragDropContext>
+      ) : (
+        <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
+            <Table>
+                <TableHeader>
+                    <TableRow className="bg-slate-50">
+                        <TableHead className="text-right">לקוח</TableHead>
+                        <TableHead className="text-right">מוצר</TableHead>
+                        <TableHead className="text-right">שלב</TableHead>
+                        <TableHead className="text-right">סכום</TableHead>
+                        <TableHead className="text-right">הסתברות</TableHead>
+                        <TableHead className="text-right">משימה הבאה</TableHead>
+                        <TableHead className="text-left">פעולות</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {opportunities.map((opp) => (
+                        <TableRow key={opp.id} className="hover:bg-slate-50">
+                            <TableCell className="font-medium">{opp.lead_name || "לקוח לא ידוע"}</TableCell>
+                            <TableCell>{productLabels[opp.product_type] || opp.product_type}</TableCell>
+                            <TableCell>
+                                <Badge variant="outline" className={`${STAGES.find(s => s.id === opp.deal_stage)?.color.replace('border-', 'text-')}`}>
+                                    {STAGES.find(s => s.id === opp.deal_stage)?.label || opp.deal_stage}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>₪{opp.loan_amount_requested?.toLocaleString() || '-'}</TableCell>
+                            <TableCell>
+                                <div className="w-full bg-slate-200 rounded-full h-2.5 w-24">
+                                    <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${opp.probability}%` }}></div>
+                                </div>
+                                <span className="text-xs text-slate-500">{opp.probability}%</span>
+                            </TableCell>
+                            <TableCell className="text-sm text-slate-600 truncate max-w-[200px]">{opp.next_task || '-'}</TableCell>
+                            <TableCell className="text-left">
+                                <Button variant="ghost" size="sm" onClick={() => { setEditingOpp(opp); setShowForm(true); }}>
+                                    ערוך
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                    {opportunities.length === 0 && (
+                        <TableRow>
+                            <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                                אין הזדמנויות פעילות
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
+      )}
 
       <Dialog open={showForm} onOpenChange={(open) => {
         setShowForm(open);

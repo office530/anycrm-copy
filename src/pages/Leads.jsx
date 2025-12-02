@@ -126,7 +126,11 @@ export default function LeadsPage() {
                          lead.phone_number?.includes(filters.search) ||
                          lead.city?.toLowerCase().includes(filters.search.toLowerCase());
     const matchesYear = filters.year === "all" || lead.source_year === filters.year;
-    const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
+    // Default: Exclude converted leads unless specifically asked for
+    const matchesStatus = filters.status === "all" 
+        ? lead.lead_status !== "Converted to Opportunity"
+        : lead.lead_status === filters.status;
+        
     return matchesSearch && matchesYear && matchesStatus;
   });
 
