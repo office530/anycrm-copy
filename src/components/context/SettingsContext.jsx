@@ -29,6 +29,24 @@ export function SettingsProvider({ children }) {
     }
   });
 
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('crm_theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('crm_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
   const [pipelineStages, setPipelineStages] = useState(() => {
     try {
       const saved = localStorage.getItem('crm_stages');
@@ -57,7 +75,7 @@ export function SettingsProvider({ children }) {
   };
 
   return (
-    <SettingsContext.Provider value={{ branding, updateBranding, pipelineStages, updateStage, setPipelineStages }}>
+    <SettingsContext.Provider value={{ branding, updateBranding, pipelineStages, updateStage, setPipelineStages, theme, toggleTheme }}>
       {children}
     </SettingsContext.Provider>
   );

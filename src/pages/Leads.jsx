@@ -98,20 +98,20 @@ export default function LeadsPage() {
   return (
     <div className="space-y-6 pb-20">
       {/* Header & Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
         <div className="flex-1 w-full md:w-auto flex flex-col md:flex-row gap-3">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input 
               placeholder="חיפוש שם או טלפון..." 
-              className="pr-10 bg-slate-50 border-slate-200 focus:bg-white transition-all rounded-xl"
+              className="pr-10 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 dark:text-slate-100 transition-all rounded-xl"
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
             />
           </div>
           <div className="flex gap-2">
             <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
-                <SelectTrigger className="w-[160px] rounded-xl bg-slate-50 border-slate-200">
+                <SelectTrigger className="w-[160px] rounded-xl bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 dark:text-slate-100">
                 <Filter className="w-3.5 h-3.5 ml-2 text-slate-500" />
                 <SelectValue placeholder="סטטוס" />
                 </SelectTrigger>
@@ -163,18 +163,18 @@ export default function LeadsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="group bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-teal-100 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                        className="group bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-md hover:border-teal-100 dark:hover:border-teal-900 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
                     >
                         {/* Name & Details */}
                         <div className="col-span-3 flex items-center gap-3">
-                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-slate-600 bg-slate-100 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors`}>
+                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30 group-hover:text-teal-600 transition-colors`}>
                                 {lead.full_name?.charAt(0) || <User className="w-5 h-5" />}
                              </div>
                              <div className="flex-1 min-w-0">
                                 <InlineEdit 
                                     value={lead.full_name}
                                     onSave={(val) => updateLead.mutate({ id: lead.id, data: { full_name: val } })}
-                                    className="font-bold text-slate-800 text-base"
+                                    className="font-bold text-slate-800 dark:text-slate-100 text-base"
                                 />
                                 <div className="flex items-center gap-2 text-xs text-slate-400">
                                     <InlineEdit 
@@ -189,8 +189,8 @@ export default function LeadsPage() {
                         </div>
 
                         {/* Phone & WhatsApp */}
-                        <div className="col-span-3 flex items-center text-slate-600 gap-2">
-                            <Phone className="w-4 h-4 text-slate-300" />
+                        <div className="col-span-3 flex items-center text-slate-600 dark:text-slate-400 gap-2">
+                            <Phone className="w-4 h-4 text-slate-300 dark:text-slate-600" />
                             <InlineEdit 
                                 value={lead.phone_number}
                                 type="tel"

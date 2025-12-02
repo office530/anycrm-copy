@@ -79,15 +79,15 @@ export default function OpportunitiesPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-            <h2 className="text-2xl font-bold text-slate-800">צנרת עסקאות</h2>
-            <p className="text-slate-500 text-sm">ניהול ותיעדוף הזדמנויות עסקיות</p>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">צנרת עסקאות</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">ניהול ותיעדוף הזדמנויות עסקיות</p>
         </div>
         
-        <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm flex gap-1">
-            <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-500'}>
+        <div className="bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex gap-1">
+            <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
                 <LayoutGrid className="w-4 h-4 ml-2" /> לוח
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-500'}>
+            <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
                 <ListIcon className="w-4 h-4 ml-2" /> רשימה
             </Button>
         </div>
@@ -105,15 +105,15 @@ export default function OpportunitiesPage() {
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-slate-100 text-slate-700'} border border-transparent`}>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'} border border-transparent`}>
                         {stage.label}
                     </span>
                     <span className="text-xs text-slate-400 font-medium">{stageOpps.length}</span>
                 </div>
-                <div className="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
+                <div className="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className={`h-full ${stage.color || 'bg-slate-400'}`} style={{ width: '100%' }}></div>
                 </div>
-                {total > 0 && <div className="text-xs font-medium text-slate-500 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
+                {total > 0 && <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
               </div>
 
               {/* Droppable Area */}
@@ -135,7 +135,7 @@ export default function OpportunitiesPage() {
                             {...provided.dragHandleProps}
                             className={`
                               cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border-none shadow-sm group relative overflow-hidden
-                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white'}
+                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white dark:bg-slate-900 dark:shadow-none dark:border dark:border-slate-800'}
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
@@ -144,16 +144,16 @@ export default function OpportunitiesPage() {
                               
                               {/* שם הלקוח */}
                               <div className="flex justify-between items-start">
-                                <span className="font-bold text-slate-800 line-clamp-1 group-hover:text-teal-600 transition-colors">
+                                <span className="font-bold text-slate-800 dark:text-slate-100 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                                   {opp.lead_name || "לקוח ללא שם"}
                                 </span>
-                                <Badge variant="outline" className="text-[10px] bg-slate-50 border-slate-100 text-slate-500">
+                                <Badge variant="outline" className="text-[10px] bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                                   {opp.probability}%
                                 </Badge>
                               </div>
                               
                               {/* עריכה מהירה: סכום ותאריך */}
-                              <div className="space-y-2 bg-slate-50/50 p-2 rounded-lg border border-slate-100/50">
+                              <div className="space-y-2 bg-slate-50/50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100/50 dark:border-slate-700/50">
                                 <div className="flex justify-between items-center text-xs">
                                   <span className="text-slate-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> סכום</span>
                                   <div className="w-24 text-right">
@@ -162,7 +162,7 @@ export default function OpportunitiesPage() {
                                         type="number"
                                         formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
-                                        className="font-bold text-slate-700 justify-end h-6 bg-white shadow-sm"
+                                        className="font-bold text-slate-700 dark:text-slate-200 justify-end h-6 bg-white dark:bg-slate-700 shadow-sm"
                                       />
                                   </div>
                                 </div>
@@ -174,7 +174,7 @@ export default function OpportunitiesPage() {
                                         type="date"
                                         placeholder="קבע תאריך"
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
-                                        className="justify-end h-6 text-slate-600"
+                                        className="justify-end h-6 text-slate-600 dark:text-slate-300"
                                         formatDisplay={(val) => val ? moment(val).format("DD/MM/YYYY") : "אין תאריך"}
                                       />
                                   </div>
