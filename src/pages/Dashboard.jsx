@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
-import { Users, TrendingUp, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
+import { Users, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
@@ -166,7 +166,7 @@ export default function Dashboard() {
       {/* KPIs Row 1: Leads Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <KpiCard title="סה״כ לידים" value={stats.totalLeads} icon={Users} color="bg-blue-500" subtext={`${stats.newLeads} חדשים בתקופה זו`} />
-        <KpiCard title="לידים שהומרו" value={stats.convertedLeads} icon={TrendingUp} color="bg-purple-500" subtext={`${((stats.convertedLeads / (stats.totalLeads || 1)) * 100).toFixed(1)}% יחס המרה`} />
+        <KpiCard title="לידים שהומרו" value={stats.convertedLeads} icon={Activity} color="bg-purple-500" subtext={`${((stats.convertedLeads / (stats.totalLeads || 1)) * 100).toFixed(1)}% יחס המרה`} />
         <KpiCard title="הכנסות בפועל" value={`₪${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} עסקאות סגורות`} />
       </div>
 
