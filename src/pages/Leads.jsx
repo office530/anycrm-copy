@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Calendar, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
@@ -19,35 +19,32 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { InlineEdit } from "@/components/ui/InlineEdit";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSettings } from "@/components/context/SettingsContext"; // שימוש ב-Context
 
 export default function LeadsPage() {
+  const { leadStatuses } = useSettings(); // שליפת הסטטוסים הדינמיים
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all" });
 
   const queryClient = useQueryClient();
 
-  // Data Fetching
+  // Data
   const { data: leads, isLoading } = useQuery({
     queryKey: ['leads'],
     queryFn: () => base44.entities.Lead.list(),
     initialData: []
   });
 
-  // --- Statistics Calculation (New!) ---
+  // Stats Logic
   const stats = useMemo(() => {
       const total = leads.length;
-      const newThisMonth = leads.filter(l => {
-          // Assuming 'created_at' or using logic if generic. Here mimicking simple check
-          return true; // Placeholder for real date check if field exists
-      }).length;
-      const convertedCount = leads.filter(l => l.lead_status === 'Converted').length;
+      // חישוב המרות לפי הסטטוס שמוגדר כ"Converted" ב-Context או חיפוש המילה Converted
+      const convertedCount = leads.filter(l => l.lead_status.includes('Converted')).length;
       const conversionRate = total > 0 ? ((convertedCount / total) * 100).toFixed(1) : 0;
-      
-      return { total, newThisMonth, conversionRate };
+      return { total, conversionRate };
   }, [leads]);
 
-  // --- Mutations ---
   const createLead = useMutation({
     mutationFn: (data) => base44.entities.Lead.create(data),
     onSuccess: (data) => {
@@ -60,9 +57,7 @@ export default function LeadsPage() {
 
   const updateLead = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['leads']);
-    }
+    onSuccess: () => queryClient.invalidateQueries(['leads'])
   });
 
   const convertToOpportunity = useMutation({
@@ -75,7 +70,7 @@ export default function LeadsPage() {
             email: leadData.email,
             product_type: "Reverse Mortgage", 
             property_value: leadData.estimated_property_value || 0,
-            deal_stage: "New (חדש)",
+            deal_stage: "New (חדש)", // ניתן להפוך גם את זה לדינמי בעתיד
             probability: 10,
         });
     },
@@ -87,58 +82,36 @@ export default function LeadsPage() {
     }
   });
 
-  // --- Settings ---
-  const statusOptions = [
-    { value: "New", label: "חדש", color: "bg-blue-100 text-blue-700" },
-    { value: "Attempting Contact", label: "בטיפול", color: "bg-yellow-100 text-yellow-700" },
-    { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-orange-100 text-orange-700" },
-    { value: "Sales Ready", label: "בשל למכירה", color: "bg-purple-100 text-purple-700" },
-    { value: "Converted", label: "הומר להזדמנות", color: "bg-emerald-100 text-emerald-700" },
-    { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-gray-100 text-gray-600" }
-  ];
-
-  // --- Improved Filtering Logic ---
+  // סינון חכם
   const filteredLeads = useMemo(() => {
     return leads.filter(lead => {
-        // Revival List Special Logic
         if (filters.status === "revival_2023") {
             return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
         }
-
-        // Robust Search (Handles nulls and cleaning)
         const searchTerm = filters.search.toLowerCase().trim();
         const leadName = (lead.full_name || "").toLowerCase();
-        const leadPhone = (lead.phone_number || "").replace(/\D/g, ''); // Remove non-digits for search
+        const leadPhone = (lead.phone_number || "").replace(/\D/g, ''); 
         const searchPhone = searchTerm.replace(/\D/g, ''); 
 
-        const matchesSearch = !searchTerm || 
-                              leadName.includes(searchTerm) || 
-                              leadPhone.includes(searchPhone);
-
+        const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
         const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
         
-        // Hide converted by default unless selected specifically
         const matchesStatus = filters.status === "all" 
             ? lead.lead_status !== "Converted" 
             : lead.lead_status === filters.status;
 
         return matchesSearch && matchesYear && matchesStatus;
-    }).sort((a, b) => {
-        // Sort by ID descending (assuming higher ID = newer) or created_date if available
-        return b.id - a.id; 
-    });
-  }, [leads, filters]);
+    }).sort((a, b) => b.id - a.id);
+  }, [leads, filters, leadStatuses]);
 
   return (
     <div className="space-y-6 pb-20">
       
-      {/* Stats Bar (New!) */}
+      {/* Stats Bar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
             <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
-                    <Users className="w-5 h-5" />
-                </div>
+                <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Users className="w-5 h-5" /></div>
                 <div>
                     <p className="text-sm text-slate-500">סה״כ לידים</p>
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{stats.total}</p>
@@ -147,9 +120,7 @@ export default function LeadsPage() {
         </Card>
         <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
             <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-teal-100 text-teal-600 rounded-xl">
-                    <CheckCircle2 className="w-5 h-5" />
-                </div>
+                <div className="p-3 bg-teal-100 text-teal-600 rounded-xl"><CheckCircle2 className="w-5 h-5" /></div>
                 <div>
                     <p className="text-sm text-slate-500">הומרו להזדמנות</p>
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{stats.conversionRate}%</p>
@@ -158,14 +129,11 @@ export default function LeadsPage() {
         </Card>
         <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
             <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-purple-100 text-purple-600 rounded-xl">
-                    <Activity className="w-5 h-5" />
-                </div>
+                <div className="p-3 bg-purple-100 text-purple-600 rounded-xl"><Activity className="w-5 h-5" /></div>
                 <div>
                     <p className="text-sm text-slate-500">פעילים בטיפול</p>
-                    {/* Active = Not Converted & Not Lost */}
                     <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                        {leads.filter(l => !['Converted', 'Lost / Unqualified'].includes(l.lead_status)).length}
+                        {leads.filter(l => !l.lead_status.includes('Converted') && !l.lead_status.includes('Lost')).length}
                     </p>
                 </div>
             </CardContent>
@@ -178,7 +146,7 @@ export default function LeadsPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input 
-              placeholder="חיפוש שם או טלפון..." 
+              placeholder="חיפוש..." 
               className="pr-10 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 dark:text-slate-100 transition-all rounded-xl"
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
@@ -192,7 +160,8 @@ export default function LeadsPage() {
                 </SelectTrigger>
                 <SelectContent>
                 <SelectItem value="all">כל הסטטוסים</SelectItem>
-                {statusOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                {/* כאן משתמשים בסטטוסים הדינמיים מה-Context! */}
+                {leadStatuses.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                 <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה</SelectItem>
                 </SelectContent>
             </Select>
@@ -213,10 +182,9 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Leads List - Floating Cards */}
+      {/* Leads List */}
       <div className="space-y-3">
-        {/* Column Headers (Desktop Only) */}
-        <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+         <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">
             <div className="col-span-3 text-right">לקוח</div>
             <div className="col-span-3 text-right">פרטי קשר</div>
             <div className="col-span-2 text-right">סטטוס</div>
@@ -229,8 +197,7 @@ export default function LeadsPage() {
                 <div className="text-center py-20 text-slate-400">טוען נתונים...</div>
             ) : filteredLeads.length === 0 ? (
                 <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-500">לא נמצאו לידים התואמים את הסינון</p>
-                    {filters.search && <Button variant="link" onClick={() => setFilters({...filters, search: ""})}>נקה חיפוש</Button>}
+                    <p className="text-slate-500">לא נמצאו לידים</p>
                 </div>
             ) : (
                 filteredLeads.map((lead, index) => (
@@ -241,7 +208,6 @@ export default function LeadsPage() {
                         transition={{ delay: index * 0.05 }}
                         className="group bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-md hover:border-teal-100 dark:hover:border-teal-900 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
                     >
-                        {/* Name & Details */}
                         <div className="col-span-3 flex items-center gap-3">
                              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30 group-hover:text-teal-600 transition-colors`}>
                                 {lead.full_name?.charAt(0) || <User className="w-5 h-5" />}
@@ -253,18 +219,13 @@ export default function LeadsPage() {
                                     className="font-bold text-slate-800 dark:text-slate-100 text-base"
                                 />
                                 <div className="flex items-center gap-2 text-xs text-slate-400">
-                                    <InlineEdit 
-                                        value={lead.city} 
-                                        placeholder="עיר"
-                                        onSave={(val) => updateLead.mutate({ id: lead.id, data: { city: val } })}
-                                    />
+                                    <InlineEdit value={lead.city} placeholder="עיר" onSave={(val) => updateLead.mutate({ id: lead.id, data: { city: val } })} />
                                     <span>•</span>
-                                    <span>בן {lead.age || '?'}</span>
+                                    <span>{lead.age || '?'}</span>
                                 </div>
                              </div>
                         </div>
 
-                        {/* Phone & WhatsApp */}
                         <div className="col-span-3 flex items-center text-slate-600 dark:text-slate-400 gap-2">
                             <Phone className="w-4 h-4 text-slate-300 dark:text-slate-600" />
                             <InlineEdit 
@@ -275,32 +236,28 @@ export default function LeadsPage() {
                             />
                             {lead.phone_number && (
                                 <Button 
-                                  size="icon" 
-                                  variant="ghost" 
-                                  className="h-7 w-7 text-green-500 hover:bg-green-50 hover:text-green-600 rounded-full"
+                                  size="icon" variant="ghost" className="h-7 w-7 text-green-500 hover:bg-green-50 rounded-full"
                                   onClick={() => {
                                       const cleanNum = lead.phone_number.replace(/\D/g, '').replace(/^0/, '');
                                       window.open(`https://wa.me/972${cleanNum}`, '_blank');
                                   }}
-                                  title="שלח הודעת וואטסאפ"
                                 >
                                     <MessageCircle className="w-4 h-4" />
                                 </Button>
                             )}
                         </div>
 
-                        {/* Status - Smart Edit */}
                         <div className="col-span-2">
                              <InlineEdit 
                                 type="select"
                                 value={lead.lead_status}
-                                options={statusOptions}
+                                options={leadStatuses} // שימוש בסטטוסים הדינמיים
                                 onSave={(val) => {
                                     if (val === 'Converted') convertToOpportunity.mutate(lead);
                                     else updateLead.mutate({ id: lead.id, data: { lead_status: val } });
                                 }}
                                 formatDisplay={(val) => {
-                                    const status = statusOptions.find(o => o.value === val);
+                                    const status = leadStatuses.find(o => o.value === val);
                                     return (
                                         <Badge variant="secondary" className={`${status?.color || 'bg-slate-100'} border-0 px-3 py-1`}>
                                             {status?.label || val}
@@ -310,13 +267,11 @@ export default function LeadsPage() {
                              />
                         </div>
 
-                        {/* Year & Source */}
                         <div className="col-span-2 flex flex-col justify-center text-sm text-slate-500">
                             <span className="font-medium">{lead.source_year}</span>
                             <span className="text-xs text-slate-400">{lead.last_contact_date || 'לא נוצר קשר'}</span>
                         </div>
 
-                        {/* Actions */}
                         <div className="col-span-2 flex justify-end gap-2 pl-2">
                             <Button 
                                 variant="ghost" 
@@ -338,15 +293,11 @@ export default function LeadsPage() {
                             </Button>
                         </div>
                     </motion.div>
-                )))}
+                ))}
             </AnimatePresence>
       </div>
 
-      {/* Edit/Create Modal */}
-      <Dialog open={showLeadForm} onOpenChange={(open) => {
-        setShowLeadForm(open);
-        if (!open) setEditingLead(null);
-      }}>
+      <Dialog open={showLeadForm} onOpenChange={(open) => { setShowLeadForm(open); if(!open) setEditingLead(null); }}>
         <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
           <LeadForm 
             lead={editingLead} 

@@ -4,12 +4,73 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus, Zap, Save, Loader2, Sparkles } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+
+// ספריית התבניות המוכנות
+const templates = [
+  {
+    id: 'welcome_email',
+    title: 'מייל ברוכים הבאים',
+    description: 'שלח מייל אוטומטי לכל ליד חדש שנכנס למערכת',
+    icon: Mail,
+    color: 'bg-blue-500',
+    rule: {
+        name: 'מייל ברוכים הבאים (אוטומטי)',
+        trigger_entity: 'Lead',
+        trigger_event: 'create',
+        action_type: 'send_email',
+        action_config: {
+            email_subject: 'ברוכים הבאים ל-INGAGE!',
+            email_body: 'שלום {{full_name}}, תודה שהצטרפת אלינו. נציג יצור איתך קשר בהקדם.',
+            email_to: '{{email}}'
+        }
+    }
+  },
+  {
+    id: 'task_big_deal',
+    title: 'התראת "עסקה גדולה"',
+    description: 'פתח משימה דחופה למנהל כאשר נפתחת הזדמנות מעל 1M ₪',
+    icon: Bell,
+    color: 'bg-purple-500',
+    rule: {
+        name: 'התראת עסקה גדולה VIP',
+        trigger_entity: 'Opportunity',
+        trigger_event: 'create',
+        condition_field: 'property_value', // הנחה שיש שדה כזה או דומה
+        condition_value: '1000000',
+        action_type: 'create_task',
+        action_config: {
+            task_title: 'בדיקת עסקה VIP - {{lead_name}}',
+            task_description: 'נפתחה הזדמנות חדשה בסכום גבוה. נא ליצור קשר מיידי.',
+            task_due_days: 0
+        }
+    }
+  },
+  {
+    id: 'task_followup',
+    title: 'פולואו-אפ להצעת מחיר',
+    description: 'צור משימת מעקב 3 ימים אחרי שהסטטוס משתנה ל"נשלחה סימולציה"',
+    icon: Clock,
+    color: 'bg-orange-500',
+    rule: {
+        name: 'מעקב סימולציה',
+        trigger_entity: 'Opportunity',
+        trigger_event: 'update',
+        condition_field: 'deal_stage',
+        condition_value: 'Simulation Sent (נשלחה סימולציה)',
+        action_type: 'create_task',
+        action_config: {
+            task_title: 'האם הלקוח עבר על הסימולציה?',
+            task_description: 'עברו 3 ימים מאז השליחה. וודא קבלה.',
+            task_due_days: 3
+        }
+    }
+  }
+];
 
 export default function AutomationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,69 +82,113 @@ export default function AutomationPage() {
     initialData: []
   });
 
+  const createRule = useMutation({
+    mutationFn: (data) => base44.entities.AutomationRule.create(data),
+    onSuccess: () => queryClient.invalidateQueries(['automationRules'])
+  });
+
   const deleteRule = useMutation({
     mutationFn: (id) => base44.entities.AutomationRule.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['automationRules'])
   });
 
+  const activateTemplate = (template) => {
+      if(confirm(`האם ליצור את האוטומציה: "${template.title}"?`)) {
+          createRule.mutate(template.rule);
+      }
+  };
+
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-8 pb-20" dir="rtl">
+      
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">אוטומציות</h1>
-          <p className="text-slate-500">הגדרת חוקים ופעולות אוטומטיות</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">אוטומציות</h1>
+          <p className="text-slate-500 dark:text-slate-400">הפוך את העסק לאוטומטי עם חוקים חכמים</p>
         </div>
-        <Button onClick={() => setIsDialogOpen(true)} className="bg-blue-600">
+        <Button onClick={() => setIsDialogOpen(true)} className="bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800">
             <Plus className="w-4 h-4 ml-2" />
-            חוק חדש
+            צור חוק מותאם אישית
         </Button>
       </div>
 
-      <div className="grid gap-4">
+      {/* Templates Gallery (New!) */}
+      <div>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+              <Wand2 className="w-5 h-5 text-teal-500" />
+              תבניות מוכנות (Quick Start)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {templates.map(tpl => (
+                  <Card key={tpl.id} className="group hover:shadow-lg transition-all border-none shadow-sm bg-white dark:bg-slate-900 cursor-pointer" onClick={() => activateTemplate(tpl)}>
+                      <CardContent className="p-6">
+                          <div className={`w-12 h-12 rounded-2xl ${tpl.color} flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                              <tpl.icon className="w-6 h-6" />
+                          </div>
+                          <h4 className="font-bold text-lg mb-2 dark:text-white">{tpl.title}</h4>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{tpl.description}</p>
+                          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                              <span className="text-xs font-bold text-teal-600 dark:text-teal-400 group-hover:underline">הפעל תבנית &rarr;</span>
+                          </div>
+                      </CardContent>
+                  </Card>
+              ))}
+          </div>
+      </div>
+
+      {/* Active Rules List */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2 mt-8">
+              <Zap className="w-5 h-5 text-yellow-500" />
+              אוטומציות פעילות ({rules.length})
+        </h3>
+        
         {isLoading ? <div className="text-center py-10">טוען...</div> : rules.map(rule => (
-            <Card key={rule.id} className="flex flex-row items-center justify-between p-6">
+            <Card key={rule.id} className="flex flex-row items-center justify-between p-6 bg-white dark:bg-slate-900 border-none shadow-sm">
                 <div className="flex items-center gap-4">
-                    <div className="bg-purple-100 p-3 rounded-full text-purple-600">
+                    <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-full text-slate-600 dark:text-slate-300">
                         <Zap className="w-6 h-6" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg">{rule.name}</h3>
-                        <p className="text-sm text-slate-500">
+                        <h3 className="font-bold text-lg dark:text-white">{rule.name}</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                             כאשר 
-                            <span className="font-medium text-slate-700 mx-1">
+                            <span className="font-medium text-slate-700 dark:text-slate-200 mx-1">
                                 {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'}
                             </span>
                             {rule.trigger_event === 'create' ? 'נוצר/ה' : 'מתעדכן/ת'}
                             {rule.condition_field && (
                                 <>
                                     {' '}כאשר{' '}
-                                    <span className="font-medium text-slate-700">{rule.condition_field}</span>
+                                    <span className="font-medium text-slate-700 dark:text-slate-200">{rule.condition_field}</span>
                                     {' '}שווה ל-{' '}
-                                    <span className="font-medium text-slate-700">{rule.condition_value}</span>
+                                    <span className="font-medium text-slate-700 dark:text-slate-200">{rule.condition_value}</span>
                                 </>
                             )}
                         </p>
-                        <p className="text-xs text-blue-600 mt-1">
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1">
+                            {rule.action_type === 'send_email' ? <Mail className="w-3 h-3"/> : <Bell className="w-3 h-3"/>}
                             ביצוע: {rule.action_type === 'send_email' ? 'שליחת אימייל' : 'יצירת משימה'}
                         </p>
                     </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => deleteRule.mutate(rule.id)}>
+                <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" onClick={() => deleteRule.mutate(rule.id)}>
                     <Trash2 className="w-5 h-5" />
                 </Button>
             </Card>
         ))}
         {rules.length === 0 && !isLoading && (
-            <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed">
-                <p className="text-slate-500">אין חוקים מוגדרים עדיין</p>
+            <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed dark:border-slate-700">
+                <p className="text-slate-500 dark:text-slate-400">אין חוקים מוגדרים עדיין. נסה להשתמש בתבניות למעלה!</p>
             </div>
         )}
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl dark:bg-slate-900 dark:border-slate-800">
             <DialogHeader>
-                <DialogTitle>יצירת אוטומציה חדשה</DialogTitle>
+                <DialogTitle className="dark:text-white">יצירת אוטומציה חדשה</DialogTitle>
             </DialogHeader>
             <RuleForm onSuccess={() => setIsDialogOpen(false)} />
         </DialogContent>
