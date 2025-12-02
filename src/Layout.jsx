@@ -88,21 +88,7 @@ function LayoutContent({ children, currentPageName }) {
                     הגדרות מערכת
                 </Link>
 
-                <div className="border-t border-slate-800/50 pt-4 mt-2">
-                    <div className="bg-slate-800/30 rounded-2xl p-3 flex items-center gap-3">
-                        <Avatar className="h-10 w-10 border-2 border-slate-600">
-                            <AvatarImage src="https://github.com/shadcn.png" />
-                            <AvatarFallback>JD</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-white truncate">יוסי כהן</p>
-                            <p className="text-xs text-slate-400 truncate">מנהל מערכת</p>
-                        </div>
-                        <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white rounded-full">
-                            <LogOut className="w-4 h-4" />
-                        </Button>
-                    </div>
-                </div>
+
             </div>
         </div>
       </aside>
