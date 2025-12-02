@@ -150,21 +150,21 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
               defaultValue={lead?.lead_status || "New"} 
               onValueChange={(val) => handleSelectChange("lead_status", val)}
             >
-              <SelectTrigger className={leadStatus === 'Converted to Opportunity' ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : ''}>
+              <SelectTrigger className={leadStatus === 'Converted' ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : ''}>
                 <SelectValue placeholder="סטטוס" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="New">חדש (New)</SelectItem>
-                <SelectItem value="Contact Attempt 1">ניסיון יצירת קשר 1</SelectItem>
-                <SelectItem value="Contact Attempt 2">ניסיון יצירת קשר 2</SelectItem>
-                <SelectItem value="Nurturing">טיפוח (Nurturing)</SelectItem>
-                <SelectItem value="Unqualified">לא רלוונטי (Unqualified)</SelectItem>
-                <SelectItem value="Converted to Opportunity" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
+                <SelectItem value="Attempting Contact">בטיפול - מנסה ליצור קשר</SelectItem>
+                <SelectItem value="Contacted - Qualifying">נוצר קשר - בירור צרכים</SelectItem>
+                <SelectItem value="Sales Ready">בשל להזדמנות / חם</SelectItem>
+                <SelectItem value="Lost / Unqualified">לא רלוונטי (סופי)</SelectItem>
+                <SelectItem value="Converted" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
               </SelectContent>
             </Select>
-            {leadStatus === 'Converted to Opportunity' && (
+            {leadStatus === 'Converted' && (
               <p className="text-xs text-emerald-600 font-medium mt-1">
-                ✨ שמירה תוביל לפתיחת הזדמנות חדשה
+                ✨ שמירה תוביל לפתיחת הזדמנות חדשה והסרת הליד מהרשימה
               </p>
             )}
           </div>

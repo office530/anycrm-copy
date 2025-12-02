@@ -50,7 +50,7 @@ export default function LeadsPage() {
       setShowLeadForm(false);
       processAutomation('Lead', 'create', data);
       
-      if (data.lead_status === 'Converted to Opportunity') {
+      if (data.lead_status === 'Converted') {
          convertToOpportunity.mutate(data);
       }
     }
@@ -70,7 +70,7 @@ export default function LeadsPage() {
     mutationFn: async (leadData) => {
         // Step 1: Update lead status first
         await base44.entities.Lead.update(leadData.id, { 
-            lead_status: "Converted to Opportunity" 
+            lead_status: "Converted" 
         });
 
         // Step 2: Create Opportunity with mapped fields
@@ -127,15 +127,15 @@ export default function LeadsPage() {
     const matchesYear = filters.year === "all" || lead.source_year === filters.year;
     // Default: Exclude converted leads unless specifically asked for
     const matchesStatus = filters.status === "all" 
-        ? lead.lead_status !== "Converted to Opportunity"
+        ? lead.lead_status !== "Converted"
         : lead.lead_status === filters.status;
         
     return matchesSearch && matchesYear && matchesStatus;
   });
 
   const handleLeadSubmit = (formData) => {
-    // Check if user selected "Converted to Opportunity"
-    if (formData.lead_status === 'Converted to Opportunity') {
+    // Check if user selected "Converted"
+    if (formData.lead_status === 'Converted') {
         if (editingLead) {
             // Merge old data with new form data to ensure we have all fields
             const mergedData = { ...editingLead, ...formData };
@@ -156,20 +156,20 @@ export default function LeadsPage() {
 
   const statusColors = {
     "New": "bg-blue-100 text-blue-800",
-    "Contact Attempt 1": "bg-yellow-100 text-yellow-800",
-    "Contact Attempt 2": "bg-orange-100 text-orange-800",
-    "Nurturing": "bg-purple-100 text-purple-800",
-    "Unqualified": "bg-gray-100 text-gray-800",
-    "Converted to Opportunity": "bg-emerald-100 text-emerald-800"
+    "Attempting Contact": "bg-yellow-100 text-yellow-800",
+    "Contacted - Qualifying": "bg-orange-100 text-orange-800",
+    "Sales Ready": "bg-purple-100 text-purple-800",
+    "Lost / Unqualified": "bg-gray-100 text-gray-800",
+    "Converted": "bg-emerald-100 text-emerald-800"
   };
 
   const statusLabels = {
     "New": "חדש",
-    "Contact Attempt 1": "ניסיון 1",
-    "Contact Attempt 2": "ניסיון 2",
-    "Nurturing": "טיפוח",
-    "Unqualified": "לא רלוונטי",
-    "Converted to Opportunity": "הומר להזדמנות"
+    "Attempting Contact": "בטיפול",
+    "Contacted - Qualifying": "בירור צרכים",
+    "Sales Ready": "בשל למכירה",
+    "Lost / Unqualified": "לא רלוונטי",
+    "Converted": "הומר להזדמנות"
   };
 
   const legacyColors = {
@@ -211,8 +211,10 @@ export default function LeadsPage() {
             <SelectContent>
               <SelectItem value="all">כל הסטטוסים</SelectItem>
               <SelectItem value="New">חדש</SelectItem>
-              <SelectItem value="Contact Attempt 1">ניסיון 1</SelectItem>
-              <SelectItem value="Converted to Opportunity">הומר להזדמנות</SelectItem>
+              <SelectItem value="Attempting Contact">בטיפול</SelectItem>
+              <SelectItem value="Contacted - Qualifying">בירור צרכים</SelectItem>
+              <SelectItem value="Sales Ready">בשל למכירה</SelectItem>
+              <SelectItem value="Converted">הומר להזדמנות</SelectItem>
               <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה 2023</SelectItem>
             </SelectContent>
           </Select>
