@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SettingsProvider, useSettings } from '@/context/SettingsContext';
+import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
