@@ -23,6 +23,8 @@ export const defaultPipelineStages = [
   { id: "Closed Lost (אבוד)", label: "אבוד", color: "bg-slate-500", light: "bg-slate-50 text-slate-700" }
 ];
 
+export const defaultStages = defaultPipelineStages;
+
 export const defaultBranding = {
   companyName: "AgentCRM",
   logoUrl: "", 
