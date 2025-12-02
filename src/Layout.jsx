@@ -8,10 +8,34 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
 
+import { useNavigate } from 'react-router-dom';
+
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { branding, theme, toggleTheme } = useSettings();
-  
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // בדיקה אם אנחנו בעמוד הנחיתה
+  const isLandingPage = currentPageName === 'LandingPage' || location.pathname === '/LandingPage' || location.pathname === '/';
+
+  // בדיקת התחברות (דמה) - אם מנסים לגשת לעמוד פנימי
+  React.useEffect(() => {
+      if (!isLandingPage) {
+          const isAuthenticated = localStorage.getItem('crm_is_authenticated') === 'true';
+          if (!isAuthenticated) {
+              // הפניה לעמוד הנחיתה אם לא מחובר
+              // מכיוון שאין לנו שליטה מלאה על ה-Router הראשי, נשתמש בנתיב הישיר
+              navigate(createPageUrl('LandingPage')); 
+          }
+      }
+  }, [isLandingPage, navigate]);
+
+  // אם אנחנו בעמוד נחיתה - נציג רק את התוכן ללא המעטפת
+  if (isLandingPage) {
+      return <main className="w-full min-h-screen">{children}</main>;
+  }
+
   // Exact paths
   const navigation = [
     { name: 'לוח בקרה', path: 'Dashboard', icon: LayoutDashboard },
