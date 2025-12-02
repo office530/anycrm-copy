@@ -27,6 +27,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { InlineEdit } from "@/components/ui/InlineEdit";
 
 export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -257,29 +258,65 @@ export default function LeadsPage() {
                 <TableCell className="rounded-r-2xl border-none py-4 pr-6">
                   <div className="flex items-center gap-4">
                     <div className={`w-2.5 h-2.5 rounded-full ${legacyColors[lead.original_status_color] || 'bg-gray-300'} ring-4 ring-slate-50`} title={`Legacy Color: ${lead.original_status_color}`} />
-                    <div>
-                      <Link to={`${createPageUrl('LeadDetails')}?id=${lead.id}`} className="font-bold text-slate-800 hover:text-teal-600 transition-colors">
-                        {lead.full_name}
-                      </Link>
-                      <p className="text-xs text-slate-400 mt-1 font-medium">{lead.city} • בן {lead.age}</p>
+                    <div className="flex-1 min-w-0">
+                      <InlineEdit 
+                        value={lead.full_name}
+                        onSave={(val) => updateLead.mutate({ id: lead.id, data: { full_name: val } })}
+                        className="font-bold text-slate-800 hover:text-teal-600"
+                      />
+                      <p className="text-xs text-slate-400 mt-0.5 font-medium flex items-center gap-1">
+                        {lead.city} • בן {lead.age}
+                      </p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="border-none py-4">
                   <div className="flex items-center text-slate-500 font-medium">
                     <Phone className="w-3.5 h-3.5 ml-2 text-slate-300" />
-                    {lead.phone_number}
+                    <InlineEdit 
+                        value={lead.phone_number}
+                        type="tel"
+                        onSave={(val) => updateLead.mutate({ id: lead.id, data: { phone_number: val } })}
+                    />
                   </div>
                 </TableCell>
                 <TableCell className="border-none py-4">
-                  <Badge variant="secondary" className={`rounded-full px-3 py-1 shadow-sm font-semibold ${statusColors[lead.lead_status]}`}>
-                    {statusLabels[lead.lead_status] || lead.lead_status}
-                  </Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Badge 
+                        variant="secondary" 
+                        className={`rounded-full px-3 py-1 shadow-sm font-semibold cursor-pointer hover:opacity-80 transition-opacity ${statusColors[lead.lead_status]}`}
+                      >
+                        {statusLabels[lead.lead_status] || lead.lead_status}
+                      </Badge>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="center">
+                        {Object.entries(statusLabels).map(([key, label]) => (
+                             <DropdownMenuItem 
+                                key={key}
+                                onClick={() => {
+                                    if (key === 'Converted') {
+                                        convertToOpportunity.mutate(lead);
+                                    } else {
+                                        updateLead.mutate({ id: lead.id, data: { lead_status: key } });
+                                    }
+                                }}
+                                className="cursor-pointer"
+                             >
+                                {label}
+                             </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
                 <TableCell className="border-none py-4">
-                    <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md text-xs font-medium">
-                        {lead.source_year}
-                    </span>
+                    <div className="w-20">
+                        <InlineEdit 
+                            value={lead.source_year}
+                            onSave={(val) => updateLead.mutate({ id: lead.id, data: { source_year: val } })}
+                            className="bg-slate-100 text-slate-600 rounded-md text-xs font-medium px-2"
+                        />
+                    </div>
                 </TableCell>
                 <TableCell className="border-none py-4">
                   <div className="flex items-center text-slate-500 text-sm font-medium">

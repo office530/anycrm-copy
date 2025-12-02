@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
+import { InlineEdit } from "@/components/ui/InlineEdit";
 
 const STAGES = [
   { id: "New (חדש)", label: "חדש", color: "border-slate-400" },
@@ -198,14 +199,34 @@ export default function OpportunitiesPage() {
                               </div>
                               
                               <div className="text-xs text-slate-500 space-y-1">
-                                <div className="flex justify-between">
-                                  <span>מוצר:</span>
-                                  <span className="font-medium">{productLabels[opp.product_type] || opp.product_type}</span>
+                              <div className="flex justify-between">
+                                <span>מוצר:</span>
+                                <span className="font-medium">{productLabels[opp.product_type] || opp.product_type}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span>סכום:</span>
+                                <div className="w-24">
+                                    <InlineEdit 
+                                      value={opp.loan_amount_requested}
+                                      type="number"
+                                      formatDisplay={(val) => `₪${Number(val || 0).toLocaleString()}`}
+                                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
+                                      className="font-medium text-slate-900 justify-end text-right"
+                                    />
                                 </div>
-                                <div className="flex justify-between">
-                                  <span>סכום:</span>
-                                  <span className="font-medium text-slate-900">₪{opp.loan_amount_requested?.toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <span>יעד סגירה:</span>
+                                <div className="w-28">
+                                    <InlineEdit 
+                                      value={opp.expected_close_date}
+                                      type="date"
+                                      placeholder="הגדר תאריך"
+                                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
+                                      className="justify-end text-right"
+                                    />
                                 </div>
+                              </div>
                               </div>
 
                               {opp.next_task && (
