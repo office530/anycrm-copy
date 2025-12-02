@@ -27,7 +27,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       product_type: "Reverse Mortgage",
       property_value: initialLead?.estimated_property_value || "",
       loan_amount_requested: "",
-      deal_stage: "Discovery Call (שיחת בירור צרכים)",
+      deal_stage: "New (חדש)",
       probability: 20,
       expected_close_date: "",
       next_task: "",
@@ -226,6 +226,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                 <SelectValue placeholder="בחר שלב" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="New (חדש)">חדש</SelectItem>
                 <SelectItem value="Discovery Call (שיחת בירור צרכים)">שיחת בירור צרכים</SelectItem>
                 <SelectItem value="Meeting Scheduled (נקבעת פגישה)">נקבעת פגישה</SelectItem>
                 <SelectItem value="Simulation Sent (נשלחה סימולציה)">נשלחה סימולציה</SelectItem>

@@ -5,17 +5,19 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, AlertCircle, LayoutGrid, List as ListIcon } from "lucide-react";
+import { Loader2, Plus, AlertCircle, LayoutGrid, List as ListIcon, ArrowLeft } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 
 const STAGES = [
+  { id: "New (חדש)", label: "חדש", color: "border-slate-400" },
   { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "border-blue-500" },
+  { id: "Meeting Scheduled (נקבעת פגישה)", label: "נקבעת פגישה", color: "border-indigo-500" },
   { id: "Simulation Sent (נשלחה סימולציה)", label: "נשלחה סימולציה", color: "border-purple-500" },
-  { id: "Negotiation (משא ומתן)", label: "משא ומתן", color: "border-yellow-500" },
-  { id: "Underwriting (חיתום/תהליך בבנק)", label: "תהליך בבנק/חיתום", color: "border-orange-500" },
+  { id: "Documents Collection (איסוף מסמכים)", label: "איסוף מסמכים", color: "border-yellow-500" },
+  { id: "Request Sent to Harel (בקשה נשלחה להראל)", label: "נשלח להראל", color: "border-orange-500" },
   { id: "Closed Won (נחתם - בהצלחה)", label: "נסגר בהצלחה", color: "border-green-500" },
   { id: "Closed Lost (אבוד)", label: "אבוד", color: "border-red-500" }
 ];
@@ -73,6 +75,30 @@ export default function OpportunitiesPage() {
 
   const getStageOpportunities = (stageId) => {
     return opportunities.filter(o => o.deal_stage === stageId);
+  };
+
+  const handleNextStage = (e, opp) => {
+    e.stopPropagation();
+    const currentStageIndex = STAGES.findIndex(s => s.id === opp.deal_stage);
+    if (currentStageIndex !== -1 && currentStageIndex < STAGES.length - 2) { // Stop before Closed Won/Lost if logic requires, or allow full traversal
+        // Allow going to Closed Won, but maybe stop there?
+        // The last two are Closed Won and Closed Lost. 
+        // Let's say the flow is linear up to "Request Sent to Harel", then you choose Won or Lost.
+        // But user asked "until closed won/lost". Let's make it go linearly to Closed Won.
+        
+        // Actually, looking at my new STAGES list:
+        // ... Request Sent ... -> Closed Won -> Closed Lost.
+        // Moving from Won to Lost via "Next" is weird.
+        // Let's allow moving up to Closed Won (index STAGES.length - 2).
+        
+        const nextStage = STAGES[currentStageIndex + 1];
+        if (nextStage.id === "Closed Lost (אבוד)") return; // Don't auto-advance to Lost
+        
+        updateOppMutation.mutate({
+            id: opp.id,
+            data: { ...opp, deal_stage: nextStage.id }
+        });
+    }
   };
 
   const calculateTotal = (stageId) => {
@@ -153,9 +179,22 @@ export default function OpportunitiesPage() {
                                 <span className="font-bold text-sm text-slate-800 line-clamp-1">
                                   {opp.lead_name || "לקוח לא ידוע"}
                                 </span>
-                                <Badge variant="outline" className="text-[10px] h-5 px-1">
-                                  {opp.probability}%
-                                </Badge>
+                                <div className="flex items-center gap-1">
+                                    <Badge variant="outline" className="text-[10px] h-5 px-1">
+                                      {opp.probability}%
+                                    </Badge>
+                                    {opp.deal_stage !== "Closed Won (נחתם - בהצלחה)" && opp.deal_stage !== "Closed Lost (אבוד)" && (
+                                        <Button 
+                                            size="icon" 
+                                            variant="ghost" 
+                                            className="h-5 w-5 hover:bg-blue-100 text-blue-600"
+                                            title="העבר לשלב הבא"
+                                            onClick={(e) => handleNextStage(e, opp)}
+                                        >
+                                            <ArrowLeft className="h-3 w-3" />
+                                        </Button>
+                                    )}
+                                </div>
                               </div>
                               
                               <div className="text-xs text-slate-500 space-y-1">
