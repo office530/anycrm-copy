@@ -8,6 +8,8 @@ import {
 import { Users, TrendingUp, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -118,12 +120,16 @@ export default function Dashboard() {
               <h1 className="text-4xl font-bold text-slate-900 mb-2">ברוכים הבאים ל-Gishers</h1>
               <p className="text-slate-500 text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
               <div className="flex gap-3">
-                <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
-                    הוסף נתונים חדשים
-                </Button>
-                <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 rounded-full px-6">
-                    צפה בדוחות
-                </Button>
+                <Link to={createPageUrl('Leads')}>
+                  <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
+                      הוסף נתונים חדשים
+                  </Button>
+                </Link>
+                <Link to={createPageUrl('Reports')}>
+                  <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 rounded-full px-6">
+                      צפה בדוחות
+                  </Button>
+                </Link>
               </div>
           </div>
           <div className="relative z-10">
