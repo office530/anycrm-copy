@@ -112,14 +112,14 @@ export default function Dashboard() {
   if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
 
   return (
-    <div className="space-y-8 pb-10 max-w-7xl mx-auto">
+    <div className="space-y-6 md:space-y-8 pb-10 max-w-7xl mx-auto">
       
       {/* Branding Hero Section */}
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex items-center justify-between overflow-hidden relative">
-          <div className="relative z-10 max-w-lg">
-              <h1 className="text-4xl font-bold text-slate-900 mb-2">ברוכים הבאים ל-Gishers</h1>
-              <p className="text-slate-500 text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
-              <div className="flex gap-3">
+      <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
+          <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">ברוכים הבאים ל-Gishers</h1>
+              <p className="text-slate-500 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
                   <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
                       הוסף נתונים חדשים
@@ -305,9 +305,9 @@ export default function Dashboard() {
   );
 }
 
-function KpiCard({ title, value, label, icon: Icon, color, total }) {
+function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
     return (
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all">
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
@@ -315,9 +315,9 @@ function KpiCard({ title, value, label, icon: Icon, color, total }) {
                     </div>
                     {total && <span className="text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-full">{total} סה״כ</span>}
                 </div>
-                <h3 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-1">{value}</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-1">{value}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{title}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">{label}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">{subtext}</p>
             </div>
         </div>
     );
