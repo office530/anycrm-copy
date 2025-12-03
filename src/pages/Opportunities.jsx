@@ -248,7 +248,81 @@ export default function OpportunitiesPage() {
       </DragDropContext>
       ) : (
         <div className="bg-white dark:bg-neutral-200 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-300 overflow-hidden">
-             <div className="p-10 text-center text-neutral-500">תצוגת רשימה זמינה בגרסה הבאה</div>
+             <Table>
+               <TableHeader className="bg-neutral-50 dark:bg-neutral-300">
+                 <TableRow>
+                   <TableHead className="text-right">לקוח</TableHead>
+                   <TableHead className="text-right">מוצר</TableHead>
+                   <TableHead className="text-right">שלב</TableHead>
+                   <TableHead className="text-right">סכום</TableHead>
+                   <TableHead className="text-right">הסתברות</TableHead>
+                   <TableHead className="text-right">צפי סגירה</TableHead>
+                   <TableHead className="text-left">פעולות</TableHead>
+                 </TableRow>
+               </TableHeader>
+               <TableBody>
+                 {opportunities.map((opp) => (
+                   <TableRow key={opp.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-300/50 transition-colors">
+                     <TableCell className="font-medium">
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setEditingOpp(opp); setShowForm(true); }}>
+                            <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">
+                                {opp.lead_name?.charAt(0)}
+                            </div>
+                            <span className="hover:text-teal-600 underline-offset-4 hover:underline">{opp.lead_name}</span>
+                        </div>
+                     </TableCell>
+                     <TableCell>{opp.product_type}</TableCell>
+                     <TableCell>
+                        <InlineEdit 
+                            type="select"
+                            value={opp.deal_stage}
+                            options={activeStages.map(s => ({ value: s.id, label: s.label }))}
+                            onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { deal_stage: val } })}
+                            formatDisplay={(val) => {
+                                const stage = activeStages.find(s => s.id === val);
+                                return <Badge variant="outline" className={`${stage?.light} border-0`}>{stage?.label || val}</Badge>;
+                            }}
+                        />
+                     </TableCell>
+                     <TableCell>
+                        <InlineEdit 
+                             value={opp.loan_amount_requested}
+                             type="number"
+                             formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
+                             onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
+                             className="font-mono"
+                        />
+                     </TableCell>
+                     <TableCell>
+                        <InlineEdit 
+                             value={opp.probability}
+                             type="number"
+                             formatDisplay={(val) => `${val}%`}
+                             onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { probability: Number(val) } })}
+                        />
+                     </TableCell>
+                     <TableCell>
+                        <InlineEdit 
+                             value={opp.expected_close_date}
+                             type="date"
+                             formatDisplay={(val) => val ? moment(val).format("DD/MM/YYYY") : "-"}
+                             onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
+                        />
+                     </TableCell>
+                     <TableCell className="text-left">
+                        <Button variant="ghost" size="sm" 
+                            onClick={() => {
+                                if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                            }} 
+                            className="text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                     </TableCell>
+                   </TableRow>
+                 ))}
+               </TableBody>
+             </Table>
         </div>
       )}
 
