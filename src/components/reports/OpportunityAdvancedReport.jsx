@@ -196,7 +196,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </div>
             <div className="text-center px-4 border-l border-neutral-200">
                 <p className="text-xs text-neutral-500">צפי משוקלל</p>
-                <p className="text-lg font-bold text-blue-600">₪{weightedPipeline.toLocaleString()}</p>
+                <p className="text-lg font-bold text-red-600">₪{weightedPipeline.toLocaleString()}</p>
             </div>
             <div className="text-center px-4">
                 <p className="text-xs text-neutral-500">אחוז סגירה</p>
@@ -210,7 +210,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-blue-500" /> התקדמות עסקאות (כמות ושווי)
+                    <BarChart3 className="w-5 h-5 text-red-500" /> התקדמות עסקאות (כמות ושווי)
                 </CardTitle>
             </CardHeader>
             <CardContent className="h-[350px]">
@@ -223,7 +223,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                             contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
                             formatter={(value, name) => name === 'value' ? `₪${value.toLocaleString()}` : value}
                         />
-                        <Bar dataKey="count" name="כמות" fill="#3b82f6" barSize={20} radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="count" name="כמות" fill="#ef4444" barSize={20} radius={[0, 4, 4, 0]} />
                     </ComposedChart>
                 </ResponsiveContainer>
             </CardContent>

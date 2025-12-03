@@ -42,7 +42,7 @@ export default function ReportsPage() {
   const isLoading = leadsLoading || oppsLoading || tasksLoading || activitiesLoading;
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-96"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>;
+    return <div className="flex justify-center items-center h-96"><Loader2 className="w-8 h-8 animate-spin text-red-600" /></div>;
   }
 
   return (

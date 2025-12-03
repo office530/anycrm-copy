@@ -66,7 +66,7 @@ export default function ActivityReport({ tasks, activities, timeRange }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">שיחות שבוצעו</CardTitle>
-            <Phone className="h-4 w-4 text-blue-500" />
+            <Phone className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.calls}</div>
@@ -96,7 +96,7 @@ export default function ActivityReport({ tasks, activities, timeRange }) {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#3b82f6" name="כמות" />
+                <Bar dataKey="value" fill="#ef4444" name="כמות" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

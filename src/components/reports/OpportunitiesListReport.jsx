@@ -69,14 +69,14 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
       
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-blue-50 border-blue-100">
+        <Card className="bg-neutral-50 border-neutral-100">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-600 mb-1">הזדמנויות פתוחות</p>
-              <h3 className="text-3xl font-bold text-blue-900">{stats.openCount}</h3>
+              <p className="text-sm font-medium text-red-600 mb-1">הזדמנויות פתוחות</p>
+              <h3 className="text-3xl font-bold text-neutral-900">{stats.openCount}</h3>
             </div>
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Briefcase className="w-6 h-6 text-blue-600" />
+            <div className="p-3 bg-red-100 rounded-full">
+              <Briefcase className="w-6 h-6 text-red-600" />
             </div>
           </CardContent>
         </Card>

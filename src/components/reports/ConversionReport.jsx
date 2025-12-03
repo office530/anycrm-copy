@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FunnelChart, Funnel, LabelList, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Users, ArrowLeftRight, Percent } from "lucide-react";
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
+const COLORS = ['#ef4444', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
 
 export default function ConversionReport({ leads, opportunities, timeRange }) {
   
@@ -31,7 +31,7 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
     {
       "value": stats.totalLeads,
       "name": "סה\"כ לידים",
-      "fill": "#3b82f6"
+      "fill": "#ef4444"
     },
     {
       "value": stats.convertedLeads,
@@ -56,7 +56,7 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">יחס המרה (ליד להזדמנות)</CardTitle>
-            <ArrowLeftRight className="h-4 w-4 text-blue-500" />
+            <ArrowLeftRight className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.conversionRate.toFixed(1)}%</div>

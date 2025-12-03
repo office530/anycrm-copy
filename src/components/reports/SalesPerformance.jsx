@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { DollarSign, Trophy, Target, TrendingUp } from "lucide-react";
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+const COLORS = ['#ef4444', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 export default function SalesPerformance({ leads, opportunities, timeRange }) {
   
@@ -76,7 +76,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">שווי עסקה ממוצע</CardTitle>
-            <Target className="h-4 w-4 text-blue-500" />
+            <Target className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(stats.avgDealSize)}</div>
@@ -137,7 +137,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
                 <XAxis type="number" />
                 <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px' }} />
                 <Tooltip />
-                <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} name="כמות" />
+                <Bar dataKey="value" fill="#ef4444" radius={[0, 4, 4, 0]} name="כמות" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
