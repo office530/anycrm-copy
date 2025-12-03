@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area } from
 'recharts';
-import { Users, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
+import { Users, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
@@ -112,21 +112,21 @@ export default function Dashboard() {
   if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
 
   return (
-    <div className="space-y-6 md:space-y-8 pb-10 max-w-7xl mx-auto">
+    <div className="space-y-4 pb-10 max-w-7xl mx-auto">
       
       {/* Branding Hero Section */}
-      <div className="bg-gradient-to-br from-white to-neutral-50/50 md:bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-100 md:border-neutral-100 border-transparent flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
+      <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm border border-neutral-100 flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-4 md:gap-0">
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
               <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">ברוכים הבאים </h1>
               <p className="text-neutral-600 text-base md:text-lg mb-6">Old Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
-                  <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
+                  <Button className="bg-red-700 hover:bg-red-800 text-white rounded-xl px-6 shadow-md shadow-red-900/10">
                       הוסף נתונים חדשים
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Reports')}>
-                  <Button variant="outline" className="bg-zinc-200 text-red-700 px-6 py-2 text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-red-200 hover:bg-red-50">
+                  <Button variant="outline" className="bg-white text-neutral-700 px-6 py-2 text-sm font-medium rounded-xl border border-neutral-200 hover:bg-neutral-50 hover:text-red-700 transition-colors shadow-sm">
                       צפה בדוחות
                   </Button>
                 </Link>
@@ -136,7 +136,7 @@ export default function Dashboard() {
               <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692ea53ece3f48d4695254eb/413fe96bb_image.png"
             alt="Gishers Logo"
-            className="h-32 object-contain" />
+            className="h-28 object-contain mix-blend-multiply" />
 
           </div>
           {/* Decorative Background */}
@@ -171,7 +171,7 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           
           {/* Left Column: Charts (Span 2) */}
           <div className="lg:col-span-2 space-y-6">
@@ -188,20 +188,20 @@ export default function Dashboard() {
                         <AreaChart data={stats.trendData}>
                             <defs>
                                 <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#a3a3a3" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#a3a3a3" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0} />
                                 </linearGradient>
                                 <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#b91c1c" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#dc2626" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                            <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
-                            <Area type="monotone" dataKey="sales" name="מכירות" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} dy={10} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
+                            <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }} />
+                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#94a3b8" fill="url(#colorLeads)" strokeWidth={3} fillOpacity={1} />
+                            <Area type="monotone" dataKey="sales" name="מכירות" stroke="#dc2626" fill="url(#colorSales)" strokeWidth={3} fillOpacity={1} />
                         </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -306,19 +306,34 @@ export default function Dashboard() {
 }
 
 function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
-  return (
-    <div className="bg-white dark:bg-neutral-200 p-5 md:p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-300 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
-                        <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
-                    </div>
-                    {total && <span className="text-xs font-bold text-neutral-500 dark:text-neutral-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-800 mb-1">{value}</h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-700 font-medium">{title}</p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-600 mt-2">{subtext}</p>
-            </div>
-        </div>);
+  // Parse color for background and text
+  const baseColor = color.replace('bg-', '');
+  const bgClass = `bg-${baseColor}-50`;
+  const textClass = `text-${baseColor}-600`;
 
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] border border-neutral-100 hover:shadow-lg transition-all duration-300 relative overflow-hidden group">
+            <div className="relative z-10">
+                <div className="flex items-start justify-between mb-2">
+                    <p className="text-sm font-medium text-neutral-500 uppercase tracking-wide">{title}</p>
+                    <div className={`p-2 rounded-full ${bgClass} ${textClass} group-hover:scale-110 transition-transform duration-300`}>
+                        <Icon className="w-5 h-5" />
+                    </div>
+                </div>
+                
+                <div className="flex items-baseline gap-2 mt-1">
+                    <h3 className="text-4xl font-extrabold text-neutral-800 tracking-tight">{value}</h3>
+                </div>
+                
+                <div className="flex items-center gap-2 mt-3">
+                     {/* Placeholder for trend - in real app calculate this */}
+                    <div className="flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        <span>+12%</span>
+                    </div>
+                    <p className="text-xs text-neutral-400 font-medium">{subtext}</p>
+                </div>
+            </div>
+    </div>
+  );
 }
