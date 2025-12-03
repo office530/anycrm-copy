@@ -10,6 +10,8 @@ import OpportunityAdvancedReport from '@/components/reports/OpportunityAdvancedR
 import OpportunitiesListReport from '@/components/reports/OpportunitiesListReport'; // Fixed import
 import ConversionReport from '@/components/reports/ConversionReport';
 import ActivityReport from '@/components/reports/ActivityReport';
+import CustomReports from '@/components/reports/CustomReports';
+import CustomDashboard from '@/components/reports/CustomDashboard';
 
 export default function ReportsPage() {
   const [timeRange, setTimeRange] = useState('all');
@@ -73,6 +75,8 @@ export default function ReportsPage() {
           <TabsTrigger value="sales">ביצועי מכירות</TabsTrigger>
           <TabsTrigger value="conversion">יחסי המרה</TabsTrigger>
           <TabsTrigger value="activity">דוח פעילות</TabsTrigger>
+          <TabsTrigger value="custom_reports">דוחות מותאמים</TabsTrigger>
+          <TabsTrigger value="custom_dashboard">דשבורד אישי</TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
@@ -93,6 +97,14 @@ export default function ReportsPage() {
 
         <TabsContent value="activity" className="mt-6">
           <ActivityReport tasks={tasks} activities={activities} timeRange={timeRange} />
+        </TabsContent>
+
+        <TabsContent value="custom_reports" className="mt-6">
+          <CustomReports />
+        </TabsContent>
+
+        <TabsContent value="custom_dashboard" className="mt-6">
+          <CustomDashboard />
         </TabsContent>
       </Tabs>
     </div>

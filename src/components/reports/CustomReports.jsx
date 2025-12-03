@@ -1,0 +1,286 @@
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Plus, Save, Download, Trash2, FileText, BarChart } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+// Helper to export to CSV
+const exportToCSV = (data, filename) => {
+    if (!data || !data.length) return;
+    const headers = Object.keys(data[0]);
+    const csvContent = [
+        headers.join(','),
+        ...data.map(row => headers.map(fieldName => {
+            let val = row[fieldName];
+            if (val === null || val === undefined) val = '';
+            val = String(val).replace(/"/g, '""');
+            if (val.includes(',')) val = `"${val}"`;
+            return val;
+        }).join(','))
+    ].join('\n');
+
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${filename}.csv`;
+    link.click();
+};
+
+export default function CustomReports() {
+    const [isCreating, setIsCreating] = useState(false);
+    const [selectedReport, setSelectedReport] = useState(null);
+    const queryClient = useQueryClient();
+
+    // Fetch saved reports
+    const { data: savedReports, isLoading: loadingReports } = useQuery({
+        queryKey: ['report_configs'],
+        queryFn: () => base44.entities.ReportConfig.filter({ type: 'table' }),
+        initialData: []
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id) => base44.entities.ReportConfig.delete(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['report_configs']);
+            if (selectedReport?.id) setSelectedReport(null);
+        }
+    });
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">דוחות מותאמים אישית</h2>
+                <Button onClick={() => setIsCreating(true)} className="bg-red-600 hover:bg-red-700">
+                    <Plus className="w-4 h-4 ml-2" />
+                    צור דוח חדש
+                </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Sidebar: Saved Reports List */}
+                <Card className="md:col-span-1 h-fit">
+                    <CardHeader>
+                        <CardTitle className="text-lg">הדוחות שלי</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        {loadingReports ? <Loader2 className="animate-spin mx-auto" /> : 
+                        savedReports.length === 0 ? <p className="text-sm text-slate-400">אין דוחות שמורים</p> :
+                        savedReports.map(report => (
+                            <div 
+                                key={report.id} 
+                                onClick={() => setSelectedReport(report)}
+                                className={`p-3 rounded-lg cursor-pointer border transition-colors flex justify-between items-center group ${selectedReport?.id === report.id ? 'bg-red-50 border-red-200 text-red-700' : 'hover:bg-slate-50 border-transparent'}`}
+                            >
+                                <div className="flex items-center gap-2 overflow-hidden">
+                                    <FileText className="w-4 h-4 flex-shrink-0" />
+                                    <span className="truncate text-sm font-medium">{report.name}</span>
+                                </div>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if(confirm('למחוק דוח זה?')) deleteMutation.mutate(report.id);
+                                    }}
+                                >
+                                    <Trash2 className="w-3 h-3" />
+                                </Button>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+
+                {/* Main Content: Report Viewer or Creator */}
+                <Card className="md:col-span-3 min-h-[500px]">
+                    <CardContent className="p-6">
+                        {isCreating ? (
+                            <ReportEditor 
+                                onCancel={() => setIsCreating(false)} 
+                                onSave={() => {
+                                    setIsCreating(false);
+                                    queryClient.invalidateQueries(['report_configs']);
+                                }} 
+                            />
+                        ) : selectedReport ? (
+                            <ReportViewer report={selectedReport} />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-slate-400 py-20">
+                                <FileText className="w-16 h-16 mb-4 opacity-20" />
+                                <p>בחר דוח מהרשימה או צור דוח חדש</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    );
+}
+
+function ReportEditor({ onCancel, onSave }) {
+    const [step, setStep] = useState(1);
+    const [config, setConfig] = useState({
+        name: "",
+        type: "table",
+        entity_type: "Lead",
+        config: { fields: [] }
+    });
+    const [schema, setSchema] = useState(null);
+
+    // Fetch schema when entity type changes
+    useEffect(() => {
+        async function fetchSchema() {
+            try {
+                const s = await base44.entities[config.entity_type].schema();
+                setSchema(s);
+            } catch (e) { console.error(e); }
+        }
+        fetchSchema();
+    }, [config.entity_type]);
+
+    const saveMutation = useMutation({
+        mutationFn: (data) => base44.entities.ReportConfig.create(data),
+        onSuccess: onSave
+    });
+
+    const toggleField = (field) => {
+        const current = config.config.fields || [];
+        const next = current.includes(field) ? current.filter(f => f !== field) : [...current, field];
+        setConfig({ ...config, config: { ...config.config, fields: next } });
+    };
+
+    const availableFields = schema ? Object.keys(schema.properties) : [];
+
+    return (
+        <div className="space-y-6 animate-in fade-in">
+            <div className="flex justify-between items-center border-b pb-4">
+                <h3 className="text-xl font-bold">יצירת דוח חדש</h3>
+                <Button variant="ghost" onClick={onCancel}>ביטול</Button>
+            </div>
+
+            <div className="grid gap-6">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>שם הדוח</Label>
+                        <Input value={config.name} onChange={e => setConfig({...config, name: e.target.value})} placeholder="לדוגמה: לידים חדשים השבוע" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>ישות מקור</Label>
+                        <Select value={config.entity_type} onValueChange={v => setConfig({...config, entity_type: v, config: { fields: [] }})}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Lead">לידים</SelectItem>
+                                <SelectItem value="Opportunity">הזדמנויות</SelectItem>
+                                <SelectItem value="Task">משימות</SelectItem>
+                                <SelectItem value="Activity">פעילויות</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label>שדות להצגה (בחר לפחות אחד)</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-slate-50 max-h-60 overflow-y-auto">
+                        {availableFields.map(field => (
+                            <div key={field} className="flex items-center space-x-2 space-x-reverse">
+                                <Checkbox 
+                                    id={field} 
+                                    checked={config.config.fields?.includes(field)}
+                                    onCheckedChange={() => toggleField(field)}
+                                />
+                                <Label htmlFor={field} className="text-sm cursor-pointer font-normal">
+                                    {schema?.properties[field]?.description || field}
+                                </Label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                    <Button 
+                        onClick={() => saveMutation.mutate(config)} 
+                        disabled={!config.name || config.config.fields?.length === 0 || saveMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-700"
+                    >
+                        {saveMutation.isPending && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
+                        שמור וצור דוח
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function ReportViewer({ report }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['report_data', report.id],
+        queryFn: () => base44.entities[report.entity_type].list(),
+        // In a real app, we would apply filtering on the server side if supported, 
+        // or robust client side filtering. For now, fetching all.
+    });
+
+    if (isLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
+
+    // Filter columns based on config
+    const fields = report.config.fields || [];
+    // Simple data mapping
+    const displayData = data?.map(item => {
+        const row = {};
+        fields.forEach(f => row[f] = item[f]);
+        return row;
+    }) || [];
+
+    return (
+        <div className="space-y-4">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h3 className="text-xl font-bold">{report.name}</h3>
+                    <p className="text-sm text-slate-500">מקור: {report.entity_type} | {displayData.length} רשומות</p>
+                </div>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => window.print()}>
+                        הדפס ל-PDF
+                    </Button>
+                    <Button variant="outline" onClick={() => exportToCSV(displayData, report.name)}>
+                        <Download className="w-4 h-4 ml-2" />
+                        ייצוא CSV
+                    </Button>
+                </div>
+            </div>
+
+            <div className="border rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader className="bg-slate-50">
+                            <TableRow>
+                                {fields.map(f => <TableHead key={f} className="text-right">{f}</TableHead>)}
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {displayData.slice(0, 50).map((row, i) => (
+                                <TableRow key={i}>
+                                    {fields.map(f => <TableCell key={f}>{String(row[f] || '-')}</TableCell>)}
+                                </TableRow>
+                            ))}
+                            {displayData.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={fields.length} className="text-center py-8 text-slate-500">
+                                        אין נתונים להצגה
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
+            {displayData.length > 50 && <p className="text-xs text-slate-400 text-center mt-2">מציג 50 רשומות ראשונות</p>}
+        </div>
+    );
+}
