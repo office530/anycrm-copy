@@ -28,17 +28,17 @@ function LayoutContent({ children, currentPageName }) {
   const activeClass = `bg-red-50 text-red-700 font-bold`;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-heebo text-slate-900 flex" dir="rtl">
+    <div className="min-h-screen bg-[#F8FAFC] font-heebo text-neutral-900 flex" dir="rtl">
       
       {/* Sidebar Desktop */}
       <aside className={`
-        fixed inset-y-0 right-0 z-50 w-72 bg-white text-slate-800 border-l border-slate-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-sm
+        fixed inset-y-0 right-0 z-50 w-72 bg-white text-neutral-800 border-l border-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-sm
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
             {/* Logo */}
-            <div className="p-8 border-b border-slate-50">
-                <div className="flex items-center gap-3 text-2xl font-bold tracking-tight text-slate-900">
+            <div className="p-8 border-b border-neutral-50">
+                <div className="flex items-center gap-3 text-2xl font-bold tracking-tight text-neutral-900">
                     {branding.logoUrl ? (
                         <img src={branding.logoUrl} alt="Logo" className="w-10 h-10 object-contain bg-white rounded-lg p-1" />
                     ) : (
@@ -48,7 +48,7 @@ function LayoutContent({ children, currentPageName }) {
                     )}
                     <span className="truncate">{branding.companyName}</span>
                 </div>
-                <p className="text-xs text-slate-500 mt-2 font-medium tracking-wide opacity-80">OLD SALES DATABASE</p>
+                <p className="text-xs text-neutral-500 mt-2 font-medium tracking-wide opacity-80">OLD SALES DATABASE</p>
             </div>
 
             {/* Nav */}
@@ -64,10 +64,10 @@ function LayoutContent({ children, currentPageName }) {
                         group flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
                         ? activeClass
-                        : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}
+                        : 'text-neutral-600 hover:bg-red-50 hover:text-red-600'}
                     `}
                     >
-                    <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-red-700' : 'text-slate-400 group-hover:text-red-600'}`} />
+                    <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-red-700' : 'text-neutral-400 group-hover:text-red-600'}`} />
                     <span className="relative z-10">{item.name}</span>
                     {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-600 rounded-r-full" />}
                     </Link>
@@ -82,7 +82,7 @@ function LayoutContent({ children, currentPageName }) {
                     onClick={() => setIsSidebarOpen(false)}
                     className={`
                         flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        ${currentPageName === 'Settings' ? 'bg-red-50 text-red-700 font-bold' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}
+                        ${currentPageName === 'Settings' ? 'bg-red-50 text-red-700 font-bold' : 'text-neutral-600 hover:bg-red-50 hover:text-red-600'}
                     `}
                 >
                     <SettingsIcon className="w-5 h-5" />
@@ -105,15 +105,15 @@ function LayoutContent({ children, currentPageName }) {
         </header>
 
         {/* Topbar Desktop */}
-        <header className="hidden lg:flex bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800 h-20 items-center justify-between px-8 sticky top-0 z-30">
-            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+        <header className="hidden lg:flex bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200/60 dark:border-slate-800 h-20 items-center justify-between px-8 sticky top-0 z-30">
+            <h1 className="text-2xl font-bold text-neutral-800 dark:text-slate-100">
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
             </h1>
             <div className="flex items-center gap-2 md:gap-4">
                 <div className="hidden md:block">
                   <GlobalSearch />
                 </div>
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-neutral-500 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-neutral-400">
                     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
                 <Notifications />

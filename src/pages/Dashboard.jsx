@@ -115,10 +115,10 @@ export default function Dashboard() {
     <div className="space-y-6 md:space-y-8 pb-10 max-w-7xl mx-auto">
       
       {/* Branding Hero Section */}
-      <div className="bg-gradient-to-br from-white to-slate-50/50 md:bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 md:border-slate-100 border-transparent flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
+      <div className="bg-gradient-to-br from-white to-slate-50/50 md:bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-100 md:border-neutral-100 border-transparent flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">ברוכים הבאים ל-Gishers</h1>
-              <p className="text-slate-500 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">ברוכים הבאים ל-Gishers</h1>
+              <p className="text-neutral-500 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
                   <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
@@ -146,12 +146,12 @@ export default function Dashboard() {
       {/* Header & Filter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
         <div>
-            <h2 className="text-2xl font-bold text-slate-800">סקירת ביצועים</h2>
-            <p className="text-slate-500">נתונים עבור: {dateRangeLabel}</p>
+            <h2 className="text-2xl font-bold text-neutral-800">סקירת ביצועים</h2>
+            <p className="text-neutral-500">נתונים עבור: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px] bg-white border-red-100 focus:ring-red-200">
-                <Calendar className="w-4 h-4 ml-2 text-slate-500" />
+                <Calendar className="w-4 h-4 ml-2 text-neutral-500" />
                 <SelectValue placeholder="בחר טווח זמן" />
             </SelectTrigger>
             <SelectContent>
@@ -177,10 +177,10 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
               
               {/* Sales Trend Chart */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-900">
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-900">
                   <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-slate-400" /> מגמות לידים ומכירות
+                          <Activity className="w-5 h-5 text-neutral-400" /> מגמות לידים ומכירות
                       </CardTitle>
                   </CardHeader>
                   <CardContent className="h-[300px]">
@@ -208,7 +208,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Opportunity Stages */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-900">
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-900">
                   <CardHeader>
                       <CardTitle className="text-lg">הזדמנויות לפי שלב</CardTitle>
                   </CardHeader>
@@ -230,16 +230,16 @@ export default function Dashboard() {
           <div className="space-y-6">
               
               {/* Tasks List */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-900 h-full max-h-[600px] flex flex-col">
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-900 h-full max-h-[600px] flex flex-col">
                   <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center justify-between">
-                          <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-slate-400" /> משימות קרובות</span>
+                          <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-neutral-400" /> משימות קרובות</span>
                           <Badge variant="outline">{stats.upcomingTasks.length}</Badge>
                       </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 overflow-y-auto pr-2">
                       {stats.upcomingTasks.length === 0 ? (
-                          <div className="text-center py-10 text-slate-400">
+                          <div className="text-center py-10 text-neutral-400">
                               <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
                               <p>אין משימות דחופות</p>
                           </div>
@@ -250,7 +250,7 @@ export default function Dashboard() {
                                   const isOverdue = moment(task.due_date).isBefore(moment(), 'day');
                                   
                                   return (
-                                      <div key={task.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 group hover:border-red-200 transition-colors">
+                                      <div key={task.id} className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 group hover:border-red-200 transition-colors">
                                           <div className="flex justify-between items-start mb-1">
                                               <h4 className="font-medium text-sm line-clamp-1">{task.title}</h4>
                                               {isOverdue ? (
@@ -258,11 +258,11 @@ export default function Dashboard() {
                                               ) : isToday ? (
                                                   <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">היום</Badge>
                                               ) : (
-                                                  <span className="text-xs text-slate-400">{moment(task.due_date).format('DD/MM')}</span>
+                                                  <span className="text-xs text-neutral-400">{moment(task.due_date).format('DD/MM')}</span>
                                               )}
                                           </div>
-                                          <p className="text-xs text-slate-500 line-clamp-1">{task.description || "ללא תיאור"}</p>
-                                          <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-400">
+                                          <p className="text-xs text-neutral-500 line-clamp-1">{task.description || "ללא תיאור"}</p>
+                                          <div className="mt-2 flex items-center gap-2 text-[10px] text-neutral-400">
                                               {task.priority && <Badge variant="outline" className="text-[10px] py-0 h-4">{task.priority}</Badge>}
                                           </div>
                                       </div>
@@ -271,17 +271,17 @@ export default function Dashboard() {
                           </div>
                       )}
                   </CardContent>
-                  <div className="p-4 border-t border-slate-100 dark:border-slate-800">
-                      <Button variant="ghost" className="w-full text-slate-500 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
+                  <div className="p-4 border-t border-neutral-100 dark:border-slate-800">
+                      <Button variant="ghost" className="w-full text-neutral-500 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
                           כל המשימות
                       </Button>
                   </div>
               </Card>
 
               {/* Pipeline Summary Mini-Card */}
-              <Card className="bg-slate-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
+              <Card className="bg-neutral-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
                   <div className="relative z-10">
-                      <div className="text-slate-400 text-sm mb-1">הזדמנויות פתוחות</div>
+                      <div className="text-neutral-400 text-sm mb-1">הזדמנויות פתוחות</div>
                       <div className="text-3xl font-bold mb-4">{stats.totalOpps - stats.wonOppsCount}</div>
                       <div className="flex flex-col gap-2">
                           <div className="flex justify-between text-xs opacity-80">
@@ -307,17 +307,17 @@ export default function Dashboard() {
 
 function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
     return (
-        <div className="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-neutral-900 p-5 md:p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all">
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-full">{total} סה״כ</span>}
+                    {total && <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-slate-800 px-2 py-1 rounded-full">{total} סה״כ</span>}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-1">{value}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{title}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">{subtext}</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-slate-100 mb-1">{value}</h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">{title}</p>
+                <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-2">{subtext}</p>
             </div>
         </div>
     );
