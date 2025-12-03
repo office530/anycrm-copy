@@ -1,308 +1,246 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ActivityLog from "./ActivityLog";
-import DiscoveryScript from "./DiscoveryScript";
-import FileUpload from "../common/FileUpload";
-import { FileText } from "lucide-react";
+import { User, FileText, Phone, Save, X, Briefcase, Home } from "lucide-react";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
-    defaultValues: lead || {
-      full_name: "",
-      phone_number: "",
-      email: "",
-      documents: [],
-      age: "",
-      city: "",
-      source_year: "2024",
-      original_status_color: "Green",
-      lead_status: "New",
-      last_contact_date: new Date().toISOString().split('T')[0],
-      notes: "",
-      marital_status: "Married",
-      estimated_property_value: "",
-      existing_mortgage_balance: "",
-      has_children: true,
-      spouse_age: "",
-      lead_temperature: ""
-    }
+  const [formData, setFormData] = useState({
+    full_name: "",
+    phone_number: "",
+    email: "",
+    age: "",
+    city: "",
+    source_year: new Date().getFullYear().toString(),
+    lead_status: "New",
+    last_contact_date: "",
+    marital_status: "",
+    has_children: false,
+    spouse_age: "",
+    estimated_property_value: "",
+    mortgage_balance: "",
+    notes: ""
   });
 
-  const leadStatus = watch("lead_status");
-  const lastContactDate = watch("last_contact_date");
-  const originalStatusColor = watch("original_status_color");
-
-  // Calculate Lead Temperature
-  React.useEffect(() => {
-    let temp = "Cold (קר)";
-    const daysSinceContact = lastContactDate 
-      ? Math.floor((new Date() - new Date(lastContactDate)) / (1000 * 60 * 60 * 24))
-      : 999;
-
-    if (daysSinceContact <= 30) {
-      temp = "Warm (חם)";
-    } else if (originalStatusColor === "Green") {
-      temp = "Hot History (היה חם בעבר)";
+  useEffect(() => {
+    if (lead) {
+      setFormData({ ...formData, ...lead });
     }
+  }, [lead]);
 
-    setValue("lead_temperature", temp);
-  }, [lastContactDate, originalStatusColor, setValue]);
-
-  const handleSelectChange = (field, value) => {
-    setValue(field, value);
+  const handleChange = (key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white p-6 rounded-xl shadow-lg border border-slate-100"
-      dir="rtl"
-    >
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold text-slate-800">
-          {lead ? "תיק לקוח" : "הוספת ליד חדש"}
-        </h2>
-        <p className="text-slate-500">ניהול פרטים ופעילויות</p>
+    // שינוי 1: הרחבנו את הטופס ל-max-w-4xl כדי שיהיה מרווח
+    <div className="bg-white rounded-2xl shadow-2xl flex flex-col w-full max-w-5xl h-[90vh] md:h-auto md:max-h-[90vh] overflow-hidden border border-slate-200" dir="rtl">
+      
+      {/* כותרת יוקרתית */}
+      <div className="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+        <div className="flex items-center gap-3">
+            <div className="bg-red-50 p-2 rounded-lg">
+                <User className="w-6 h-6 text-red-700" />
+            </div>
+            <div>
+                <h2 className="text-2xl font-bold text-slate-800">
+                    {lead ? `תיק לקוח: ${lead.full_name}` : "יצירת ליד חדש"}
+                </h2>
+                <p className="text-sm text-slate-500 font-medium">עריכת פרטים וניהול נתונים</p>
+            </div>
+        </div>
+        <Button variant="ghost" size="icon" onClick={onCancel} className="text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full">
+            <X className="w-6 h-6" />
+        </Button>
       </div>
 
-      <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="details" className="flex items-center gap-2">
-            <User className="w-4 h-4" />
-            פרטי ליד
-          </TabsTrigger>
-          <TabsTrigger value="documents" className="flex items-center gap-2">
-          <FileText className="w-4 h-4" />
-          מסמכים
-          </TabsTrigger>
-          <TabsTrigger value="discovery" className="flex items-center gap-2" disabled={!lead}>
-          <ClipboardList className="w-4 h-4" />
-          תסריט שיחה
-          </TabsTrigger>
-          <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!lead}>
-          <Activity className="w-4 h-4" />
-          תיעוד פעילות
-          </TabsTrigger>
-          </TabsList>
+      {/* תוכן הטופס */}
+      <div className="flex-1 overflow-y-auto p-8 bg-[#F8FAFC]">
+        <Tabs defaultValue="details" className="w-full">
+            {/* טאבים בעיצוב נקי */}
+            <TabsList className="w-full justify-start bg-white border border-slate-200 p-1 rounded-xl mb-6 h-auto shadow-sm">
+                <TabsTrigger value="details" className="flex-1 data-[state=active]:bg-red-50 data-[state=active]:text-red-700 data-[state=active]:font-bold py-2.5 rounded-lg transition-all">
+                    <User className="w-4 h-4 ml-2" /> פרטים אישיים
+                </TabsTrigger>
+                <TabsTrigger value="financial" className="flex-1 data-[state=active]:bg-red-50 data-[state=active]:text-red-700 data-[state=active]:font-bold py-2.5 rounded-lg transition-all">
+                    <Home className="w-4 h-4 ml-2" /> נכס ומשפחה
+                </TabsTrigger>
+                <TabsTrigger value="activity" className="flex-1 data-[state=active]:bg-red-50 data-[state=active]:text-red-700 data-[state=active]:font-bold py-2.5 rounded-lg transition-all">
+                    <Briefcase className="w-4 h-4 ml-2" /> ניהול עסקה
+                </TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="details">
-          <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label>שם מלא *</Label>
-            <Input {...register("full_name", { required: "שדה חובה" })} placeholder="לדוגמה: דוד כהן" />
-            {errors.full_name && <span className="text-red-500 text-sm">{errors.full_name.message}</span>}
-          </div>
-          
-          <div className="space-y-2">
-            <Label>מספר טלפון *</Label>
-            <Input 
-              {...register("phone_number", { 
-                required: "שדה חובה",
-                pattern: {
-                  value: /^0[0-9]{1,2}-?[0-9]{7}$/,
-                  message: "מספר טלפון לא תקין (לדוגמה: 050-1234567)"
-                }
-              })} 
-              placeholder="050-0000000" 
-            />
-            {errors.phone_number && <span className="text-red-500 text-sm">{errors.phone_number.message}</span>}
-          </div>
+            {/* טאב 1: פרטים אישיים - פרוס לרוחב (3 עמודות) */}
+            <TabsContent value="details" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-50 pb-2">
+                        <span className="w-1 h-5 bg-red-600 rounded-full"></span>
+                        מידע בסיסי
+                    </h3>
+                    
+                    {/* שינוי 2: Grid של 3 עמודות למסכים רחבים */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <Label className="text-right block font-bold text-slate-700">שם מלא *</Label>
+                            <Input 
+                                value={formData.full_name} 
+                                onChange={(e) => handleChange("full_name", e.target.value)} 
+                                className="text-right h-10 border-slate-200 focus:border-red-500 focus:ring-red-500"
+                                placeholder="ישראל ישראלי"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-right block font-bold text-slate-700">טלפון נייד *</Label>
+                            <Input 
+                                value={formData.phone_number} 
+                                onChange={(e) => handleChange("phone_number", e.target.value)} 
+                                className="text-right font-mono h-10 border-slate-200 focus:border-red-500 focus:ring-red-500"
+                                placeholder="050-0000000"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-right block font-bold text-slate-700">עיר מגורים</Label>
+                            <Input 
+                                value={formData.city} 
+                                onChange={(e) => handleChange("city", e.target.value)} 
+                                className="text-right h-10 border-slate-200 focus:border-red-500 focus:ring-red-500"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-right block font-bold text-slate-700">גיל</Label>
+                            <Input 
+                                type="number"
+                                value={formData.age} 
+                                onChange={(e) => handleChange("age", e.target.value)} 
+                                className="text-right h-10 border-slate-200 focus:border-red-500 focus:ring-red-500"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-right block font-bold text-slate-700">אימייל</Label>
+                            <Input 
+                                value={formData.email} 
+                                onChange={(e) => handleChange("email", e.target.value)} 
+                                className="text-right h-10 border-slate-200 focus:border-red-500 focus:ring-red-500"
+                                placeholder="email@example.com"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-right block font-bold text-slate-700">סטטוס נוכחי</Label>
+                            <Select value={formData.lead_status} onValueChange={(val) => handleChange("lead_status", val)}>
+                                <SelectTrigger className="text-right w-full bg-white h-10 border-slate-200 focus:ring-red-500">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white border-slate-200">
+                                    <SelectItem value="New">חדש</SelectItem>
+                                    <SelectItem value="Attempting Contact">בטיפול</SelectItem>
+                                    <SelectItem value="Contacted - Qualifying">בירור צרכים</SelectItem>
+                                    <SelectItem value="Sales Ready">בשל למכירה</SelectItem>
+                                    <SelectItem value="Converted">הומר להזדמנות</SelectItem>
+                                    <SelectItem value="Lost / Unqualified">לא רלוונטי</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </div>
+            </TabsContent>
 
-          <div className="space-y-2">
-            <Label>אימייל</Label>
-            <Input 
-              {...register("email", {
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "כתובת אימייל לא תקינה"
-                }
-              })} 
-              placeholder="email@example.com" 
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-          </div>
+            {/* טאב 2: פיננסי - מרווח וברור */}
+            <TabsContent value="financial" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                     <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-50 pb-2">
+                        <span className="w-1 h-5 bg-red-600 rounded-full"></span>
+                        פרופיל פיננסי ומשפחתי
+                    </h3>
 
-          <div className="space-y-2">
-            <Label>גיל</Label>
-            <Input type="number" {...register("age", { valueAsNumber: true })} placeholder="לדוגמה: 68" />
-          </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* צד ימין - משפחה */}
+                        <div className="space-y-4">
+                             <div className="space-y-2">
+                                <Label className="text-right block font-bold text-slate-700">מצב משפחתי</Label>
+                                <Select value={formData.marital_status} onValueChange={(val) => handleChange("marital_status", val)}>
+                                    <SelectTrigger className="bg-white text-right h-10 border-slate-200 focus:ring-red-500"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
+                                    <SelectContent className="bg-white">
+                                        <SelectItem value="Married">נשוי/אה</SelectItem>
+                                        <SelectItem value="Single">רווק/ה</SelectItem>
+                                        <SelectItem value="Widowed">אלמן/ה</SelectItem>
+                                        <SelectItem value="Divorced">גרוש/ה</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-right block font-bold text-slate-700">גיל בן/ת זוג</Label>
+                                <Input value={formData.spouse_age} onChange={(e) => handleChange("spouse_age", e.target.value)} className="text-right h-10 border-slate-200" />
+                            </div>
+                            <div className="flex items-center gap-3 pt-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                <Checkbox 
+                                    id="has_children" 
+                                    checked={formData.has_children} 
+                                    onCheckedChange={(val) => handleChange("has_children", val)}
+                                    className="w-5 h-5 data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600 border-slate-300"
+                                />
+                                <Label htmlFor="has_children" className="font-bold text-slate-700 cursor-pointer select-none text-base">יש ילדים?</Label>
+                            </div>
+                        </div>
 
-          <div className="space-y-2">
-            <Label>עיר</Label>
-            <Input {...register("city")} placeholder="לדוגמה: תל אביב" />
-          </div>
+                        {/* צד שמאל - נכס */}
+                        <div className="space-y-4">
+                             <div className="space-y-2">
+                                <Label className="text-right block font-bold text-slate-700">שווי נכס מוערך (₪)</Label>
+                                <div className="relative">
+                                    <Input value={formData.estimated_property_value} type="number" onChange={(e) => handleChange("estimated_property_value", e.target.value)} className="text-right h-10 border-slate-200 pl-10" />
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₪</span>
+                                </div>
+                            </div>
+                             <div className="space-y-2">
+                                <Label className="text-right block font-bold text-slate-700">יתרת משכנתא קיימת (₪)</Label>
+                                <div className="relative">
+                                    <Input value={formData.mortgage_balance} type="number" onChange={(e) => handleChange("mortgage_balance", e.target.value)} className="text-right h-10 border-slate-200 pl-10" />
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₪</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
 
-          <div className="space-y-2">
-            <Label>שנת מקור</Label>
-            <Select 
-              defaultValue={lead?.source_year || "2024"} 
-              onValueChange={(val) => handleSelectChange("source_year", val)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="בחר שנה" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                 {/* הערות - רחב למטה */}
+                 <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <Label className="text-right block font-bold text-slate-700 mb-2">הערות חשובות / מצב בריאותי</Label>
+                    <Textarea 
+                        value={formData.notes} 
+                        onChange={(e) => handleChange("notes", e.target.value)} 
+                        className="text-right min-h-[120px] border-slate-200 focus:border-red-500 focus:ring-red-500 resize-none text-base p-4"
+                        placeholder="רשום כאן כל פרט חשוב לגבי הלקוח..."
+                    />
+                 </div>
+            </TabsContent>
 
-          {/* Original Status Removed */}
-
-          <div className="space-y-2">
-            <Label>סטטוס ליד</Label>
-            <Select 
-              defaultValue={lead?.lead_status || "New"} 
-              onValueChange={(val) => handleSelectChange("lead_status", val)}
-            >
-              <SelectTrigger className={leadStatus === 'Converted' ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : ''}>
-                <SelectValue placeholder="סטטוס" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="New">חדש (New)</SelectItem>
-                <SelectItem value="Attempting Contact">בטיפול - מנסה ליצור קשר</SelectItem>
-                <SelectItem value="Contacted - Qualifying">נוצר קשר - בירור צרכים</SelectItem>
-                <SelectItem value="Sales Ready">בשל להזדמנות / חם</SelectItem>
-                <SelectItem value="Lost / Unqualified">לא רלוונטי (סופי)</SelectItem>
-                <SelectItem value="Converted" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
-              </SelectContent>
-            </Select>
-            {leadStatus === 'Converted' && (
-              <p className="text-xs text-emerald-600 font-medium mt-1">
-                ✨ שמירה תוביל לפתיחת הזדמנות חדשה והסרת הליד מהרשימה
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label>תאריך יצירת קשר אחרון</Label>
-            <Input type="date" {...register("last_contact_date")} />
-          </div>
-
-          <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6 mt-2">
-             <div className="space-y-2">
-              <Label className="text-right block">מצב משפחתי</Label>
-              <Select 
-                defaultValue={lead?.marital_status || "Married"} 
-                onValueChange={(val) => handleSelectChange("marital_status", val)}
-              >
-                <SelectTrigger className="text-right">
-                  <SelectValue placeholder="בחר סטטוס" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Married">נשוי/אה (Married)</SelectItem>
-                  <SelectItem value="Widowed">אלמן/ה (Widowed)</SelectItem>
-                  <SelectItem value="Divorced">גרוש/ה (Divorced)</SelectItem>
-                  <SelectItem value="Single">רווק/ה (Single)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-               <div className="flex items-center gap-2">
-                 <Label>יש ילדים?</Label>
-                 <input 
-                    type="checkbox" 
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                    {...register("has_children")} 
-                 />
-               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>גיל בן/ת זוג</Label>
-              <Input type="number" {...register("spouse_age", { valueAsNumber: true })} placeholder="לדוגמה: 65" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-right block">שווי נכס מוערך (₪)</Label>
-              <Input 
-                type="number" 
-                {...register("estimated_property_value", { valueAsNumber: true })} 
-                placeholder="0.00"
-                className="text-right" 
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>יתרת משכנתא קיימת (₪)</Label>
-              <Input 
-                type="number" 
-                {...register("existing_mortgage_balance", { valueAsNumber: true })} 
-                placeholder="0.00" 
-              />
-            </div>
-             
-             {/* Lead Temperature Removed */}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label>הערות</Label>
-          <Textarea {...register("notes")} placeholder="הערות חשובות..." className="h-24" />
-        </div>
-        
-        <div className="flex justify-end gap-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
-          <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-            {lead ? "עדכן ליד" : "צור ליד"}
-          </Button>
-        </div>
-        </div>
-        </TabsContent>
-
-        <TabsContent value="documents" className="space-y-6">
-          <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-            <FileUpload 
-              files={watch("documents") || []}
-              onFilesChange={(newFiles) => setValue("documents", newFiles)}
-            />
-          </div>
-          
-          <div className="flex justify-end gap-4 pt-4 border-t">
-             <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
-             <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-               {lead ? "עדכן ליד" : "צור ליד"}
-             </Button>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="discovery">
-          {lead ? (
-            <div className="h-[600px] overflow-y-auto pr-2">
-              <DiscoveryScript leadId={lead.id} />
-            </div>
-          ) : (
-            <div className="text-center py-10 text-slate-500">
-              יש לשמור את הליד לפני שניתן למלא תסריט שיחה
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="activity" className="h-[600px]">
-          {lead ? (
-            <ActivityLog leadId={lead.id} />
-          ) : (
-            <div className="text-center py-10 text-slate-500">
-              יש לשמור את הליד לפני שניתן להוסיף פעילויות
-            </div>
-          )}
-        </TabsContent>
+            {/* טאב 3: פעילות */}
+            <TabsContent value="activity" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                 <div className="bg-white p-10 rounded-xl border border-dashed border-slate-300 text-center">
+                    <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Phone className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-700">היסטוריית התקשרויות</h3>
+                    <p className="text-slate-500 mt-2">רשימת השיחות והמשימות תופיע כאן בגרסה הבאה.</p>
+                 </div>
+            </TabsContent>
         </Tabs>
-        </motion.div>
+      </div>
+
+      {/* Footer - כפתורים */}
+      <div className="px-8 py-5 border-t border-slate-100 bg-white flex justify-end gap-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <Button variant="outline" onClick={onCancel} className="h-11 px-8 border-slate-300 text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium">
+            ביטול
+        </Button>
+        <Button onClick={() => onSubmit(formData)} disabled={isSubmitting} className="h-11 px-8 bg-red-700 hover:bg-red-800 text-white shadow-lg shadow-red-900/20 font-bold tracking-wide transition-all hover:scale-105">
+            <Save className="w-5 h-5 ml-2" />
+            {lead ? "שמור שינויים" : "צור ליד חדש"}
+        </Button>
+      </div>
+    </div>
   );
 }
