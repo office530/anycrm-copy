@@ -4,11 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2 } from "lucide-react";
 import LeadForm from "@/components/crm/LeadForm";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 export default function LeadDetailsPage() {
-  const queryParams = new URLSearchParams(window.location.search);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('id') || queryParams.get('leadId');
   const queryClient = useQueryClient();
 

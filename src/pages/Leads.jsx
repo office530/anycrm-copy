@@ -268,7 +268,7 @@ export default function LeadsPage() {
                             {lead.full_name?.charAt(0)}
                          </div>
                          <div className="flex-1">
-                            <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="font-bold text-slate-800 hover:text-red-600 transition-colors">
+                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-800 hover:text-red-600 transition-colors">
                                 {lead.full_name}
                             </Link>
                             <div className="text-xs text-slate-500">{lead.city}</div>
@@ -333,7 +333,7 @@ export default function LeadsPage() {
                             {lead.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
+                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
                                 {lead.full_name}
                             </Link>
                             <div className="text-sm text-slate-500">{lead.city}</div>
