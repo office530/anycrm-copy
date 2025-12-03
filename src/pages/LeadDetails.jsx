@@ -9,7 +9,7 @@ import { createPageUrl } from '@/utils';
 
 export default function LeadDetailsPage() {
   const queryParams = new URLSearchParams(window.location.search);
-  const leadId = queryParams.get('id');
+  const leadId = queryParams.get('id') || queryParams.get('leadId');
   const queryClient = useQueryClient();
 
   const { data: lead, isLoading } = useQuery({
