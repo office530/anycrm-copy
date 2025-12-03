@@ -268,7 +268,9 @@ export default function LeadsPage() {
                             {lead.full_name?.charAt(0)}
                          </div>
                          <div className="flex-1">
-                            <InlineEdit value={lead.full_name} className="font-bold text-slate-800" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
+                            <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="font-bold text-slate-800 hover:text-red-600 transition-colors">
+                                {lead.full_name}
+                            </Link>
                             <div className="text-xs text-slate-500">{lead.city}</div>
                             {lead.tags && lead.tags.length > 0 &&
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -331,7 +333,9 @@ export default function LeadsPage() {
                             {lead.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <InlineEdit value={lead.full_name} className="font-bold text-slate-900 text-lg" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
+                            <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
+                                {lead.full_name}
+                            </Link>
                             <div className="text-sm text-slate-500">{lead.city}</div>
                             {lead.tags && lead.tags.length > 0 &&
                 <div className="flex flex-wrap gap-1 mt-1">
