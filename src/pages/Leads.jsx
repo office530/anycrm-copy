@@ -231,8 +231,8 @@ export default function LeadsPage() {
         <div className="divide-y divide-slate-100">
             {isLoading ? <div className="p-10 text-center text-slate-500">טוען נתונים...</div> :
           filteredLeads.map((lead) =>
-          <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
-                    <div className="col-span-3 flex items-center gap-3">
+          <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group border-l-2 border-transparent hover:border-red-500">
+                    <div className="col-span-4 flex items-center gap-3">
                          <div className="w-9 h-9 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm">
                             {lead.full_name?.charAt(0)}
                          </div>
@@ -248,19 +248,39 @@ export default function LeadsPage() {
                             )}
                          </div>
                     </div>
-                    <div className="col-span-3 text-sm text-slate-600 flex items-center gap-2">
+                    <div className="col-span-4 text-sm text-slate-600 flex items-center gap-2">
                         <Phone className="w-4 h-4 text-slate-400" />
                         <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
-                    </div>
-                    <div className="col-span-2">
-                        <StatusBadge lead={lead} statuses={leadStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     </div>
                     <div className="col-span-2 text-sm text-slate-600">
                         {lead.source_year} <span className="text-slate-400 text-xs">({lead.last_contact_date || '-'})</span>
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-red-600"><Pencil className="w-4 h-4" /></Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="text-red-700 bg-red-50 hover:bg-red-100 rounded-lg px-2">
+                                    <span className="ml-2">פעולות</span>
+                                    <MoreHorizontal className="w-4 h-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem 
+                                    className="cursor-pointer flex justify-between items-center p-3 text-right"
+                                    onClick={() => {setEditingLead(lead);setShowLeadForm(true);}}
+                                >
+                                    <Pencil className="w-4 h-4 text-slate-500" />
+                                    <span>פתח ליד</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                    className="cursor-pointer flex justify-between items-center p-3 text-right bg-red-50 text-red-700 focus:bg-red-100 focus:text-red-800 mt-1"
+                                    onClick={() => convertToOpportunity.mutate(lead)}
+                                >
+                                    <Briefcase className="w-4 h-4" />
+                                    <span>המר להזדמנות מיידי</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
           )}
