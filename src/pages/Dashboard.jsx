@@ -126,7 +126,7 @@ export default function Dashboard() {
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Reports')}>
-                  <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 rounded-full px-6">
+                  <Button variant="outline" className="bg-zinc-200 text-red-700 px-6 py-2 text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-red-200 hover:bg-red-50">
                       צפה בדוחות
                   </Button>
                 </Link>
@@ -281,7 +281,7 @@ export default function Dashboard() {
               {/* Pipeline Summary Mini-Card */}
               <Card className="bg-red-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
                   <div className="relative z-10">
-                      <div className="text-neutral-500 text-sm mb-1">הזדמנויות פתוחות</div>
+                      <div className="text-slate-50 mb-1 text-sm">הזדמנויות פתוחות</div>
                       <div className="text-3xl font-bold mb-4">{stats.totalOpps - stats.wonOppsCount}</div>
                       <div className="flex flex-col gap-2">
                           <div className="flex justify-between text-xs opacity-80">
