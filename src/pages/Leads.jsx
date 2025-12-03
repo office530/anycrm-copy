@@ -9,8 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
         Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag } from
       "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from
 "@/components/ui/dropdown-menu";
@@ -28,7 +27,7 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
-  const [showConverted, setShowConverted] = useState(false);
+
 
   const queryClient = useQueryClient();
 
@@ -106,20 +105,15 @@ export default function LeadsPage() {
       const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
 
-      // Status Logic: If "all", hide converted unless showConverted is true
-      let matchesStatus = true;
-      if (filters.status === "all") {
-          matchesStatus = showConverted ? true : lead.lead_status !== "Converted";
-      } else {
-          matchesStatus = lead.lead_status === filters.status;
-      }
+      // Status Logic: If "all", hide converted leads by default
+      const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
 
       // Tag Logic
       const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
 
       return matchesSearch && matchesYear && matchesStatus && matchesTag;
       }).sort((a, b) => b.id - a.id);
-      }, [leads, filters, showConverted]);
+      }, [leads, filters]);
 
   return (
     <div className="space-y-6 pb-24 font-sans text-slate-900">
@@ -166,10 +160,7 @@ export default function LeadsPage() {
                 </SelectContent>
           </Select>
 
-          <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
-              <Switch id="show-converted" checked={showConverted} onCheckedChange={setShowConverted} className="data-[state=checked]:bg-red-600" />
-              <Label htmlFor="show-converted" className="text-sm text-slate-600 cursor-pointer">הצג לידים שהומרו</Label>
-          </div>
+
           </div>
 
           <div className="flex gap-2 w-full md:w-auto">
