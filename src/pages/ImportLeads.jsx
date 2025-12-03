@@ -179,7 +179,8 @@ export default function ImportLeadsPage() {
                     </Card>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                {/* Desktop View */}
+                <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                         <h3 className="font-bold text-slate-700">תצוגה מקדימה (50 רשומות ראשונות)</h3>
                         <Button variant="ghost" size="sm" onClick={() => setStep(1)} className="text-slate-500 hover:text-red-600">
@@ -219,6 +220,38 @@ export default function ImportLeadsPage() {
                             </TableBody>
                         </Table>
                     </div>
+                </div>
+
+                {/* Mobile View */}
+                <div className="md:hidden space-y-4">
+                    {data.slice(0, 50).map((row, i) => (
+                        <div key={i} className={`bg-white p-4 rounded-xl shadow-sm border ${!row.isValid ? 'border-red-200 bg-red-50/30' : 'border-slate-200'} flex flex-col gap-3`}>
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="font-bold text-slate-900 text-lg">{row.full_name}</div>
+                                    <div className="text-xs text-slate-500">{row.city}</div>
+                                </div>
+                                {row.isValid ? (
+                                    <Badge className="bg-green-100 text-green-700 border-0 hover:bg-green-100">תקין</Badge>
+                                ) : (
+                                    <Badge variant="destructive" className="bg-red-100 text-red-700 border-0 hover:bg-red-100">
+                                        {row.errors}
+                                    </Badge>
+                                )}
+                            </div>
+                            
+                            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-2">
+                                <div className="flex justify-between">
+                                    <span className="text-slate-500 text-sm">טלפון:</span>
+                                    <span className="font-mono text-slate-700 font-medium">{row.phone_number}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-slate-500 text-sm">שנה:</span>
+                                    <span className="text-slate-700">{row.source_year}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
                 <div className="flex justify-between items-center pt-4">
