@@ -119,9 +119,7 @@ function LayoutContent({ children, currentPageName }) {
                 <div className="hidden md:block">
                   <GlobalSearch />
                 </div>
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-600">
-                    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </Button>
+                {/* Theme toggle removed as per request - forced to light mode */}
                 <Notifications />
             </div>
         </header>
