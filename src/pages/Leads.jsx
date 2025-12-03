@@ -207,21 +207,15 @@ export default function LeadsPage() {
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
+            <div className="col-span-4 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
                 לקוח
                 {sortConfig.key === 'full_name' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
+            <div className="col-span-4 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
                 פרטי קשר
                 {sortConfig.key === 'phone_number' ? (
-                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
-            </div>
-            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
-                סטטוס
-                {sortConfig.key === 'lead_status' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
@@ -303,8 +297,31 @@ export default function LeadsPage() {
                 </div>
 
                 <div className="flex items-center justify-between mt-1">
-                    <StatusBadge lead={lead} statuses={leadStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="text-red-700 border-red-100 bg-red-50 hover:bg-red-100 h-8">
+                                <span className="ml-2">פעולות</span>
+                                <MoreHorizontal className="w-3 h-3" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem 
+                                className="cursor-pointer flex justify-between items-center p-3 text-right"
+                                onClick={() => {setEditingLead(lead);setShowLeadForm(true);}}
+                            >
+                                <Pencil className="w-4 h-4 text-slate-500" />
+                                <span>פתח ליד</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                                className="cursor-pointer flex justify-between items-center p-3 text-right bg-red-50 text-red-700 focus:bg-red-100 focus:text-red-800 mt-1"
+                                onClick={() => convertToOpportunity.mutate(lead)}
+                            >
+                                <Briefcase className="w-4 h-4" />
+                                <span>המר להזדמנות מיידי</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
         )}
