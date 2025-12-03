@@ -165,7 +165,7 @@ export default function Dashboard() {
 
       {/* KPIs Row 1: Leads Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <KpiCard title="סה״כ לידים" value={stats.totalLeads} icon={Users} color="bg-blue-500" subtext={`${stats.newLeads} חדשים בתקופה זו`} />
+        <KpiCard title="סה״כ לידים" value={stats.totalLeads} icon={Users} color="bg-red-500" subtext={`${stats.newLeads} חדשים בתקופה זו`} />
         <KpiCard title="לידים שהומרו" value={stats.convertedLeads} icon={Activity} color="bg-purple-500" subtext={`${((stats.convertedLeads / (stats.totalLeads || 1)) * 100).toFixed(1)}% יחס המרה`} />
         <KpiCard title="הכנסות בפועל" value={`₪${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} עסקאות סגורות`} />
       </div>
@@ -279,7 +279,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Pipeline Summary Mini-Card */}
-              <Card className="bg-neutral-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
+              <Card className="bg-red-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
                   <div className="relative z-10">
                       <div className="text-neutral-400 text-sm mb-1">הזדמנויות פתוחות</div>
                       <div className="text-3xl font-bold mb-4">{stats.totalOpps - stats.wonOppsCount}</div>
@@ -291,7 +291,7 @@ export default function Dashboard() {
                           <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
                               <div className="bg-red-500 h-full rounded-full" style={{ width: `${(stats.wonOppsCount / (stats.totalOpps || 1)) * 100}%` }}></div>
                           </div>
-                          <div className="text-right text-xs text-red-400 mt-1">
+                          <div className="text-right text-xs text-white/80 mt-1">
                               {((stats.wonOppsCount / (stats.totalOpps || 1)) * 100).toFixed(0)}% הצלחה
                           </div>
                       </div>

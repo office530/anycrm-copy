@@ -4,23 +4,23 @@ const SettingsContext = createContext();
 
 // ברירת מחדל - סטטוסים של לידים
 export const defaultLeadStatuses = [
-  { value: "New", label: "חדש", color: "bg-blue-100 text-blue-700" },
-  { value: "Attempting Contact", label: "בטיפול", color: "bg-yellow-100 text-yellow-700" },
-  { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-orange-100 text-orange-700" },
-  { value: "Sales Ready", label: "בשל למכירה", color: "bg-purple-100 text-purple-700" },
-  { value: "Converted", label: "הומר להזדמנות", color: "bg-emerald-100 text-emerald-700" },
-  { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-gray-100 text-gray-600" }
+  { value: "New", label: "חדש", color: "bg-red-50 text-red-700" },
+  { value: "Attempting Contact", label: "בטיפול", color: "bg-orange-50 text-orange-700" },
+  { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-amber-50 text-amber-700" },
+  { value: "Sales Ready", label: "בשל למכירה", color: "bg-neutral-100 text-neutral-700" },
+  { value: "Converted", label: "הומר להזדמנות", color: "bg-emerald-50 text-emerald-700" },
+  { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-neutral-50 text-neutral-400" }
 ];
 
 // ברירת מחדל - שלבי הזדמנויות
 export const defaultPipelineStages = [
-  { id: "New (חדש)", label: "חדש", color: "bg-blue-500", light: "bg-blue-50 text-blue-700" },
-  { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "bg-indigo-500", light: "bg-indigo-50 text-indigo-700" },
-  { id: "Meeting Scheduled (נקבעת פגישה)", label: "נקבעת פגישה", color: "bg-purple-500", light: "bg-purple-50 text-purple-700" },
-  { id: "Documents Collection (איסוף מסמכים)", label: "איסוף מסמכים", color: "bg-orange-500", light: "bg-orange-50 text-orange-700" },
-  { id: "Request Sent to Harel (בקשה נשלחה להראל)", label: "נשלח להראל", color: "bg-sky-500", light: "bg-sky-50 text-sky-700" },
+  { id: "New (חדש)", label: "חדש", color: "bg-red-400", light: "bg-red-50 text-red-700" },
+  { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "bg-orange-400", light: "bg-orange-50 text-orange-700" },
+  { id: "Meeting Scheduled (נקבעת פגישה)", label: "נקבעת פגישה", color: "bg-amber-400", light: "bg-amber-50 text-amber-700" },
+  { id: "Documents Collection (איסוף מסמכים)", label: "איסוף מסמכים", color: "bg-stone-400", light: "bg-stone-50 text-stone-700" },
+  { id: "Request Sent to Harel (בקשה נשלחה להראל)", label: "נשלח להראל", color: "bg-neutral-400", light: "bg-neutral-50 text-neutral-700" },
   { id: "Closed Won (נחתם - בהצלחה)", label: "נסגר בהצלחה", color: "bg-emerald-500", light: "bg-emerald-50 text-emerald-700" },
-  { id: "Closed Lost (אבוד)", label: "אבוד", color: "bg-slate-500", light: "bg-slate-50 text-slate-700" }
+  { id: "Closed Lost (אבוד)", label: "אבוד", color: "bg-neutral-300", light: "bg-neutral-50 text-neutral-500" }
 ];
 
 export const defaultStages = defaultPipelineStages;
