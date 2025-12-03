@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-        Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown } from
+        Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2 } from
       "lucide-react";
 
 import {
@@ -79,6 +79,14 @@ export default function LeadsPage() {
   const updateLead = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
     onSuccess: () => queryClient.invalidateQueries(['leads'])
+  });
+
+  const deleteLead = useMutation({
+    mutationFn: (id) => base44.entities.Lead.delete(id),
+    onSuccess: () => {
+        queryClient.invalidateQueries(['leads']);
+        alert("הליד נמחק בהצלחה");
+    }
   });
 
   const convertToOpportunity = useMutation({
@@ -259,6 +267,11 @@ export default function LeadsPage() {
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
                         <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => {
+                                if(window.confirm('האם אתה בטוח שברצונך למחוק ליד זה? פעולה זו לא ניתנת לביטול.')) deleteLead.mutate(lead.id);
+                            }} className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50" title="מחק ליד">
+                                <Trash2 className="w-4 h-4" />
+                            </Button>
                             <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title="פתח ליד">
                                 <Pencil className="w-4 h-4" />
                             </Button>
@@ -300,6 +313,11 @@ export default function LeadsPage() {
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => {
+                            if(window.confirm('האם אתה בטוח שברצונך למחוק ליד זה?')) deleteLead.mutate(lead.id);
+                        }} className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50">
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
                         <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
                             <Pencil className="w-4 h-4" />
                         </Button>

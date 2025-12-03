@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, LayoutGrid, List as ListIcon, TrendingUp, Calendar, AlertCircle, DollarSign, Briefcase, Trophy } from "lucide-react";
+import { Loader2, LayoutGrid, List as ListIcon, TrendingUp, Calendar, AlertCircle, DollarSign, Briefcase, Trophy, Trash2 } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -47,6 +47,14 @@ export default function OpportunitiesPage() {
       setShowForm(false);
       processAutomation('Opportunity', 'update', data, editingOpp);
       setEditingOpp(null);
+    }
+  });
+
+  const deleteOppMutation = useMutation({
+    mutationFn: (id) => base44.entities.Opportunity.delete(id),
+    onSuccess: () => {
+        queryClient.invalidateQueries(['opportunities']);
+        alert("ההזדמנות נמחקה בהצלחה");
     }
   });
 
@@ -171,6 +179,16 @@ export default function OpportunitiesPage() {
                               
                               {/* שם הלקוח */}
                               <div className="flex justify-between items-start">
+                                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                                        }}
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                </div>
                                 <span className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                                   {opp.lead_name || "לקוח ללא שם"}
                                 </span>
