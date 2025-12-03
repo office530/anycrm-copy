@@ -118,7 +118,7 @@ export default function Dashboard() {
       <div className="bg-gradient-to-br from-white to-neutral-50/50 md:bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-100 md:border-neutral-100 border-transparent flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
               <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">ברוכים הבאים ל-Gishers</h1>
-              <p className="text-neutral-500 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
+              <p className="text-neutral-600 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
                   <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
@@ -147,11 +147,11 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
         <div>
             <h2 className="text-2xl font-bold text-neutral-800">סקירת ביצועים</h2>
-            <p className="text-neutral-500">נתונים עבור: {dateRangeLabel}</p>
+            <p className="text-neutral-600">נתונים עבור: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px] bg-white border-red-100 focus:ring-red-200">
-                <Calendar className="w-4 h-4 ml-2 text-neutral-500" />
+                <Calendar className="w-4 h-4 ml-2 text-neutral-600" />
                 <SelectValue placeholder="בחר טווח זמן" />
             </SelectTrigger>
             <SelectContent>
@@ -180,7 +180,7 @@ export default function Dashboard() {
               <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200">
                   <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-neutral-400" /> מגמות לידים ומכירות
+                          <Activity className="w-5 h-5 text-neutral-500" /> מגמות לידים ומכירות
                       </CardTitle>
                   </CardHeader>
                   <CardContent className="h-[300px]">
@@ -233,13 +233,13 @@ export default function Dashboard() {
               <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200 h-full max-h-[600px] flex flex-col">
                   <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center justify-between">
-                          <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-neutral-400" /> משימות קרובות</span>
+                          <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-neutral-500" /> משימות קרובות</span>
                           <Badge variant="outline">{stats.upcomingTasks.length}</Badge>
                       </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 overflow-y-auto pr-2">
                       {stats.upcomingTasks.length === 0 ? (
-                          <div className="text-center py-10 text-neutral-400">
+                          <div className="text-center py-10 text-neutral-500">
                               <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
                               <p>אין משימות דחופות</p>
                           </div>
@@ -258,11 +258,11 @@ export default function Dashboard() {
                                               ) : isToday ? (
                                                   <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">היום</Badge>
                                               ) : (
-                                                  <span className="text-xs text-neutral-400">{moment(task.due_date).format('DD/MM')}</span>
+                                                  <span className="text-xs text-neutral-500">{moment(task.due_date).format('DD/MM')}</span>
                                               )}
                                           </div>
-                                          <p className="text-xs text-neutral-500 line-clamp-1">{task.description || "ללא תיאור"}</p>
-                                          <div className="mt-2 flex items-center gap-2 text-[10px] text-neutral-400">
+                                          <p className="text-xs text-neutral-600 line-clamp-1">{task.description || "ללא תיאור"}</p>
+                                          <div className="mt-2 flex items-center gap-2 text-[10px] text-neutral-500">
                                               {task.priority && <Badge variant="outline" className="text-[10px] py-0 h-4">{task.priority}</Badge>}
                                           </div>
                                       </div>
@@ -272,7 +272,7 @@ export default function Dashboard() {
                       )}
                   </CardContent>
                   <div className="p-4 border-t border-neutral-100 dark:border-neutral-300">
-                      <Button variant="ghost" className="w-full text-neutral-500 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
+                      <Button variant="ghost" className="w-full text-neutral-600 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
                           כל המשימות
                       </Button>
                   </div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
               {/* Pipeline Summary Mini-Card */}
               <Card className="bg-red-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
                   <div className="relative z-10">
-                      <div className="text-neutral-400 text-sm mb-1">הזדמנויות פתוחות</div>
+                      <div className="text-neutral-500 text-sm mb-1">הזדמנויות פתוחות</div>
                       <div className="text-3xl font-bold mb-4">{stats.totalOpps - stats.wonOppsCount}</div>
                       <div className="flex flex-col gap-2">
                           <div className="flex justify-between text-xs opacity-80">
@@ -313,11 +313,11 @@ function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
                     <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-neutral-400 dark:text-neutral-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
+                    {total && <span className="text-xs font-bold text-neutral-500 dark:text-neutral-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-800 mb-1">{value}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-700 font-medium">{title}</p>
-                <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-2">{subtext}</p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-700 font-medium">{title}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-600 mt-2">{subtext}</p>
             </div>
         </div>
     );

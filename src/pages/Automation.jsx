@@ -115,7 +115,7 @@ export default function AutomationPage() {
 
       {/* Templates Gallery (New!) */}
       <div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-neutral-900 dark:text-slate-200 mb-4 flex items-center gap-2">
               <Wand2 className="w-5 h-5 text-teal-500" />
               תבניות מוכנות (Quick Start)
           </h3>
@@ -127,7 +127,7 @@ export default function AutomationPage() {
                               <tpl.icon className="w-6 h-6" />
                           </div>
                           <h4 className="font-bold text-lg mb-2 dark:text-white">{tpl.title}</h4>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{tpl.description}</p>
+                          <p className="text-sm text-neutral-600 dark:text-slate-400 leading-relaxed">{tpl.description}</p>
                           <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                               <span className="text-xs font-bold text-teal-600 dark:text-teal-400 group-hover:underline">הפעל תבנית &rarr;</span>
                           </div>
@@ -139,8 +139,8 @@ export default function AutomationPage() {
 
       {/* Active Rules List */}
       <div className="space-y-4">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2 mt-8">
-              <Zap className="w-5 h-5 text-yellow-500" />
+        <h3 className="text-lg font-bold text-neutral-900 dark:text-slate-200 mb-4 flex items-center gap-2 mt-8">
+              <Zap className="w-5 h-5 text-red-600" />
               אוטומציות פעילות ({rules.length})
         </h3>
         
@@ -152,7 +152,7 @@ export default function AutomationPage() {
                     </div>
                     <div>
                         <h3 className="font-bold text-lg dark:text-white">{rule.name}</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                        <p className="text-sm text-neutral-600 dark:text-slate-400">
                             כאשר 
                             <span className="font-medium text-slate-700 dark:text-slate-200 mx-1">
                                 {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'}
@@ -179,8 +179,8 @@ export default function AutomationPage() {
             </Card>
         ))}
         {rules.length === 0 && !isLoading && (
-            <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed dark:border-slate-700">
-                <p className="text-slate-500 dark:text-slate-400">אין חוקים מוגדרים עדיין. נסה להשתמש בתבניות למעלה!</p>
+            <div className="text-center py-12 bg-neutral-100 dark:bg-slate-800/50 rounded-2xl border border-dashed dark:border-slate-700">
+                <p className="text-neutral-600 dark:text-slate-400">אין חוקים מוגדרים עדיין. נסה להשתמש בתבניות למעלה!</p>
             </div>
         )}
       </div>
@@ -416,7 +416,7 @@ function RuleForm({ onSuccess }) {
                 </div>
 
                 {formData.action_type === 'create_task' ? (
-                    <div className="space-y-3 bg-slate-50 p-3 rounded">
+                    <div className="space-y-3 bg-neutral-100 p-3 rounded">
                          <div className="space-y-2">
                             <Label>כותרת משימה</Label>
                             <Input 
@@ -434,7 +434,7 @@ function RuleForm({ onSuccess }) {
                         </div>
                     </div>
                 ) : (
-                     <div className="space-y-3 bg-slate-50 p-3 rounded">
+                     <div className="space-y-3 bg-neutral-100 p-3 rounded">
                         <div className="space-y-2">
                             <Label>שלח אל</Label>
                             <Input 

@@ -144,10 +144,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           <Briefcase className="w-6 h-6 text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-slate-800">
+          <h2 className="text-xl font-bold text-neutral-900">
             {title || (opportunity ? "ניהול הזדמנות" : "הזדמנות חדשה")}
           </h2>
-          <p className="text-slate-500 text-sm">
+          <p className="text-neutral-600 text-sm">
             {initialLead ? `עבור לקוח: ${initialLead.full_name}` : "ניהול פרטי עסקה"}
           </p>
         </div>
@@ -300,7 +300,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
         {/* Sales Strategy Section */}
         <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
-        <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+        <h3 className="font-semibold text-neutral-900 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-purple-500" />
           אסטרטגיית מכירה
         </h3>
@@ -353,7 +353,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs text-slate-500">אסטרטגיה מומלצת</Label>
+              <Label className="text-xs text-neutral-600">אסטרטגיה מומלצת</Label>
               <div className="relative">
                 <textarea 
                   readOnly
@@ -365,7 +365,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs text-slate-500">מענה להתנגדות</Label>
+              <Label className="text-xs text-neutral-600">מענה להתנגדות</Label>
               <div className="relative">
                 <textarea 
                   readOnly
@@ -409,56 +409,56 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
         <TabsContent value="originalLead">
           {isLoadingLead ? (
-            <div className="text-center py-10 text-slate-500"><Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" /> טוען פרטי ליד...</div>
+            <div className="text-center py-10 text-neutral-600"><Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" /> טוען פרטי ליד...</div>
           ) : originalLeadData ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
               <div className="space-y-2">
-                <Label className="text-xs text-slate-500">שם מלא</Label>
-                <p className="font-medium text-slate-800">{originalLeadData.full_name}</p>
+                <Label className="text-xs text-neutral-600">שם מלא</Label>
+                <p className="font-medium text-neutral-900">{originalLeadData.full_name}</p>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs text-slate-500">מספר טלפון</Label>
-                <p className="font-medium text-slate-800">{originalLeadData.phone_number}</p>
+                <Label className="text-xs text-neutral-600">מספר טלפון</Label>
+                <p className="font-medium text-neutral-900">{originalLeadData.phone_number}</p>
               </div>
               {originalLeadData.email && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-slate-500">אימייל</Label>
-                  <p className="font-medium text-slate-800">{originalLeadData.email}</p>
+                  <Label className="text-xs text-neutral-600">אימייל</Label>
+                  <p className="font-medium text-neutral-900">{originalLeadData.email}</p>
                 </div>
               )}
               {originalLeadData.age && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-slate-500">גיל</Label>
-                  <p className="font-medium text-slate-800">{originalLeadData.age}</p>
+                  <Label className="text-xs text-neutral-600">גיל</Label>
+                  <p className="font-medium text-neutral-900">{originalLeadData.age}</p>
                 </div>
               )}
               {originalLeadData.city && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-slate-500">עיר</Label>
-                  <p className="font-medium text-slate-800">{originalLeadData.city}</p>
+                  <Label className="text-xs text-neutral-600">עיר</Label>
+                  <p className="font-medium text-neutral-900">{originalLeadData.city}</p>
                 </div>
               )}
               {originalLeadData.marital_status && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-slate-500">מצב משפחתי</Label>
-                  <p className="font-medium text-slate-800">{originalLeadData.marital_status}</p>
+                  <Label className="text-xs text-neutral-600">מצב משפחתי</Label>
+                  <p className="font-medium text-neutral-900">{originalLeadData.marital_status}</p>
                 </div>
               )}
               {originalLeadData.estimated_property_value && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-slate-500">שווי נכס מוערך (₪)</Label>
-                  <p className="font-medium text-slate-800">{originalLeadData.estimated_property_value.toLocaleString()}</p>
+                  <Label className="text-xs text-neutral-600">שווי נכס מוערך (₪)</Label>
+                  <p className="font-medium text-neutral-900">{originalLeadData.estimated_property_value.toLocaleString()}</p>
                 </div>
               )}
               {originalLeadData.notes && (
                 <div className="space-y-2 md:col-span-2">
-                  <Label className="text-xs text-slate-500">הערות</Label>
-                  <p className="font-medium text-slate-800 whitespace-pre-wrap">{originalLeadData.notes}</p>
+                  <Label className="text-xs text-neutral-600">הערות</Label>
+                  <p className="font-medium text-neutral-900 whitespace-pre-wrap">{originalLeadData.notes}</p>
                 </div>
               )}
             </div>
           ) : (
-            <div className="text-center py-10 text-slate-500">
+            <div className="text-center py-10 text-neutral-600">
               אין פרטי ליד מקוריים זמינים עבור הזדמנות זו.
             </div>
           )}
@@ -475,7 +475,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         {(opportunity?.lead_id || initialLead?.id) ? (
         <ActivityLog leadId={opportunity?.lead_id || initialLead?.id} opportunityId={opportunity?.id} />
         ) : (
-        <div className="text-center py-10 text-slate-500">
+        <div className="text-center py-10 text-neutral-600">
           יש לשמור את ההזדמנות לפני שניתן להוסיף פעילויות
         </div>
         )}
