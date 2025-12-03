@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase
-} from "lucide-react";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase } from
+"lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from
+"@/components/ui/dropdown-menu";
 import LeadForm from "@/components/crm/LeadForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
@@ -38,10 +38,10 @@ export default function LeadsPage() {
 
   // חישוב סטטיסטיקות
   const stats = useMemo(() => {
-      const total = leads.length;
-      const convertedCount = leads.filter(l => l.lead_status.includes('Converted')).length;
-      const conversionRate = total > 0 ? ((convertedCount / total) * 100).toFixed(1) : 0;
-      return { total, conversionRate };
+    const total = leads.length;
+    const convertedCount = leads.filter((l) => l.lead_status.includes('Converted')).length;
+    const conversionRate = total > 0 ? (convertedCount / total * 100).toFixed(1) : 0;
+    return { total, conversionRate };
   }, [leads]);
 
   // מוטציות (פעולות שרת)
@@ -62,15 +62,15 @@ export default function LeadsPage() {
 
   const convertToOpportunity = useMutation({
     mutationFn: async (leadData) => {
-        await base44.entities.Lead.update(leadData.id, { lead_status: "Converted" });
-        return await base44.entities.Opportunity.create({
-            lead_id: leadData.id,
-            lead_name: leadData.full_name,
-            phone_number: leadData.phone_number,
-            email: leadData.email,
-            deal_stage: "New (חדש)",
-            probability: 10,
-        });
+      await base44.entities.Lead.update(leadData.id, { lead_status: "Converted" });
+      return await base44.entities.Opportunity.create({
+        lead_id: leadData.id,
+        lead_name: leadData.full_name,
+        phone_number: leadData.phone_number,
+        email: leadData.email,
+        deal_stage: "New (חדש)",
+        probability: 10
+      });
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['opportunities']);
@@ -82,18 +82,18 @@ export default function LeadsPage() {
 
   // סינון
   const filteredLeads = useMemo(() => {
-    return leads.filter(lead => {
-        if (filters.status === "revival_2023") {
-            return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
-        }
-        const searchTerm = filters.search.toLowerCase().trim();
-        const leadName = (lead.full_name || "").toLowerCase();
-        const leadPhone = (lead.phone_number || "").replace(/\D/g, ''); 
-        const searchPhone = searchTerm.replace(/\D/g, ''); 
-        const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
-        const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
-        const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
-        return matchesSearch && matchesYear && matchesStatus;
+    return leads.filter((lead) => {
+      if (filters.status === "revival_2023") {
+        return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
+      }
+      const searchTerm = filters.search.toLowerCase().trim();
+      const leadName = (lead.full_name || "").toLowerCase();
+      const leadPhone = (lead.phone_number || "").replace(/\D/g, '');
+      const searchPhone = searchTerm.replace(/\D/g, '');
+      const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
+      const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
+      const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
+      return matchesSearch && matchesYear && matchesStatus;
     }).sort((a, b) => b.id - a.id);
   }, [leads, filters]);
 
@@ -104,7 +104,7 @@ export default function LeadsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard icon={Users} label="סה״כ לידים" value={stats.total} color="bg-red-100 text-red-700" />
         <StatCard icon={CheckCircle2} label="הומרו להזדמנות" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
-        <StatCard icon={Activity} label="פעילים בטיפול" value={leads.filter(l => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
+        <StatCard icon={Activity} label="פעילים בטיפול" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
       </div>
 
       {/* סרגל כלים וחיפוש */}
@@ -112,21 +112,21 @@ export default function LeadsPage() {
         <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
           <div className="relative flex-1">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-            <Input 
-              placeholder="חיפוש שם או טלפון..." 
+            <Input
+              placeholder="חיפוש שם או טלפון..."
               className="pr-10 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
               value={filters.search}
-              onChange={e => setFilters({...filters, search: e.target.value})}
-            />
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
+
           </div>
-          <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
+          <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
                 <SelectTrigger className="w-full md:w-[180px] border-slate-300 text-slate-700 font-medium rounded-lg">
                     <Filter className="w-4 h-4 ml-2 text-slate-500" />
                     <SelectValue placeholder="סטטוס" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">כל הסטטוסים</SelectItem>
-                    {leadStatuses.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                     <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה</SelectItem>
                 </SelectContent>
           </Select>
@@ -134,7 +134,7 @@ export default function LeadsPage() {
         
         <div className="flex gap-2 w-full md:w-auto">
              <Link to={createPageUrl('ImportLeads')} className="flex-1 md:flex-none">
-                <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:text-red-700 hover:bg-red-50 hover:border-red-200 font-medium">
+                <Button variant="outline" className="bg-background text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm h-9 w-full border-slate-300 hover:text-red-700 hover:bg-red-50 hover:border-red-200">
                     <Upload className="w-4 h-4 ml-2" />
                     ייבוא
                 </Button>
@@ -157,21 +157,21 @@ export default function LeadsPage() {
         </div>
 
         <div className="divide-y divide-slate-100">
-            {isLoading ? <div className="p-10 text-center text-slate-500">טוען נתונים...</div> : 
-             filteredLeads.map((lead) => (
-                <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
+            {isLoading ? <div className="p-10 text-center text-slate-500">טוען נתונים...</div> :
+          filteredLeads.map((lead) =>
+          <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
                     <div className="col-span-3 flex items-center gap-3">
                          <div className="w-9 h-9 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm">
                             {lead.full_name?.charAt(0)}
                          </div>
                          <div className="flex-1">
-                            <InlineEdit value={lead.full_name} className="font-bold text-slate-800" onSave={(v) => updateLead.mutate({id: lead.id, data: {full_name: v}})} />
+                            <InlineEdit value={lead.full_name} className="font-bold text-slate-800" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
                             <div className="text-xs text-slate-500">{lead.city}</div>
                          </div>
                     </div>
                     <div className="col-span-3 text-sm text-slate-600 flex items-center gap-2">
                         <Phone className="w-4 h-4 text-slate-400" />
-                        <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({id: lead.id, data: {phone_number: v}})} />
+                        <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
                     <div className="col-span-2">
@@ -181,32 +181,32 @@ export default function LeadsPage() {
                         {lead.source_year} <span className="text-slate-400 text-xs">({lead.last_contact_date || '-'})</span>
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead); setShowLeadForm(true)}} className="h-8 w-8 text-slate-400 hover:text-red-600"><Pencil className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-red-600"><Pencil className="w-4 h-4" /></Button>
                     </div>
                 </div>
-            ))}
+          )}
         </div>
       </div>
 
       {/* --- תצוגת מובייל (כרטיסים) --- */}
       <div className="md:hidden space-y-4">
-         {filteredLeads.map((lead) => (
-            <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
+         {filteredLeads.map((lead) =>
+        <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
                             {lead.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <InlineEdit value={lead.full_name} className="font-bold text-slate-900 text-lg" onSave={(v) => updateLead.mutate({id: lead.id, data: {full_name: v}})} />
+                            <InlineEdit value={lead.full_name} className="font-bold text-slate-900 text-lg" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
                             <div className="text-sm text-slate-500">{lead.city}</div>
                         </div>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead); setShowLeadForm(true)}} className="text-slate-400"><MoreHorizontal /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="text-slate-400"><MoreHorizontal /></Button>
                 </div>
                 
                 <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
-                     <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({id: lead.id, data: {phone_number: v}})} />
+                     <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                      {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                 </div>
 
@@ -215,35 +215,35 @@ export default function LeadsPage() {
                     <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
                 </div>
             </div>
-         ))}
+        )}
       </div>
 
       {/* דיאלוג עריכה */}
-      <Dialog open={showLeadForm} onOpenChange={(open) => { setShowLeadForm(open); if(!open) setEditingLead(null); }}>
+      <Dialog open={showLeadForm} onOpenChange={(open) => {setShowLeadForm(open);if (!open) setEditingLead(null);}}>
         <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
-          <LeadForm 
-            lead={editingLead} 
+          <LeadForm
+            lead={editingLead}
             onSubmit={(data) => {
-                if (data.lead_status === 'Converted') {
-                    if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
-                    else createLead.mutate(data); 
-                } else {
-                    editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
-                }
+              if (data.lead_status === 'Converted') {
+                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });else
+                createLead.mutate(data);
+              } else {
+                editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
+              }
             }}
             onCancel={() => setShowLeadForm(false)}
-            isSubmitting={createLead.isPending || updateLead.isPending}
-          />
+            isSubmitting={createLead.isPending || updateLead.isPending} />
+
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>);
+
 }
 
 // קומפוננטות עזר קטנות
 function StatCard({ icon: Icon, label, value, color }) {
-    return (
-        <Card className="border-none shadow-sm bg-white">
+  return (
+    <Card className="border-none shadow-sm bg-white">
             <CardContent className="p-4 flex items-center gap-4">
                 <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
                 <div>
@@ -251,33 +251,33 @@ function StatCard({ icon: Icon, label, value, color }) {
                     <p className="text-2xl font-bold text-slate-800">{value}</p>
                 </div>
             </CardContent>
-        </Card>
-    );
+        </Card>);
+
 }
 
 function WhatsAppBtn({ phone }) {
-    const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
-    return (
-        <Button 
-            size="icon" variant="ghost" className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
-            onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}
-        >
+  const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
+  return (
+    <Button
+      size="icon" variant="ghost" className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
+      onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}>
+
             <MessageCircle className="w-4 h-4" />
-        </Button>
-    );
+        </Button>);
+
 }
 
 function StatusBadge({ lead, statuses, updateLead, convert }) {
-    return (
-        <InlineEdit 
-            type="select"
-            value={lead.lead_status}
-            options={statuses}
-            onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
-            formatDisplay={(val) => {
-                const s = statuses.find(o => o.value === val);
-                return <Badge variant="outline" className={`${s?.color || 'bg-slate-100 text-slate-600'} border-0 px-3 py-1 font-medium w-full justify-center`}>{s?.label || val}</Badge>;
-            }}
-        />
-    );
+  return (
+    <InlineEdit
+      type="select"
+      value={lead.lead_status}
+      options={statuses}
+      onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
+      formatDisplay={(val) => {
+        const s = statuses.find((o) => o.value === val);
+        return <Badge variant="outline" className={`${s?.color || 'bg-slate-100 text-slate-600'} border-0 px-3 py-1 font-medium w-full justify-center`}>{s?.label || val}</Badge>;
+      }} />);
+
+
 }
