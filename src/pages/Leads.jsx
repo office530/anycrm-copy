@@ -216,20 +216,26 @@ export default function LeadsPage() {
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
-            <div className="col-span-4 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
+            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
                 לקוח
                 {sortConfig.key === 'full_name' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-4 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
+            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
+                סטטוס
+                {sortConfig.key === 'lead_status' ? (
+                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
+            </div>
+            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
                 פרטי קשר
                 {sortConfig.key === 'phone_number' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('source_year')}>
-                שנה / מקור
+            <div className="col-span-1 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('source_year')}>
+                שנה
                 {sortConfig.key === 'source_year' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
@@ -241,7 +247,7 @@ export default function LeadsPage() {
             {isLoading ? <div className="p-10 text-center text-slate-500">טוען נתונים...</div> :
           filteredLeads.map((lead) =>
           <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
-                    <div className="col-span-4 flex items-center gap-3">
+                    <div className="col-span-3 flex items-center gap-3">
                          <div className="w-9 h-9 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm">
                             {lead.full_name?.charAt(0)}
                          </div>
@@ -257,13 +263,16 @@ export default function LeadsPage() {
                             )}
                          </div>
                     </div>
-                    <div className="col-span-4 text-sm text-slate-600 flex items-center gap-2">
+                    <div className="col-span-3">
+                        <StatusBadge lead={lead} statuses={leadStatuses} updateLead={updateLead} convert={convertToOpportunity} />
+                    </div>
+                    <div className="col-span-3 text-sm text-slate-600 flex items-center gap-2">
                         <Phone className="w-4 h-4 text-slate-400" />
                         <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
-                    <div className="col-span-2 text-sm text-slate-600">
-                        {lead.source_year} <span className="text-slate-400 text-xs">({lead.last_contact_date || '-'})</span>
+                    <div className="col-span-1 text-sm text-slate-600">
+                        {lead.source_year}
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
                         <div className="flex items-center justify-end gap-1">
