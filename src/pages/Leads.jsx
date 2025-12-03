@@ -124,10 +124,10 @@ export default function LeadsPage() {
                     <Filter className="w-4 h-4 ml-2 text-slate-500" />
                     <SelectValue placeholder="סטטוס" />
                 </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">כל הסטטוסים</SelectItem>
-                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                    <SelectItem value="revival_2023" className="text-orange-600 font-bold">♻️ רשימת החייאה</SelectItem>
+                <SelectContent className="bg-white text-slate-900 text-right">
+                    <SelectItem value="all" className="text-right">כל הסטטוסים</SelectItem>
+                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-right hover:bg-slate-50">{opt.label}</SelectItem>)}
+                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
                 </SelectContent>
           </Select>
         </div>
@@ -276,7 +276,8 @@ function StatusBadge({ lead, statuses, updateLead, convert }) {
       onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
       formatDisplay={(val) => {
         const s = statuses.find((o) => o.value === val);
-        return <Badge variant="outline" className={`${s?.color || 'bg-slate-100 text-slate-600'} border-0 px-3 py-1 font-medium w-full justify-center`}>{s?.label || val}</Badge>;
+        const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
+        return <Badge variant="outline" className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : (s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal')} border-0 px-3 py-1 w-full justify-start`}>{s?.label || val}</Badge>;
       }} />);
 
 

@@ -193,12 +193,12 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
 
           <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6 mt-2">
              <div className="space-y-2">
-              <Label>מצב משפחתי</Label>
+              <Label className="text-right block">מצב משפחתי</Label>
               <Select 
                 defaultValue={lead?.marital_status || "Married"} 
                 onValueChange={(val) => handleSelectChange("marital_status", val)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-right">
                   <SelectValue placeholder="בחר סטטוס" />
                 </SelectTrigger>
                 <SelectContent>
@@ -227,11 +227,12 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
             </div>
 
             <div className="space-y-2">
-              <Label>שווי נכס מוערך (₪)</Label>
+              <Label className="text-right block">שווי נכס מוערך (₪)</Label>
               <Input 
                 type="number" 
                 {...register("estimated_property_value", { valueAsNumber: true })} 
-                placeholder="0.00" 
+                placeholder="0.00"
+                className="text-right" 
               />
             </div>
 

@@ -128,7 +128,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
           </div>
           <div className="space-y-2 col-span-2">
             <Label>מצב בריאותי / צלילות (ייפוי כוח מתמשך?)</Label>
-            <Textarea {...register("health_status")} placeholder="פרט לגבי צלילות, ייפוי כוח וכו'..." className="h-20" />
+            <Textarea {...register("health_status")} placeholder="פרט לגבי צלילות, ייפוי כוח וכו'..." className="h-20 text-right placeholder:text-right" />
           </div>
         </CardContent>
       </Card>
