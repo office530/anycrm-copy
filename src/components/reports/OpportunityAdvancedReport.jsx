@@ -141,13 +141,13 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
     <div className="space-y-6 animate-in fade-in duration-500">
       
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-end md:items-center justify-between">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-neutral-100 flex flex-col md:flex-row gap-4 items-end md:items-center justify-between">
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
             <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-500 ml-1">טווח תאריכים</label>
+                <label className="text-xs font-medium text-neutral-500 ml-1">טווח תאריכים</label>
                 <Select value={dateRange} onValueChange={setDateRange}>
-                    <SelectTrigger className="w-[180px] bg-slate-50">
-                        <Calendar className="w-4 h-4 ml-2 text-slate-400" />
+                    <SelectTrigger className="w-[180px] bg-neutral-50">
+                        <Calendar className="w-4 h-4 ml-2 text-neutral-400" />
                         <SelectValue placeholder="בחר טווח" />
                     </SelectTrigger>
                     <SelectContent>
@@ -161,10 +161,10 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-500 ml-1">נציג מטפל</label>
+                <label className="text-xs font-medium text-neutral-500 ml-1">נציג מטפל</label>
                 <Select value={filterRep} onValueChange={setFilterRep}>
-                    <SelectTrigger className="w-[180px] bg-slate-50">
-                        <User className="w-4 h-4 ml-2 text-slate-400" />
+                    <SelectTrigger className="w-[180px] bg-neutral-50">
+                        <User className="w-4 h-4 ml-2 text-neutral-400" />
                         <SelectValue placeholder="כל הנציגים" />
                     </SelectTrigger>
                     <SelectContent>
@@ -175,10 +175,10 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-500 ml-1">שלב בעסקה</label>
+                <label className="text-xs font-medium text-neutral-500 ml-1">שלב בעסקה</label>
                 <Select value={filterStage} onValueChange={setFilterStage}>
-                    <SelectTrigger className="w-[180px] bg-slate-50">
-                        <FilterIcon className="w-4 h-4 ml-2 text-slate-400" />
+                    <SelectTrigger className="w-[180px] bg-neutral-50">
+                        <FilterIcon className="w-4 h-4 ml-2 text-neutral-400" />
                         <SelectValue placeholder="כל השלבים" />
                     </SelectTrigger>
                     <SelectContent>
@@ -189,17 +189,17 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </div>
         </div>
         
-        <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
-            <div className="text-center px-4 border-l border-slate-200">
-                <p className="text-xs text-slate-500">שווי צנרת</p>
-                <p className="text-lg font-bold text-slate-800">₪{totalPipeline.toLocaleString()}</p>
+        <div className="flex items-center gap-2 bg-neutral-50 px-4 py-2 rounded-lg border border-neutral-200">
+            <div className="text-center px-4 border-l border-neutral-200">
+                <p className="text-xs text-neutral-500">שווי צנרת</p>
+                <p className="text-lg font-bold text-neutral-800">₪{totalPipeline.toLocaleString()}</p>
             </div>
-            <div className="text-center px-4 border-l border-slate-200">
-                <p className="text-xs text-slate-500">צפי משוקלל</p>
+            <div className="text-center px-4 border-l border-neutral-200">
+                <p className="text-xs text-neutral-500">צפי משוקלל</p>
                 <p className="text-lg font-bold text-blue-600">₪{weightedPipeline.toLocaleString()}</p>
             </div>
             <div className="text-center px-4">
-                <p className="text-xs text-slate-500">אחוז סגירה</p>
+                <p className="text-xs text-neutral-500">אחוז סגירה</p>
                 <p className="text-lg font-bold text-green-600">{winRate.toFixed(1)}%</p>
             </div>
         </div>
@@ -207,7 +207,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
 
       {/* Row 1: Progression & Conversion */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm border-slate-100">
+        <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                     <BarChart3 className="w-5 h-5 text-blue-500" /> התקדמות עסקאות (כמות ושווי)
@@ -229,7 +229,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100">
+        <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                     <PieChart className="w-5 h-5 text-purple-500" /> המרות לפי מקור (עסקאות זכייה)
@@ -261,7 +261,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
 
       {/* Row 2: Revenue & Cycle */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm border-slate-100">
+        <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-green-500" /> צפי הכנסות (משוקלל vs בפועל)
@@ -291,7 +291,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100">
+        <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-orange-500" /> אורך מחזור מכירה ממוצע (ימים)
@@ -312,10 +312,10 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
       </div>
 
       {/* Detailed Table */}
-      <Card className="shadow-sm border-slate-100 overflow-hidden">
+      <Card className="shadow-sm border-neutral-100 overflow-hidden">
           <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                  <TableIcon className="w-5 h-5 text-slate-500" /> פירוט הזדמנויות מסונן
+                  <TableIcon className="w-5 h-5 text-neutral-500" /> פירוט הזדמנויות מסונן
               </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -337,23 +337,23 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                               <TableCell className="font-medium">{o.lead_name}</TableCell>
                               <TableCell>{o.product_type}</TableCell>
                               <TableCell>
-                                  <Badge variant="outline" className="bg-slate-50 font-normal">{o.deal_stage?.split('(')[0]}</Badge>
+                                  <Badge variant="outline" className="bg-neutral-50 font-normal">{o.deal_stage?.split('(')[0]}</Badge>
                               </TableCell>
                               <TableCell>₪{o.loan_amount_requested?.toLocaleString()}</TableCell>
                               <TableCell>{o.probability}%</TableCell>
                               <TableCell>{o.expected_close_date ? moment(o.expected_close_date).format('DD/MM/YYYY') : '-'}</TableCell>
-                              <TableCell className="text-xs text-slate-500">{o.created_by}</TableCell>
+                              <TableCell className="text-xs text-neutral-500">{o.created_by}</TableCell>
                           </TableRow>
                       ))}
                       {filteredData.length === 0 && (
                           <TableRow>
-                              <TableCell colSpan={7} className="text-center py-8 text-slate-500">לא נמצאו נתונים לתצוגה</TableCell>
+                              <TableCell colSpan={7} className="text-center py-8 text-neutral-500">לא נמצאו נתונים לתצוגה</TableCell>
                           </TableRow>
                       )}
                   </TableBody>
               </Table>
               {filteredData.length > 10 && (
-                  <div className="p-4 text-center text-xs text-slate-500 bg-slate-50 border-t border-slate-100">
+                  <div className="p-4 text-center text-xs text-neutral-500 bg-neutral-50 border-t border-neutral-100">
                       מציג 10 מתוך {filteredData.length} הזדמנויות. הורד דוח מלא לצפייה בכולם.
                   </div>
               )}

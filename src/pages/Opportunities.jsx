@@ -66,7 +66,7 @@ export default function OpportunitiesPage() {
           triggerConfetti();
           // Custom Toast Logic
           const toastEl = document.createElement('div');
-          toastEl.className = "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
+          toastEl.className = "fixed top-1/2 left-1/2 transform -tranneutral-x-1/2 -tranneutral-y-1/2 bg-neutral-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
           toastEl.innerHTML = `<span class="text-2xl">🎉</span> <div><div class="font-bold">ברכות!</div><div class="text-sm opacity-90">עסקה נוספת נסגרה בהצלחה!</div></div>`;
           document.body.appendChild(toastEl);
           setTimeout(() => {
@@ -87,33 +87,33 @@ export default function OpportunitiesPage() {
       
       {/* Stats Header (New!) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-slate-200 p-4 rounded-2xl border border-slate-100 dark:border-slate-300 flex items-center gap-3 shadow-sm">
+          <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
              <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><DollarSign className="w-5 h-5"/></div>
              <div>
-                 <div className="text-xs text-slate-500">שווי צנרת כולל</div>
-                 <div className="font-bold text-lg dark:text-slate-900">{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
+                 <div className="text-xs text-neutral-500">שווי צנרת כולל</div>
+                 <div className="font-bold text-lg dark:text-neutral-900">{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
              </div>
           </div>
-          <div className="bg-white dark:bg-slate-200 p-4 rounded-2xl border border-slate-100 dark:border-slate-300 flex items-center gap-3 shadow-sm">
+          <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
              <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Briefcase className="w-5 h-5"/></div>
              <div>
-                 <div className="text-xs text-slate-500">עסקאות פעילות</div>
-                 <div className="font-bold text-lg dark:text-slate-900">{stats.activeDeals}</div>
+                 <div className="text-xs text-neutral-500">עסקאות פעילות</div>
+                 <div className="font-bold text-lg dark:text-neutral-900">{stats.activeDeals}</div>
              </div>
           </div>
-          <div className="bg-white dark:bg-slate-200 p-4 rounded-2xl border border-slate-100 dark:border-slate-300 flex items-center gap-3 shadow-sm">
+          <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
              <div className="p-2 bg-purple-100 text-purple-600 rounded-lg"><Trophy className="w-5 h-5"/></div>
              <div>
-                 <div className="text-xs text-slate-500">נסגרו בהצלחה</div>
-                 <div className="font-bold text-lg dark:text-slate-900">{stats.wonDeals}</div>
+                 <div className="text-xs text-neutral-500">נסגרו בהצלחה</div>
+                 <div className="font-bold text-lg dark:text-neutral-900">{stats.wonDeals}</div>
              </div>
           </div>
           <div className="flex items-center justify-end gap-2">
-            <div className="bg-white dark:bg-slate-200 p-1 rounded-xl border border-slate-200 dark:border-slate-300 shadow-sm flex gap-1 h-fit">
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 dark:bg-slate-300 text-slate-900 dark:text-slate-900 shadow-sm' : 'text-slate-500 dark:text-slate-600'}>
+            <div className="bg-white dark:bg-neutral-200 p-1 rounded-xl border border-neutral-200 dark:border-neutral-300 shadow-sm flex gap-1 h-fit">
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-neutral-100 dark:bg-neutral-300 text-neutral-900 dark:text-neutral-900 shadow-sm' : 'text-neutral-500 dark:text-neutral-600'}>
                     <LayoutGrid className="w-4 h-4 ml-2" /> לוח
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-300 text-slate-900 dark:text-slate-900 shadow-sm' : 'text-slate-500 dark:text-slate-600'}>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-neutral-100 dark:bg-neutral-300 text-neutral-900 dark:text-neutral-900 shadow-sm' : 'text-neutral-500 dark:text-neutral-600'}>
                     <ListIcon className="w-4 h-4 ml-2" /> רשימה
                 </Button>
             </div>
@@ -132,15 +132,15 @@ export default function OpportunitiesPage() {
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-slate-100 text-slate-700 dark:bg-slate-300 dark:text-slate-700'} border border-transparent`}>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-neutral-100 text-neutral-700 dark:bg-neutral-300 dark:text-neutral-700'} border border-transparent`}>
                         {stage.label}
                     </span>
-                    <span className="text-xs text-slate-400 font-medium">{stageOpps.length}</span>
+                    <span className="text-xs text-neutral-400 font-medium">{stageOpps.length}</span>
                 </div>
-                <div className="h-1 w-full bg-slate-200 dark:bg-slate-300 rounded-full overflow-hidden">
-                    <div className={`h-full ${stage.color || 'bg-slate-400'}`} style={{ width: '100%' }}></div>
+                <div className="h-1 w-full bg-neutral-200 dark:bg-neutral-300 rounded-full overflow-hidden">
+                    <div className={`h-full ${stage.color || 'bg-neutral-400'}`} style={{ width: '100%' }}></div>
                 </div>
-                {total > 0 && <div className="text-xs font-medium text-slate-500 dark:text-slate-600 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
+                {total > 0 && <div className="text-xs font-medium text-neutral-500 dark:text-neutral-600 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
               </div>
 
               {/* Droppable Area */}
@@ -150,7 +150,7 @@ export default function OpportunitiesPage() {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] transition-colors rounded-xl ${
-                      snapshot.isDraggingOver ? 'bg-slate-100/50 ring-2 ring-dashed ring-slate-200' : ''
+                      snapshot.isDraggingOver ? 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' : ''
                     }`}
                   >
                     {stageOpps.map((opp, index) => (
@@ -162,46 +162,46 @@ export default function OpportunitiesPage() {
                             {...provided.dragHandleProps}
                             className={`
                               cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border-none shadow-sm group relative overflow-hidden
-                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white dark:bg-slate-200 dark:shadow-none dark:border dark:border-slate-300'}
+                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white dark:bg-neutral-200 dark:shadow-none dark:border dark:border-neutral-300'}
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
-                            <div className={`absolute top-0 right-0 w-1 h-full ${stage.color || 'bg-slate-300'}`} />
+                            <div className={`absolute top-0 right-0 w-1 h-full ${stage.color || 'bg-neutral-300'}`} />
                             <CardContent className="p-4 pr-5 space-y-3">
                               
                               {/* שם הלקוח */}
                               <div className="flex justify-between items-start">
-                                <span className="font-bold text-slate-800 dark:text-slate-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                <span className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                                   {opp.lead_name || "לקוח ללא שם"}
                                 </span>
-                                <Badge variant="outline" className="text-[10px] bg-slate-50 dark:bg-slate-300 border-slate-100 dark:border-slate-300 text-slate-500 dark:text-slate-600">
+                                <Badge variant="outline" className="text-[10px] bg-neutral-50 dark:bg-neutral-300 border-neutral-100 dark:border-neutral-300 text-neutral-500 dark:text-neutral-600">
                                   {opp.probability}%
                                 </Badge>
                               </div>
                               
                               {/* עריכה מהירה: סכום ותאריך */}
-                              <div className="space-y-2 bg-slate-50/50 dark:bg-slate-300/50 p-2 rounded-lg border border-slate-100/50 dark:border-slate-300/50">
+                              <div className="space-y-2 bg-neutral-50/50 dark:bg-neutral-300/50 p-2 rounded-lg border border-neutral-100/50 dark:border-neutral-300/50">
                                 <div className="flex justify-between items-center text-xs">
-                                  <span className="text-slate-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> סכום</span>
+                                  <span className="text-neutral-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> סכום</span>
                                   <div className="w-24 text-right">
                                       <InlineEdit 
                                         value={opp.loan_amount_requested}
                                         type="number"
                                         formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
-                                        className="font-bold text-slate-700 dark:text-slate-800 justify-end h-6 bg-white dark:bg-slate-300 shadow-sm"
+                                        className="font-bold text-neutral-700 dark:text-neutral-800 justify-end h-6 bg-white dark:bg-neutral-300 shadow-sm"
                                       />
                                   </div>
                                 </div>
                                 <div className="flex justify-between items-center text-xs">
-                                  <span className="text-slate-400 flex items-center gap-1"><Calendar className="w-3 h-3" /> צפי</span>
+                                  <span className="text-neutral-400 flex items-center gap-1"><Calendar className="w-3 h-3" /> צפי</span>
                                   <div className="w-28 text-right">
                                       <InlineEdit 
                                         value={opp.expected_close_date}
                                         type="date"
                                         placeholder="קבע תאריך"
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
-                                        className="justify-end h-6 text-slate-600 dark:text-slate-700"
+                                        className="justify-end h-6 text-neutral-600 dark:text-neutral-700"
                                         formatDisplay={(val) => val ? moment(val).format("DD/MM/YYYY") : "אין תאריך"}
                                       />
                                   </div>
@@ -229,8 +229,8 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className="bg-white dark:bg-slate-200 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-300 overflow-hidden">
-             <div className="p-10 text-center text-slate-500">תצוגת רשימה זמינה בגרסה הבאה</div>
+        <div className="bg-white dark:bg-neutral-200 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-300 overflow-hidden">
+             <div className="p-10 text-center text-neutral-500">תצוגת רשימה זמינה בגרסה הבאה</div>
         </div>
       )}
 

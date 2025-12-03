@@ -32,8 +32,8 @@ function LayoutContent({ children, currentPageName }) {
       
       {/* Sidebar Desktop */}
       <aside className={`
-        fixed inset-y-0 right-0 z-50 w-72 bg-white text-neutral-800 border-l border-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-sm
-        ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+        fixed inset-y-0 right-0 z-50 w-72 bg-white text-neutral-800 border-l border-neutral-100 transition-transform duration-300 ease-in-out lg:tranneutral-x-0 lg:static lg:inset-0 shadow-sm
+        ${isSidebarOpen ? 'tranneutral-x-0' : 'tranneutral-x-full'}
       `}>
         <div className="flex flex-col h-full">
             {/* Logo */}
@@ -48,7 +48,7 @@ function LayoutContent({ children, currentPageName }) {
                     )}
                     <span className="truncate">{branding.companyName}</span>
                 </div>
-                <p className="text-xs text-neutral-500 mt-2 font-medium tracking-wide opacity-80 dark:text-slate-600">OLD SALES DATABASE</p>
+                <p className="text-xs text-neutral-500 mt-2 font-medium tracking-wide opacity-80 dark:text-neutral-600">OLD SALES DATABASE</p>
             </div>
 
             {/* Nav */}
@@ -69,7 +69,7 @@ function LayoutContent({ children, currentPageName }) {
                     >
                     <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-red-700' : 'text-neutral-400 group-hover:text-red-600'}`} />
                     <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-600 rounded-r-full" />}
+                    {isActive && <div className="absolute left-0 top-1/2 -tranneutral-y-1/2 w-1 h-6 bg-red-600 rounded-r-full" />}
                     </Link>
                 );
                 })}
@@ -105,7 +105,7 @@ function LayoutContent({ children, currentPageName }) {
         </header>
 
         {/* Topbar Desktop */}
-        <header className="hidden lg:flex bg-white/80 dark:bg-slate-200/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800 h-20 items-center justify-between px-8 sticky top-0 z-30">
+        <header className="hidden lg:flex bg-white/80 dark:bg-neutral-200/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800 h-20 items-center justify-between px-8 sticky top-0 z-30">
             <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
             </h1>
@@ -113,7 +113,7 @@ function LayoutContent({ children, currentPageName }) {
                 <div className="hidden md:block">
                   <GlobalSearch />
                 </div>
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-neutral-500 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:text-neutral-600">
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-600">
                     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
                 <Notifications />

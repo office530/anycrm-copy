@@ -107,11 +107,11 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-end bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+      <div className="flex flex-col md:flex-row gap-4 items-end bg-white p-4 rounded-xl shadow-sm border border-neutral-100">
         <div className="w-full md:w-64 space-y-1">
-          <label className="text-xs font-medium text-slate-500">חיפוש לקוח</label>
+          <label className="text-xs font-medium text-neutral-500">חיפוש לקוח</label>
           <div className="relative">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute right-3 top-1/2 -tranneutral-y-1/2 w-4 h-4 text-neutral-400" />
             <Input 
               placeholder="שם לקוח..." 
               value={searchClient}
@@ -122,7 +122,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         </div>
 
         <div className="w-full md:w-48 space-y-1">
-          <label className="text-xs font-medium text-slate-500">סינון לפי שלב</label>
+          <label className="text-xs font-medium text-neutral-500">סינון לפי שלב</label>
           <Select value={filterStage} onValueChange={setFilterStage}>
             <SelectTrigger>
               <SelectValue placeholder="כל השלבים" />
@@ -135,7 +135,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         </div>
 
         <div className="w-full md:w-48 space-y-1">
-          <label className="text-xs font-medium text-slate-500">תאריך יצירה</label>
+          <label className="text-xs font-medium text-neutral-500">תאריך יצירה</label>
           <Select value={filterDate} onValueChange={setFilterDate}>
             <SelectTrigger>
               <SelectValue placeholder="כל הזמנים" />
@@ -151,9 +151,9 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
       </div>
 
       {/* Table */}
-      <Card className="shadow-sm overflow-hidden border-slate-100">
-        <CardHeader className="border-b bg-slate-50/50">
-          <CardTitle className="text-lg font-medium text-slate-800">פירוט הזדמנויות</CardTitle>
+      <Card className="shadow-sm overflow-hidden border-neutral-100">
+        <CardHeader className="border-b bg-neutral-50/50">
+          <CardTitle className="text-lg font-medium text-neutral-800">פירוט הזדמנויות</CardTitle>
         </CardHeader>
         <div className="overflow-x-auto">
           <Table>
@@ -170,24 +170,24 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
               {filteredData.length > 0 ? (
                 filteredData.map((o) => (
                   <TableRow key={o.id}>
-                    <TableCell className="font-medium text-slate-900">{o.lead_name || 'ללא שם'}</TableCell>
-                    <TableCell className="font-mono text-slate-600">₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
+                    <TableCell className="font-medium text-neutral-900">{o.lead_name || 'ללא שם'}</TableCell>
+                    <TableCell className="font-mono text-neutral-600">₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-white border-slate-200 font-normal text-slate-600">
+                      <Badge variant="outline" className="bg-white border-neutral-200 font-normal text-neutral-600">
                         {o.deal_stage}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="text-neutral-500 text-sm">
                       {o.created_date ? moment(o.created_date).format('DD/MM/YYYY') : '-'}
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="text-neutral-500 text-sm">
                       {o.expected_close_date ? moment(o.expected_close_date).format('DD/MM/YYYY') : '-'}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center text-slate-500">
+                  <TableCell colSpan={5} className="h-24 text-center text-neutral-500">
                     לא נמצאו הזדמנויות התואמות את הסינון
                   </TableCell>
                 </TableRow>

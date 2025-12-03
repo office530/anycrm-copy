@@ -49,8 +49,8 @@ export default function ReportsPage() {
     <div className="space-y-8" dir="rtl">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">דוחות וניתוח נתונים</h1>
-          <p className="text-slate-500">סקירה מקיפה של ביצועים, המרות ופעילות</p>
+          <h1 className="text-3xl font-bold text-neutral-800">דוחות וניתוח נתונים</h1>
+          <p className="text-neutral-500">סקירה מקיפה של ביצועים, המרות ופעילות</p>
         </div>
         
         <Select value={timeRange} onValueChange={setTimeRange}>

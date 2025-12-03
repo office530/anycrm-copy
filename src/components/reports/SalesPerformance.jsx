@@ -58,7 +58,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{formatCurrency(stats.totalRevenue)}</div>
-            <p className="text-xs text-slate-500">סה"כ עסקאות שנסגרו בהצלחה</p>
+            <p className="text-xs text-neutral-500">סה"כ עסקאות שנסגרו בהצלחה</p>
           </CardContent>
         </Card>
 
@@ -69,7 +69,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.closedCount}</div>
-            <p className="text-xs text-slate-500">מספר עסקאות בסטטוס זכייה</p>
+            <p className="text-xs text-neutral-500">מספר עסקאות בסטטוס זכייה</p>
           </CardContent>
         </Card>
 
@@ -80,7 +80,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(stats.avgDealSize)}</div>
-            <p className="text-xs text-slate-500">ממוצע לעסקה שנסגרה</p>
+            <p className="text-xs text-neutral-500">ממוצע לעסקה שנסגרה</p>
           </CardContent>
         </Card>
 
@@ -91,7 +91,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(stats.pipelineValue)}</div>
-            <p className="text-xs text-slate-500">פוטנציאל עסקאות פתוחות</p>
+            <p className="text-xs text-neutral-500">פוטנציאל עסקאות פתוחות</p>
           </CardContent>
         </Card>
       </div>

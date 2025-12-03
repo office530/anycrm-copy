@@ -109,30 +109,30 @@ export default function LeadsPage() {
       
       {/* Stats Bar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-none shadow-sm bg-white dark:bg-slate-200">
+        <Card className="border-none shadow-sm bg-white dark:bg-neutral-200">
             <CardContent className="p-4 flex items-center gap-4">
                 <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Users className="w-5 h-5" /></div>
                 <div>
-                    <p className="text-sm text-slate-500">סה״כ לידים</p>
-                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-900">{stats.total}</p>
+                    <p className="text-sm text-neutral-500">סה״כ לידים</p>
+                    <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">{stats.total}</p>
                 </div>
             </CardContent>
         </Card>
-        <Card className="border-none shadow-sm bg-white dark:bg-slate-200">
+        <Card className="border-none shadow-sm bg-white dark:bg-neutral-200">
             <CardContent className="p-4 flex items-center gap-4">
                 <div className="p-3 bg-teal-100 text-teal-600 rounded-xl"><CheckCircle2 className="w-5 h-5" /></div>
                 <div>
-                    <p className="text-sm text-slate-500">הומרו להזדמנות</p>
-                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-900">{stats.conversionRate}%</p>
+                    <p className="text-sm text-neutral-500">הומרו להזדמנות</p>
+                    <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">{stats.conversionRate}%</p>
                 </div>
             </CardContent>
         </Card>
-        <Card className="border-none shadow-sm bg-white dark:bg-slate-200">
+        <Card className="border-none shadow-sm bg-white dark:bg-neutral-200">
             <CardContent className="p-4 flex items-center gap-4">
                 <div className="p-3 bg-purple-100 text-purple-600 rounded-xl"><Activity className="w-5 h-5" /></div>
                 <div>
-                    <p className="text-sm text-slate-500">פעילים בטיפול</p>
-                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-900">
+                    <p className="text-sm text-neutral-500">פעילים בטיפול</p>
+                    <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">
                         {leads.filter(l => !l.lead_status.includes('Converted') && !l.lead_status.includes('Lost')).length}
                     </p>
                 </div>
@@ -141,21 +141,21 @@ export default function LeadsPage() {
       </div>
 
       {/* Filters & Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-200 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-300">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-neutral-200 p-4 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-300">
         <div className="flex-1 w-full md:w-auto flex flex-col md:flex-row gap-3">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute right-3 top-1/2 -tranneutral-y-1/2 w-4 h-4 text-neutral-400" />
             <Input 
               placeholder="חיפוש..." 
-              className="pr-10 bg-slate-50 dark:bg-slate-300 border-slate-200 dark:border-slate-300 focus:bg-white dark:focus:bg-slate-800 dark:text-slate-900 transition-all rounded-xl"
+              className="pr-10 bg-neutral-50 dark:bg-neutral-300 border-neutral-200 dark:border-neutral-300 focus:bg-white dark:focus:bg-neutral-800 dark:text-neutral-900 transition-all rounded-xl"
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
             />
           </div>
           <div className="flex gap-2">
             <Select value={filters.status} onValueChange={v => setFilters({...filters, status: v})}>
-                <SelectTrigger className="w-[160px] rounded-xl bg-slate-50 dark:bg-slate-300 border-slate-200 dark:border-slate-300 dark:text-slate-900">
-                <Filter className="w-3.5 h-3.5 ml-2 text-slate-500" />
+                <SelectTrigger className="w-[160px] rounded-xl bg-neutral-50 dark:bg-neutral-300 border-neutral-200 dark:border-neutral-300 dark:text-neutral-900">
+                <Filter className="w-3.5 h-3.5 ml-2 text-neutral-500" />
                 <SelectValue placeholder="סטטוס" />
                 </SelectTrigger>
                 <SelectContent>
@@ -170,12 +170,12 @@ export default function LeadsPage() {
         
         <div className="flex gap-3 w-full md:w-auto">
              <Link to={createPageUrl('ImportLeads')} className="w-full md:w-auto">
-                <Button variant="outline" className="w-full border-slate-200 hover:bg-slate-50 rounded-xl">
+                <Button variant="outline" className="w-full border-neutral-200 hover:bg-neutral-50 rounded-xl">
                     <Upload className="w-4 h-4 ml-2" />
                     ייבוא
                 </Button>
             </Link>
-            <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto bg-slate-800 hover:bg-slate-800 text-white rounded-xl shadow-lg shadow-slate-900/20">
+            <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto bg-neutral-800 hover:bg-neutral-800 text-white rounded-xl shadow-lg shadow-neutral-900/20">
             <Plus className="w-4 h-4 ml-2" />
             ליד חדש
             </Button>
@@ -184,7 +184,7 @@ export default function LeadsPage() {
 
       {/* Leads List */}
       <div className="space-y-3">
-         <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+         <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
             <div className="col-span-3 text-right">לקוח</div>
             <div className="col-span-3 text-right">פרטי קשר</div>
             <div className="col-span-2 text-right">סטטוס</div>
@@ -194,10 +194,10 @@ export default function LeadsPage() {
 
         <AnimatePresence>
             {isLoading ? (
-                <div className="text-center py-20 text-slate-400">טוען נתונים...</div>
+                <div className="text-center py-20 text-neutral-400">טוען נתונים...</div>
             ) : filteredLeads.length === 0 ? (
-                <div className="text-center py-20 bg-white dark:bg-slate-200 rounded-3xl border border-dashed border-slate-200 dark:border-slate-300">
-                    <p className="text-slate-500">לא נמצאו לידים</p>
+                <div className="text-center py-20 bg-white dark:bg-neutral-200 rounded-3xl border border-dashed border-neutral-200 dark:border-neutral-300">
+                    <p className="text-neutral-500">לא נמצאו לידים</p>
                 </div>
             ) : (
                 filteredLeads.map((lead, index) => (
@@ -206,19 +206,19 @@ export default function LeadsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="group bg-white dark:bg-slate-200 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-300 hover:shadow-md hover:border-teal-100 dark:hover:border-teal-900 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                        className="group bg-white dark:bg-neutral-200 rounded-2xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-300 hover:shadow-md hover:border-teal-100 dark:hover:border-teal-900 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
                     >
                         <div className="col-span-3 flex items-center gap-3">
-                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-700 bg-slate-100 dark:bg-slate-300 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30 group-hover:text-teal-600 transition-colors`}>
+                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-700 bg-neutral-100 dark:bg-neutral-300 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30 group-hover:text-teal-600 transition-colors`}>
                                 {lead.full_name?.charAt(0) || <User className="w-5 h-5" />}
                              </div>
                              <div className="flex-1 min-w-0">
                                 <InlineEdit 
                                     value={lead.full_name}
                                     onSave={(val) => updateLead.mutate({ id: lead.id, data: { full_name: val } })}
-                                    className="font-bold text-slate-800 dark:text-slate-900 text-base"
+                                    className="font-bold text-neutral-800 dark:text-neutral-900 text-base"
                                 />
-                                <div className="flex items-center gap-2 text-xs text-slate-400">
+                                <div className="flex items-center gap-2 text-xs text-neutral-400">
                                     <InlineEdit value={lead.city} placeholder="עיר" onSave={(val) => updateLead.mutate({ id: lead.id, data: { city: val } })} />
                                     <span>•</span>
                                     <span>{lead.age || '?'}</span>
@@ -226,8 +226,8 @@ export default function LeadsPage() {
                              </div>
                         </div>
 
-                        <div className="col-span-3 flex items-center text-slate-600 dark:text-slate-600 gap-2">
-                            <Phone className="w-4 h-4 text-slate-300 dark:text-slate-600" />
+                        <div className="col-span-3 flex items-center text-neutral-600 dark:text-neutral-600 gap-2">
+                            <Phone className="w-4 h-4 text-neutral-300 dark:text-neutral-600" />
                             <InlineEdit 
                                 value={lead.phone_number}
                                 type="tel"
@@ -259,7 +259,7 @@ export default function LeadsPage() {
                                 formatDisplay={(val) => {
                                     const status = leadStatuses.find(o => o.value === val);
                                     return (
-                                        <Badge variant="secondary" className={`${status?.color || 'bg-slate-100'} border-0 px-3 py-1`}>
+                                        <Badge variant="secondary" className={`${status?.color || 'bg-neutral-100'} border-0 px-3 py-1`}>
                                             {status?.label || val}
                                         </Badge>
                                     );
@@ -267,16 +267,16 @@ export default function LeadsPage() {
                              />
                         </div>
 
-                        <div className="col-span-2 flex flex-col justify-center text-sm text-slate-500">
+                        <div className="col-span-2 flex flex-col justify-center text-sm text-neutral-500">
                             <span className="font-medium">{lead.source_year}</span>
-                            <span className="text-xs text-slate-400">{lead.last_contact_date || 'לא נוצר קשר'}</span>
+                            <span className="text-xs text-neutral-400">{lead.last_contact_date || 'לא נוצר קשר'}</span>
                         </div>
 
                         <div className="col-span-2 flex justify-end gap-2 pl-2">
                             <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                className="h-8 w-8 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                                 onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}
                                 title="ערוך פרטים מלאים"
                             >
@@ -285,7 +285,7 @@ export default function LeadsPage() {
                             <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-8 w-8 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
+                                className="h-8 w-8 text-neutral-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
                                 onClick={() => convertToOpportunity.mutate(lead)}
                                 title="המר להזדמנות"
                             >
