@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const [aiLoading, setAiLoading] = React.useState(false);
-  
+
   // Conversion State
   const [transferSettings, setTransferSettings] = React.useState({
     contactDetails: true,
@@ -47,8 +47,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
   const { data: originalLeadData, isLoading: isLoadingLead } = useQuery({
     queryKey: ['lead', leadId],
-    queryFn: () => base44.entities.Lead.list().then(leads => leads.find(l => l.id === leadId)),
-    enabled: !!leadId,
+    queryFn: () => base44.entities.Lead.list().then((leads) => leads.find((l) => l.id === leadId)),
+    enabled: !!leadId
   });
 
   // Update form values when checkboxes change (only if initialLead exists)
@@ -56,21 +56,21 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     if (!initialLead) return;
 
     if (transferSettings.propertyDetails) {
-        setValue("property_value", initialLead.estimated_property_value || "");
+      setValue("property_value", initialLead.estimated_property_value || "");
     } else {
-        setValue("property_value", ""); // Clear if unchecked
+      setValue("property_value", ""); // Clear if unchecked
     }
-    
+
     // You could add more fields here based on the checkboxes
   }, [transferSettings, initialLead, setValue]);
 
   const handleFormSubmit = (data) => {
-      // Pass the task creation flag along with the data
-      onSubmit({ 
-          ...data, 
-          _createTask: transferSettings.createTask,
-          _leadName: initialLead?.full_name // Helper for task title
-      });
+    // Pass the task creation flag along with the data
+    onSubmit({
+      ...data,
+      _createTask: transferSettings.createTask,
+      _leadName: initialLead?.full_name // Helper for task title
+    });
   };
 
   const generateAiInsights = async () => {
@@ -78,7 +78,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     try {
       const values = getValues();
       const leadData = initialLead || {}; // In a real app, might need to fetch lead if not passed
-      
+
       // Strategy Prompt
       const strategyPrompt = `
         Act as an expert Israeli insurance agent consultant.
@@ -112,9 +112,9 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
       // Execute in parallel
       const [strategyRes, objectionRes] = await Promise.all([
-        base44.integrations.Core.InvokeLLM({ prompt: strategyPrompt }),
-        values.current_objection ? base44.integrations.Core.InvokeLLM({ prompt: objectionPrompt }) : Promise.resolve({ output: "" })
-      ]);
+      base44.integrations.Core.InvokeLLM({ prompt: strategyPrompt }),
+      values.current_objection ? base44.integrations.Core.InvokeLLM({ prompt: objectionPrompt }) : Promise.resolve({ output: "" })]
+      );
 
       setValue("ai_sales_strategy", typeof strategyRes === 'string' ? strategyRes : strategyRes.output);
       if (values.current_objection) {
@@ -137,8 +137,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="bg-white p-6 rounded-xl shadow-xl border border-slate-100"
-      dir="rtl"
-    >
+      dir="rtl">
+
       <div className="mb-4 flex items-center gap-3 border-b pb-4">
         <div className="bg-blue-100 p-2 rounded-full">
           <Briefcase className="w-6 h-6 text-blue-600" />
@@ -153,43 +153,43 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </div>
       </div>
 
-      {initialLead && (
-        <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-lg p-4 space-y-3">
+      {initialLead &&
+      <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-lg p-4 space-y-3">
             <h3 className="font-semibold text-emerald-800 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 הגדרות המרה מהירה
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                    <input 
-                        type="checkbox" 
-                        checked={transferSettings.contactDetails}
-                        onChange={e => setTransferSettings({...transferSettings, contactDetails: e.target.checked})}
-                        className="rounded text-emerald-600 focus:ring-emerald-500"
-                    />
+                    <input
+              type="checkbox"
+              checked={transferSettings.contactDetails}
+              onChange={(e) => setTransferSettings({ ...transferSettings, contactDetails: e.target.checked })}
+              className="rounded text-emerald-600 focus:ring-emerald-500" />
+
                     העבר פרטי קשר
                 </label>
                 <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                    <input 
-                        type="checkbox" 
-                        checked={transferSettings.propertyDetails}
-                        onChange={e => setTransferSettings({...transferSettings, propertyDetails: e.target.checked})}
-                        className="rounded text-emerald-600 focus:ring-emerald-500"
-                    />
+                    <input
+              type="checkbox"
+              checked={transferSettings.propertyDetails}
+              onChange={(e) => setTransferSettings({ ...transferSettings, propertyDetails: e.target.checked })}
+              className="rounded text-emerald-600 focus:ring-emerald-500" />
+
                     העבר נתוני נכס (שווי)
                 </label>
                 <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer font-medium">
-                    <input 
-                        type="checkbox" 
-                        checked={transferSettings.createTask}
-                        onChange={e => setTransferSettings({...transferSettings, createTask: e.target.checked})}
-                        className="rounded text-emerald-600 focus:ring-emerald-500"
-                    />
+                    <input
+              type="checkbox"
+              checked={transferSettings.createTask}
+              onChange={(e) => setTransferSettings({ ...transferSettings, createTask: e.target.checked })}
+              className="rounded text-emerald-600 focus:ring-emerald-500" />
+
                     צור משימת מעקב אוטומטית
                 </label>
             </div>
         </div>
-      )}
+      }
 
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -222,11 +222,11 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           {/* Phone and Email removed as they appear in Original Lead Details */}
 
           <div className="space-y-2">
-            <Label>סוג מוצר</Label>
-            <Select 
-              defaultValue={opportunity?.product_type || "Reverse Mortgage"} 
-              onValueChange={(val) => handleSelectChange("product_type", val)}
-            >
+            <Label className="text-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">סוג מוצר</Label>
+            <Select
+                  defaultValue={opportunity?.product_type || "Reverse Mortgage"}
+                  onValueChange={(val) => handleSelectChange("product_type", val)}>
+
               <SelectTrigger>
                 <SelectValue placeholder="בחר מוצר" />
               </SelectTrigger>
@@ -241,10 +241,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
           <div className="space-y-2">
             <Label>שלב בעסקה</Label>
-            <Select 
-              defaultValue={opportunity?.deal_stage || "Discovery Call (שיחת בירור צרכים)"} 
-              onValueChange={(val) => handleSelectChange("deal_stage", val)}
-            >
+            <Select
+                  defaultValue={opportunity?.deal_stage || "Discovery Call (שיחת בירור צרכים)"}
+                  onValueChange={(val) => handleSelectChange("deal_stage", val)}>
+
               <SelectTrigger>
                 <SelectValue placeholder="בחר שלב" />
               </SelectTrigger>
@@ -261,40 +261,40 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
 
           <div className="space-y-2">
-            <Label>שווי נכס (₪)</Label>
-            <Input 
-              type="number" 
-              {...register("property_value", { valueAsNumber: true })} 
-              placeholder="0.00" 
-            />
+            <Label className="bg-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">שווי נכס (₪)</Label>
+            <Input
+                  type="number"
+                  {...register("property_value", { valueAsNumber: true })}
+                  placeholder="0.00" />
+
           </div>
 
           <div className="space-y-2">
-            <Label>סכום הלוואה מבוקש (₪)</Label>
-            <Input 
-              type="number" 
-              {...register("loan_amount_requested", { valueAsNumber: true })} 
-              placeholder="0.00" 
-            />
+            <Label className="text-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">סכום הלוואה מבוקש (₪)</Label>
+            <Input
+                  type="number"
+                  {...register("loan_amount_requested", { valueAsNumber: true })}
+                  placeholder="0.00" />
+
           </div>
 
           <div className="space-y-2">
-            <Label>הסתברות סגירה (%)</Label>
-            <Input 
-              type="number" 
-              min="0" max="100"
-              {...register("probability", { valueAsNumber: true })} 
-            />
+            <Label className="text-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">הסתברות סגירה (%)</Label>
+            <Input
+                  type="number"
+                  min="0" max="100"
+                  {...register("probability", { valueAsNumber: true })} />
+
           </div>
 
           <div className="space-y-2">
-            <Label>תאריך סגירה צפוי</Label>
+            <Label className="text-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">תאריך סגירה צפוי</Label>
             <Input type="date" {...register("expected_close_date")} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label>משימה הבאה</Label>
+          <Label className="text-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">משימה הבאה</Label>
           <Input {...register("next_task")} placeholder="לדוגמה: לחזור ללקוח עם תשובה מהבנק..." />
         </div>
 
@@ -308,10 +308,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>כאב מרכזי (Pain Point)</Label>
-            <Select 
-              defaultValue={opportunity?.main_pain_point} 
-              onValueChange={(val) => handleSelectChange("main_pain_point", val)}
-            >
+            <Select
+                    defaultValue={opportunity?.main_pain_point}
+                    onValueChange={(val) => handleSelectChange("main_pain_point", val)}>
+
               <SelectTrigger>
                 <SelectValue placeholder="בחר צורך מרכזי" />
               </SelectTrigger>
@@ -338,14 +338,14 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
               <BrainCircuit className="w-4 h-4" />
               המוח המלאכותי (AI Consultant)
             </Label>
-            <Button 
-              type="button" 
-              size="sm" 
-              variant="outline"
-              onClick={generateAiInsights}
-              disabled={aiLoading}
-              className="text-purple-600 border-purple-200 hover:bg-purple-50"
-            >
+            <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={generateAiInsights}
+                    disabled={aiLoading}
+                    className="text-purple-600 border-purple-200 hover:bg-purple-50">
+
               {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <Sparkles className="w-3 h-3 mr-2" />}
               צור תובנות AI
             </Button>
@@ -355,24 +355,24 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
             <div className="space-y-2">
               <Label className="text-xs text-neutral-600">אסטרטגיה מומלצת</Label>
               <div className="relative">
-                <textarea 
-                  readOnly
-                  {...register("ai_sales_strategy")}
-                  className="w-full min-h-[80px] p-3 rounded-md border bg-purple-50/50 text-sm focus:outline-none resize-none"
-                  placeholder="לחץ על 'צור תובנות' לקבלת אסטרטגיה..."
-                />
+                <textarea
+                        readOnly
+                        {...register("ai_sales_strategy")}
+                        className="w-full min-h-[80px] p-3 rounded-md border bg-purple-50/50 text-sm focus:outline-none resize-none"
+                        placeholder="לחץ על 'צור תובנות' לקבלת אסטרטגיה..." />
+
               </div>
             </div>
 
             <div className="space-y-2">
               <Label className="text-xs text-neutral-600">מענה להתנגדות</Label>
               <div className="relative">
-                <textarea 
-                  readOnly
-                  {...register("ai_objection_handler")}
-                  className="w-full min-h-[80px] p-3 rounded-md border bg-purple-50/50 text-sm focus:outline-none resize-none"
-                  placeholder="המענה יופיע כאן..."
-                />
+                <textarea
+                        readOnly
+                        {...register("ai_objection_handler")}
+                        className="w-full min-h-[80px] p-3 rounded-md border bg-purple-50/50 text-sm focus:outline-none resize-none"
+                        placeholder="המענה יופיע כאן..." />
+
               </div>
             </div>
           </div>
@@ -391,11 +391,11 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
         <TabsContent value="documents" className="space-y-6">
           <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-            <FileUpload 
+            <FileUpload
               files={watch("documents") || []}
               onFilesChange={(newFiles) => setValue("documents", newFiles)}
-              label="מסמכי עסקה"
-            />
+              label="מסמכי עסקה" />
+
           </div>
           
           <div className="flex justify-end gap-4 pt-4 border-t">
@@ -408,10 +408,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </TabsContent>
 
         <TabsContent value="originalLead">
-          {isLoadingLead ? (
-            <div className="text-center py-10 text-neutral-600"><Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" /> טוען פרטי ליד...</div>
-          ) : originalLeadData ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
+          {isLoadingLead ?
+          <div className="text-center py-10 text-neutral-600"><Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" /> טוען פרטי ליד...</div> :
+          originalLeadData ?
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
               <div className="space-y-2">
                 <Label className="text-xs text-neutral-600">שם מלא</Label>
                 <p className="font-medium text-neutral-900">{originalLeadData.full_name}</p>
@@ -420,48 +420,48 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                 <Label className="text-xs text-neutral-600">מספר טלפון</Label>
                 <p className="font-medium text-neutral-900">{originalLeadData.phone_number}</p>
               </div>
-              {originalLeadData.email && (
-                <div className="space-y-2">
+              {originalLeadData.email &&
+            <div className="space-y-2">
                   <Label className="text-xs text-neutral-600">אימייל</Label>
                   <p className="font-medium text-neutral-900">{originalLeadData.email}</p>
                 </div>
-              )}
-              {originalLeadData.age && (
-                <div className="space-y-2">
+            }
+              {originalLeadData.age &&
+            <div className="space-y-2">
                   <Label className="text-xs text-neutral-600">גיל</Label>
                   <p className="font-medium text-neutral-900">{originalLeadData.age}</p>
                 </div>
-              )}
-              {originalLeadData.city && (
-                <div className="space-y-2">
+            }
+              {originalLeadData.city &&
+            <div className="space-y-2">
                   <Label className="text-xs text-neutral-600">עיר</Label>
                   <p className="font-medium text-neutral-900">{originalLeadData.city}</p>
                 </div>
-              )}
-              {originalLeadData.marital_status && (
-                <div className="space-y-2">
+            }
+              {originalLeadData.marital_status &&
+            <div className="space-y-2">
                   <Label className="text-xs text-neutral-600">מצב משפחתי</Label>
                   <p className="font-medium text-neutral-900">{originalLeadData.marital_status}</p>
                 </div>
-              )}
-              {originalLeadData.estimated_property_value && (
-                <div className="space-y-2">
+            }
+              {originalLeadData.estimated_property_value &&
+            <div className="space-y-2">
                   <Label className="text-xs text-neutral-600">שווי נכס מוערך (₪)</Label>
                   <p className="font-medium text-neutral-900">{originalLeadData.estimated_property_value.toLocaleString()}</p>
                 </div>
-              )}
-              {originalLeadData.notes && (
-                <div className="space-y-2 md:col-span-2">
+            }
+              {originalLeadData.notes &&
+            <div className="space-y-2 md:col-span-2">
                   <Label className="text-xs text-neutral-600">הערות</Label>
                   <p className="font-medium text-neutral-900 whitespace-pre-wrap">{originalLeadData.notes}</p>
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-10 text-neutral-600">
+            }
+            </div> :
+
+          <div className="text-center py-10 text-neutral-600">
               אין פרטי ליד מקוריים זמינים עבור הזדמנות זו.
             </div>
-          )}
+          }
           <div className="flex justify-end gap-4 pt-4 border-t">
             <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
             <Button onClick={handleSubmit(handleFormSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
@@ -472,15 +472,15 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </TabsContent>
 
         <TabsContent value="activity" className="h-[600px]">
-        {(opportunity?.lead_id || initialLead?.id) ? (
-        <ActivityLog leadId={opportunity?.lead_id || initialLead?.id} opportunityId={opportunity?.id} />
-        ) : (
-        <div className="text-center py-10 text-neutral-600">
+        {opportunity?.lead_id || initialLead?.id ?
+          <ActivityLog leadId={opportunity?.lead_id || initialLead?.id} opportunityId={opportunity?.id} /> :
+
+          <div className="text-center py-10 text-neutral-600">
           יש לשמור את ההזדמנות לפני שניתן להוסיף פעילויות
         </div>
-        )}
+          }
         </TabsContent>
         </Tabs>
-        </motion.div>
-  );
+        </motion.div>);
+
 }
