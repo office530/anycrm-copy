@@ -37,26 +37,26 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       spouse_age: "",
       lead_temperature: "",
       tags: []
-      }
-      });
+    }
+  });
 
-      // Fetch linked opportunities if editing a lead
-      const { data: opportunities } = useQuery({
-      queryKey: ['lead_opportunities', lead?.id],
-      queryFn: () => base44.entities.Opportunity.filter({ lead_id: lead.id }),
-      enabled: !!lead?.id
-      });
+  // Fetch linked opportunities if editing a lead
+  const { data: opportunities } = useQuery({
+    queryKey: ['lead_opportunities', lead?.id],
+    queryFn: () => base44.entities.Opportunity.filter({ lead_id: lead.id }),
+    enabled: !!lead?.id
+  });
 
-      const leadStatus = watch("lead_status");
+  const leadStatus = watch("lead_status");
   const lastContactDate = watch("last_contact_date");
   const originalStatusColor = watch("original_status_color");
 
   // Calculate Lead Temperature
   React.useEffect(() => {
     let temp = "Cold (קר)";
-    const daysSinceContact = lastContactDate 
-      ? Math.floor((new Date() - new Date(lastContactDate)) / (1000 * 60 * 60 * 24))
-      : 999;
+    const daysSinceContact = lastContactDate ?
+    Math.floor((new Date() - new Date(lastContactDate)) / (1000 * 60 * 60 * 24)) :
+    999;
 
     if (daysSinceContact <= 30) {
       temp = "Warm (חם)";
@@ -79,8 +79,8 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-6 rounded-xl shadow-lg border border-slate-100"
-      dir="rtl"
-    >
+      dir="rtl">
+
       <div className="mb-6 pb-4 border-b border-slate-100">
         <h2 className="text-2xl font-bold text-slate-900">
           {lead ? "תיק לקוח" : "הוספת ליד חדש"}
@@ -117,78 +117,78 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
                   <Label className={labelClass}>תגיות לקוח</Label>
-                  <TagManager 
-                    tags={watch("tags") || []} 
-                    onChange={(newTags) => setValue("tags", newTags)} 
-                  />
+                  <TagManager
+                  tags={watch("tags") || []}
+                  onChange={(newTags) => setValue("tags", newTags)} />
+
               </div>
 
               <div className="space-y-1">
                 <Label className={labelClass}>שם מלא *</Label>
-                <Input 
-                  {...register("full_name", { required: "שדה חובה" })} 
-                  placeholder="לדוגמה: דוד כהן" 
-                  className={inputClass}
-                />
+                <Input
+                  {...register("full_name", { required: "שדה חובה" })}
+                  placeholder="לדוגמה: דוד כהן"
+                  className={inputClass} />
+
                 {errors.full_name && <span className="text-red-500 text-sm font-medium">{errors.full_name.message}</span>}
               </div>
               
               <div className="space-y-1">
                 <Label className={labelClass}>מספר טלפון *</Label>
-                <Input 
-                  {...register("phone_number", { 
+                <Input
+                  {...register("phone_number", {
                     required: "שדה חובה",
                     pattern: {
                       value: /^0[0-9]{1,2}-?[0-9]{7}$/,
                       message: "מספר טלפון לא תקין"
                     }
-                  })} 
-                  placeholder="050-0000000" 
-                  className={inputClass}
-                />
+                  })}
+                  placeholder="050-0000000"
+                  className={inputClass} />
+
                 {errors.phone_number && <span className="text-red-500 text-sm font-medium">{errors.phone_number.message}</span>}
               </div>
 
               <div className="space-y-1">
                 <Label className={labelClass}>אימייל</Label>
-                <Input 
+                <Input
                   {...register("email", {
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                       message: "כתובת אימייל לא תקינה"
                     }
-                  })} 
-                  placeholder="email@example.com" 
-                  className={inputClass}
-                />
+                  })}
+                  placeholder="email@example.com"
+                  className={inputClass} />
+
                 {errors.email && <span className="text-red-500 text-sm font-medium">{errors.email.message}</span>}
               </div>
 
               <div className="space-y-1">
                 <Label className={labelClass}>גיל</Label>
-                <Input 
-                  type="number" 
-                  {...register("age", { valueAsNumber: true })} 
-                  placeholder="לדוגמה: 68" 
-                  className={inputClass}
-                />
+                <Input
+                  type="number"
+                  {...register("age", { valueAsNumber: true })}
+                  placeholder="לדוגמה: 68"
+                  className={inputClass} />
+
               </div>
 
               <div className="space-y-1">
                 <Label className={labelClass}>עיר</Label>
-                <Input 
-                  {...register("city")} 
-                  placeholder="לדוגמה: תל אביב" 
-                  className={inputClass}
-                />
+                <Input
+                  {...register("city")}
+                  placeholder="לדוגמה: תל אביב"
+                  className={inputClass} />
+
               </div>
 
               <div className="space-y-1">
                 <Label className={labelClass}>שנת מקור</Label>
-                <Select 
-                  defaultValue={lead?.source_year || "2024"} 
-                  onValueChange={(val) => handleSelectChange("source_year", val)}
-                >
+                <Select
+                  defaultValue={lead?.source_year || "2024"}
+                  onValueChange={(val) => handleSelectChange("source_year", val)}>
+
                   <SelectTrigger className={inputClass}>
                     <SelectValue placeholder="בחר שנה" />
                   </SelectTrigger>
@@ -202,10 +202,10 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
 
               <div className="space-y-1">
                 <Label className={labelClass}>סטטוס ליד</Label>
-                <Select 
-                  defaultValue={lead?.lead_status || "New"} 
-                  onValueChange={(val) => handleSelectChange("lead_status", val)}
-                >
+                <Select
+                  defaultValue={lead?.lead_status || "New"}
+                  onValueChange={(val) => handleSelectChange("lead_status", val)}>
+
                   <SelectTrigger className={`${inputClass} ${leadStatus === 'Converted' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : ''}`}>
                     <SelectValue placeholder="סטטוס" />
                   </SelectTrigger>
@@ -218,31 +218,31 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
                     <SelectItem value="Converted" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
                   </SelectContent>
                 </Select>
-                {leadStatus === 'Converted' && (
-                  <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
+                {leadStatus === 'Converted' &&
+                <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
                     <Activity className="w-3 h-3" />
                     שמירה תוביל לפתיחת הזדמנות חדשה
                   </p>
-                )}
+                }
               </div>
 
               <div className="space-y-1">
                 <Label className={labelClass}>תאריך יצירת קשר אחרון</Label>
-                <Input 
-                  type="date" 
-                  {...register("last_contact_date")} 
-                  className={inputClass}
-                />
+                <Input
+                  type="date"
+                  {...register("last_contact_date")}
+                  className={inputClass} />
+
               </div>
 
               {/* Additional Details Section */}
               <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 pt-6 mt-2">
                  <div className="space-y-1">
                   <Label className={`${labelClass} text-right`}>מצב משפחתי</Label>
-                  <Select 
-                    defaultValue={lead?.marital_status || "Married"} 
-                    onValueChange={(val) => handleSelectChange("marital_status", val)}
-                  >
+                  <Select
+                    defaultValue={lead?.marital_status || "Married"}
+                    onValueChange={(val) => handleSelectChange("marital_status", val)}>
+
                     <SelectTrigger className={`${inputClass} text-right`}>
                       <SelectValue placeholder="בחר סטטוס" />
                     </SelectTrigger>
@@ -258,53 +258,53 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
                 <div className="space-y-1">
                    <div className="flex items-center gap-2 mb-2">
                      <Label className="text-slate-900 font-semibold m-0">יש ילדים?</Label>
-                     <input 
-                        type="checkbox" 
-                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300"
-                        {...register("has_children")} 
-                     />
+                     <input
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300"
+                      {...register("has_children")} />
+
                    </div>
-                   <Input 
-                      type="number" 
-                      {...register("spouse_age", { valueAsNumber: true })} 
-                      placeholder="גיל בן/ת זוג (אם רלוונטי)" 
-                      className={inputClass}
-                   />
+                   <Input
+                    type="number"
+                    {...register("spouse_age", { valueAsNumber: true })}
+                    placeholder="גיל בן/ת זוג (אם רלוונטי)"
+                    className={inputClass} />
+
                 </div>
 
                 <div className="space-y-1">
                   <Label className={`${labelClass} text-right`}>שווי נכס מוערך (₪)</Label>
-                  <Input 
-                    type="number" 
-                    {...register("estimated_property_value", { valueAsNumber: true })} 
-                    placeholder="0.00" 
-                    className={`${inputClass} text-right`}
-                  />
+                  <Input
+                    type="number"
+                    {...register("estimated_property_value", { valueAsNumber: true })}
+                    placeholder="0.00"
+                    className={`${inputClass} text-right`} />
+
                 </div>
 
                 <div className="space-y-1">
                   <Label className={`${labelClass} text-right`}>יתרת משכנתא קיימת (₪)</Label>
-                  <Input 
-                    type="number" 
-                    {...register("existing_mortgage_balance", { valueAsNumber: true })} 
-                    placeholder="0.00" 
-                    className={`${inputClass} text-right`}
-                  />
+                  <Input
+                    type="number"
+                    {...register("existing_mortgage_balance", { valueAsNumber: true })}
+                    placeholder="0.00"
+                    className={`${inputClass} text-right`} />
+
                 </div>
               </div>
             </div>
 
             <div className="space-y-1">
               <Label className={labelClass}>הערות</Label>
-              <Textarea 
-                {...register("notes")} 
-                placeholder="הערות חשובות לתיק..." 
-                className={`${inputClass} h-24 resize-none`} 
-              />
+              <Textarea
+                {...register("notes")}
+                placeholder="הערות חשובות לתיק..."
+                className={`${inputClass} h-24 resize-none`} />
+
             </div>
             
             <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
-              <Button type="button" variant="outline" onClick={onCancel} className="text-slate-600 border-slate-300 hover:bg-slate-50">ביטול</Button>
+              <Button type="button" variant="outline" onClick={onCancel} className="bg-background text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-slate-300 hover:bg-slate-50">ביטול</Button>
               <Button onClick={handleSubmit(onSubmit)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
                 {lead ? "עדכן תיק לקוח" : "צור ליד חדש"}
@@ -314,12 +314,12 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
               </TabsContent>
 
               <TabsContent value="opportunities" className="h-[600px] overflow-y-auto pr-2">
-              {!lead ? (
-              <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>
-              ) : opportunities?.length > 0 ? (
-              <div className="space-y-3">
-               {opportunities.map(opp => (
-                 <div key={opp.id} className="p-4 bg-white border rounded-xl shadow-sm flex justify-between items-center hover:border-red-200 transition-colors">
+              {!lead ?
+          <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div> :
+          opportunities?.length > 0 ?
+          <div className="space-y-3">
+               {opportunities.map((opp) =>
+            <div key={opp.id} className="p-4 bg-white border rounded-xl shadow-sm flex justify-between items-center hover:border-red-200 transition-colors">
                     <div>
                        <h4 className="font-bold text-slate-800">{opp.product_type}</h4>
                        <p className="text-sm text-slate-500">שלב: {opp.deal_stage}</p>
@@ -329,14 +329,14 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
                        <Badge variant="outline" className="mt-1">{opp.probability}% היתכנות</Badge>
                     </div>
                  </div>
-               ))}
-              </div>
-              ) : (
-              <div className="text-center py-10 text-slate-400 border-2 border-dashed rounded-xl">
+            )}
+              </div> :
+
+          <div className="text-center py-10 text-slate-400 border-2 border-dashed rounded-xl">
               <Briefcase className="w-10 h-10 mx-auto mb-2 opacity-50" />
               <p>אין הזדמנויות פתוחות ללקוח זה</p>
               </div>
-              )}
+          }
               </TabsContent>
 
               <TabsContent value="activity" className="h-[600px]">
@@ -345,10 +345,10 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
 
               <TabsContent value="documents" className="space-y-6">
           <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
-            <FileUpload 
+            <FileUpload
               files={watch("documents") || []}
-              onFilesChange={(newFiles) => setValue("documents", newFiles)}
-            />
+              onFilesChange={(newFiles) => setValue("documents", newFiles)} />
+
           </div>
           
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
@@ -360,18 +360,18 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
         </TabsContent>
 
         <TabsContent value="discovery">
-          {lead ? (
-            <div className="h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+          {lead ?
+          <div className="h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
               <DiscoveryScript leadId={lead.id} />
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-16 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            </div> :
+
+          <div className="flex flex-col items-center justify-center py-16 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
               <Activity className="w-10 h-10 mb-3 opacity-50" />
               <p className="font-medium">יש לשמור את הליד לפני שניתן למלא תסריט שיחה</p>
             </div>
-          )}
+          }
         </TabsContent>
       </Tabs>
-    </motion.div>
-  );
+    </motion.div>);
+
 }
