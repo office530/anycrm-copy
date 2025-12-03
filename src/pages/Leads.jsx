@@ -89,6 +89,7 @@ export default function LeadsPage() {
         lead_name: leadData.full_name,
         phone_number: leadData.phone_number,
         email: leadData.email,
+        product_type: "Reverse Mortgage",
         deal_stage: "New (חדש)",
         probability: 10
       });
@@ -114,8 +115,8 @@ export default function LeadsPage() {
       const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
 
-      // Status Logic: If "all", hide converted leads by default
-      const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
+      // Status Logic: Show all leads including converted ones
+      const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
 
       // Tag Logic
       const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
@@ -261,9 +262,15 @@ export default function LeadsPage() {
                             <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title="פתח ליד">
                                 <Pencil className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="המר להזדמנות מיידי">
-                                <CheckCircle2 className="w-4 h-4" />
-                            </Button>
+                            {lead.lead_status === 'Converted' ? (
+                                <div className="h-8 px-2 flex items-center justify-center text-emerald-600" title="הומר להזדמנות">
+                                    <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
+                                </div>
+                            ) : (
+                                <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="המר להזדמנות מיידי">
+                                    <CheckCircle2 className="w-4 h-4" />
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -296,9 +303,15 @@ export default function LeadsPage() {
                         <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
                             <Pencil className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
-                            <CheckCircle2 className="w-4 h-4" />
-                        </Button>
+                        {lead.lead_status === 'Converted' ? (
+                            <div className="h-8 w-8 flex items-center justify-center text-emerald-600">
+                                <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
+                            </div>
+                        ) : (
+                            <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
+                                <CheckCircle2 className="w-4 h-4" />
+                            </Button>
+                        )}
                     </div>
                     </div>
 
