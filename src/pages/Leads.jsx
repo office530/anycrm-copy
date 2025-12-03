@@ -264,11 +264,13 @@ export default function LeadsPage() {
           filteredLeads.map((lead) =>
           <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
                     <div className="col-span-3 flex items-center gap-3">
-                         <div className="w-9 h-9 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm">
+                         <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="w-9 h-9 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm hover:bg-red-100 transition-colors">
                             {lead.full_name?.charAt(0)}
-                         </div>
+                         </Link>
                          <div className="flex-1">
-                            <InlineEdit value={lead.full_name} className="font-bold text-slate-800" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
+                            <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="font-bold text-slate-800 hover:text-red-600 hover:underline transition-colors">
+                                {lead.full_name}
+                            </Link>
                             <div className="text-xs text-slate-500">{lead.city}</div>
                             {lead.tags && lead.tags.length > 0 &&
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -327,11 +329,13 @@ export default function LeadsPage() {
         <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
+                        <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg hover:bg-red-100 transition-colors">
                             {lead.full_name?.charAt(0)}
-                        </div>
+                        </Link>
                         <div>
-                            <InlineEdit value={lead.full_name} className="font-bold text-slate-900 text-lg" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
+                            <Link to={createPageUrl(`LeadDetails?leadId=${lead.id}`)} className="font-bold text-slate-900 text-lg hover:text-red-600 hover:underline transition-colors">
+                                {lead.full_name}
+                            </Link>
                             <div className="text-sm text-slate-500">{lead.city}</div>
                             {lead.tags && lead.tags.length > 0 &&
                 <div className="flex flex-wrap gap-1 mt-1">
