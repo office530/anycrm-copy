@@ -71,20 +71,20 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
   });
 
   const docs = [
-    "תעודות זהות + ספח",
-    "נסח טאבו עדכני",
-    "יתרת סילוק (אם יש)",
-    "דפי חשבון 3 חודשים",
-    "אישור ניהול חשבון / צ'ק",
-    "הסכם שכירות (אם יש)"
-  ];
+  "תעודות זהות + ספח",
+  "נסח טאבו עדכני",
+  "יתרת סילוק (אם יש)",
+  "דפי חשבון 3 חודשים",
+  "אישור ניהול חשבון / צ'ק",
+  "הסכם שכירות (אם יש)"];
+
 
   const currentDocs = watch("documents_collected") || [];
 
   const handleDocToggle = (doc) => {
-    const newDocs = currentDocs.includes(doc)
-      ? currentDocs.filter(d => d !== doc)
-      : [...currentDocs, doc];
+    const newDocs = currentDocs.includes(doc) ?
+    currentDocs.filter((d) => d !== doc) :
+    [...currentDocs, doc];
     setValue("documents_collected", newDocs);
   };
 
@@ -99,14 +99,14 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             1. פרטים אישיים
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="bg-slate-600 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 col-span-2 md:col-span-1">
             <Label>שם הלווה/ים</Label>
             <Input {...register("borrower_names")} placeholder="שמות מלאים" />
           </div>
           <div className="space-y-2 col-span-2 md:col-span-1">
             <Label>מצב משפחתי</Label>
-            <Select onValueChange={v => setValue("marital_status", v)} defaultValue={initialData?.marital_status}>
+            <Select onValueChange={(v) => setValue("marital_status", v)} defaultValue={initialData?.marital_status}>
               <SelectTrigger><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="Married">נשוי/אה</SelectItem>
@@ -141,7 +141,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             2. הילדים והיורשים (קריטי!)
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="bg-slate-600 p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>כמה ילדים יש?</Label>
@@ -149,7 +149,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             </div>
             <div className="space-y-2">
               <Label>מודעות הילדים לתהליך</Label>
-              <Select onValueChange={v => setValue("children_awareness", v)} defaultValue={initialData?.children_awareness}>
+              <Select onValueChange={(v) => setValue("children_awareness", v)} defaultValue={initialData?.children_awareness}>
                 <SelectTrigger><SelectValue placeholder="בחר מצב" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Know and Support">יודעים ותומכים</SelectItem>
@@ -162,19 +162,19 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
 
           <div className="space-y-2">
             <Label>פירוט ילדים (שם + עיר/מדינה - מיקום חשוב!)</Label>
-            <Textarea 
-              {...register("children_details")} 
+            <Textarea
+              {...register("children_details")}
               placeholder={`ילד 1: שם, עיר...
 ילד 2: שם, עיר...
-האם יש ילדים בחו"ל?`} 
-              className="h-32 font-mono text-sm" 
-            />
+האם יש ילדים בחו"ל?`}
+              className="h-32 font-mono text-sm" />
+
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>תוכנית לנכס ביום שאחרי (120)</Label>
-              <Select onValueChange={v => setValue("property_after_120", v)} defaultValue={initialData?.property_after_120}>
+              <Select onValueChange={(v) => setValue("property_after_120", v)} defaultValue={initialData?.property_after_120}>
                 <SelectTrigger><SelectValue placeholder="מה הילדים יעשו?" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Keep Property">ישמרו את הנכס (ימחזרו)</SelectItem>
@@ -199,7 +199,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             3. הנכס והבטוחה
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="bg-slate-600 p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label>כתובת הנכס</Label>
@@ -211,7 +211,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             </div>
             <div className="space-y-2">
               <Label>סוג הנכס</Label>
-              <Select onValueChange={v => setValue("property_type", v)} defaultValue={initialData?.property_type}>
+              <Select onValueChange={(v) => setValue("property_type", v)} defaultValue={initialData?.property_type}>
                 <SelectTrigger><SelectValue placeholder="בחר סוג" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Apartment">דירה בבניין</SelectItem>
@@ -223,7 +223,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             </div>
             <div className="space-y-2">
               <Label>מצב רישומי</Label>
-              <Select onValueChange={v => setValue("registration_status", v)} defaultValue={initialData?.registration_status}>
+              <Select onValueChange={(v) => setValue("registration_status", v)} defaultValue={initialData?.registration_status}>
                 <SelectTrigger><SelectValue placeholder="בחר רישום" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Private Tabu">טאבו פרטי</SelectItem>
@@ -238,20 +238,20 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-center space-x-2 space-x-reverse pt-4">
-              <Checkbox 
-                checked={watch("existing_mortgage")} 
-                onCheckedChange={v => setValue("existing_mortgage", v)} 
-                id="mortgage" 
-              />
+              <Checkbox
+                checked={watch("existing_mortgage")}
+                onCheckedChange={(v) => setValue("existing_mortgage", v)}
+                id="mortgage" />
+
               <Label htmlFor="mortgage" className="font-medium">האם קיימת משכנתא/חוב על הבית?</Label>
             </div>
             
-            {watch("existing_mortgage") && (
-              <div className="space-y-2 animate-in fade-in">
+            {watch("existing_mortgage") &&
+            <div className="space-y-2 animate-in fade-in">
                 <Label className="text-red-600">יתרה לסילוק (₪)</Label>
                 <Input type="number" {...register("mortgage_balance_to_clear", { valueAsNumber: true })} />
               </div>
-            )}
+            }
           </div>
         </CardContent>
       </Card>
@@ -264,7 +264,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             4. צרכים ומטרות (הכסף)
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="bg-slate-600 pt-6 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 col-span-2">
              <Label>מה מטרת הכסף?</Label>
              <Input {...register("loan_purpose")} placeholder="עזרה לילדים / מחייה / סגירת חובות..." />
@@ -275,7 +275,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
           </div>
           <div className="space-y-2">
             <Label>מסלול מועדף</Label>
-            <Select onValueChange={v => setValue("payment_preference", v)} defaultValue={initialData?.payment_preference}>
+            <Select onValueChange={(v) => setValue("payment_preference", v)} defaultValue={initialData?.payment_preference}>
               <SelectTrigger><SelectValue placeholder="בחר מסלול" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="Pay Interest Monthly">תשלום ריבית חודשי</SelectItem>
@@ -295,18 +295,18 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             5. מסמכים לבקשה ראשונית
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="bg-slate-600 pt-6 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {docs.map((doc) => (
-              <div key={doc} className="flex items-center space-x-3 space-x-reverse p-3 rounded-lg border hover:bg-slate-50 transition-colors">
-                <Checkbox 
-                  id={doc} 
-                  checked={currentDocs.includes(doc)}
-                  onCheckedChange={() => handleDocToggle(doc)}
-                />
+            {docs.map((doc) =>
+            <div key={doc} className="flex items-center space-x-3 space-x-reverse p-3 rounded-lg border hover:bg-slate-50 transition-colors">
+                <Checkbox
+                id={doc}
+                checked={currentDocs.includes(doc)}
+                onCheckedChange={() => handleDocToggle(doc)} />
+
                 <Label htmlFor={doc} className="cursor-pointer flex-1">{doc}</Label>
               </div>
-            ))}
+            )}
           </div>
         </CardContent>
       </Card>
@@ -318,6 +318,6 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         </Button>
       </div>
 
-    </form>
-  );
+    </form>);
+
 }
