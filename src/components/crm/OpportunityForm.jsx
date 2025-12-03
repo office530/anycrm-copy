@@ -261,7 +261,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
 
           <div className="space-y-2">
-            <Label className="bg-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">שווי נכס (₪)</Label>
+            <Label className="bg-slate-50 text-slate-800 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">שווי נכס (₪)</Label>
             <Input
                   type="number"
                   {...register("property_value", { valueAsNumber: true })}
