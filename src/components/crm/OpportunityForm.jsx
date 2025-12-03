@@ -343,8 +343,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                     size="sm"
                     variant="outline"
                     onClick={generateAiInsights}
-                    disabled={aiLoading}
-                    className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                    disabled={aiLoading} className="bg-slate-50 text-purple-600 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-8 border-purple-200 hover:bg-purple-50">
+
 
               {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <Sparkles className="w-3 h-3 mr-2" />}
               צור תובנות AI
