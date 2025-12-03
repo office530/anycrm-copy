@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase } from
-"lucide-react";
+        Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag } from
+      "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from
 "@/components/ui/dropdown-menu";
@@ -25,7 +27,8 @@ export default function LeadsPage() {
   const { leadStatuses } = useSettings();
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [filters, setFilters] = useState({ search: "", year: "all", status: "all" });
+  const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
+  const [showConverted, setShowConverted] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -35,6 +38,16 @@ export default function LeadsPage() {
     queryFn: () => base44.entities.Lead.list(),
     initialData: []
   });
+
+  const uniqueTags = useMemo(() => {
+    const tags = new Set();
+    leads.forEach(lead => {
+      if (lead.tags && Array.isArray(lead.tags)) {
+        lead.tags.forEach(tag => tags.add(tag));
+      }
+    });
+    return Array.from(tags);
+  }, [leads]);
 
   // חישוב סטטיסטיקות
   const stats = useMemo(() => {
@@ -92,10 +105,21 @@ export default function LeadsPage() {
       const searchPhone = searchTerm.replace(/\D/g, '');
       const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
-      const matchesStatus = filters.status === "all" ? lead.lead_status !== "Converted" : lead.lead_status === filters.status;
-      return matchesSearch && matchesYear && matchesStatus;
-    }).sort((a, b) => b.id - a.id);
-  }, [leads, filters]);
+
+      // Status Logic: If "all", hide converted unless showConverted is true
+      let matchesStatus = true;
+      if (filters.status === "all") {
+          matchesStatus = showConverted ? true : lead.lead_status !== "Converted";
+      } else {
+          matchesStatus = lead.lead_status === filters.status;
+      }
+
+      // Tag Logic
+      const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
+
+      return matchesSearch && matchesYear && matchesStatus && matchesTag;
+      }).sort((a, b) => b.id - a.id);
+      }, [leads, filters, showConverted]);
 
   return (
     <div className="space-y-6 pb-24 font-sans text-slate-900">
@@ -120,7 +144,7 @@ export default function LeadsPage() {
 
           </div>
           <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger className="w-full md:w-[180px] border-slate-300 text-slate-700 font-medium rounded-lg">
+                <SelectTrigger className="w-full md:w-[160px] border-slate-300 text-slate-700 font-medium rounded-lg">
                     <Filter className="w-4 h-4 ml-2 text-slate-500" />
                     <SelectValue placeholder="סטטוס" />
                 </SelectTrigger>
@@ -130,9 +154,25 @@ export default function LeadsPage() {
                     <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
                 </SelectContent>
           </Select>
-        </div>
-        
-        <div className="flex gap-2 w-full md:w-auto">
+
+          <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
+                <SelectTrigger className="w-full md:w-[140px] border-slate-300 text-slate-700 font-medium rounded-lg">
+                    <Tag className="w-4 h-4 ml-2 text-slate-500" />
+                    <SelectValue placeholder="תגיות" />
+                </SelectTrigger>
+                <SelectContent className="bg-white text-slate-900 text-right">
+                    <SelectItem value="all" className="text-right">כל התגיות</SelectItem>
+                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-right hover:bg-slate-50">{tag}</SelectItem>)}
+                </SelectContent>
+          </Select>
+
+          <div className="flex items-center space-x-2 space-x-reverse bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+              <Switch id="show-converted" checked={showConverted} onCheckedChange={setShowConverted} className="data-[state=checked]:bg-red-600" />
+              <Label htmlFor="show-converted" className="text-sm text-slate-600 cursor-pointer">הצג לידים שהומרו</Label>
+          </div>
+          </div>
+
+          <div className="flex gap-2 w-full md:w-auto">
              <Link to={createPageUrl('ImportLeads')} className="flex-1 md:flex-none">
                 <Button variant="outline" className="bg-background text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm h-9 w-full border-slate-300 hover:text-red-700 hover:bg-red-50 hover:border-red-200">
                     <Upload className="w-4 h-4 ml-2" />
@@ -167,6 +207,13 @@ export default function LeadsPage() {
                          <div className="flex-1">
                             <InlineEdit value={lead.full_name} className="font-bold text-slate-800" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
                             <div className="text-xs text-slate-500">{lead.city}</div>
+                            {lead.tags && lead.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                    {lead.tags.map((tag, i) => (
+                                        <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
+                                    ))}
+                                </div>
+                            )}
                          </div>
                     </div>
                     <div className="col-span-3 text-sm text-slate-600 flex items-center gap-2">
@@ -200,6 +247,13 @@ export default function LeadsPage() {
                         <div>
                             <InlineEdit value={lead.full_name} className="font-bold text-slate-900 text-lg" onSave={(v) => updateLead.mutate({ id: lead.id, data: { full_name: v } })} />
                             <div className="text-sm text-slate-500">{lead.city}</div>
+                            {lead.tags && lead.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                    {lead.tags.map((tag, i) => (
+                                        <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                     <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="text-slate-400"><MoreHorizontal /></Button>

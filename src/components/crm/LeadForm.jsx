@@ -6,11 +6,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList, FileText } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList, FileText, Briefcase } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import ActivityLog from "./ActivityLog";
 import DiscoveryScript from "./DiscoveryScript";
 import FileUpload from "../common/FileUpload";
+import TagManager from "./TagManager";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -31,11 +35,19 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       existing_mortgage_balance: "",
       has_children: true,
       spouse_age: "",
-      lead_temperature: ""
-    }
-  });
+      lead_temperature: "",
+      tags: []
+      }
+      });
 
-  const leadStatus = watch("lead_status");
+      // Fetch linked opportunities if editing a lead
+      const { data: opportunities } = useQuery({
+      queryKey: ['lead_opportunities', lead?.id],
+      queryFn: () => base44.entities.Opportunity.filter({ lead_id: lead.id }),
+      enabled: !!lead?.id
+      });
+
+      const leadStatus = watch("lead_status");
   const lastContactDate = watch("last_contact_date");
   const originalStatusColor = watch("original_status_color");
 
@@ -77,25 +89,40 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       </div>
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-100/80 p-1">
-          <TabsTrigger value="details" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+        <TabsList className="grid w-full grid-cols-5 mb-6 bg-slate-100/80 p-1 h-auto">
+          <TabsTrigger value="details" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
             <User className="w-4 h-4" />
-            פרטי ליד
+            <span className="text-xs md:text-sm">פרופיל 360</span>
           </TabsTrigger>
-          <TabsTrigger value="documents" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+          <TabsTrigger value="opportunities" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
+            <Briefcase className="w-4 h-4" />
+            <span className="text-xs md:text-sm">הזדמנויות</span>
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
+            <Activity className="w-4 h-4" />
+            <span className="text-xs md:text-sm">פעילות</span>
+          </TabsTrigger>
+          <TabsTrigger value="documents" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
             <FileText className="w-4 h-4" />
-            מסמכים
+            <span className="text-xs md:text-sm">מסמכים</span>
           </TabsTrigger>
-          <TabsTrigger value="discovery" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm" disabled={!lead}>
+          <TabsTrigger value="discovery" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
             <ClipboardList className="w-4 h-4" />
-            תסריט שיחה
+            <span className="text-xs md:text-sm">תסריט</span>
           </TabsTrigger>
-          {/* Activity Log temporarily hidden or moved if needed, keeping 3 cols for layout consistency */}
         </TabsList>
 
         <TabsContent value="details">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="col-span-1 md:col-span-2">
+                  <Label className={labelClass}>תגיות לקוח</Label>
+                  <TagManager 
+                    tags={watch("tags") || []} 
+                    onChange={(newTags) => setValue("tags", newTags)} 
+                  />
+              </div>
+
               <div className="space-y-1">
                 <Label className={labelClass}>שם מלא *</Label>
                 <Input 
@@ -278,15 +305,45 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
             
             <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
               <Button type="button" variant="outline" onClick={onCancel} className="text-slate-600 border-slate-300 hover:bg-slate-50">ביטול</Button>
-              <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 shadow-sm shadow-blue-900/20" disabled={isSubmitting}>
+              <Button onClick={handleSubmit(onSubmit)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
                 {lead ? "עדכן תיק לקוח" : "צור ליד חדש"}
               </Button>
-            </div>
-          </div>
-        </TabsContent>
+              </div>
+              </div>
+              </TabsContent>
 
-        <TabsContent value="documents" className="space-y-6">
+              <TabsContent value="opportunities" className="h-[600px] overflow-y-auto pr-2">
+              {!lead ? (
+              <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>
+              ) : opportunities?.length > 0 ? (
+              <div className="space-y-3">
+               {opportunities.map(opp => (
+                 <div key={opp.id} className="p-4 bg-white border rounded-xl shadow-sm flex justify-between items-center hover:border-red-200 transition-colors">
+                    <div>
+                       <h4 className="font-bold text-slate-800">{opp.product_type}</h4>
+                       <p className="text-sm text-slate-500">שלב: {opp.deal_stage}</p>
+                    </div>
+                    <div className="text-left">
+                       <div className="font-mono font-bold text-red-700">₪{opp.loan_amount_requested?.toLocaleString()}</div>
+                       <Badge variant="outline" className="mt-1">{opp.probability}% היתכנות</Badge>
+                    </div>
+                 </div>
+               ))}
+              </div>
+              ) : (
+              <div className="text-center py-10 text-slate-400 border-2 border-dashed rounded-xl">
+              <Briefcase className="w-10 h-10 mx-auto mb-2 opacity-50" />
+              <p>אין הזדמנויות פתוחות ללקוח זה</p>
+              </div>
+              )}
+              </TabsContent>
+
+              <TabsContent value="activity" className="h-[600px]">
+              {lead ? <ActivityLog leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
+              </TabsContent>
+
+              <TabsContent value="documents" className="space-y-6">
           <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
             <FileUpload 
               files={watch("documents") || []}
