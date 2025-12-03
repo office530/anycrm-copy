@@ -188,8 +188,8 @@ export default function Dashboard() {
                         <AreaChart data={stats.trendData}>
                             <defs>
                                 <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.1}/>
-                                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor="#a3a3a3" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="#a3a3a3" stopOpacity={0}/>
                                 </linearGradient>
                                 <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.1}/>
@@ -200,7 +200,7 @@ export default function Dashboard() {
                             <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
                             <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
                             <RechartsTooltip contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
-                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#94a3b8" fill="url(#colorLeads)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
                             <Area type="monotone" dataKey="sales" name="מכירות" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
                         </AreaChart>
                     </ResponsiveContainer>

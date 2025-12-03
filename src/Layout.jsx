@@ -28,7 +28,7 @@ function LayoutContent({ children, currentPageName }) {
   const activeClass = `bg-red-50 text-red-700 font-bold`;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-heebo text-neutral-900 flex" dir="rtl">
+    <div className="min-h-screen bg-neutral-50 font-heebo text-neutral-900 flex" dir="rtl">
       
       {/* Sidebar Desktop */}
       <aside className={`
