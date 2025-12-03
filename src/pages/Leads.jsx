@@ -232,15 +232,21 @@ export default function LeadsPage() {
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
+            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
                 סטטוס ליד
                 {sortConfig.key === 'lead_status' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
+            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
                 פרטי קשר
                 {sortConfig.key === 'phone_number' ?
+            sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
+            <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
+            </div>
+            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('created_date')}>
+                תאריך יצירה
+                {sortConfig.key === 'created_date' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
@@ -273,13 +279,18 @@ export default function LeadsPage() {
                 }
                          </div>
                     </div>
-                    <div className="col-span-3">
+                    <div className="col-span-2">
                         <StatusBadge lead={lead} statuses={displayStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     </div>
-                    <div className="col-span-3 text-sm text-slate-600 flex items-center gap-2">
+                    <div className="col-span-2 text-sm text-slate-600 flex items-center gap-2">
                         <Phone className="w-4 h-4 text-slate-400" />
                         <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
+                    </div>
+                    <div className="col-span-2 text-xs text-slate-500 dir-ltr">
+                        {lead.created_date ? new Date(lead.created_date).toLocaleDateString('he-IL') : '-'}
+                        <br/>
+                        <span className="text-[10px] opacity-70">{lead.created_date ? new Date(lead.created_date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                     </div>
                     <div className="col-span-1 text-sm text-slate-600">
                         {lead.source_year}
