@@ -7,7 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   LineChart, Line, PieChart, Pie, Cell, AreaChart, Area, Legend, ComposedChart
 } from 'recharts';
-import { Download, Filter, RefreshCw, Calendar, User, Filter as FilterIcon, Table as TableIcon, BarChart3 } from "lucide-react";
+import { Download, Filter, RefreshCw, Calendar, User, Filter as FilterIcon, Table as TableIcon, BarChart3, TrendingUp } from "lucide-react";
 import moment from 'moment';
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
