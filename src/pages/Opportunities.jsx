@@ -87,33 +87,33 @@ export default function OpportunitiesPage() {
       
       {/* Stats Header (New!) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 shadow-sm">
+          <div className="bg-white dark:bg-slate-200 p-4 rounded-2xl border border-slate-100 dark:border-slate-300 flex items-center gap-3 shadow-sm">
              <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><DollarSign className="w-5 h-5"/></div>
              <div>
                  <div className="text-xs text-slate-500">שווי צנרת כולל</div>
-                 <div className="font-bold text-lg dark:text-slate-100">{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
+                 <div className="font-bold text-lg dark:text-slate-900">{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
              </div>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 shadow-sm">
+          <div className="bg-white dark:bg-slate-200 p-4 rounded-2xl border border-slate-100 dark:border-slate-300 flex items-center gap-3 shadow-sm">
              <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Briefcase className="w-5 h-5"/></div>
              <div>
                  <div className="text-xs text-slate-500">עסקאות פעילות</div>
-                 <div className="font-bold text-lg dark:text-slate-100">{stats.activeDeals}</div>
+                 <div className="font-bold text-lg dark:text-slate-900">{stats.activeDeals}</div>
              </div>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center gap-3 shadow-sm">
+          <div className="bg-white dark:bg-slate-200 p-4 rounded-2xl border border-slate-100 dark:border-slate-300 flex items-center gap-3 shadow-sm">
              <div className="p-2 bg-purple-100 text-purple-600 rounded-lg"><Trophy className="w-5 h-5"/></div>
              <div>
                  <div className="text-xs text-slate-500">נסגרו בהצלחה</div>
-                 <div className="font-bold text-lg dark:text-slate-100">{stats.wonDeals}</div>
+                 <div className="font-bold text-lg dark:text-slate-900">{stats.wonDeals}</div>
              </div>
           </div>
           <div className="flex items-center justify-end gap-2">
-            <div className="bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex gap-1 h-fit">
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
+            <div className="bg-white dark:bg-slate-200 p-1 rounded-xl border border-slate-200 dark:border-slate-300 shadow-sm flex gap-1 h-fit">
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-slate-100 dark:bg-slate-300 text-slate-900 dark:text-slate-900 shadow-sm' : 'text-slate-500 dark:text-slate-600'}>
                     <LayoutGrid className="w-4 h-4 ml-2" /> לוח
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'}>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-slate-100 dark:bg-slate-300 text-slate-900 dark:text-slate-900 shadow-sm' : 'text-slate-500 dark:text-slate-600'}>
                     <ListIcon className="w-4 h-4 ml-2" /> רשימה
                 </Button>
             </div>
@@ -132,15 +132,15 @@ export default function OpportunitiesPage() {
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'} border border-transparent`}>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-slate-100 text-slate-700 dark:bg-slate-300 dark:text-slate-700'} border border-transparent`}>
                         {stage.label}
                     </span>
                     <span className="text-xs text-slate-400 font-medium">{stageOpps.length}</span>
                 </div>
-                <div className="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-1 w-full bg-slate-200 dark:bg-slate-300 rounded-full overflow-hidden">
                     <div className={`h-full ${stage.color || 'bg-slate-400'}`} style={{ width: '100%' }}></div>
                 </div>
-                {total > 0 && <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
+                {total > 0 && <div className="text-xs font-medium text-slate-500 dark:text-slate-600 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
               </div>
 
               {/* Droppable Area */}
@@ -162,7 +162,7 @@ export default function OpportunitiesPage() {
                             {...provided.dragHandleProps}
                             className={`
                               cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border-none shadow-sm group relative overflow-hidden
-                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white dark:bg-slate-900 dark:shadow-none dark:border dark:border-slate-800'}
+                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white dark:bg-slate-200 dark:shadow-none dark:border dark:border-slate-300'}
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
@@ -171,16 +171,16 @@ export default function OpportunitiesPage() {
                               
                               {/* שם הלקוח */}
                               <div className="flex justify-between items-start">
-                                <span className="font-bold text-slate-800 dark:text-slate-100 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                <span className="font-bold text-slate-800 dark:text-slate-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                                   {opp.lead_name || "לקוח ללא שם"}
                                 </span>
-                                <Badge variant="outline" className="text-[10px] bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                                <Badge variant="outline" className="text-[10px] bg-slate-50 dark:bg-slate-300 border-slate-100 dark:border-slate-300 text-slate-500 dark:text-slate-600">
                                   {opp.probability}%
                                 </Badge>
                               </div>
                               
                               {/* עריכה מהירה: סכום ותאריך */}
-                              <div className="space-y-2 bg-slate-50/50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100/50 dark:border-slate-700/50">
+                              <div className="space-y-2 bg-slate-50/50 dark:bg-slate-300/50 p-2 rounded-lg border border-slate-100/50 dark:border-slate-300/50">
                                 <div className="flex justify-between items-center text-xs">
                                   <span className="text-slate-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> סכום</span>
                                   <div className="w-24 text-right">
@@ -189,7 +189,7 @@ export default function OpportunitiesPage() {
                                         type="number"
                                         formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
-                                        className="font-bold text-slate-700 dark:text-slate-200 justify-end h-6 bg-white dark:bg-slate-700 shadow-sm"
+                                        className="font-bold text-slate-700 dark:text-slate-800 justify-end h-6 bg-white dark:bg-slate-300 shadow-sm"
                                       />
                                   </div>
                                 </div>
@@ -201,7 +201,7 @@ export default function OpportunitiesPage() {
                                         type="date"
                                         placeholder="קבע תאריך"
                                         onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
-                                        className="justify-end h-6 text-slate-600 dark:text-slate-300"
+                                        className="justify-end h-6 text-slate-600 dark:text-slate-700"
                                         formatDisplay={(val) => val ? moment(val).format("DD/MM/YYYY") : "אין תאריך"}
                                       />
                                   </div>
@@ -229,7 +229,7 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+        <div className="bg-white dark:bg-slate-200 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-300 overflow-hidden">
              <div className="p-10 text-center text-slate-500">תצוגת רשימה זמינה בגרסה הבאה</div>
         </div>
       )}

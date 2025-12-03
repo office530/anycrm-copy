@@ -177,7 +177,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
               
               {/* Sales Trend Chart */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-900">
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-200">
                   <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                           <Activity className="w-5 h-5 text-neutral-400" /> מגמות לידים ומכירות
@@ -208,7 +208,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Opportunity Stages */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-900">
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-200">
                   <CardHeader>
                       <CardTitle className="text-lg">הזדמנויות לפי שלב</CardTitle>
                   </CardHeader>
@@ -230,7 +230,7 @@ export default function Dashboard() {
           <div className="space-y-6">
               
               {/* Tasks List */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-900 h-full max-h-[600px] flex flex-col">
+              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-slate-200 h-full max-h-[600px] flex flex-col">
                   <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center justify-between">
                           <span className="flex items-center gap-2"><CheckCircle2 className="w-5 h-5 text-neutral-400" /> משימות קרובות</span>
@@ -271,7 +271,7 @@ export default function Dashboard() {
                           </div>
                       )}
                   </CardContent>
-                  <div className="p-4 border-t border-neutral-100 dark:border-neutral-800">
+                  <div className="p-4 border-t border-neutral-100 dark:border-slate-300">
                       <Button variant="ghost" className="w-full text-neutral-500 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
                           כל המשימות
                       </Button>
@@ -307,17 +307,17 @@ export default function Dashboard() {
 
 function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
     return (
-        <div className="bg-white dark:bg-neutral-900 p-5 md:p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 relative overflow-hidden group hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-200 p-5 md:p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-slate-300 relative overflow-hidden group hover:shadow-md transition-all">
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
+                    {total && <span className="text-xs font-bold text-neutral-400 dark:text-slate-500 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">{value}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">{title}</p>
-                <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-2">{subtext}</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-slate-900 mb-1">{value}</h3>
+                <p className="text-sm text-neutral-500 dark:text-slate-600 font-medium">{title}</p>
+                <p className="text-xs text-neutral-400 dark:text-slate-500 mt-2">{subtext}</p>
             </div>
         </div>
     );
