@@ -7,19 +7,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
-import { 
-  Phone, 
-  Mail, 
-  MessageSquare, 
-  Calendar, 
-  FileText, 
+import {
+  Phone,
+  Mail,
+  MessageSquare,
+  Calendar,
+  FileText,
   FileCheck,
   Plus,
   Clock,
   CheckCircle2,
   XCircle,
-  Voicemail
-} from "lucide-react";
+  Voicemail } from
+"lucide-react";
 
 export default function ActivityLog({ leadId, opportunityId }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -66,43 +66,43 @@ export default function ActivityLog({ leadId, opportunityId }) {
 
   const getActivityIcon = (type) => {
     switch (type) {
-      case 'Call': return <Phone className="w-4 h-4" />;
-      case 'Email': return <Mail className="w-4 h-4" />;
-      case 'SMS': return <MessageSquare className="w-4 h-4" />;
-      case 'Meeting': return <Calendar className="w-4 h-4" />;
-      case 'Document Collection': return <FileCheck className="w-4 h-4" />;
-      default: return <FileText className="w-4 h-4" />;
+      case 'Call':return <Phone className="w-4 h-4" />;
+      case 'Email':return <Mail className="w-4 h-4" />;
+      case 'SMS':return <MessageSquare className="w-4 h-4" />;
+      case 'Meeting':return <Calendar className="w-4 h-4" />;
+      case 'Document Collection':return <FileCheck className="w-4 h-4" />;
+      default:return <FileText className="w-4 h-4" />;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Completed': return 'text-green-600 bg-green-50 border-green-200';
-      case 'Scheduled': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'No Answer': return 'text-red-600 bg-red-50 border-red-200';
-      case 'Left Message': return 'text-orange-600 bg-orange-50 border-orange-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'Completed':return 'text-green-600 bg-green-50 border-green-200';
+      case 'Scheduled':return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'No Answer':return 'text-red-600 bg-red-50 border-red-200';
+      case 'Left Message':return 'text-orange-600 bg-orange-50 border-orange-200';
+      default:return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'Completed': return 'הושלם';
-      case 'Scheduled': return 'מתוכנן';
-      case 'No Answer': return 'אין מענה';
-      case 'Left Message': return 'הושארה הודעה';
-      default: return status;
+      case 'Completed':return 'הושלם';
+      case 'Scheduled':return 'מתוכנן';
+      case 'No Answer':return 'אין מענה';
+      case 'Left Message':return 'הושארה הודעה';
+      default:return status;
     }
   };
 
   const getTypeLabel = (type) => {
     switch (type) {
-      case 'Call': return 'שיחה טלפונית';
-      case 'Email': return 'דואר אלקטרוני';
-      case 'SMS': return 'הודעת SMS';
-      case 'Meeting': return 'פגישה';
-      case 'Document Collection': return 'איסוף מסמכים';
-      default: return 'הערה כללית';
+      case 'Call':return 'שיחה טלפונית';
+      case 'Email':return 'דואר אלקטרוני';
+      case 'SMS':return 'הודעת SMS';
+      case 'Meeting':return 'פגישה';
+      case 'Document Collection':return 'איסוף מסמכים';
+      default:return 'הערה כללית';
     }
   };
 
@@ -110,24 +110,24 @@ export default function ActivityLog({ leadId, opportunityId }) {
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-slate-800">תיעוד אינטראקציות</h3>
-        <Button 
-          size="sm" 
+        <Button
+          size="sm"
           variant={isAdding ? "secondary" : "default"}
-          onClick={() => setIsAdding(!isAdding)}
-        >
+          onClick={() => setIsAdding(!isAdding)}>
+
           {isAdding ? "ביטול" : <><Plus className="w-4 h-4 mr-2" /> פעילות חדשה</>}
         </Button>
       </div>
 
-      {isAdding && (
-        <form onSubmit={handleSubmit} className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 space-y-4 animate-in slide-in-from-top-2">
+      {isAdding &&
+      <form onSubmit={handleSubmit} className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 space-y-4 animate-in slide-in-from-top-2">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">סוג פעילות</label>
-              <Select 
-                value={newActivity.type} 
-                onValueChange={(val) => setNewActivity({...newActivity, type: val})}
-              >
+              <label className="text-slate-900 text-sm font-medium">סוג פעילות</label>
+              <Select
+              value={newActivity.type}
+              onValueChange={(val) => setNewActivity({ ...newActivity, type: val })}>
+
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -142,11 +142,11 @@ export default function ActivityLog({ leadId, opportunityId }) {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">תוצאה / סטטוס</label>
-              <Select 
-                value={newActivity.status} 
-                onValueChange={(val) => setNewActivity({...newActivity, status: val})}
-              >
+              <label className="text-slate-800 text-sm font-medium">תוצאה / סטטוס</label>
+              <Select
+              value={newActivity.status}
+              onValueChange={(val) => setNewActivity({ ...newActivity, status: val })}>
+
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -161,49 +161,49 @@ export default function ActivityLog({ leadId, opportunityId }) {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium">תאריך ושעה</label>
-            <Input 
-              type="datetime-local" 
-              value={newActivity.date}
-              onChange={(e) => setNewActivity({...newActivity, date: e.target.value})}
-            />
+            <label className="text-slate-800 text-sm font-medium">תאריך ושעה</label>
+            <Input
+            type="datetime-local"
+            value={newActivity.date}
+            onChange={(e) => setNewActivity({ ...newActivity, date: e.target.value })} />
+
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">סיכום / תוכן</label>
-            <Textarea 
-              placeholder="כתוב כאן סיכום של השיחה או הפעילות..." 
-              value={newActivity.summary}
-              onChange={(e) => setNewActivity({...newActivity, summary: e.target.value})}
-              className="h-20"
-            />
+            <label className="text-slate-800 text-sm font-medium">סיכום / תוכן</label>
+            <Textarea
+            placeholder="כתוב כאן סיכום של השיחה או הפעילות..."
+            value={newActivity.summary}
+            onChange={(e) => setNewActivity({ ...newActivity, summary: e.target.value })}
+            className="h-20" />
+
           </div>
 
-          <div className="flex justify-end">
+          <div className="text-slate-800 flex justify-end">
             <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
               שמור פעילות
             </Button>
           </div>
         </form>
-      )}
+      }
 
       <ScrollArea className="flex-1 pr-4 -mr-4">
         <div className="space-y-4 pb-4">
-          {isLoading ? (
-            <p className="text-center text-slate-500 py-4">טוען היסטוריה...</p>
-          ) : activities?.length === 0 ? (
-            <div className="text-center py-8 text-slate-400 border-2 border-dashed rounded-lg">
+          {isLoading ?
+          <p className="text-center text-slate-500 py-4">טוען היסטוריה...</p> :
+          activities?.length === 0 ?
+          <div className="text-center py-8 text-slate-400 border-2 border-dashed rounded-lg">
               <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>אין פעילויות מתועדות עדיין</p>
-            </div>
-          ) : (
-            activities?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((activity) => (
-              <div key={activity.id} className="flex gap-3 p-3 bg-white rounded-lg border shadow-sm">
+            </div> :
+
+          activities?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((activity) =>
+          <div key={activity.id} className="flex gap-3 p-3 bg-white rounded-lg border shadow-sm">
                 <div className={`p-2 rounded-full h-fit ${
-                  activity.type === 'Call' ? 'bg-blue-100 text-blue-600' : 
-                  activity.type === 'Meeting' ? 'bg-purple-100 text-purple-600' :
-                  'bg-slate-100 text-slate-600'
-                }`}>
+            activity.type === 'Call' ? 'bg-blue-100 text-blue-600' :
+            activity.type === 'Meeting' ? 'bg-purple-100 text-purple-600' :
+            'bg-slate-100 text-slate-600'}`
+            }>
                   {getActivityIcon(activity.type)}
                 </div>
                 <div className="flex-1 space-y-1">
@@ -221,10 +221,10 @@ export default function ActivityLog({ leadId, opportunityId }) {
                   </div>
                 </div>
               </div>
-            ))
-          )}
+          )
+          }
         </div>
       </ScrollArea>
-    </div>
-  );
+    </div>);
+
 }
