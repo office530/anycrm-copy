@@ -14,13 +14,13 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
 
   // Unique Stages for Filter
   const stages = useMemo(() => {
-    const s = new Set(opportunities.map(o => o.deal_stage).filter(Boolean));
+    const s = new Set(opportunities.map((o) => o.deal_stage).filter(Boolean));
     return Array.from(s);
   }, [opportunities]);
 
   // Filter Logic
   const filteredData = useMemo(() => {
-    return opportunities.filter(o => {
+    return opportunities.filter((o) => {
       // Stage Filter
       if (filterStage !== 'all' && o.deal_stage !== filterStage) return false;
 
@@ -49,13 +49,13 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
     let wonCount = 0;
     let wonAmount = 0;
 
-    filteredData.forEach(o => {
+    filteredData.forEach((o) => {
       const isWon = o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה') || o.deal_stage?.includes('נחתם');
       const isLost = o.deal_stage?.includes('Lost') || o.deal_stage?.includes('אבוד');
-      
+
       if (isWon) {
         wonCount++;
-        wonAmount += (o.loan_amount_requested || 0);
+        wonAmount += o.loan_amount_requested || 0;
       } else if (!isLost) {
         openCount++;
       }
@@ -112,12 +112,12 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
           <label className="text-xs font-medium text-neutral-500">חיפוש לקוח</label>
           <div className="relative">
             <Search className="absolute right-3 top-1/2 -tranneutral-y-1/2 w-4 h-4 text-neutral-400" />
-            <Input 
-              placeholder="שם לקוח..." 
+            <Input
+              placeholder="שם לקוח..."
               value={searchClient}
               onChange={(e) => setSearchClient(e.target.value)}
-              className="pr-9"
-            />
+              className="pr-9" />
+
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">כל השלבים</SelectItem>
-              {stages.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              {stages.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -167,35 +167,35 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.length > 0 ? (
-                filteredData.map((o) => (
-                  <TableRow key={o.id}>
-                    <TableCell className="font-medium text-neutral-900">{o.lead_name || 'ללא שם'}</TableCell>
-                    <TableCell className="font-mono text-neutral-600">₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
+              {filteredData.length > 0 ?
+              filteredData.map((o) =>
+              <TableRow key={o.id}>
+                    <TableCell className="text-slate-50 p-2 font-medium align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">{o.lead_name || 'ללא שם'}</TableCell>
+                    <TableCell className="text-slate-50 p-2 font-mono align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="bg-white border-neutral-200 font-normal text-neutral-600">
                         {o.deal_stage}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-neutral-500 text-sm">
+                    <TableCell className="text-slate-50 p-2 text-sm align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
                       {o.created_date ? moment(o.created_date).format('DD/MM/YYYY') : '-'}
                     </TableCell>
                     <TableCell className="text-neutral-500 text-sm">
                       {o.expected_close_date ? moment(o.expected_close_date).format('DD/MM/YYYY') : '-'}
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
+              ) :
+
+              <TableRow>
                   <TableCell colSpan={5} className="h-24 text-center text-neutral-500">
                     לא נמצאו הזדמנויות התואמות את הסינון
                   </TableCell>
                 </TableRow>
-              )}
+              }
             </TableBody>
           </Table>
         </div>
       </Card>
-    </div>
-  );
+    </div>);
+
 }
