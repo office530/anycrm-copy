@@ -116,7 +116,7 @@ export default function AutomationPage() {
       {/* Templates Gallery (New!) */}
       <div>
           <h3 className="text-lg font-bold text-neutral-900 dark:text-slate-200 mb-4 flex items-center gap-2">
-              <Wand2 className="w-5 h-5 text-teal-500" />
+              <Wand2 className="w-5 h-5 text-red-500" />
               תבניות מוכנות (Quick Start)
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -129,7 +129,7 @@ export default function AutomationPage() {
                           <h4 className="font-bold text-lg mb-2 dark:text-white">{tpl.title}</h4>
                           <p className="text-sm text-neutral-600 dark:text-slate-400 leading-relaxed">{tpl.description}</p>
                           <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                              <span className="text-xs font-bold text-teal-600 dark:text-teal-400 group-hover:underline">הפעל תבנית &rarr;</span>
+                              <span className="text-xs font-bold text-red-600 dark:text-red-400 group-hover:underline">הפעל תבנית &rarr;</span>
                           </div>
                       </CardContent>
                   </Card>
@@ -167,7 +167,7 @@ export default function AutomationPage() {
                                 </>
                             )}
                         </p>
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1">
+                        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 flex items-center gap-1">
                             {rule.action_type === 'send_email' ? <Mail className="w-3 h-3"/> : <Bell className="w-3 h-3"/>}
                             ביצוע: {rule.action_type === 'send_email' ? 'שליחת אימייל' : 'יצירת משימה'}
                         </p>
@@ -461,7 +461,7 @@ function RuleForm({ onSuccess }) {
                 )}
             </div>
 
-            <Button type="submit" className="w-full bg-blue-600" disabled={createRule.isPending}>
+            <Button type="submit" className="w-full bg-red-700 hover:bg-red-800" disabled={createRule.isPending}>
                 {createRule.isPending && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
                 שמור חוק
             </Button>

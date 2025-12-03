@@ -120,7 +120,7 @@ export default function LeadsPage() {
         </Card>
         <Card className="border-none shadow-sm bg-white dark:bg-neutral-200">
             <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-teal-100 text-teal-600 rounded-xl"><CheckCircle2 className="w-5 h-5" /></div>
+                <div className="p-3 bg-neutral-100 text-neutral-600 rounded-xl"><CheckCircle2 className="w-5 h-5" /></div>
                 <div>
                     <p className="text-sm text-neutral-500">הומרו להזדמנות</p>
                     <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">{stats.conversionRate}%</p>
@@ -129,7 +129,7 @@ export default function LeadsPage() {
         </Card>
         <Card className="border-none shadow-sm bg-white dark:bg-neutral-200">
             <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-purple-100 text-purple-600 rounded-xl"><Activity className="w-5 h-5" /></div>
+                <div className="p-3 bg-neutral-800 text-white rounded-xl"><Activity className="w-5 h-5" /></div>
                 <div>
                     <p className="text-sm text-neutral-500">פעילים בטיפול</p>
                     <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">
@@ -206,10 +206,10 @@ export default function LeadsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="group bg-white dark:bg-neutral-200 rounded-2xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-300 hover:shadow-md hover:border-teal-100 dark:hover:border-teal-900 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                        className="group bg-white dark:bg-neutral-200 rounded-2xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-300 hover:shadow-md hover:border-red-100 dark:hover:border-red-900 transition-all duration-200 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
                     >
                         <div className="col-span-3 flex items-center gap-3">
-                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-700 bg-neutral-100 dark:bg-neutral-300 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30 group-hover:text-teal-600 transition-colors`}>
+                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-700 bg-neutral-100 dark:bg-neutral-300 group-hover:bg-red-50 dark:group-hover:bg-red-900/30 group-hover:text-red-600 transition-colors`}>
                                 {lead.full_name?.charAt(0) || <User className="w-5 h-5" />}
                              </div>
                              <div className="flex-1 min-w-0">
@@ -285,7 +285,7 @@ export default function LeadsPage() {
                             <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-8 w-8 text-neutral-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
+                                className="h-8 w-8 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
                                 onClick={() => convertToOpportunity.mutate(lead)}
                                 title="המר להזדמנות"
                             >

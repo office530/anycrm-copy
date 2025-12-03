@@ -89,7 +89,7 @@ export function InlineEdit({
             open={true} 
             onOpenChange={(open) => !open && setIsEditing(false)}
            >
-            <SelectTrigger className="h-8 text-sm border-teal-500 ring-1 ring-teal-500">
+            <SelectTrigger className="h-8 text-sm border-red-200 ring-1 ring-red-200">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
@@ -113,11 +113,11 @@ export function InlineEdit({
           onChange={(e) => setCurrentValue(e.target.value)}
           onBlur={() => handleSave()}
           onKeyDown={handleKeyDown}
-          className="h-8 text-sm w-full border-teal-500 focus-visible:ring-teal-500"
+          className="h-8 text-sm w-full border-red-200 focus-visible:ring-red-200"
           placeholder={placeholder}
         />
         <div className="absolute left-2 top-1/2 -translate-y-1/2 flex gap-1">
-            <button onMouseDown={() => handleSave()} className="bg-teal-500 text-white rounded-full p-0.5 hover:bg-teal-600">
+            <button onMouseDown={() => handleSave()} className="bg-red-600 text-white rounded-full p-0.5 hover:bg-red-700">
                 <Check className="w-3 h-3" />
             </button>
         </div>
@@ -141,7 +141,7 @@ export function InlineEdit({
         {formatDisplay ? formatDisplay(currentValue) : (currentValue || placeholder || "לחץ לעריכה")}
       </span>
       
-      {showSuccess && <Check className="w-3 h-3 text-teal-500 animate-in fade-in zoom-in" />}
+      {showSuccess && <Check className="w-3 h-3 text-red-600 animate-in fade-in zoom-in" />}
       
       <Pencil className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity absolute left-1" />
     </div>
