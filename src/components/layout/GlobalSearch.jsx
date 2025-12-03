@@ -60,6 +60,15 @@ export default function GlobalSearch() {
     setIsOpen(false);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && searchTerm.length >= 2) {
+        setIsOpen(false);
+        // Navigate will be handled by the Link or form submission normally, 
+        // but since this is a controlled input inside a div, we need to force navigation
+        window.location.href = createPageUrl('SearchResults') + `?q=${encodeURIComponent(searchTerm)}`;
+    }
+  };
+
   const clearSearch = () => {
     setSearchTerm('');
     setIsOpen(false);
@@ -74,6 +83,7 @@ export default function GlobalSearch() {
         <input
           value={searchTerm}
           onChange={handleSearch}
+          onKeyDown={handleKeyDown}
           onFocus={() => searchTerm.length >= 2 && setIsOpen(true)} 
           className="bg-white text-slate-800 pr-12 pl-10 py-3 text-base rounded-full border border-slate-200 w-72 focus:w-96 transition-all focus:ring-4 focus:ring-red-100 focus:border-red-300 placeholder:text-slate-400 shadow-sm"
           placeholder="חיפוש במאגר הנתונים..." 
@@ -150,6 +160,14 @@ export default function GlobalSearch() {
             }
                 </div>
           }
+              {/* Footer Link */}
+              <Link 
+                  to={createPageUrl('SearchResults') + `?q=${encodeURIComponent(searchTerm)}`}
+                  onClick={() => setIsOpen(false)}
+                  className="block p-3 text-center text-sm font-medium text-red-600 bg-slate-50 hover:bg-red-50 border-t border-slate-100 transition-colors mt-1"
+              >
+                  הצג את כל התוצאות עבור "{searchTerm}"
+              </Link>
             </>
         }
         </div>
