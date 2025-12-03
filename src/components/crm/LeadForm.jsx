@@ -6,12 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityLog from "./ActivityLog";
 import DiscoveryScript from "./DiscoveryScript";
 import FileUpload from "../common/FileUpload";
-import { FileText } from "lucide-react";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -60,6 +59,9 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
     setValue(field, value);
   };
 
+  const labelClass = "text-slate-900 font-semibold mb-1.5 block";
+  const inputClass = "text-slate-900 font-medium placeholder:text-slate-400 border-slate-300 focus:border-blue-500";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -67,242 +69,252 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       className="bg-white p-6 rounded-xl shadow-lg border border-slate-100"
       dir="rtl"
     >
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold text-slate-800">
+      <div className="mb-6 pb-4 border-b border-slate-100">
+        <h2 className="text-2xl font-bold text-slate-900">
           {lead ? "תיק לקוח" : "הוספת ליד חדש"}
         </h2>
-        <p className="text-slate-500">ניהול פרטים ופעילויות</p>
+        <p className="text-slate-500 text-sm mt-1">ניהול פרטים ופעילויות</p>
       </div>
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="details" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-100/80 p-1">
+          <TabsTrigger value="details" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
             <User className="w-4 h-4" />
             פרטי ליד
           </TabsTrigger>
-          <TabsTrigger value="documents" className="flex items-center gap-2">
-          <FileText className="w-4 h-4" />
-          מסמכים
+          <TabsTrigger value="documents" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm">
+            <FileText className="w-4 h-4" />
+            מסמכים
           </TabsTrigger>
-          <TabsTrigger value="discovery" className="flex items-center gap-2" disabled={!lead}>
-          <ClipboardList className="w-4 h-4" />
-          תסריט שיחה
+          <TabsTrigger value="discovery" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm" disabled={!lead}>
+            <ClipboardList className="w-4 h-4" />
+            תסריט שיחה
           </TabsTrigger>
-          <TabsTrigger value="activity" className="flex items-center gap-2" disabled={!lead}>
-          <Activity className="w-4 h-4" />
-          תיעוד פעילות
-          </TabsTrigger>
-          </TabsList>
+          {/* Activity Log temporarily hidden or moved if needed, keeping 3 cols for layout consistency */}
+        </TabsList>
 
         <TabsContent value="details">
           <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label>שם מלא *</Label>
-            <Input {...register("full_name", { required: "שדה חובה" })} placeholder="לדוגמה: דוד כהן" />
-            {errors.full_name && <span className="text-red-500 text-sm">{errors.full_name.message}</span>}
-          </div>
-          
-          <div className="space-y-2">
-            <Label>מספר טלפון *</Label>
-            <Input 
-              {...register("phone_number", { 
-                required: "שדה חובה",
-                pattern: {
-                  value: /^0[0-9]{1,2}-?[0-9]{7}$/,
-                  message: "מספר טלפון לא תקין (לדוגמה: 050-1234567)"
-                }
-              })} 
-              placeholder="050-0000000" 
-            />
-            {errors.phone_number && <span className="text-red-500 text-sm">{errors.phone_number.message}</span>}
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <Label className={labelClass}>שם מלא *</Label>
+                <Input 
+                  {...register("full_name", { required: "שדה חובה" })} 
+                  placeholder="לדוגמה: דוד כהן" 
+                  className={inputClass}
+                />
+                {errors.full_name && <span className="text-red-500 text-sm font-medium">{errors.full_name.message}</span>}
+              </div>
+              
+              <div className="space-y-1">
+                <Label className={labelClass}>מספר טלפון *</Label>
+                <Input 
+                  {...register("phone_number", { 
+                    required: "שדה חובה",
+                    pattern: {
+                      value: /^0[0-9]{1,2}-?[0-9]{7}$/,
+                      message: "מספר טלפון לא תקין"
+                    }
+                  })} 
+                  placeholder="050-0000000" 
+                  className={inputClass}
+                />
+                {errors.phone_number && <span className="text-red-500 text-sm font-medium">{errors.phone_number.message}</span>}
+              </div>
 
-          <div className="space-y-2">
-            <Label>אימייל</Label>
-            <Input 
-              {...register("email", {
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "כתובת אימייל לא תקינה"
-                }
-              })} 
-              placeholder="email@example.com" 
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-          </div>
+              <div className="space-y-1">
+                <Label className={labelClass}>אימייל</Label>
+                <Input 
+                  {...register("email", {
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "כתובת אימייל לא תקינה"
+                    }
+                  })} 
+                  placeholder="email@example.com" 
+                  className={inputClass}
+                />
+                {errors.email && <span className="text-red-500 text-sm font-medium">{errors.email.message}</span>}
+              </div>
 
-          <div className="space-y-2">
-            <Label>גיל</Label>
-            <Input type="number" {...register("age", { valueAsNumber: true })} placeholder="לדוגמה: 68" />
-          </div>
+              <div className="space-y-1">
+                <Label className={labelClass}>גיל</Label>
+                <Input 
+                  type="number" 
+                  {...register("age", { valueAsNumber: true })} 
+                  placeholder="לדוגמה: 68" 
+                  className={inputClass}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label>עיר</Label>
-            <Input {...register("city")} placeholder="לדוגמה: תל אביב" />
-          </div>
+              <div className="space-y-1">
+                <Label className={labelClass}>עיר</Label>
+                <Input 
+                  {...register("city")} 
+                  placeholder="לדוגמה: תל אביב" 
+                  className={inputClass}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label>שנת מקור</Label>
-            <Select 
-              defaultValue={lead?.source_year || "2024"} 
-              onValueChange={(val) => handleSelectChange("source_year", val)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="בחר שנה" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="space-y-1">
+                <Label className={labelClass}>שנת מקור</Label>
+                <Select 
+                  defaultValue={lead?.source_year || "2024"} 
+                  onValueChange={(val) => handleSelectChange("source_year", val)}
+                >
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue placeholder="בחר שנה" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2023">2023</SelectItem>
+                    <SelectItem value="2024">2024</SelectItem>
+                    <SelectItem value="2025">2025</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Original Status Removed */}
+              <div className="space-y-1">
+                <Label className={labelClass}>סטטוס ליד</Label>
+                <Select 
+                  defaultValue={lead?.lead_status || "New"} 
+                  onValueChange={(val) => handleSelectChange("lead_status", val)}
+                >
+                  <SelectTrigger className={`${inputClass} ${leadStatus === 'Converted' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : ''}`}>
+                    <SelectValue placeholder="סטטוס" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="New">חדש (New)</SelectItem>
+                    <SelectItem value="Attempting Contact">בטיפול - מנסה ליצור קשר</SelectItem>
+                    <SelectItem value="Contacted - Qualifying">נוצר קשר - בירור צרכים</SelectItem>
+                    <SelectItem value="Sales Ready">בשל להזדמנות / חם</SelectItem>
+                    <SelectItem value="Lost / Unqualified">לא רלוונטי (סופי)</SelectItem>
+                    <SelectItem value="Converted" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
+                  </SelectContent>
+                </Select>
+                {leadStatus === 'Converted' && (
+                  <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
+                    <Activity className="w-3 h-3" />
+                    שמירה תוביל לפתיחת הזדמנות חדשה
+                  </p>
+                )}
+              </div>
 
-          <div className="space-y-2">
-            <Label>סטטוס ליד</Label>
-            <Select 
-              defaultValue={lead?.lead_status || "New"} 
-              onValueChange={(val) => handleSelectChange("lead_status", val)}
-            >
-              <SelectTrigger className={leadStatus === 'Converted' ? 'border-emerald-500 text-emerald-700 bg-emerald-50' : ''}>
-                <SelectValue placeholder="סטטוס" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="New">חדש (New)</SelectItem>
-                <SelectItem value="Attempting Contact">בטיפול - מנסה ליצור קשר</SelectItem>
-                <SelectItem value="Contacted - Qualifying">נוצר קשר - בירור צרכים</SelectItem>
-                <SelectItem value="Sales Ready">בשל להזדמנות / חם</SelectItem>
-                <SelectItem value="Lost / Unqualified">לא רלוונטי (סופי)</SelectItem>
-                <SelectItem value="Converted" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
-              </SelectContent>
-            </Select>
-            {leadStatus === 'Converted' && (
-              <p className="text-xs text-emerald-600 font-medium mt-1">
-                ✨ שמירה תוביל לפתיחת הזדמנות חדשה והסרת הליד מהרשימה
-              </p>
-            )}
-          </div>
+              <div className="space-y-1">
+                <Label className={labelClass}>תאריך יצירת קשר אחרון</Label>
+                <Input 
+                  type="date" 
+                  {...register("last_contact_date")} 
+                  className={inputClass}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label>תאריך יצירת קשר אחרון</Label>
-            <Input type="date" {...register("last_contact_date")} />
-          </div>
+              {/* Additional Details Section */}
+              <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 pt-6 mt-2">
+                 <div className="space-y-1">
+                  <Label className={`${labelClass} text-right`}>מצב משפחתי</Label>
+                  <Select 
+                    defaultValue={lead?.marital_status || "Married"} 
+                    onValueChange={(val) => handleSelectChange("marital_status", val)}
+                  >
+                    <SelectTrigger className={`${inputClass} text-right`}>
+                      <SelectValue placeholder="בחר סטטוס" />
+                    </SelectTrigger>
+                    <SelectContent className="text-right">
+                      <SelectItem value="Married">נשוי/אה (Married)</SelectItem>
+                      <SelectItem value="Widowed">אלמן/ה (Widowed)</SelectItem>
+                      <SelectItem value="Divorced">גרוש/ה (Divorced)</SelectItem>
+                      <SelectItem value="Single">רווק/ה (Single)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6 mt-2">
-             <div className="space-y-2">
-              <Label className="text-right block">מצב משפחתי</Label>
-              <Select 
-                defaultValue={lead?.marital_status || "Married"} 
-                onValueChange={(val) => handleSelectChange("marital_status", val)}
-              >
-                <SelectTrigger className="text-right">
-                  <SelectValue placeholder="בחר סטטוס" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Married">נשוי/אה (Married)</SelectItem>
-                  <SelectItem value="Widowed">אלמן/ה (Widowed)</SelectItem>
-                  <SelectItem value="Divorced">גרוש/ה (Divorced)</SelectItem>
-                  <SelectItem value="Single">רווק/ה (Single)</SelectItem>
-                </SelectContent>
-              </Select>
+                <div className="space-y-1">
+                   <div className="flex items-center gap-2 mb-2">
+                     <Label className="text-slate-900 font-semibold m-0">יש ילדים?</Label>
+                     <input 
+                        type="checkbox" 
+                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300"
+                        {...register("has_children")} 
+                     />
+                   </div>
+                   <Input 
+                      type="number" 
+                      {...register("spouse_age", { valueAsNumber: true })} 
+                      placeholder="גיל בן/ת זוג (אם רלוונטי)" 
+                      className={inputClass}
+                   />
+                </div>
+
+                <div className="space-y-1">
+                  <Label className={`${labelClass} text-right`}>שווי נכס מוערך (₪)</Label>
+                  <Input 
+                    type="number" 
+                    {...register("estimated_property_value", { valueAsNumber: true })} 
+                    placeholder="0.00" 
+                    className={`${inputClass} text-right`}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label className={`${labelClass} text-right`}>יתרת משכנתא קיימת (₪)</Label>
+                  <Input 
+                    type="number" 
+                    {...register("existing_mortgage_balance", { valueAsNumber: true })} 
+                    placeholder="0.00" 
+                    className={`${inputClass} text-right`}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
-               <div className="flex items-center gap-2">
-                 <Label>יש ילדים?</Label>
-                 <input 
-                    type="checkbox" 
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                    {...register("has_children")} 
-                 />
-               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>גיל בן/ת זוג</Label>
-              <Input type="number" {...register("spouse_age", { valueAsNumber: true })} placeholder="לדוגמה: 65" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-right block">שווי נכס מוערך (₪)</Label>
-              <Input 
-                type="number" 
-                {...register("estimated_property_value", { valueAsNumber: true })} 
-                placeholder="0.00"
-                className="text-right" 
+            <div className="space-y-1">
+              <Label className={labelClass}>הערות</Label>
+              <Textarea 
+                {...register("notes")} 
+                placeholder="הערות חשובות לתיק..." 
+                className={`${inputClass} h-24 resize-none`} 
               />
             </div>
-
-            <div className="space-y-2">
-              <Label>יתרת משכנתא קיימת (₪)</Label>
-              <Input 
-                type="number" 
-                {...register("existing_mortgage_balance", { valueAsNumber: true })} 
-                placeholder="0.00" 
-              />
+            
+            <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
+              <Button type="button" variant="outline" onClick={onCancel} className="text-slate-600 border-slate-300 hover:bg-slate-50">ביטול</Button>
+              <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 shadow-sm shadow-blue-900/20" disabled={isSubmitting}>
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+                {lead ? "עדכן תיק לקוח" : "צור ליד חדש"}
+              </Button>
             </div>
-             
-             {/* Lead Temperature Removed */}
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label>הערות</Label>
-          <Textarea {...register("notes")} placeholder="הערות חשובות..." className="h-24" />
-        </div>
-        
-        <div className="flex justify-end gap-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
-          <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-            {lead ? "עדכן ליד" : "צור ליד"}
-          </Button>
-        </div>
-        </div>
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-6">
-          <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+          <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
             <FileUpload 
               files={watch("documents") || []}
               onFilesChange={(newFiles) => setValue("documents", newFiles)}
             />
           </div>
           
-          <div className="flex justify-end gap-4 pt-4 border-t">
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
              <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
              <Button onClick={handleSubmit(onSubmit)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-               {lead ? "עדכן ליד" : "צור ליד"}
+               {lead ? "שמור שינויים" : "צור ליד"}
              </Button>
           </div>
         </TabsContent>
 
         <TabsContent value="discovery">
           {lead ? (
-            <div className="h-[600px] overflow-y-auto pr-2">
+            <div className="h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
               <DiscoveryScript leadId={lead.id} />
             </div>
           ) : (
-            <div className="text-center py-10 text-slate-500">
-              יש לשמור את הליד לפני שניתן למלא תסריט שיחה
+            <div className="flex flex-col items-center justify-center py-16 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+              <Activity className="w-10 h-10 mb-3 opacity-50" />
+              <p className="font-medium">יש לשמור את הליד לפני שניתן למלא תסריט שיחה</p>
             </div>
           )}
         </TabsContent>
-
-        <TabsContent value="activity" className="h-[600px]">
-          {lead ? (
-            <ActivityLog leadId={lead.id} />
-          ) : (
-            <div className="text-center py-10 text-slate-500">
-              יש לשמור את הליד לפני שניתן להוסיף פעילויות
-            </div>
-          )}
-        </TabsContent>
-        </Tabs>
-        </motion.div>
+      </Tabs>
+    </motion.div>
   );
 }
