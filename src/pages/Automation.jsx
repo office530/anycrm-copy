@@ -12,15 +12,15 @@ import { Textarea } from "@/components/ui/textarea";
 
 // תבניות מוכנות עם צבעים חזקים
 const templates = [
-  {
-    id: 'welcome_email', title: 'מייל ברוכים הבאים', description: 'שלח מייל אוטומטי לכל ליד חדש', icon: Mail, color: 'bg-slate-700',
-    rule: { name: 'מייל ברוכים הבאים', trigger_entity: 'Lead', trigger_event: 'create', action_type: 'send_email', action_config: { email_subject: 'ברוכים הבאים!', email_to: '{{email}}' } }
-  },
-  {
-    id: 'task_big_deal', title: 'התראת "עסקה גדולה"', description: 'פתח משימה למנהל על עסקה מעל 1M ₪', icon: Bell, color: 'bg-red-700',
-    rule: { name: 'עסקה גדולה VIP', trigger_entity: 'Opportunity', trigger_event: 'create', condition_field: 'property_value', condition_value: '1000000', action_type: 'create_task' }
-  }
-];
+{
+  id: 'welcome_email', title: 'מייל ברוכים הבאים', description: 'שלח מייל אוטומטי לכל ליד חדש', icon: Mail, color: 'bg-slate-700',
+  rule: { name: 'מייל ברוכים הבאים', trigger_entity: 'Lead', trigger_event: 'create', action_type: 'send_email', action_config: { email_subject: 'ברוכים הבאים!', email_to: '{{email}}' } }
+},
+{
+  id: 'task_big_deal', title: 'התראת "עסקה גדולה"', description: 'פתח משימה למנהל על עסקה מעל 1M ₪', icon: Bell, color: 'bg-red-700',
+  rule: { name: 'עסקה גדולה VIP', trigger_entity: 'Opportunity', trigger_event: 'create', condition_field: 'property_value', condition_value: '1000000', action_type: 'create_task' }
+}];
+
 
 export default function AutomationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,8 +64,8 @@ export default function AutomationPage() {
               תבניות מהירות
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {templates.map(tpl => (
-                  <Card key={tpl.id} className="group hover:shadow-md transition-all border border-slate-200 cursor-pointer bg-white" onClick={() => createRule.mutate(tpl.rule)}>
+              {templates.map((tpl) =>
+          <Card key={tpl.id} className="group hover:shadow-md transition-all border border-slate-200 cursor-pointer bg-white" onClick={() => createRule.mutate(tpl.rule)}>
                       <CardContent className="p-6">
                           <div className={`w-12 h-12 rounded-xl ${tpl.color} flex items-center justify-center text-white mb-4 shadow-md`}>
                               <tpl.icon className="w-6 h-6" />
@@ -74,7 +74,7 @@ export default function AutomationPage() {
                           <p className="text-sm text-slate-600">{tpl.description}</p>
                       </CardContent>
                   </Card>
-              ))}
+          )}
           </div>
       </div>
 
@@ -85,8 +85,8 @@ export default function AutomationPage() {
               חוקים פעילים ({rules.length})
         </h3>
         
-        {isLoading ? <div className="text-center py-10 text-slate-500">טוען נתונים...</div> : rules.map(rule => (
-            <Card key={rule.id} className="flex flex-row items-center justify-between p-6 bg-white border border-slate-200 shadow-sm hover:border-red-200 transition-colors">
+        {isLoading ? <div className="text-center py-10 text-slate-500">טוען נתונים...</div> : rules.map((rule) =>
+        <Card key={rule.id} className="flex flex-row items-center justify-between p-6 bg-white border border-slate-200 shadow-sm hover:border-red-200 transition-colors">
                 <div className="flex items-center gap-5">
                     <div className="bg-slate-50 p-3 rounded-full text-slate-600 border border-slate-100">
                         <Zap className="w-6 h-6" />
@@ -97,7 +97,7 @@ export default function AutomationPage() {
                             <span className="font-semibold text-slate-800">טריגר:</span> {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'} {rule.trigger_event === 'create' ? 'נוצר' : 'עודכן'}
                         </p>
                         <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                            {rule.action_type === 'send_email' ? <Mail className="w-3 h-3"/> : <Bell className="w-3 h-3"/>}
+                            {rule.action_type === 'send_email' ? <Mail className="w-3 h-3" /> : <Bell className="w-3 h-3" />}
                             פעולה: {rule.action_type === 'send_email' ? 'שליחת אימייל' : 'יצירת משימה'}
                         </p>
                     </div>
@@ -106,60 +106,60 @@ export default function AutomationPage() {
                     <Trash2 className="w-5 h-5" />
                 </Button>
             </Card>
-        ))}
+        )}
         
-        {rules.length === 0 && !isLoading && (
-            <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+        {rules.length === 0 && !isLoading &&
+        <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
                 <p className="text-slate-500 font-medium">אין אוטומציות מוגדרות</p>
             </div>
-        )}
+        }
       </div>
 
       {/* מודל יצירה (הושאר פשוט לקריאה) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl"><RuleForm onSuccess={() => setIsDialogOpen(false)} /></DialogContent>
+        <DialogContent className="bg-slate-50 p-6 fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-2xl"><RuleForm onSuccess={() => setIsDialogOpen(false)} /></DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>);
+
 }
 
 // טופס יצירה (עם AI)
 function RuleForm({ onSuccess }) {
-    const queryClient = useQueryClient();
-    const [aiPrompt, setAiPrompt] = useState("");
-    const [isGenerating, setIsGenerating] = useState(false);
+  const queryClient = useQueryClient();
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
-    const [formData, setFormData] = useState({
-        name: "",
-        trigger_entity: "Lead",
-        trigger_event: "create",
-        condition_field: "",
-        condition_value: "",
-        action_type: "create_task",
-        action_config: {
-            email_to: "",
-            email_subject: "",
-            email_body: "",
-            task_title: "",
-            task_description: "",
-            task_due_days: 1
-        }
-    });
+  const [formData, setFormData] = useState({
+    name: "",
+    trigger_entity: "Lead",
+    trigger_event: "create",
+    condition_field: "",
+    condition_value: "",
+    action_type: "create_task",
+    action_config: {
+      email_to: "",
+      email_subject: "",
+      email_body: "",
+      task_title: "",
+      task_description: "",
+      task_due_days: 1
+    }
+  });
 
-    const createRule = useMutation({
-        mutationFn: (data) => base44.entities.AutomationRule.create(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries(['automationRules']);
-            onSuccess();
-        }
-    });
+  const createRule = useMutation({
+    mutationFn: (data) => base44.entities.AutomationRule.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['automationRules']);
+      onSuccess();
+    }
+  });
 
-    const generateWithAI = async () => {
-        if (!aiPrompt.trim()) return;
-        
-        setIsGenerating(true);
-        try {
-            const systemPrompt = `
+  const generateWithAI = async () => {
+    if (!aiPrompt.trim()) return;
+
+    setIsGenerating(true);
+    try {
+      const systemPrompt = `
                 You are an automation configuration assistant for a CRM. 
                 User Logic: "${aiPrompt}"
                 
@@ -185,60 +185,60 @@ function RuleForm({ onSuccess }) {
     
                 Output strictly valid JSON only.
             `;
-    
-            const response = await base44.integrations.Core.InvokeLLM({
-                prompt: systemPrompt,
-                response_json_schema: {
-                    type: "object",
-                    properties: {
-                        name: { type: "string" },
-                        trigger_entity: { type: "string" },
-                        trigger_event: { type: "string" },
-                        condition_field: { type: "string" },
-                        condition_value: { type: "string" },
-                        action_type: { type: "string" },
-                        action_config: {
-                            type: "object",
-                            properties: {
-                                email_to: { type: "string" },
-                                email_subject: { type: "string" },
-                                email_body: { type: "string" },
-                                task_title: { type: "string" },
-                                task_description: { type: "string" },
-                                task_due_days: { type: "number" }
-                            }
-                        }
-                    }
-                }
-            });
-    
-            const aiData = typeof response === 'string' ? JSON.parse(response) : response;
-            
-            // Merge AI data into current rule state
-            setFormData(prev => ({
-                ...prev,
-                ...aiData,
-                action_config: {
-                    ...prev.action_config,
-                    ...(aiData.action_config || {})
-                }
-            }));
-    
-        } catch (error) {
-            console.error("AI Generation failed", error);
-            alert("אירעה שגיאה ביצירת האוטומציה עם AI");
-        } finally {
-            setIsGenerating(false);
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: systemPrompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            trigger_entity: { type: "string" },
+            trigger_event: { type: "string" },
+            condition_field: { type: "string" },
+            condition_value: { type: "string" },
+            action_type: { type: "string" },
+            action_config: {
+              type: "object",
+              properties: {
+                email_to: { type: "string" },
+                email_subject: { type: "string" },
+                email_body: { type: "string" },
+                task_title: { type: "string" },
+                task_description: { type: "string" },
+                task_due_days: { type: "number" }
+              }
+            }
+          }
         }
-    };
+      });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        createRule.mutate(formData);
-    };
+      const aiData = typeof response === 'string' ? JSON.parse(response) : response;
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
+      // Merge AI data into current rule state
+      setFormData((prev) => ({
+        ...prev,
+        ...aiData,
+        action_config: {
+          ...prev.action_config,
+          ...(aiData.action_config || {})
+        }
+      }));
+
+    } catch (error) {
+      console.error("AI Generation failed", error);
+      alert("אירעה שגיאה ביצירת האוטומציה עם AI");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createRule.mutate(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
             
             {/* AI Generator Section */}
             <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg mb-8 border border-slate-800 relative overflow-hidden">
@@ -254,25 +254,25 @@ function RuleForm({ onSuccess }) {
                     
                     <div className="flex gap-3 pt-2">
                         <div className="flex-1 relative">
-                            <Textarea 
-                                value={aiPrompt}
-                                onChange={(e) => setAiPrompt(e.target.value)}
-                                placeholder="למשל: כאשר ליד הופך ל'בשל למכירה', שלח לו מייל ברוכים הבאים..."
-                                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-red-900 focus:bg-slate-800 transition-all"
-                            />
+                            <Textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="למשל: כאשר ליד הופך ל'בשל למכירה', שלח לו מייל ברוכים הבאים..."
+                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-red-900 focus:bg-slate-800 transition-all" />
+
                         </div>
-                        <Button 
-                            type="button"
-                            onClick={generateWithAI}
-                            disabled={isGenerating || !aiPrompt}
-                            className="h-20 w-32 bg-red-700 text-white hover:bg-red-800 hover:scale-105 transition-all font-bold shadow-lg rounded-xl shrink-0 border-none"
-                        >
-                            {isGenerating ? <Loader2 className="w-6 h-6 animate-spin" /> : (
-                                <div className="flex flex-col items-center gap-1">
+                        <Button
+              type="button"
+              onClick={generateWithAI}
+              disabled={isGenerating || !aiPrompt}
+              className="h-20 w-32 bg-red-700 text-white hover:bg-red-800 hover:scale-105 transition-all font-bold shadow-lg rounded-xl shrink-0 border-none">
+
+                            {isGenerating ? <Loader2 className="w-6 h-6 animate-spin" /> :
+              <div className="flex flex-col items-center gap-1">
                                     <Sparkles className="w-5 h-5" />
                                     <span>צור חוק</span>
                                 </div>
-                            )}
+              }
                         </Button>
                     </div>
                 </div>
@@ -280,18 +280,18 @@ function RuleForm({ onSuccess }) {
 
             <div className="space-y-2">
                 <Label>שם החוק</Label>
-                <Input 
-                    value={formData.name} 
-                    onChange={e => setFormData({...formData, name: e.target.value})} 
-                    placeholder="לדוגמה: משימת מעקב לליד חדש"
-                    required
-                />
+                <Input
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          placeholder="לדוגמה: משימת מעקב לליד חדש"
+          required />
+
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label>ישות מפעילה</Label>
-                    <Select value={formData.trigger_entity} onValueChange={v => setFormData({...formData, trigger_entity: v})}>
+                    <Select value={formData.trigger_entity} onValueChange={(v) => setFormData({ ...formData, trigger_entity: v })}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                             <SelectItem value="Lead">ליד</SelectItem>
@@ -301,7 +301,7 @@ function RuleForm({ onSuccess }) {
                 </div>
                 <div className="space-y-2">
                     <Label>אירוע</Label>
-                    <Select value={formData.trigger_event} onValueChange={v => setFormData({...formData, trigger_event: v})}>
+                    <Select value={formData.trigger_event} onValueChange={(v) => setFormData({ ...formData, trigger_event: v })}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                             <SelectItem value="create">יצירה חדשה</SelectItem>
@@ -314,26 +314,26 @@ function RuleForm({ onSuccess }) {
             <div className="grid grid-cols-2 gap-4 border-t pt-4">
                  <div className="space-y-2">
                     <Label>שדה לתנאי (אופציונלי)</Label>
-                    <Input 
-                        value={formData.condition_field} 
-                        onChange={e => setFormData({...formData, condition_field: e.target.value})} 
-                        placeholder="למשל: lead_status"
-                    />
+                    <Input
+            value={formData.condition_field}
+            onChange={(e) => setFormData({ ...formData, condition_field: e.target.value })}
+            placeholder="למשל: lead_status" />
+
                 </div>
                 <div className="space-y-2">
                     <Label>ערך לתנאי</Label>
-                    <Input 
-                        value={formData.condition_value} 
-                        onChange={e => setFormData({...formData, condition_value: e.target.value})} 
-                        placeholder="למשל: New"
-                    />
+                    <Input
+            value={formData.condition_value}
+            onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
+            placeholder="למשל: New" />
+
                 </div>
             </div>
 
             <div className="border-t pt-4 space-y-4">
                 <div className="space-y-2">
                     <Label>פעולה לביצוע</Label>
-                    <Select value={formData.action_type} onValueChange={v => setFormData({...formData, action_type: v})}>
+                    <Select value={formData.action_type} onValueChange={(v) => setFormData({ ...formData, action_type: v })}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                             <SelectItem value="create_task">יצירת משימה</SelectItem>
@@ -342,56 +342,56 @@ function RuleForm({ onSuccess }) {
                     </Select>
                 </div>
 
-                {formData.action_type === 'create_task' ? (
-                    <div className="space-y-3 bg-slate-100 p-3 rounded">
+                {formData.action_type === 'create_task' ?
+        <div className="space-y-3 bg-slate-100 p-3 rounded">
                          <div className="space-y-2">
                             <Label>כותרת משימה</Label>
-                            <Input 
-                                value={formData.action_config.task_title} 
-                                onChange={e => setFormData({...formData, action_config: {...formData.action_config, task_title: e.target.value}})}
-                                placeholder="השתמש ב-{{full_name}} לשילוב שם"
-                            />
+                            <Input
+              value={formData.action_config.task_title}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_title: e.target.value } })}
+              placeholder="השתמש ב-{{full_name}} לשילוב שם" />
+
                         </div>
                         <div className="space-y-2">
                             <Label>תיאור</Label>
-                            <Input 
-                                value={formData.action_config.task_description} 
-                                onChange={e => setFormData({...formData, action_config: {...formData.action_config, task_description: e.target.value}})}
-                            />
+                            <Input
+              value={formData.action_config.task_description}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_description: e.target.value } })} />
+
                         </div>
-                    </div>
-                ) : (
-                     <div className="space-y-3 bg-slate-100 p-3 rounded">
+                    </div> :
+
+        <div className="space-y-3 bg-slate-100 p-3 rounded">
                         <div className="space-y-2">
                             <Label>שלח אל</Label>
-                            <Input 
-                                value={formData.action_config.email_to} 
-                                onChange={e => setFormData({...formData, action_config: {...formData.action_config, email_to: e.target.value}})}
-                                placeholder="כתובת מייל או {{email}}"
-                            />
+                            <Input
+              value={formData.action_config.email_to}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_to: e.target.value } })}
+              placeholder="כתובת מייל או {{email}}" />
+
                         </div>
                         <div className="space-y-2">
                             <Label>נושא</Label>
-                            <Input 
-                                value={formData.action_config.email_subject} 
-                                onChange={e => setFormData({...formData, action_config: {...formData.action_config, email_subject: e.target.value}})}
-                            />
+                            <Input
+              value={formData.action_config.email_subject}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_subject: e.target.value } })} />
+
                         </div>
                         <div className="space-y-2">
                             <Label>תוכן</Label>
-                            <Input 
-                                value={formData.action_config.email_body} 
-                                onChange={e => setFormData({...formData, action_config: {...formData.action_config, email_body: e.target.value}})}
-                            />
+                            <Input
+              value={formData.action_config.email_body}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_body: e.target.value } })} />
+
                         </div>
                     </div>
-                )}
+        }
             </div>
 
             <Button type="submit" className="w-full bg-red-700 hover:bg-red-800 text-white font-bold mt-4" disabled={createRule.isPending}>
                 {createRule.isPending && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
                 שמור חוק
             </Button>
-        </form>
-    );
+        </form>);
+
 }
