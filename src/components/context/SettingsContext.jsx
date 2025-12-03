@@ -14,13 +14,71 @@ export const defaultLeadStatuses = [
 
 // ברירת מחדל - שלבי הזדמנויות
 export const defaultPipelineStages = [
-  { id: "New (חדש)", label: "חדש", color: "bg-red-400", light: "bg-red-50 text-red-700" },
-  { id: "Discovery Call (שיחת בירור צרכים)", label: "בירור צרכים", color: "bg-orange-400", light: "bg-orange-50 text-orange-700" },
-  { id: "Meeting Scheduled (נקבעת פגישה)", label: "נקבעת פגישה", color: "bg-amber-400", light: "bg-amber-50 text-amber-700" },
-  { id: "Documents Collection (איסוף מסמכים)", label: "איסוף מסמכים", color: "bg-stone-400", light: "bg-stone-50 text-stone-700" },
-  { id: "Request Sent to Harel (בקשה נשלחה להראל)", label: "נשלח להראל", color: "bg-neutral-400", light: "bg-neutral-50 text-neutral-700" },
-  { id: "Closed Won (נחתם - בהצלחה)", label: "נסגר בהצלחה", color: "bg-emerald-500", light: "bg-emerald-50 text-emerald-700" },
-  { id: "Closed Lost (אבוד)", label: "אבוד", color: "bg-neutral-300", light: "bg-neutral-50 text-neutral-500" }
+  { 
+    id: "New (חדש)", 
+    label: "חדש", 
+    color: "bg-red-400", 
+    light: "bg-red-50 text-red-700",
+    checklist: [
+      { id: "c1", text: "אימות פרטי ליד" },
+      { id: "c2", text: "בדיקת היתכנות ראשונית" }
+    ]
+  },
+  { 
+    id: "Discovery Call (שיחת בירור צרכים)", 
+    label: "בירור צרכים", 
+    color: "bg-orange-400", 
+    light: "bg-orange-50 text-orange-700",
+    checklist: [
+      { id: "c3", text: "מילוי תסריט שיחה" },
+      { id: "c4", text: "הבנת צורך מרכזי" }
+    ]
+  },
+  { 
+    id: "Meeting Scheduled (נקבעת פגישה)", 
+    label: "נקבעת פגישה", 
+    color: "bg-amber-400", 
+    light: "bg-amber-50 text-amber-700",
+    checklist: [
+      { id: "c5", text: "שליחת זימון ליומן" },
+      { id: "c6", text: "וידוא הגעת כל הלווים" }
+    ]
+  },
+  { 
+    id: "Documents Collection (איסוף מסמכים)", 
+    label: "איסוף מסמכים", 
+    color: "bg-stone-400", 
+    light: "bg-stone-50 text-stone-700",
+    checklist: [
+      { id: "c7", text: "תעודות זהות" },
+      { id: "c8", text: "נסח טאבו" },
+      { id: "c9", text: "דפי חשבון בנק" }
+    ]
+  },
+  { 
+    id: "Request Sent to Harel (בקשה נשלחה להראל)", 
+    label: "נשלח להראל", 
+    color: "bg-neutral-400", 
+    light: "bg-neutral-50 text-neutral-700",
+    checklist: [
+      { id: "c10", text: "בדיקת תקינות בקשה" },
+      { id: "c11", text: "קבלת אישור קבלה" }
+    ]
+  },
+  { 
+    id: "Closed Won (נחתם - בהצלחה)", 
+    label: "נסגר בהצלחה", 
+    color: "bg-emerald-500", 
+    light: "bg-emerald-50 text-emerald-700",
+    checklist: []
+  },
+  { 
+    id: "Closed Lost (אבוד)", 
+    label: "אבוד", 
+    color: "bg-neutral-300", 
+    light: "bg-neutral-50 text-neutral-500",
+    checklist: []
+  }
 ];
 
 export const defaultStages = defaultPipelineStages;
@@ -64,11 +122,17 @@ export function SettingsProvider({ children }) {
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   const updateBranding = (key, value) => setBranding(prev => ({ ...prev, [key]: value }));
   
+  const updateStage = (index, field, value) => {
+    const newStages = [...pipelineStages];
+    newStages[index][field] = value;
+    setPipelineStages(newStages);
+  };
+  
   return (
     <SettingsContext.Provider value={{ 
       branding, updateBranding, 
       leadStatuses, setLeadStatuses, 
-      pipelineStages, setPipelineStages, 
+      pipelineStages, setPipelineStages, updateStage,
       theme, toggleTheme 
     }}>
       {children}

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Briefcase, RefreshCcw, Save } from "lucide-react";
+import { Settings, Briefcase, RefreshCcw, Save, Plus, Trash2, ListTodo } from "lucide-react";
 
 export default function SettingsPage() {
   const { branding, updateBranding, pipelineStages, updateStage, setPipelineStages } = useSettings();
@@ -138,6 +138,55 @@ export default function SettingsPage() {
                         <div className="space-y-1 opacity-50 pointer-events-none">
                             <Label className="text-xs text-slate-400">מזהה מערכת (לא לשינוי)</Label>
                             <Input value={stage.id} disabled className="h-8 bg-slate-100" />
+                        </div>
+                    </div>
+                    
+                    <div className="w-full pt-3 mt-3 border-t border-slate-100">
+                        <div className="flex items-center justify-between mb-2">
+                            <Label className="text-xs text-slate-500 flex items-center gap-1">
+                                <ListTodo className="w-3 h-3" />
+                                צ'ק-ליסט לשלב זה
+                            </Label>
+                            <Button 
+                                size="sm" variant="ghost" className="h-6 text-xs"
+                                onClick={() => {
+                                    const newStages = [...pipelineStages];
+                                    if (!newStages[index].checklist) newStages[index].checklist = [];
+                                    newStages[index].checklist.push({ id: `c_${Date.now()}`, text: "" });
+                                    setPipelineStages(newStages);
+                                }}
+                            >
+                                <Plus className="w-3 h-3 mr-1" /> הוסף פריט
+                            </Button>
+                        </div>
+                        <div className="space-y-2">
+                            {stage.checklist?.map((item, i) => (
+                                <div key={i} className="flex items-center gap-2">
+                                    <Input 
+                                        value={item.text}
+                                        onChange={(e) => {
+                                            const newStages = [...pipelineStages];
+                                            newStages[index].checklist[i].text = e.target.value;
+                                            setPipelineStages(newStages);
+                                        }}
+                                        placeholder="משימה לביצוע..."
+                                        className="h-7 text-xs bg-white"
+                                    />
+                                    <Button
+                                        size="icon" variant="ghost" className="h-7 w-7 text-slate-400 hover:text-red-600"
+                                        onClick={() => {
+                                            const newStages = [...pipelineStages];
+                                            newStages[index].checklist.splice(i, 1);
+                                            setPipelineStages(newStages);
+                                        }}
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                </div>
+                            ))}
+                            {(!stage.checklist || stage.checklist.length === 0) && (
+                                <div className="text-xs text-slate-400 italic text-center py-1">אין משימות מוגדרות לשלב זה</div>
+                            )}
                         </div>
                     </div>
                   </div>

@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText, User } from "lucide-react";
+import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText, User, CheckSquare, AlertCircle } from "lucide-react";
+import { useSettings } from "@/components/context/SettingsContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityLog from "./ActivityLog";
 import { base44 } from "@/api/base44Client";
@@ -13,8 +14,9 @@ import FileUpload from "../common/FileUpload";
 import { useQuery } from "@tanstack/react-query";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
+  const { pipelineStages } = useSettings();
   const [aiLoading, setAiLoading] = React.useState(false);
-
+  
   // Conversion State
   const [transferSettings, setTransferSettings] = React.useState({
     contactDetails: true,
@@ -39,9 +41,26 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       current_objection: "",
       ai_sales_strategy: "",
       ai_objection_handler: "",
-      documents: []
+      documents: [],
+      checklist_completed: []
     }
   });
+
+  const currentStage = watch("deal_stage");
+  const checklistCompleted = watch("checklist_completed") || [];
+  
+  const activeStageConfig = pipelineStages?.find(s => s.id === currentStage);
+  const stageChecklist = activeStageConfig?.checklist || [];
+
+  const toggleChecklistItem = (itemId) => {
+    const current = checklistCompleted;
+    const exists = current.includes(itemId);
+    if (exists) {
+      setValue("checklist_completed", current.filter(id => id !== itemId));
+    } else {
+      setValue("checklist_completed", [...current, itemId]);
+    }
+  };
 
   const leadId = opportunity?.lead_id || initialLead?.id;
 
@@ -216,6 +235,39 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         {/* Hidden fields for linking */}
         <input type="hidden" {...register("lead_id")} />
         <input type="hidden" {...register("lead_name")} />
+
+        {/* Checklist Section */}
+        {stageChecklist.length > 0 && (
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
+                <h3 className="text-blue-800 font-bold text-sm flex items-center gap-2 mb-3">
+                    <CheckSquare className="w-4 h-4" />
+                    צ'ק-ליסט לשלב: {activeStageConfig?.label}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {stageChecklist.map(item => {
+                        const isChecked = checklistCompleted.includes(item.id);
+                        return (
+                            <label key={item.id} className={`flex items-center gap-3 p-2 rounded-lg transition-colors cursor-pointer border ${isChecked ? 'bg-white border-blue-200 shadow-sm' : 'bg-transparent border-transparent hover:bg-blue-100/50'}`}>
+                                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${isChecked ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300'}`}>
+                                    {isChecked && <CheckSquare className="w-3.5 h-3.5" />}
+                                </div>
+                                <input 
+                                    type="checkbox" 
+                                    className="hidden"
+                                    checked={isChecked}
+                                    onChange={() => toggleChecklistItem(item.id)}
+                                />
+                                <span className={`text-sm ${isChecked ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>{item.text}</span>
+                            </label>
+                        );
+                    })}
+                </div>
+                <div className="mt-3 pt-3 border-t border-blue-100 flex items-center gap-2 text-xs text-blue-600">
+                    <AlertCircle className="w-3 h-3" />
+                    <span>השלמת המשימות תסייע בקידום העסקה לשלב הבא</span>
+                </div>
+            </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
