@@ -111,7 +111,7 @@ export default function LeadsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-none shadow-sm bg-white dark:bg-neutral-200">
             <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Users className="w-5 h-5" /></div>
+                <div className="p-3 bg-red-100 text-red-600 rounded-xl"><Users className="w-5 h-5" /></div>
                 <div>
                     <p className="text-sm text-neutral-500">סה״כ לידים</p>
                     <p className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">{stats.total}</p>
@@ -276,7 +276,7 @@ export default function LeadsPage() {
                             <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-8 w-8 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                                className="h-8 w-8 text-neutral-400 hover:text-red-600 hover:bg-blue-50 rounded-full transition-colors"
                                 onClick={() => { setEditingLead(lead); setShowLeadForm(true); }}
                                 title="ערוך פרטים מלאים"
                             >
