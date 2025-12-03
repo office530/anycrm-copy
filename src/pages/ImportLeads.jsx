@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, AlertTriangle, CheckCircle2, ArrowRight, Loader2, RefreshCw } from "lucide-react";
+import { Upload, AlertTriangle, CheckCircle2, ArrowRight, Loader2, RefreshCw, Tag, X } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const STEPS = [
     { id: 1, label: 'העלאת קובץ' },
-    { id: 2, label: 'בדיקת נתונים' },
+    { id: 2, label: 'בדיקה ותיוג' },
     { id: 3, label: 'ייבוא' }
 ];
 
@@ -19,7 +21,38 @@ export default function ImportLeadsPage() {
   const [summary, setSummary] = useState({ valid: 0, invalid: 0 });
   const [importProgress, setImportProgress] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
+  
+  // ניהול תגיות
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+  
   const navigate = useNavigate();
+
+  // שליפת תגיות קיימות מהמערכת (סנכרון חכם)
+  const { data: existingLeads = [] } = useQuery({
+    queryKey: ['leads'],
+    queryFn: () => base44.entities.Lead.list(),
+  });
+
+  // חישוב רשימת תגיות ייחודיות קיימות
+  const suggestedTags = useMemo(() => {
+      const allTags = existingLeads.flatMap(l => l.tags || []);
+      return [...new Set(allTags)].filter(t => !selectedTags.includes(t));
+  }, [existingLeads, selectedTags]);
+
+  // הוספת תגית
+  const addTag = (tagToAdd) => {
+      const tag = tagToAdd.trim();
+      if (tag && !selectedTags.includes(tag)) {
+          setSelectedTags([...selectedTags, tag]);
+      }
+      setTagInput("");
+  };
+
+  // הסרת תגית
+  const removeTag = (tagToRemove) => {
+      setSelectedTags(selectedTags.filter(t => t !== tagToRemove));
+  };
 
   const parseCSV = (text) => {
     const lines = text.split('\n');
@@ -109,7 +142,12 @@ export default function ImportLeadsPage() {
           try {
               await Promise.all(batch.map(row => {
                   const { isValid, errors, id, ...leadData } = row;
-                  return base44.entities.Lead.create(leadData);
+                  // הוספת התגיות שנבחרו לכל ליד
+                  const finalLead = {
+                      ...leadData,
+                      tags: selectedTags // שליחת מערך התגיות לשרת
+                  };
+                  return base44.entities.Lead.create(finalLead);
               }));
               
               completed += batch.length;
@@ -122,7 +160,7 @@ export default function ImportLeadsPage() {
 
       setIsImporting(false);
       setTimeout(() => {
-          alert(`תהליך הסתיים! ${completed} לידים יובאו בהצלחה.`);
+          alert(`תהליך הסתיים! ${completed} לידים יובאו בהצלחה עם התגיות: ${selectedTags.join(', ')}`);
           navigate('/Leads');
       }, 500);
   };
@@ -192,6 +230,65 @@ export default function ImportLeadsPage() {
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* --- אזור תיוג חכם --- */}
+                <Card className="bg-white border-slate-200 shadow-sm overflow-visible">
+                    <CardContent className="p-6">
+                        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <Tag className="w-5 h-5 text-red-600" />
+                            הוסף תגיות לקבוצה זו
+                        </h3>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex gap-2">
+                                <Input 
+                                    placeholder="הקלד תגית ולחץ Enter (למשל: ייבוא ינואר, ליד חם)" 
+                                    value={tagInput}
+                                    onChange={(e) => setTagInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            addTag(tagInput);
+                                        }
+                                    }}
+                                    className="max-w-md border-slate-300 focus:border-red-500 focus:ring-red-500"
+                                />
+                                <Button onClick={() => addTag(tagInput)} variant="outline" className="border-slate-300 text-slate-700 hover:text-red-700">הוסף</Button>
+                            </div>
+                            
+                            {/* תצוגת התגיות שנבחרו */}
+                            <div className="flex flex-wrap gap-2 min-h-[32px] items-center">
+                                {selectedTags.length === 0 && <span className="text-sm text-slate-400 italic">לא נבחרו תגיות</span>}
+                                {selectedTags.map(tag => (
+                                    <Badge key={tag} className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 pl-1 pr-3 py-1 flex items-center gap-1 text-sm font-medium">
+                                        <X 
+                                            className="w-3 h-3 cursor-pointer hover:bg-red-200 rounded-full" 
+                                            onClick={() => removeTag(tag)}
+                                        />
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </div>
+
+                            {/* הצעות לתגיות קיימות */}
+                            {suggestedTags.length > 0 && (
+                                <div className="mt-2 pt-2 border-t border-slate-100">
+                                    <p className="text-xs text-slate-500 mb-2">תגיות קיימות במערכת:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {suggestedTags.map(tag => (
+                                            <button 
+                                                key={tag} 
+                                                onClick={() => addTag(tag)}
+                                                className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200 transition-colors"
+                                            >
+                                                + {tag}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
 
                 {/* Desktop View */}
                 <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
