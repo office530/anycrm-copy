@@ -24,6 +24,16 @@ import { useSettings } from "@/components/context/SettingsContext";
 
 export default function LeadsPage() {
   const { leadStatuses } = useSettings();
+  // Custom statuses to match LeadForm exactly
+  const displayStatuses = [
+      { value: "New", label: "חדש (New)", color: "bg-red-100 text-red-800 border-red-200" },
+      { value: "Attempting Contact", label: "בטיפול - מנסה ליצור קשר", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
+      { value: "Contacted - Qualifying", label: "נוצר קשר - בירור צרכים", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
+      { value: "Sales Ready", label: "בשל להזדמנות / חם", color: "bg-neutral-800 text-white border-neutral-900" },
+      { value: "Converted", label: "הומר להזדמנות (Converted)", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+      { value: "Lost / Unqualified", label: "לא רלוונטי (סופי)", color: "bg-slate-100 text-slate-500 border-slate-200" }
+  ];
+
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
@@ -223,7 +233,7 @@ export default function LeadsPage() {
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
             <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
-                סטטוס
+                סטטוס ליד
                 {sortConfig.key === 'lead_status' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
@@ -264,7 +274,7 @@ export default function LeadsPage() {
                          </div>
                     </div>
                     <div className="col-span-3">
-                        <StatusBadge lead={lead} statuses={leadStatuses} updateLead={updateLead} convert={convertToOpportunity} />
+                        <StatusBadge lead={lead} statuses={displayStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     </div>
                     <div className="col-span-3 text-sm text-slate-600 flex items-center gap-2">
                         <Phone className="w-4 h-4 text-slate-400" />
