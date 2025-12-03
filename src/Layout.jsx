@@ -48,7 +48,7 @@ function LayoutContent({ children, currentPageName }) {
                     )}
                     <span className="truncate">{branding.companyName}</span>
                 </div>
-                <p className="text-xs text-neutral-500 mt-2 font-medium tracking-wide opacity-80">OLD SALES DATABASE</p>
+                <p className="text-xs text-neutral-500 mt-2 font-medium tracking-wide opacity-80 dark:text-slate-600">OLD SALES DATABASE</p>
             </div>
 
             {/* Nav */}

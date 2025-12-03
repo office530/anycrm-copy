@@ -313,11 +313,11 @@ function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
                     <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-neutral-400 dark:text-slate-500 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
+                    {total && <span className="text-xs font-bold text-neutral-400 dark:text-slate-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-slate-900 mb-1">{value}</h3>
-                <p className="text-sm text-neutral-500 dark:text-slate-600 font-medium">{title}</p>
-                <p className="text-xs text-neutral-400 dark:text-slate-500 mt-2">{subtext}</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-slate-800 mb-1">{value}</h3>
+                <p className="text-sm text-neutral-500 dark:text-slate-700 font-medium">{title}</p>
+                <p className="text-xs text-neutral-400 dark:text-slate-600 mt-2">{subtext}</p>
             </div>
         </div>
     );
