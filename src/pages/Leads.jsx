@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-        Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag } from
+        Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown } from
       "lucide-react";
 
 import {
@@ -27,6 +27,15 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
 
 
   const queryClient = useQueryClient();
@@ -112,8 +121,25 @@ export default function LeadsPage() {
       const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
 
       return matchesSearch && matchesYear && matchesStatus && matchesTag;
-      }).sort((a, b) => b.id - a.id);
-      }, [leads, filters]);
+      }).sort((a, b) => {
+        if (!sortConfig.key) return b.id - a.id; // Default sort by ID descending
+
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+
+        // Handle null/undefined
+        if (aValue === null || aValue === undefined) aValue = '';
+        if (bValue === null || bValue === undefined) bValue = '';
+
+        // Specific handling for numbers if needed, but currently fields are strings/mixed
+        if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+        if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+      }, [leads, filters, sortConfig]);
 
   return (
     <div className="space-y-6 pb-24 font-sans text-slate-900">
@@ -178,12 +204,33 @@ export default function LeadsPage() {
       </div>
 
       {/* --- תצוגת דסקטופ (טבלה) --- */}
+      {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-         <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide">
-            <div className="col-span-3 text-right">לקוח</div>
-            <div className="col-span-3 text-right">פרטי קשר</div>
-            <div className="col-span-2 text-right">סטטוס</div>
-            <div className="col-span-2 text-right">שנה / מקור</div>
+         <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
+            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
+                לקוח
+                {sortConfig.key === 'full_name' ? (
+                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
+            </div>
+            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
+                פרטי קשר
+                {sortConfig.key === 'phone_number' ? (
+                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
+            </div>
+            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
+                סטטוס
+                {sortConfig.key === 'lead_status' ? (
+                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
+            </div>
+            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('source_year')}>
+                שנה / מקור
+                {sortConfig.key === 'source_year' ? (
+                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
+            </div>
             <div className="col-span-2 text-left pl-4">פעולות</div>
         </div>
 
