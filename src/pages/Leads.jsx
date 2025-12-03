@@ -184,7 +184,7 @@ export default function LeadsPage() {
 
       {/* Leads List */}
       <div className="space-y-3">
-         <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+         <div className="hidden md:grid grid-cols-12 gap-4 px-6 text-xs font-bold text-neutral-600 uppercase tracking-wider bg-neutral-100 py-3 rounded-xl mb-2">
             <div className="col-span-3 text-right">לקוח</div>
             <div className="col-span-3 text-right">פרטי קשר</div>
             <div className="col-span-2 text-right">סטטוס</div>

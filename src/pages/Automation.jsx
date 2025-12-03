@@ -17,7 +17,7 @@ const templates = [
     title: 'מייל ברוכים הבאים',
     description: 'שלח מייל אוטומטי לכל ליד חדש שנכנס למערכת',
     icon: Mail,
-    color: 'bg-blue-500',
+    color: 'bg-neutral-800',
     rule: {
         name: 'מייל ברוכים הבאים (אוטומטי)',
         trigger_entity: 'Lead',
@@ -35,7 +35,7 @@ const templates = [
     title: 'התראת "עסקה גדולה"',
     description: 'פתח משימה דחופה למנהל כאשר נפתחת הזדמנות מעל 1M ₪',
     icon: Bell,
-    color: 'bg-purple-500',
+    color: 'bg-red-700',
     rule: {
         name: 'התראת עסקה גדולה VIP',
         trigger_entity: 'Opportunity',
@@ -55,7 +55,7 @@ const templates = [
     title: 'פולואו-אפ להצעת מחיר',
     description: 'צור משימת מעקב 3 ימים אחרי שהסטטוס משתנה ל"נשלחה סימולציה"',
     icon: Clock,
-    color: 'bg-orange-500',
+    color: 'bg-neutral-500',
     rule: {
         name: 'מעקב סימולציה',
         trigger_entity: 'Opportunity',
@@ -104,8 +104,8 @@ export default function AutomationPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">אוטומציות</h1>
-          <p className="text-slate-500 dark:text-slate-400">הפוך את העסק לאוטומטי עם חוקים חכמים</p>
+          <h1 className="text-3xl font-bold text-neutral-900">אוטומציות</h1>
+          <p className="text-neutral-600">הפוך את העסק לאוטומטי עם חוקים חכמים</p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)} className="bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800">
             <Plus className="w-4 h-4 ml-2" />
@@ -314,17 +314,14 @@ function RuleForm({ onSuccess }) {
         <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
             
             {/* AI Generator Section */}
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-6 rounded-2xl shadow-lg shadow-purple-900/20 mb-8 border border-white/10 relative overflow-hidden">
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-                <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl"></div>
-
+            <div className="bg-neutral-900 text-white p-6 rounded-2xl shadow-lg mb-8 border border-neutral-800 relative overflow-hidden">
+                
                 <div className="relative z-10 space-y-4">
                     <div className="flex items-center gap-2 font-bold text-lg">
-                        <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
+                        <Sparkles className="w-5 h-5 text-red-500 animate-pulse" />
                         <span>מחולל אוטומציות חכם (AI)</span>
                     </div>
-                    <p className="text-indigo-100 text-sm opacity-90">
+                    <p className="text-neutral-400 text-sm">
                         תאר את האוטומציה בשפה חופשית, והבינה המלאכותית תבנה את החוק עבורך.
                     </p>
                     
@@ -334,14 +331,14 @@ function RuleForm({ onSuccess }) {
                                 value={aiPrompt}
                                 onChange={(e) => setAiPrompt(e.target.value)}
                                 placeholder="למשל: כאשר ליד הופך ל'בשל למכירה', שלח לו מייל ברוכים הבאים..."
-                                className="bg-white/10 border-white/20 text-white placeholder:text-indigo-200/70 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-white/30 focus:bg-white/20 transition-all"
+                                className="bg-neutral-800 border-neutral-700 text-white placeholder:text-neutral-500 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-red-900 focus:bg-neutral-800 transition-all"
                             />
                         </div>
                         <Button 
                             type="button"
                             onClick={generateWithAI}
                             disabled={isGenerating || !aiPrompt}
-                            className="h-20 w-32 bg-white text-indigo-700 hover:bg-indigo-50 hover:scale-105 transition-all font-bold shadow-lg rounded-xl shrink-0 border-none"
+                            className="h-20 w-32 bg-red-700 text-white hover:bg-red-800 hover:scale-105 transition-all font-bold shadow-lg rounded-xl shrink-0 border-none"
                         >
                             {isGenerating ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                                 <div className="flex flex-col items-center gap-1">

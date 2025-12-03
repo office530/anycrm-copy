@@ -133,11 +133,11 @@ export function InlineEdit({
         setIsEditing(true);
       }}
       className={cn(
-        "group relative flex items-center gap-2 cursor-pointer rounded px-2 py-1.5 -ml-2 transition-all border border-transparent hover:bg-white hover:shadow-sm hover:border-slate-200 min-h-[32px]", 
+        "group relative flex items-center gap-2 cursor-pointer rounded px-2 py-1.5 -ml-2 transition-all border border-transparent hover:bg-white hover:shadow-sm hover:border-neutral-200 min-h-[32px] text-neutral-900 font-medium", 
         className
       )}
     >
-      <span className={cn("truncate block w-full", !currentValue && "text-slate-400 italic text-xs")}>
+      <span className={cn("truncate block w-full", !currentValue && "text-neutral-400 italic text-xs")}>
         {formatDisplay ? formatDisplay(currentValue) : (currentValue || placeholder || "לחץ לעריכה")}
       </span>
       

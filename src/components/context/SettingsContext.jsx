@@ -4,12 +4,12 @@ const SettingsContext = createContext();
 
 // ברירת מחדל - סטטוסים של לידים
 export const defaultLeadStatuses = [
-  { value: "New", label: "חדש", color: "bg-red-50 text-red-700" },
-  { value: "Attempting Contact", label: "בטיפול", color: "bg-orange-50 text-orange-700" },
-  { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-amber-50 text-amber-700" },
-  { value: "Sales Ready", label: "בשל למכירה", color: "bg-neutral-100 text-neutral-700" },
-  { value: "Converted", label: "הומר להזדמנות", color: "bg-emerald-50 text-emerald-700" },
-  { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-neutral-50 text-neutral-400" }
+  { value: "New", label: "חדש", color: "bg-red-100 text-red-800 border border-red-200 font-medium" },
+  { value: "Attempting Contact", label: "בטיפול", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
+  { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
+  { value: "Sales Ready", label: "בשל למכירה", color: "bg-neutral-800 text-white border border-neutral-900 font-medium" },
+  { value: "Converted", label: "הומר להזדמנות", color: "bg-red-700 text-white border border-red-800 font-medium shadow-sm" },
+  { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-neutral-100 text-neutral-500 border border-neutral-200" }
 ];
 
 // ברירת מחדל - שלבי הזדמנויות
