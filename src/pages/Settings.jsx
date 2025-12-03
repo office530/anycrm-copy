@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSettings, defaultStages } from '@/components/context/SettingsContext';
+import NotificationSettings from '@/components/notifications/NotificationSettings';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ export default function SettingsPage() {
         <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
           <TabsTrigger value="general">כללי ומיתוג</TabsTrigger>
           <TabsTrigger value="pipeline">שלבי מכירה (Pipeline)</TabsTrigger>
+          <TabsTrigger value="notifications">התראות</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">
@@ -194,6 +196,10 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+            <NotificationSettings />
         </TabsContent>
       </Tabs>
     </div>

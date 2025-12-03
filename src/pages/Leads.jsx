@@ -78,10 +78,26 @@ export default function LeadsPage() {
   // מוטציות (פעולות שרת)
   const createLead = useMutation({
     mutationFn: (data) => base44.entities.Lead.create(data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries(['leads']);
       setShowLeadForm(false);
       processAutomation('Lead', 'create', data);
+
+      // Create notification
+      try {
+          // In a real app, you'd fetch the admin email or iterate relevant users
+          const currentUser = await base44.auth.me();
+          await base44.entities.Notification.create({
+              title: 'ליד חדש התקבל',
+              message: `${data.full_name} - ${data.phone_number}`,
+              type: 'lead',
+              related_entity_type: 'Lead',
+              related_entity_id: data.id,
+              user_email: currentUser.email, // Notify self for now, should be 'admin' or logic
+              is_read: false
+          });
+      } catch (e) { console.error("Failed to create notification", e); }
+
       if (data.lead_status === 'Converted') convertToOpportunity.mutate(data);
     }
   });
