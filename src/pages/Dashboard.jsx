@@ -115,7 +115,7 @@ export default function Dashboard() {
     <div className="space-y-6 md:space-y-8 pb-10 max-w-7xl mx-auto">
       
       {/* Branding Hero Section */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
+      <div className="bg-gradient-to-br from-white to-slate-50/50 md:bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 md:border-slate-100 border-transparent flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
               <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">ברוכים הבאים ל-Gishers</h1>
               <p className="text-slate-500 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
@@ -140,7 +140,7 @@ export default function Dashboard() {
               />
           </div>
           {/* Decorative Background */}
-          <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-red-50 to-transparent opacity-50 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 w-full md:w-1/3 h-full bg-gradient-to-b md:bg-gradient-to-l from-red-50/50 md:from-red-50 to-transparent opacity-50 pointer-events-none"></div>
       </div>
 
       {/* Header & Filter */}
