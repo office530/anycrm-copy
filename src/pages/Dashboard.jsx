@@ -118,7 +118,7 @@ export default function Dashboard() {
       <div className="bg-gradient-to-br from-white to-neutral-50/50 md:bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-100 md:border-neutral-100 border-transparent flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0">
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
               <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">ברוכים הבאים ל-Gishers</h1>
-              <p className="text-neutral-600 text-base md:text-lg mb-6">Old Sales Database - פתרונות פיננסיים חכמים.</p>
+              <p className="text-neutral-600 text-base md:text-lg mb-6">Old Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
                   <Button className="bg-red-700 hover:bg-red-800 text-white rounded-full px-6">
