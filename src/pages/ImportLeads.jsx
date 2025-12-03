@@ -52,23 +52,37 @@ export default function ImportLeadsPage() {
         let invalidCount = 0;
 
         const mappedData = jsonData.map((row, index) => {
+            // זיהוי שדות (כולל שדות פיננסיים והערות)
             const fullName = row['Name'] || row['name'] || row['שם'] || row['שם מלא'] || row['שם לקוח'] || row['לקוח'] || row['Full Name'];
             const phone = row['Phone'] || row['phone'] || row['טלפון'] || row['נייד'] || row['סלולרי'] || row['Mobile'];
             const city = row['City'] || row['city'] || row['עיר'] || row['כתובת'];
-            const email = row['Email'] || row['email'] || row['אימייל'];
             const year = row['Year'] || row['year'] || row['שנה'] || new Date().getFullYear().toString();
             
+            // שדות נוספים
+            const age = row['Age'] || row['age'] || row['גיל'];
+            const email = row['Email'] || row['email'] || row['אימייל'] || row['מייל'];
+            const notes = row['Notes'] || row['notes'] || row['הערות'] || row['סיכום'];
+            const marital = row['Marital Status'] || row['marital'] || row['מצב משפחתי']; // צריך להיות באנגלית: Married, Single, etc.
+            const propertyVal = row['Estimated Value'] || row['property'] || row['שווי נכס'];
+            const mortgageBal = row['Mortgage Balance'] || row['mortgage'] || row['יתרת משכנתא'];
+            const status = row['Status'] || row['status'] || row['סטטוס'] || 'New';
+  
             const isValid = !!(fullName || phone);
-            
-            if (isValid) validCount++; else invalidCount++;
 
+            if (isValid) validCount++; else invalidCount++;
+  
             return {
                 id: index,
                 full_name: fullName || 'לא ידוע',
                 phone_number: phone || '',
                 city: city || '',
+                age: age || '',
                 email: email || '',
-                lead_status: 'New',
+                notes: notes || '',
+                marital_status: marital || '',
+                estimated_property_value: propertyVal || '',
+                existing_mortgage_balance: mortgageBal || '',
+                lead_status: status,
                 source_year: year,
                 isValid,
                 errors: !isValid ? 'שורה ריקה או חסרה' : ''
