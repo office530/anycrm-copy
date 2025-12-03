@@ -257,21 +257,14 @@ export default function LeadsPage() {
                         {lead.source_year} <span className="text-slate-400 text-xs">({lead.last_contact_date || '-'})</span>
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600"><MoreHorizontal className="w-4 h-4" /></Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => {setEditingLead(lead);setShowLeadForm(true);}}>
-                                    <Pencil className="w-4 h-4 ml-2" />
-                                    פתח ליד
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => convertToOpportunity.mutate(lead)} className="text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50">
-                                    <CheckCircle2 className="w-4 h-4 ml-2" />
-                                    המר להזדמנות מיידי
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title="פתח ליד">
+                                <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="המר להזדמנות מיידי">
+                                <CheckCircle2 className="w-4 h-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
           )}
@@ -299,21 +292,14 @@ export default function LeadsPage() {
                             )}
                         </div>
                     </div>
-                    <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="text-slate-400"><MoreHorizontal /></Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => {setEditingLead(lead);setShowLeadForm(true);}}>
-                                  <Pencil className="w-4 h-4 ml-2" />
-                                  פתח ליד
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => convertToOpportunity.mutate(lead)} className="text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50">
-                                  <CheckCircle2 className="w-4 h-4 ml-2" />
-                                  המר להזדמנות מיידי
-                              </DropdownMenuItem>
-                          </DropdownMenuContent>
-                      </DropdownMenu>
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+                            <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
+                            <CheckCircle2 className="w-4 h-4" />
+                        </Button>
+                    </div>
                     </div>
 
                     <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
