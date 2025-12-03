@@ -4,9 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import moment from 'moment';
-import { Search, Filter, DollarSign, Briefcase, CheckCircle2 } from 'lucide-react';
+import { Search, DollarSign, Briefcase, CheckCircle2 } from 'lucide-react';
 
 export default function OpportunitiesListReport({ opportunities = [] }) {
   const [filterStage, setFilterStage] = useState('all');

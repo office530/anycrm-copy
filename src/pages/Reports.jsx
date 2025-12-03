@@ -8,6 +8,7 @@ import { Loader2, TrendingUp, Users, CheckCircle2, Calendar } from "lucide-react
 import SalesPerformance from '@/components/reports/SalesPerformance';
 import OpportunityAdvancedReport from '@/components/reports/OpportunityAdvancedReport';
 import OpportunitiesListReport from '@/components/reports/OpportunitiesListReport';
+import OpportunitiesListReport from '@/components/reports/OpportunitiesListReport';
 import ConversionReport from '@/components/reports/ConversionReport';
 import ActivityReport from '@/components/reports/ActivityReport';
 
