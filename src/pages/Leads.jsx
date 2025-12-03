@@ -207,21 +207,15 @@ export default function LeadsPage() {
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
+            <div className="col-span-4 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
                 לקוח
                 {sortConfig.key === 'full_name' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
+            <div className="col-span-4 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
                 פרטי קשר
                 {sortConfig.key === 'phone_number' ? (
-                    sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
-            </div>
-            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
-                סטטוס
-                {sortConfig.key === 'lead_status' ? (
                     sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
                 ) : <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
@@ -294,18 +288,31 @@ export default function LeadsPage() {
                             )}
                         </div>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="text-slate-400"><MoreHorizontal /></Button>
-                </div>
-                
-                <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
+                    <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="text-slate-400"><MoreHorizontal /></Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => {setEditingLead(lead);setShowLeadForm(true);}}>
+                                  <Pencil className="w-4 h-4 ml-2" />
+                                  פתח ליד
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => convertToOpportunity.mutate(lead)} className="text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50">
+                                  <CheckCircle2 className="w-4 h-4 ml-2" />
+                                  המר להזדמנות מיידי
+                              </DropdownMenuItem>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
                      <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                      {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
-                </div>
+                    </div>
 
-                <div className="flex items-center justify-between mt-1">
-                    <StatusBadge lead={lead} statuses={leadStatuses} updateLead={updateLead} convert={convertToOpportunity} />
+                    <div className="flex items-center justify-between mt-1">
                     <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
-                </div>
+                    </div>
             </div>
         )}
       </div>
