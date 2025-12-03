@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, TrendingUp, Users, CheckCircle2, Calendar } from "lucide-react";
 import SalesPerformance from '@/components/reports/SalesPerformance';
 import OpportunityAdvancedReport from '@/components/reports/OpportunityAdvancedReport';
+import OpportunitiesListReport from '@/components/reports/OpportunitiesListReport';
 import ConversionReport from '@/components/reports/ConversionReport';
 import ActivityReport from '@/components/reports/ActivityReport';
 
@@ -65,13 +66,18 @@ export default function ReportsPage() {
         </Select>
       </div>
 
-      <Tabs defaultValue="advanced" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 max-w-[800px]">
+      <Tabs defaultValue="list" className="w-full">
+        <TabsList className="grid w-full grid-cols-5 max-w-full">
+          <TabsTrigger value="list">דוח מפורט</TabsTrigger>
           <TabsTrigger value="advanced">דשבורד הזדמנויות</TabsTrigger>
           <TabsTrigger value="sales">ביצועי מכירות</TabsTrigger>
           <TabsTrigger value="conversion">יחסי המרה</TabsTrigger>
           <TabsTrigger value="activity">דוח פעילות</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="list" className="mt-6">
+          <OpportunitiesListReport opportunities={opportunities} />
+        </TabsContent>
 
         <TabsContent value="advanced" className="mt-6">
             <OpportunityAdvancedReport leads={leads} opportunities={opportunities} />
