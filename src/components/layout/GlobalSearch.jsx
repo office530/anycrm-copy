@@ -151,9 +151,7 @@ export default function GlobalSearch() {
                                         <Briefcase className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
-                                            {opp.lead_name || 'עסקה ללא שם'}
-                                        </div>
+                                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{opp.lead_name || 'עסקה ללא שם'}</div>
                                         <div className="text-xs text-slate-500 truncate">{opp.product_type} • {opp.deal_stage?.split('(')[0]}</div>
                                     </div>
                                 </Link>

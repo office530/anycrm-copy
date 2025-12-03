@@ -14,8 +14,6 @@ import { processAutomation } from "@/components/automation/rulesEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 import { InlineEdit } from "@/components/ui/InlineEdit";
 import moment from "moment";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 
 export default function OpportunitiesPage() {
   const { pipelineStages, branding } = useSettings();
@@ -191,13 +189,9 @@ export default function OpportunitiesPage() {
                                         <Trash2 className="w-3 h-3" />
                                     </Button>
                                 </div>
-                                <Link 
-                                    to={createPageUrl(`LeadDetails?leadId=${opp.lead_id}`)}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 hover:text-red-600 dark:hover:text-red-400 transition-colors hover:underline"
-                                >
+                                <span className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                                   {opp.lead_name || "לקוח ללא שם"}
-                                </Link>
+                                </span>
                                 <Badge variant="outline" className="text-[10px] bg-neutral-50 dark:bg-neutral-300 border-neutral-100 dark:border-neutral-300 text-neutral-500 dark:text-neutral-600">
                                   {opp.probability}%
                                 </Badge>
@@ -270,19 +264,11 @@ export default function OpportunitiesPage() {
                  {opportunities.map((opp) => (
                    <TableRow key={opp.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-300/50 transition-colors">
                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                            <Link 
-                                to={createPageUrl(`LeadDetails?leadId=${opp.lead_id}`)}
-                                className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs hover:bg-teal-200 transition-colors"
-                            >
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setEditingOpp(opp); setShowForm(true); }}>
+                            <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">
                                 {opp.lead_name?.charAt(0)}
-                            </Link>
-                            <Link 
-                                to={createPageUrl(`LeadDetails?leadId=${opp.lead_id}`)}
-                                className="hover:text-red-600 underline-offset-4 hover:underline font-semibold"
-                            >
-                                {opp.lead_name}
-                            </Link>
+                            </div>
+                            <span className="hover:text-teal-600 underline-offset-4 hover:underline">{opp.lead_name}</span>
                         </div>
                      </TableCell>
                      <TableCell>{opp.product_type}</TableCell>
