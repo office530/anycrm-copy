@@ -106,14 +106,14 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Topbar Desktop */}
         <header className="hidden lg:flex bg-white/80 dark:bg-slate-200/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800 h-20 items-center justify-between px-8 sticky top-0 z-30">
-            <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100">
+            <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
             </h1>
             <div className="flex items-center gap-2 md:gap-4">
                 <div className="hidden md:block">
                   <GlobalSearch />
                 </div>
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-neutral-500 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:text-neutral-400">
+                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full text-neutral-500 hover:bg-slate-100 dark:hover:bg-neutral-800 dark:text-neutral-600">
                     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
                 <Notifications />
