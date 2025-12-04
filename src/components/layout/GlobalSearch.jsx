@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, User, Briefcase, Loader2, X } from 'lucide-react';
+import { Search, User, Briefcase, Loader2, X, CheckSquare, Activity, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -27,31 +27,54 @@ export default function GlobalSearch() {
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ['globalSearch', searchTerm],
     queryFn: async () => {
-      if (!searchTerm || searchTerm.length < 2) return { leads: [], opportunities: [] };
+      if (!searchTerm || searchTerm.length < 2) return { leads: [], opportunities: [], tasks: [], activities: [] };
 
-      // We'll fetch all and filter in memory for this example as the SDK filter is exact match usually
-      // Ideally we'd have a search endpoint, but listing and filtering is okay for small datasets
-      const [leads, opportunities] = await Promise.all([
-      base44.entities.Lead.list(),
-      base44.entities.Opportunity.list()]
-      );
+      const [leads, opportunities, tasks, activities] = await Promise.all([
+        base44.entities.Lead.list(),
+        base44.entities.Opportunity.list(),
+        base44.entities.Task.list(),
+        base44.entities.Activity.list()
+      ]);
 
       const lowerTerm = searchTerm.toLowerCase();
+      const phoneSearch = searchTerm.replace(/\D/g, '');
 
       const filteredLeads = leads.filter((l) =>
-      l.full_name?.toLowerCase().includes(lowerTerm) ||
-      l.phone_number?.includes(lowerTerm)
+        l.full_name?.toLowerCase().includes(lowerTerm) ||
+        l.phone_number?.replace(/\D/g, '').includes(phoneSearch) ||
+        l.email?.toLowerCase().includes(lowerTerm) ||
+        l.city?.toLowerCase().includes(lowerTerm) ||
+        l.notes?.toLowerCase().includes(lowerTerm)
       ).slice(0, 5);
 
       const filteredOpps = opportunities.filter((o) =>
-      o.lead_name?.toLowerCase().includes(lowerTerm) ||
-      o.product_type?.toLowerCase().includes(lowerTerm)
+        o.lead_name?.toLowerCase().includes(lowerTerm) ||
+        o.product_type?.toLowerCase().includes(lowerTerm) ||
+        o.deal_stage?.toLowerCase().includes(lowerTerm) ||
+        o.main_pain_point?.toLowerCase().includes(lowerTerm)
       ).slice(0, 5);
 
-      return { leads: filteredLeads, opportunities: filteredOpps };
+      const filteredTasks = tasks.filter((t) =>
+        t.title?.toLowerCase().includes(lowerTerm) ||
+        t.description?.toLowerCase().includes(lowerTerm) ||
+        t.status?.toLowerCase().includes(lowerTerm)
+      ).slice(0, 5);
+
+      const filteredActivities = activities.filter((a) =>
+        a.type?.toLowerCase().includes(lowerTerm) ||
+        a.summary?.toLowerCase().includes(lowerTerm) ||
+        a.status?.toLowerCase().includes(lowerTerm)
+      ).slice(0, 3);
+
+      return { 
+        leads: filteredLeads, 
+        opportunities: filteredOpps,
+        tasks: filteredTasks,
+        activities: filteredActivities
+      };
     },
     enabled: searchTerm.length >= 2,
-    staleTime: 60000 // 1 min cache
+    staleTime: 30000 // 30 sec cache
   });
 
   const handleSearch = (e) => {
@@ -86,7 +109,7 @@ export default function GlobalSearch() {
           onKeyDown={handleKeyDown}
           onFocus={() => searchTerm.length >= 2 && setIsOpen(true)} 
           className="bg-white text-slate-800 pr-12 pl-10 py-3 text-base rounded-full border border-slate-200 w-72 focus:w-96 transition-all focus:ring-4 focus:ring-red-100 focus:border-red-300 placeholder:text-slate-400 shadow-sm"
-          placeholder="חיפוש במאגר הנתונים..." 
+          placeholder="חיפוש לידים, הזדמנויות, משימות..." 
         />
 
         {searchTerm &&
@@ -98,14 +121,14 @@ export default function GlobalSearch() {
 
       {/* Results Dropdown */}
       {isOpen && searchTerm.length >= 2 &&
-      <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+      <div className="absolute top-full right-0 mt-2 w-96 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
           {isLoading ?
         <div className="p-4 text-center text-slate-500 flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" /> מחפש...
             </div> :
 
         <>
-              {searchResults?.leads?.length === 0 && searchResults?.opportunities?.length === 0 ?
+              {searchResults?.leads?.length === 0 && searchResults?.opportunities?.length === 0 && searchResults?.tasks?.length === 0 && searchResults?.activities?.length === 0 ?
           <div className="p-4 text-center text-slate-500 text-sm">
                     לא נמצאו תוצאות עבור "{searchTerm}"
                 </div> :
@@ -136,14 +159,14 @@ export default function GlobalSearch() {
             }
                     
                     {searchResults?.opportunities?.length > 0 &&
-            <div>
+            <div className="mb-2">
                             <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
                                 הזדמנויות
                             </div>
                             {searchResults.opportunities.map((opp) =>
               <Link
                 key={opp.id}
-                to={createPageUrl('Opportunities')} // Ideally should link to detail, but standard page is list
+                to={createPageUrl('Opportunities')}
                 onClick={clearSearch}
                 className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
 
@@ -153,6 +176,62 @@ export default function GlobalSearch() {
                                     <div className="flex-1 min-w-0">
                                         <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{opp.lead_name || 'עסקה ללא שם'}</div>
                                         <div className="text-xs text-slate-500 truncate">{opp.product_type} • {opp.deal_stage?.split('(')[0]}</div>
+                                    </div>
+                                </Link>
+              )}
+                        </div>
+            }
+
+                    {searchResults?.tasks?.length > 0 &&
+            <div className="mb-2">
+                            <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
+                                משימות
+                            </div>
+                            {searchResults.tasks.map((task) =>
+              <Link
+                key={task.id}
+                to={createPageUrl('Tasks')}
+                onClick={clearSearch}
+                className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                        task.status === 'done' ? 'bg-emerald-100 text-emerald-600' : 
+                                        task.status === 'in_progress' ? 'bg-amber-100 text-amber-600' : 
+                                        'bg-slate-100 text-slate-600'
+                                    }`}>
+                                        <CheckSquare className="w-4 h-4" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={`text-sm font-medium text-slate-800 dark:text-slate-200 truncate ${task.status === 'done' ? 'line-through opacity-60' : ''}`}>
+                                            {task.title}
+                                        </div>
+                                        <div className="text-xs text-slate-500 truncate">
+                                            {task.due_date ? new Date(task.due_date).toLocaleDateString('he-IL') : 'ללא תאריך'} • {task.status === 'done' ? 'הושלם' : task.status === 'in_progress' ? 'בתהליך' : 'חדש'}
+                                        </div>
+                                    </div>
+                                </Link>
+              )}
+                        </div>
+            }
+
+                    {searchResults?.activities?.length > 0 &&
+            <div className="mb-2">
+                            <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
+                                פעילויות אחרונות
+                            </div>
+                            {searchResults.activities.map((activity) =>
+              <Link
+                key={activity.id}
+                to={createPageUrl(`LeadDetails?leadId=${activity.lead_id}`)}
+                onClick={clearSearch}
+                className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+
+                                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                        <Activity className="w-4 h-4" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{activity.type} • {activity.status}</div>
+                                        <div className="text-xs text-slate-500 truncate">{activity.summary || 'אין תיאור'}</div>
                                     </div>
                                 </Link>
               )}
