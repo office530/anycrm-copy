@@ -17,6 +17,7 @@ import FileUpload from "../common/FileUpload";
 import TagManager from "./TagManager";
 import LeadAiAnalysis from "./LeadAiAnalysis";
 import LastTouchInfo from "./LastTouchInfo";
+import QuickTaskCreator from "./QuickTaskCreator";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -314,7 +315,10 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
 
                 </div>
               </div>
-            </div>
+              </div>
+
+              {/* Quick Task Creation */}
+              {lead && <QuickTaskCreator leadId={lead.id} leadName={lead.full_name} />}
 
             <div className="space-y-1">
               <Label className={labelClass}>הערות</Label>
