@@ -20,11 +20,15 @@ import {
   CheckCircle2,
   XCircle,
   Voicemail,
-  User } from
+  User,
+  Sparkles,
+  Loader2 } from
 "lucide-react";
 
 export default function ActivityLog({ leadId, opportunityId }) {
   const [isAdding, setIsAdding] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [aiSummary, setAiSummary] = useState(null);
   const [newActivity, setNewActivity] = useState({
     type: "Call",
     status: "Completed",
@@ -76,6 +80,39 @@ export default function ActivityLog({ leadId, opportunityId }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     createActivity.mutate(newActivity);
+  };
+
+  const handleAiSummarize = async () => {
+    if (!newActivity.summary.trim() || !leadId) return;
+
+    setIsSummarizing(true);
+    try {
+      const response = await base44.functions.invoke('summarizeActivity', {
+        activityText: newActivity.summary,
+        leadId: leadId
+      });
+
+      if (response.data) {
+        setAiSummary(response.data.summary);
+        
+        // Update the summary field with professional version
+        setNewActivity({
+          ...newActivity,
+          summary: response.data.summary.professional_summary
+        });
+
+        // Show success message if fields were updated
+        if (response.data.updatedFieldsCount > 0) {
+          alert(`✨ סיכום הושלם בהצלחה!\n${response.data.updatedFieldsCount} שדות עודכנו בפרופיל הלקוח.`);
+          queryClient.invalidateQueries(['leads']);
+        }
+      }
+    } catch (error) {
+      console.error('Error summarizing:', error);
+      alert('שגיאה בסיכום הפעילות. נסה שוב.');
+    } finally {
+      setIsSummarizing(false);
+    }
   };
 
   const getActivityIcon = (type) => {
@@ -184,13 +221,77 @@ export default function ActivityLog({ leadId, opportunityId }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-slate-800 text-sm font-medium">סיכום / תוכן</label>
+            <div className="flex justify-between items-center">
+              <label className="text-slate-800 text-sm font-medium">סיכום / תוכן</label>
+              {newActivity.summary.trim() && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleAiSummarize}
+                  disabled={isSummarizing}
+                  className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100"
+                >
+                  {isSummarizing ? (
+                    <>
+                      <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                      מעבד...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3 h-3 mr-2" />
+                      סכם עם AI
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
             <Textarea
-            placeholder="כתוב כאן סיכום של השיחה או הפעילות..."
+            placeholder="כתוב כאן סיכום של השיחה או הפעילות בצורה חופשית..."
             value={newActivity.summary}
-            onChange={(e) => setNewActivity({ ...newActivity, summary: e.target.value })}
-            className="h-20" />
-
+            onChange={(e) => {
+              setNewActivity({ ...newActivity, summary: e.target.value });
+              setAiSummary(null); // Clear AI summary when user edits
+            }}
+            className="h-24" />
+            
+            {aiSummary && (
+              <div className="mt-3 p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-200 space-y-3">
+                <div className="flex items-center gap-2 text-purple-900 font-semibold text-sm">
+                  <Sparkles className="w-4 h-4" />
+                  ניתוח AI
+                </div>
+                
+                {aiSummary.key_points && aiSummary.key_points.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-slate-700 mb-1">נקודות מפתח:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
+                      {aiSummary.key_points.map((point, i) => (
+                        <li key={i}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {aiSummary.call_to_action && (
+                  <div className="bg-white/70 p-2 rounded border border-purple-200">
+                    <p className="text-xs font-medium text-slate-700">פעולה נדרשת:</p>
+                    <p className="text-xs text-purple-800 font-semibold">{aiSummary.call_to_action}</p>
+                  </div>
+                )}
+                
+                {aiSummary.next_steps && aiSummary.next_steps.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-slate-700 mb-1">צעדים הבאים:</p>
+                    <ul className="list-decimal list-inside space-y-1 text-xs text-slate-600">
+                      {aiSummary.next_steps.map((step, i) => (
+                        <li key={i}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="text-slate-800 flex justify-end">
