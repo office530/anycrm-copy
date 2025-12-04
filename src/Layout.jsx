@@ -67,7 +67,7 @@ function LayoutContent({ children, currentPageName }) {
                     to={createPageUrl(item.path)}
                     onClick={() => setIsSidebarOpen(false)} // Close on mobile
                     className={`
-                        group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
+                        group flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
                         ? activeClass
                         : 'text-neutral-600 hover:bg-red-50 hover:text-red-600'}
@@ -75,7 +75,7 @@ function LayoutContent({ children, currentPageName }) {
                     >
                     <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-red-700' : 'text-neutral-400 group-hover:text-red-600'}`} />
                     <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-full bg-red-600/80" />}
+                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-600 rounded-r-full" />}
                     </Link>
                 );
                 })}
