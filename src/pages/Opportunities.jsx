@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ export default function OpportunitiesPage() {
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
   const queryClient = useQueryClient();
+  const location = useLocation();
   
   const activeStages = pipelineStages || [];
 
@@ -29,6 +31,17 @@ export default function OpportunitiesPage() {
     queryFn: () => base44.entities.Opportunity.list(),
     initialData: []
   });
+
+  // Check for action=new in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('action') === 'new') {
+        setEditingOpp(null);
+        setShowForm(true);
+        // Clean URL
+        window.history.replaceState({}, '', location.pathname);
+    }
+  }, [location]);
 
   // --- Statistics Logic (New!) ---
   const stats = useMemo(() => {
@@ -39,6 +52,17 @@ export default function OpportunitiesPage() {
     
     return { totalPipeline, totalDeals, wonDeals, activeDeals };
   }, [opportunities]);
+
+  const createOppMutation = useMutation({
+    mutationFn: (data) => base44.entities.Opportunity.create(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['opportunities']);
+      setShowForm(false);
+      processAutomation('Opportunity', 'create', data);
+      setEditingOpp(null);
+      alert("ההזדמנות נוצרה בהצלחה");
+    }
+  });
 
   const updateOppMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Opportunity.update(id, data),
@@ -329,12 +353,18 @@ export default function OpportunitiesPage() {
       {/* טופס עריכה */}
       <Dialog open={showForm} onOpenChange={(open) => { setShowForm(open); if(!open) setEditingOpp(null); }}>
         <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
-          {editingOpp && (
+          {(showForm || editingOpp) && (
             <OpportunityForm 
               opportunity={editingOpp}
-              onSubmit={(data) => updateOppMutation.mutate({ id: editingOpp.id, data })}
+              onSubmit={(data) => {
+                  if (editingOpp) {
+                      updateOppMutation.mutate({ id: editingOpp.id, data });
+                  } else {
+                      createOppMutation.mutate(data);
+                  }
+              }}
               onCancel={() => setShowForm(false)}
-              isSubmitting={updateOppMutation.isPending}
+              isSubmitting={updateOppMutation.isPending || createOppMutation.isPending}
             />
           )}
         </DialogContent>

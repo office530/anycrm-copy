@@ -23,8 +23,11 @@ import { InlineEdit } from "@/components/ui/InlineEdit";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSettings } from "@/components/context/SettingsContext";
 
+import { useLocation } from "react-router-dom";
+
 export default function LeadsPage() {
   const { leadStatuses } = useSettings();
+  const location = useLocation();
   // Custom statuses to match LeadForm exactly
   const displayStatuses = [
   { value: "New", label: "חדש (New)", color: "bg-red-100 text-red-800 border-red-200" },
@@ -40,6 +43,17 @@ export default function LeadsPage() {
   const [viewMode, setViewMode] = useState('kanban'); // Default to Kanban on mobile mostly
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  // Check for action=new in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('action') === 'new') {
+        setEditingLead(null);
+        setShowLeadForm(true);
+        // Clean URL
+        window.history.replaceState({}, '', location.pathname);
+    }
+  }, [location]);
 
   const handleSort = (key) => {
     let direction = 'asc';

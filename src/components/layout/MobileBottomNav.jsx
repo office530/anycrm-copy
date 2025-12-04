@@ -38,12 +38,12 @@ export default function MobileBottomNav() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center" side="top" className="mb-2">
                         <DropdownMenuItem asChild>
-                             <Link to={createPageUrl('Leads')} state={{ openCreate: true }} className="cursor-pointer flex items-center gap-2">
+                             <Link to={`${createPageUrl('Leads')}?action=new`} className="cursor-pointer flex items-center gap-2">
                                 <Users className="w-4 h-4" /> ליד חדש
                              </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                             <Link to={createPageUrl('Opportunities')} state={{ openCreate: true }} className="cursor-pointer flex items-center gap-2">
+                             <Link to={`${createPageUrl('Opportunities')}?action=new`} className="cursor-pointer flex items-center gap-2">
                                 <Briefcase className="w-4 h-4" /> הזדמנות חדשה
                              </Link>
                         </DropdownMenuItem>
