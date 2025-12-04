@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, TrendingUp, Target, AlertCircle, RefreshCw } from "lucide-react";
+import { Loader2, Sparkles, Target, RefreshCw } from "lucide-react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Progress } from "@/components/ui/progress";
 
 export default function LeadAiAnalysis({ lead }) {
   const queryClient = useQueryClient();
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = React.useState(false);
 
   const analyzeMutation = useMutation({
     mutationFn: async () => {

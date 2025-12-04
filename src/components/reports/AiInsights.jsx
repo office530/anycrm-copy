@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,8 +7,8 @@ import { Loader2, BrainCircuit, TrendingUp, AlertTriangle, Lightbulb } from "luc
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AiInsights() {
-  const [insights, setInsights] = useState(null);
-  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [insights, setInsights] = React.useState(null);
+  const [isLoadingAI, setIsLoadingAI] = React.useState(false);
 
   // Fetch data for analysis
   const { data: leads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
