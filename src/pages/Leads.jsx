@@ -414,7 +414,7 @@ export default function LeadsPage() {
       {/* --- תצוגת רשימה (דסקטופ + מובייל) --- */}
       {viewMode === 'list' && (
         <div className="space-y-6">
-      {/* --- תצוגת דסקטופ (טבלה) --- */}
+          {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
             <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
@@ -578,9 +578,9 @@ export default function LeadsPage() {
                 </div>
             </div>
         )}
-      </div>
-      </div>
-      )}
+        </div>
+        </div>
+        )}
 
       {/* דיאלוג עריכה */}
       <Dialog open={showLeadForm} onOpenChange={(open) => {setShowLeadForm(open);if (!open) setEditingLead(null);}}>
