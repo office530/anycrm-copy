@@ -14,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import moment from 'moment';
-import TasksWidget from "@/components/dashboard/TasksWidget";
 
 export default function Dashboard() {
   const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
@@ -172,10 +171,10 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* Left Column: Charts (Span 2) */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Left Column: Charts */}
+          <div className="space-y-6">
               
               {/* Sales Trend Chart */}
               <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200">
@@ -227,34 +226,59 @@ export default function Dashboard() {
               </Card>
           </div>
 
-          {/* Right Column: Tasks & Quick Stats */}
-          <div className="space-y-6">
-              
-              {/* Tasks Widget */}
-              <TasksWidget />
+          {/* Right Column: Pipeline Summary */}
+          <Card className="bg-gradient-to-br from-red-900 to-red-800 text-white border-none rounded-2xl p-6 md:p-8 relative overflow-hidden h-full">
+              <div className="relative z-10 space-y-6">
+                  {/* Header */}
+                  <div>
+                      <div className="text-red-100 mb-2 text-sm font-medium tracking-wide">סטטוס Pipeline</div>
+                      <div className="text-4xl md:text-5xl font-bold mb-1">{stats.totalOpps - stats.wonOppsCount}</div>
+                      <div className="text-red-200 text-sm">הזדמנויות פעילות</div>
+                  </div>
 
-              {/* Pipeline Summary Mini-Card */}
-              <Card className="bg-red-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
-                  <div className="relative z-10">
-                      <div className="text-slate-50 mb-1 text-sm">הזדמנויות פתוחות</div>
-                      <div className="text-3xl font-bold mb-4">{stats.totalOpps - stats.wonOppsCount}</div>
-                      <div className="flex flex-col gap-2">
-                          <div className="flex justify-between text-xs opacity-80">
-                              <span>התחלה</span>
-                              <span>סגירה</span>
-                          </div>
-                          <div className="w-full bg-red-950 rounded-full h-1.5 overflow-hidden">
-                              <div className="bg-red-500 h-full rounded-full" style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
-                          </div>
-                          <div className="text-right text-xs text-white/80 mt-1">
-                              {(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}% הצלחה
-                          </div>
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-red-950/30 rounded-xl p-4 backdrop-blur-sm border border-red-800/30">
+                          <div className="text-2xl font-bold">₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
+                          <div className="text-xs text-red-200 mt-1">סה״כ ערך Pipeline</div>
+                      </div>
+                      <div className="bg-red-950/30 rounded-xl p-4 backdrop-blur-sm border border-red-800/30">
+                          <div className="text-2xl font-bold">{stats.wonOppsCount}</div>
+                          <div className="text-xs text-red-200 mt-1">עסקאות נסגרו</div>
                       </div>
                   </div>
-                  {/* Decoration */}
-                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-red-600/20 blur-3xl rounded-full pointer-events-none"></div>
-              </Card>
-          </div>
+
+                  {/* Progress Bar */}
+                  <div className="space-y-2">
+                      <div className="flex justify-between text-xs text-red-200">
+                          <span>יחס הצלחה</span>
+                          <span className="font-bold text-white">{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="w-full bg-red-950/50 rounded-full h-2.5 overflow-hidden">
+                          <div className="bg-gradient-to-r from-red-400 to-red-500 h-full rounded-full transition-all duration-500" style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
+                      </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="space-y-3 pt-4 border-t border-red-800/30">
+                      <div className="flex justify-between items-center text-sm">
+                          <span className="text-red-200">ממוצע ערך עסקה</span>
+                          <span className="font-bold">₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                          <span className="text-red-200">בשלב מתקדם</span>
+                          <span className="font-bold">{filteredOpps.filter(o => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                          <span className="text-red-200">זכייה צפויה החודש</span>
+                          <span className="font-bold">₪{(filteredOpps.filter(o => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + ((o.loan_amount_requested || 0) * (o.probability || 0) / 100), 0)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                      </div>
+                  </div>
+              </div>
+              {/* Decorations */}
+              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-red-600/10 blur-3xl rounded-full pointer-events-none"></div>
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-red-500/10 blur-2xl rounded-full pointer-events-none"></div>
+          </Card>
       </div>
     </div>);
 
