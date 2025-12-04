@@ -41,8 +41,8 @@ export default function TasksWidget() {
   };
 
   return (
-    <Card className="border-none shadow-sm rounded-2xl bg-white h-full max-h-[600px] flex flex-col">
-      <CardHeader className="pb-2">
+    <Card className="border-none shadow-sm rounded-2xl bg-white flex flex-col h-[400px]">
+      <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-lg flex items-center justify-between">
           <span className="text-slate-800 flex items-center gap-2">משימות קרובות</span>
           <Badge variant="outline" className="text-xs">{upcomingTasks.length}</Badge>
@@ -124,7 +124,7 @@ export default function TasksWidget() {
           </div>
         )}
       </CardContent>
-      <div className="p-4 border-t border-slate-100">
+      <div className="p-4 border-t border-slate-100 shrink-0">
         <Link to={createPageUrl('Tasks')}>
           <Button variant="ghost" className="w-full text-slate-600 text-xs h-8">
             כל המשימות
