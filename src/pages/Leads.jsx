@@ -272,7 +272,7 @@ export default function LeadsPage() {
              <Button 
                 variant="outline" 
                 onClick={() => setShowAiImport(true)}
-                className="hidden md:flex bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
+                className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
              >
                 <Sparkles className="w-4 h-4 ml-2" />
                 ייבוא AI

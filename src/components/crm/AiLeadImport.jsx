@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Upload, FileImage, Type } from "lucide-react";
+import { Loader2, Sparkles, Upload, FileImage, Type, Camera } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -170,30 +170,49 @@ ${textToAnalyze}`,
           </TabsContent>
 
           <TabsContent value="image" className="space-y-4">
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-purple-300 transition-colors">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-                id="image-upload"
-                disabled={isProcessing}
-              />
-              <label htmlFor="image-upload" className="cursor-pointer">
-                <Upload className="w-12 h-12 mx-auto mb-3 text-slate-400" />
-                {selectedFile ? (
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-slate-900">{selectedFile.name}</p>
-                    <p className="text-xs text-slate-500">לחץ לבחירת קובץ אחר</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-slate-700">העלה תמונה עם פרטי ליד</p>
-                    <p className="text-xs text-slate-500">תמונה של טופס, כרטיס ביקור, או צילום מסך</p>
-                  </div>
-                )}
-              </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* כפתור צילום ישיר */}
+              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="camera-capture"
+                  disabled={isProcessing}
+                />
+                <label htmlFor="camera-capture" className="cursor-pointer">
+                  <Camera className="w-10 h-10 mx-auto mb-3 text-purple-500" />
+                  <p className="text-sm font-medium text-slate-700">צלם תמונה</p>
+                  <p className="text-xs text-slate-500 mt-1">פתח מצלמה</p>
+                </label>
+              </div>
+
+              {/* כפתור העלאת קובץ */}
+              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="image-upload"
+                  disabled={isProcessing}
+                />
+                <label htmlFor="image-upload" className="cursor-pointer">
+                  <Upload className="w-10 h-10 mx-auto mb-3 text-blue-500" />
+                  <p className="text-sm font-medium text-slate-700">העלה תמונה</p>
+                  <p className="text-xs text-slate-500 mt-1">בחר מהגלריה</p>
+                </label>
+              </div>
             </div>
+
+            {selectedFile && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <p className="text-sm font-medium text-green-800">✓ {selectedFile.name}</p>
+                <p className="text-xs text-green-600 mt-1">התמונה מוכנה לעיבוד</p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
