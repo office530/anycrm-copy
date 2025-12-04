@@ -548,19 +548,18 @@ export default function LeadsPage() {
       }
 
 // קומפוננטות עזר קטנות
-function StatCard({ icon, label, value, color }) {
-  const Icon = icon;
+function StatCard({ icon: Icon, label, value, color }) {
   return (
     <Card className="border-none shadow-sm bg-white">
-            <CardContent className="p-4 flex items-center gap-4">
-                <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
-                <div>
-                    <p className="text-sm font-medium text-slate-500">{label}</p>
-                    <p className="text-2xl font-bold text-slate-800">{value}</p>
-                </div>
-            </CardContent>
-        </Card>);
-
+      <CardContent className="p-4 flex items-center gap-4">
+        <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
+        <div>
+          <p className="text-sm font-medium text-slate-500">{label}</p>
+          <p className="text-2xl font-bold text-slate-800">{value}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 function WhatsAppBtn({ phone }) {
