@@ -2,10 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, Calendar
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database
 } from 'lucide-react';
-import { format } from 'date-fns';
-import { he } from 'date-fns/locale';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
@@ -121,17 +119,9 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Topbar Desktop */}
         <header className="hidden lg:flex bg-white/80 dark:bg-neutral-200/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800 h-20 items-center justify-between px-8 sticky top-0 z-30">
-            <div className="flex items-center gap-6">
-                <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">
-                    {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
-                </h1>
-                <div className="flex items-center gap-2 px-3 py-2 bg-neutral-50 dark:bg-neutral-300/50 rounded-lg border border-neutral-200 dark:border-neutral-300">
-                    <Calendar className="w-4 h-4 text-neutral-500" />
-                    <span className="text-sm font-medium text-neutral-700 dark:text-neutral-800">
-                        {format(new Date(), 'EEEE, d MMMM yyyy', { locale: he })}
-                    </span>
-                </div>
-            </div>
+            <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-900">
+                {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
+            </h1>
             <div className="flex items-center gap-2 md:gap-4">
                 <div className="hidden md:block">
                   <GlobalSearch />
