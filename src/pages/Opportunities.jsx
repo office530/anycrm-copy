@@ -6,7 +6,8 @@ import { useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, LayoutGrid, List as ListIcon, TrendingUp, Calendar, AlertCircle, DollarSign, Briefcase, Trophy, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, LayoutGrid, List as ListIcon, TrendingUp, Calendar, AlertCircle, DollarSign, Briefcase, Trophy, Trash2, Search } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -21,6 +22,7 @@ export default function OpportunitiesPage() {
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
+  const [searchTerm, setSearchTerm] = useState('');
   const queryClient = useQueryClient();
   const location = useLocation();
   
@@ -109,7 +111,26 @@ export default function OpportunitiesPage() {
     }
   };
 
-  const getStageOpportunities = (stageId) => opportunities.filter(o => o.deal_stage === stageId);
+  // Filter opportunities by search term
+  const filteredOpportunities = useMemo(() => {
+    if (!searchTerm.trim()) return opportunities;
+    
+    const term = searchTerm.toLowerCase().trim();
+    return opportunities.filter(opp => {
+      const leadName = (opp.lead_name || '').toLowerCase();
+      const phone = (opp.phone_number || '').replace(/\D/g, '');
+      const searchPhone = term.replace(/\D/g, '');
+      const email = (opp.email || '').toLowerCase();
+      const product = (opp.product_type || '').toLowerCase();
+      
+      return leadName.includes(term) || 
+             phone.includes(searchPhone) || 
+             email.includes(term) ||
+             product.includes(term);
+    });
+  }, [opportunities, searchTerm]);
+
+  const getStageOpportunities = (stageId) => filteredOpportunities.filter(o => o.deal_stage === stageId);
   const calculateTotal = (stageId) => getStageOpportunities(stageId).reduce((acc, curr) => acc + (curr.loan_amount_requested || 0), 0);
 
   if (isLoading) return <div className="flex justify-center h-96 items-center"><Loader2 className="animate-spin w-8 h-8 text-teal-600" /></div>;
@@ -117,6 +138,19 @@ export default function OpportunitiesPage() {
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col">
       
+      {/* Search Bar */}
+      <div className="mb-4">
+        <div className="relative max-w-md">
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Input
+            placeholder="חיפוש לקוח, טלפון, אימייל או מוצר..."
+            className="pr-10 border-slate-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* Stats Header (New!) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
@@ -282,7 +316,7 @@ export default function OpportunitiesPage() {
           </div>
           
           <div className="divide-y divide-slate-100">
-            {opportunities.map((opp) => {
+            {filteredOpportunities.map((opp) => {
               const stage = activeStages.find(s => s.id === opp.deal_stage);
               return (
                 <div key={opp.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
