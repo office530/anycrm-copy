@@ -547,36 +547,36 @@ export default function LeadsPage() {
   );
 }
 
-// קומפוננטות עזר קטנות
-function StatCard({ icon, label, value, color }) {
-  return (
-    <Card className="border-none shadow-sm bg-white">
-      <CardContent className="p-4 flex items-center gap-4">
-        <div className={`p-3 rounded-xl ${color}`}>
-          {React.createElement(icon, { className: "w-5 h-5" })}
-        </div>
-        <div>
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="text-2xl font-bold text-slate-800">{value}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+// Helper components
+const StatCard = ({ icon: Icon, label, value, color }) => (
+  <Card className="border-none shadow-sm bg-white">
+    <CardContent className="p-4 flex items-center gap-4">
+      <div className={`p-3 rounded-xl ${color}`}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-slate-500">{label}</p>
+        <p className="text-2xl font-bold text-slate-800">{value}</p>
+      </div>
+    </CardContent>
+  </Card>
+);
 
-function WhatsAppBtn({ phone }) {
+const WhatsAppBtn = ({ phone }) => {
   const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
   return (
     <Button
-      size="icon" variant="ghost" className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
-      onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}>
+      size="icon" 
+      variant="ghost" 
+      className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
+      onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}
+    >
+      <MessageCircle className="w-4 h-4" />
+    </Button>
+  );
+};
 
-            <MessageCircle className="w-4 h-4" />
-        </Button>);
-
-}
-
-function StatusBadge({ lead, statuses, updateLead, convert }) {
+const StatusBadge = ({ lead, statuses, updateLead, convert }) => {
   return (
     <InlineEdit
       type="select"
@@ -586,8 +586,15 @@ function StatusBadge({ lead, statuses, updateLead, convert }) {
       formatDisplay={(val) => {
         const s = statuses.find((o) => o.value === val);
         const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
-        return <Badge variant="outline" className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}>{s?.label || val}</Badge>;
-      }} />);
-
-
-}
+        return (
+          <Badge 
+            variant="outline" 
+            className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}
+          >
+            {s?.label || val}
+          </Badge>
+        );
+      }}
+    />
+  );
+};
