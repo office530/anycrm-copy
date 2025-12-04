@@ -266,7 +266,7 @@ export default function LeadsPage() {
 
       {/* --- תצוגת רשימה (דסקטופ + מובייל) --- */}
       {viewMode === 'list' && (
-        <>
+        <div className="space-y-6">
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
@@ -422,7 +422,7 @@ export default function LeadsPage() {
             </div>
         )}
       </div>
-      </>
+      </div>
       )}
 
       {/* דיאלוג עריכה */}
