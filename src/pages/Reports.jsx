@@ -71,7 +71,7 @@ export default function ReportsPage() {
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 max-w-full h-auto p-1">
+        <TabsList className="flex flex-wrap justify-start lg:grid lg:grid-cols-8 w-full h-auto p-1 gap-2">
           <TabsTrigger value="list">דוח מפורט</TabsTrigger>
           <TabsTrigger value="advanced">דשבורד הזדמנויות</TabsTrigger>
           <TabsTrigger value="sales">ביצועי מכירות</TabsTrigger>

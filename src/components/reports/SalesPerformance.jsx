@@ -57,7 +57,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{formatCurrency(stats.totalRevenue)}</div>
+            <div className="text-xl md:text-2xl font-bold text-green-600 truncate" title={formatCurrency(stats.totalRevenue)}>{formatCurrency(stats.totalRevenue)}</div>
             <p className="text-xs text-neutral-500">סה"כ עסקאות שנסגרו בהצלחה</p>
           </CardContent>
         </Card>
@@ -79,7 +79,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
             <Target className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.avgDealSize)}</div>
+            <div className="text-xl md:text-2xl font-bold truncate">{formatCurrency(stats.avgDealSize)}</div>
             <p className="text-xs text-neutral-500">ממוצע לעסקה שנסגרה</p>
           </CardContent>
         </Card>
@@ -90,7 +90,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
             <TrendingUp className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.pipelineValue)}</div>
+            <div className="text-xl md:text-2xl font-bold truncate">{formatCurrency(stats.pipelineValue)}</div>
             <p className="text-xs text-neutral-500">פוטנציאל עסקאות פתוחות</p>
           </CardContent>
         </Card>
