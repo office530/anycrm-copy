@@ -68,7 +68,7 @@ export const defaultPipelineStages = [
 ];
 
 export const defaultBranding = {
-  companyName: "Gisher's",
+  companyName: "Gisher",
   logoUrl: "", 
   primaryColor: "red",
   currency: "₪"
