@@ -46,7 +46,7 @@ function LayoutContent({ children, currentPageName }) {
 
             {/* Logo Area */}
             <div className="p-6 lg:p-6 border-b border-neutral-50 flex flex-col items-center lg:items-start mt-10 lg:mt-0">
-                <div className="flex items-center gap-3 text-2xl lg:text-2xl font-bold tracking-tight text-neutral-900">
+                <Link to={createPageUrl('Dashboard')} onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 text-2xl lg:text-2xl font-bold tracking-tight text-neutral-900 hover:opacity-80 transition-opacity">
                     {branding.logoUrl ? (
                         <img src={branding.logoUrl} alt="Logo" className="w-16 h-16 lg:w-10 lg:h-10 object-contain bg-white rounded-xl p-1" />
                     ) : (
@@ -55,7 +55,7 @@ function LayoutContent({ children, currentPageName }) {
                         </div>
                     )}
                     <span className="hidden lg:inline truncate">{branding.companyName}</span>
-                </div>
+                </Link>
                 <p className="lg:hidden text-xl font-bold mt-4 text-neutral-900">{branding.companyName}</p>
                 <p className="text-sm text-neutral-500 mt-2 font-medium tracking-wide opacity-80">OLD SALES DATABASE</p>
             </div>
