@@ -169,13 +169,14 @@ fetch(apiUrl, {
 
       {/* Main Content */}
       <Tabs defaultValue="docs" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-100">
-          <TabsTrigger value="docs">תיעוד API</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-slate-100">
+          <TabsTrigger value="docs">יצירת לידים</TabsTrigger>
+          <TabsTrigger value="opportunities">קבלת הזדמנויות</TabsTrigger>
           <TabsTrigger value="examples">דוגמאות קוד</TabsTrigger>
           <TabsTrigger value="test">בדיקה</TabsTrigger>
         </TabsList>
 
-        {/* Documentation Tab */}
+        {/* Create Lead Documentation Tab */}
         <TabsContent value="docs" className="space-y-6">
           <Card>
             <CardHeader>
@@ -256,11 +257,112 @@ fetch(apiUrl, {
           </Card>
         </TabsContent>
 
-        {/* Examples Tab */}
-        <TabsContent value="examples" className="space-y-6">
+        {/* Get Opportunities Documentation Tab */}
+        <TabsContent value="opportunities" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>cURL</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="w-5 h-5" />
+                Get Opportunities API
+              </CardTitle>
+              <CardDescription>קבל נתוני הזדמנויות מהמערכת באמצעות GET request</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-slate-700">URL</label>
+                <div className="flex gap-2 mt-1">
+                  <Input 
+                    value={`${window.location.origin}/api/functions/getOpportunities`}
+                    readOnly 
+                    className="font-mono text-sm bg-slate-50"
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={() => copyToClipboard(`${window.location.origin}/api/functions/getOpportunities`)}
+                  >
+                    {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-slate-700">Method</label>
+                <Badge className="mt-1 bg-green-100 text-green-700">GET</Badge>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-slate-700 block mb-2">Query Parameters (כולם אופציונליים)</label>
+                <div className="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <pre>{`?deal_stage=<שלב_עסקה>
+?lead_id=<מזהה_ליד>
+?product_type=<סוג_מוצר>
+?min_probability=<הסתברות_מינימלית>
+
+דוגמה:
+/getOpportunities?deal_stage=New&min_probability=50`}</pre>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-slate-700 block mb-2">Response (Success)</label>
+                <div className="bg-emerald-900 text-emerald-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                  <pre>{`{
+  "success": true,
+  "count": 10,
+  "data": [
+    {
+      "id": "123",
+      "lead_id": "456",
+      "lead_name": "דוד כהן",
+      "product_type": "Reverse Mortgage",
+      "deal_stage": "New (חדש)",
+      "probability": 60,
+      "loan_amount_requested": 500000,
+      "expected_close_date": "2025-12-31",
+      "created_date": "2025-12-01",
+      ...
+    }
+  ]
+}`}</pre>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-slate-700 block mb-2">דוגמאות שימוש</label>
+                <div className="space-y-3">
+                  <div className="bg-slate-50 p-3 rounded">
+                    <strong className="text-sm">כל ההזדמנויות:</strong>
+                    <code className="block mt-1 text-xs text-slate-700">/getOpportunities</code>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded">
+                    <strong className="text-sm">הזדמנויות בשלב מסוים:</strong>
+                    <code className="block mt-1 text-xs text-slate-700">/getOpportunities?deal_stage=Closed Won</code>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded">
+                    <strong className="text-sm">הזדמנויות עם הסתברות גבוהה:</strong>
+                    <code className="block mt-1 text-xs text-slate-700">/getOpportunities?min_probability=70</code>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded">
+                    <strong className="text-sm">הזדמנויות של ליד ספציפי:</strong>
+                    <code className="block mt-1 text-xs text-slate-700">/getOpportunities?lead_id=123</code>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Examples Tab */}
+        <TabsContent value="examples" className="space-y-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h3 className="font-bold text-blue-900 mb-2">💡 בחר דוגמה</h3>
+            <p className="text-sm text-blue-700">הדוגמאות כוללות גם יצירת לידים וגם קבלת הזדמנויות</p>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>cURL - יצירת ליד</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="relative">
@@ -281,7 +383,29 @@ fetch(apiUrl, {
 
           <Card>
             <CardHeader>
-              <CardTitle>JavaScript / Node.js</CardTitle>
+              <CardTitle>cURL - קבלת הזדמנויות</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-sm">
+                  <code>{`curl -X GET "${window.location.origin}/api/functions/getOpportunities?min_probability=50" \\
+  -H "Content-Type: application/json"`}</code>
+                </pre>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 left-2"
+                  onClick={() => copyToClipboard(`curl -X GET "${window.location.origin}/api/functions/getOpportunities?min_probability=50"`)}
+                >
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>JavaScript - יצירת ליד</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="relative">
@@ -302,7 +426,48 @@ fetch(apiUrl, {
 
           <Card>
             <CardHeader>
-              <CardTitle>Python</CardTitle>
+              <CardTitle>JavaScript - קבלת הזדמנויות</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-sm">
+                  <code>{`const apiUrl = "${window.location.origin}/api/functions/getOpportunities";
+
+// Get all opportunities
+fetch(apiUrl)
+  .then(res => res.json())
+  .then(data => {
+    console.log(\`נמצאו \${data.count} הזדמנויות\`);
+    console.log(data.data);
+  })
+  .catch(err => console.error(err));
+
+// Get with filters
+const filters = new URLSearchParams({
+  deal_stage: "New (חדש)",
+  min_probability: 50
+});
+
+fetch(\`\${apiUrl}?\${filters}\`)
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));`}</code>
+                </pre>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 left-2"
+                  onClick={() => copyToClipboard(`fetch("${window.location.origin}/api/functions/getOpportunities")...`)}
+                >
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Python - יצירת ליד</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="relative">
@@ -314,6 +479,45 @@ fetch(apiUrl, {
                   size="sm"
                   className="absolute top-2 left-2"
                   onClick={() => copyToClipboard(pythonExample)}
+                >
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Python - קבלת הזדמנויות</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-sm">
+                  <code>{`import requests
+
+# Get all opportunities
+url = "${window.location.origin}/api/functions/getOpportunities"
+response = requests.get(url)
+data = response.json()
+
+print(f"נמצאו {data['count']} הזדמנויות")
+for opp in data['data']:
+    print(f"{opp['lead_name']} - {opp['product_type']} - ₪{opp.get('loan_amount_requested', 0):,}")
+
+# Get with filters
+params = {
+    "deal_stage": "New (חדש)",
+    "min_probability": 70
+}
+response = requests.get(url, params=params)
+filtered_data = response.json()
+print(filtered_data)`}</code>
+                </pre>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-2 left-2"
+                  onClick={() => copyToClipboard(`import requests\n\nurl = "${window.location.origin}/api/functions/getOpportunities"...`)}
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </Button>
