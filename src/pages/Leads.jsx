@@ -443,8 +443,8 @@ export default function LeadsPage() {
 
         </DialogContent>
       </Dialog>
-    </div>);
-
+    </div>
+  );
 }
 
 // קומפוננטות עזר קטנות
