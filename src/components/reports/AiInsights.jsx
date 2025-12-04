@@ -30,8 +30,8 @@ export default function AiInsights() {
         if (l.source_year) leadsBySource[l.source_year] = (leadsBySource[l.source_year] || 0) + 1;
       });
 
-      const wonOpps = opportunities.filter(o => o.deal_stage?.includes('Won'));
-      const lostOpps = opportunities.filter(o => o.deal_stage?.includes('Lost'));
+      const wonOpps = opportunities.filter(o => o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה'));
+      const lostOpps = opportunities.filter(o => o.deal_stage?.includes('Lost') || o.deal_stage?.includes('אבוד'));
       
       const analysisPayload = {
         stats: {

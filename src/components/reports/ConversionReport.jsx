@@ -9,10 +9,9 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
   
   const stats = useMemo(() => {
     const totalLeads = leads.length;
-    const convertedLeads = leads.filter(l => l.lead_status === 'Converted to Opportunity' || l.lead_status === 'הומר להזדמנות').length;
-    // Or check opportunities count which implies conversion
+    const convertedLeads = leads.filter(l => l.lead_status === 'Converted' || l.lead_status?.includes('הומר')).length;
     const totalOpps = opportunities.length;
-    const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("נחתם")).length;
+    const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("בהצלחה")).length;
 
     const conversionRate = totalLeads > 0 ? (convertedLeads / totalLeads) * 100 : 0;
     const winRate = totalOpps > 0 ? (closedWon / totalOpps) * 100 : 0;

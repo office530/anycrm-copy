@@ -8,14 +8,12 @@ const COLORS = ['#ef4444', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 export default function SalesPerformance({ leads, opportunities, timeRange }) {
   
   const stats = useMemo(() => {
-    // Filter by time range logic would go here (simplified for now)
-    
-    const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("נחתם"));
+    const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("בהצלחה"));
     const totalRevenue = closedWon.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
     const avgDealSize = closedWon.length > 0 ? totalRevenue / closedWon.length : 0;
     
     const pipelineValue = opportunities
-      .filter(o => !o.deal_stage?.includes("Won") && !o.deal_stage?.includes("Lost"))
+      .filter(o => !o.deal_stage?.includes("Won") && !o.deal_stage?.includes("בהצלחה") && !o.deal_stage?.includes("Lost") && !o.deal_stage?.includes("אבוד"))
       .reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
 
     return {
