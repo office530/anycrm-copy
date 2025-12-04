@@ -519,53 +519,52 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* --- תצוגת מובייל (כרטיסים) --- */}
-      <div className="md:hidden space-y-4 pb-20">
-         {filteredLeads.map((lead) =>
-        <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
+          {/* --- תצוגת מובייל (כרטיסים) --- */}
+          <div className="md:hidden space-y-4 pb-20">
+            {filteredLeads.map((lead) =>
+              <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
-                            {lead.full_name?.charAt(0)}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
+                      {lead.full_name?.charAt(0)}
+                    </div>
+                    <div>
+                      <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
+                        {lead.full_name}
+                      </Link>
+                      <div className="text-sm text-slate-500">{lead.city}</div>
+                      {getLastActivityDate(lead.id) && (
+                        <div className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
+                          ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
                         </div>
-                        <div>
-                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
-                                {lead.full_name}
-                            </Link>
-                            <div className="text-sm text-slate-500">{lead.city}</div>
-                            {getLastActivityDate(lead.id) && (
-                              <div className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
-                                ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
-                              </div>
-                            )}
-                            {lead.tags && lead.tags.length > 0 &&
-                    <div className="flex flex-wrap gap-1 mt-1">
-                                    {lead.tags.map((tag, i) =>
-                    <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
-                    )}
-                                </div>
+                      )}
+                      {lead.tags && lead.tags.length > 0 &&
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {lead.tags.map((tag, i) =>
+                            <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
+                          )}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => {
+                      if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה?')) deleteLead.mutate(lead.id);
+                    }} className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    {lead.lead_status === 'Converted' ?
+                      <div className="h-8 w-8 flex items-center justify-center text-emerald-600">
+                        <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
+                      </div> :
+                      <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </Button>
                     }
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => {
-                if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה?')) deleteLead.mutate(lead.id);
-              }} className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50">
-                            <Trash2 className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
-                            <Pencil className="w-4 h-4" />
-                        </Button>
-                        {lead.lead_status === 'Converted' ?
-              <div className="h-8 w-8 flex items-center justify-center text-emerald-600">
-                                <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
-                            </div> :
-
-              <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
-                                <CheckCircle2 className="w-4 h-4" />
-                            </Button>
-              }
-                    </div>
+                  </div>
                 </div>
 
                 <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
@@ -576,9 +575,9 @@ export default function LeadsPage() {
                 <div className="flex items-center justify-between mt-1">
                   <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
                 </div>
-            </div>
-        )}
-        </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
