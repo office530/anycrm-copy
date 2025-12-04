@@ -146,15 +146,15 @@ export default function LeadAiAnalysis({ lead }) {
       <CardContent className="p-4 space-y-5">
         
         {/* Score and Classification */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex-1 space-y-1">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="w-full sm:flex-1 space-y-1">
             <div className="flex justify-between text-xs mb-1">
               <span className="text-slate-500">ציון איכות</span>
               <span className="font-bold text-slate-700">{lead.ai_quality_score || 0}/100</span>
             </div>
             <Progress value={lead.ai_quality_score || 0} className="h-2" indicatorClassName={getScoreColor(lead.ai_quality_score || 0)} />
           </div>
-          <Badge variant="outline" className={`px-3 py-1 text-sm font-bold border ${getClassColor(lead.ai_classification)}`}>
+          <Badge variant="outline" className={`px-3 py-1 text-sm font-bold border w-full sm:w-auto justify-center ${getClassColor(lead.ai_classification)}`}>
             {lead.ai_classification === 'Hot' ? '🔥 חם מאוד' : 
              lead.ai_classification === 'Warm' ? '☀️ פושר' : 
              lead.ai_classification === 'Cold' ? '❄️ קר' : 'לא דורג'}
