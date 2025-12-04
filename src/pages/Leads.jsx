@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2, LayoutGrid, List as ListIcon 
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2, LayoutGrid, List as ListIcon, Sparkles 
 } from "lucide-react";
 
 import {
@@ -22,6 +22,7 @@ import { createPageUrl } from "@/utils";
 import { InlineEdit } from "@/components/ui/InlineEdit";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSettings } from "@/components/context/SettingsContext";
+import AiLeadImport from "@/components/crm/AiLeadImport";
 
 import { useLocation } from "react-router-dom";
 
@@ -43,6 +44,7 @@ export default function LeadsPage() {
   const [viewMode, setViewMode] = useState('list'); // Default to list view
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [showAiImport, setShowAiImport] = useState(false);
 
   // Check for action=new in URL
   React.useEffect(() => {
@@ -265,12 +267,20 @@ export default function LeadsPage() {
                 </Button>
              </div>
 
+             <Button 
+                variant="outline" 
+                onClick={() => setShowAiImport(true)}
+                className="hidden md:flex bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
+             >
+                <Sparkles className="w-4 h-4 ml-2" />
+                ייבוא AI
+             </Button>
              <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
                 <Button variant="outline" className="bg-white text-slate-600 border-slate-300 hover:bg-slate-50">
                     <Upload className="w-4 h-4 ml-2" />
-                    ייבוא
+                    ייבוא רגיל
                 </Button>
-            </Link>
+             </Link>
             <Button onClick={() => setShowLeadForm(true)} className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10">
                 <Plus className="w-4 h-4 ml-2" />
                 ליד חדש
@@ -482,9 +492,16 @@ export default function LeadsPage() {
 
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
+
+      {/* דיאלוג ייבוא AI */}
+      <AiLeadImport 
+        open={showAiImport}
+        onOpenChange={setShowAiImport}
+        onLeadCreated={(leadData) => createLead.mutate(leadData)}
+      />
+      </div>
+      );
+      }
 
 // קומפוננטות עזר קטנות
 function StatCard({ icon: Icon, label, value, color }) {
