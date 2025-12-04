@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList, FileText, Briefcase } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import ActivityLog from "./ActivityLog";
 import DiscoveryScript from "./DiscoveryScript";
 import FileUpload from "../common/FileUpload";
 import TagManager from "./TagManager";
+import LeadAiAnalysis from "./LeadAiAnalysis";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -102,7 +103,7 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       </div>
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 mb-6 bg-slate-100/80 p-1 h-auto">
+        <TabsList className="grid w-full grid-cols-6 mb-6 bg-slate-100/80 p-1 h-auto">
           <TabsTrigger value="details" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
             <User className="w-4 h-4" />
             <span className="text-xs md:text-sm">פרופיל 360</span>
@@ -122,6 +123,10 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
           <TabsTrigger value="discovery" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
             <ClipboardList className="w-4 h-4" />
             <span className="text-xs md:text-sm">תסריט</span>
+          </TabsTrigger>
+          <TabsTrigger value="ai" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm" disabled={!lead}>
+            <Sparkles className="w-4 h-4" />
+            <span className="text-xs md:text-sm">ניתוח AI</span>
           </TabsTrigger>
         </TabsList>
 
@@ -390,6 +395,10 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
               <p className="font-medium">יש לשמור את הליד לפני שניתן למלא תסריט שיחה</p>
             </div>
           }
+        </TabsContent>
+
+        <TabsContent value="ai">
+           {lead ? <LeadAiAnalysis lead={lead} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
         </TabsContent>
       </Tabs>
     </motion.div>);

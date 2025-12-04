@@ -12,6 +12,8 @@ import ConversionReport from '@/components/reports/ConversionReport';
 import ActivityReport from '@/components/reports/ActivityReport';
 import CustomReports from '@/components/reports/CustomReports';
 import CustomDashboard from '@/components/reports/CustomDashboard';
+import AiInsights from '@/components/reports/AiInsights';
+import { BrainCircuit } from "lucide-react";
 
 export default function ReportsPage() {
   const [timeRange, setTimeRange] = useState('all');
@@ -69,7 +71,7 @@ export default function ReportsPage() {
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 max-w-full">
+        <TabsList className="grid w-full grid-cols-6 max-w-full h-auto p-1">
           <TabsTrigger value="list">דוח מפורט</TabsTrigger>
           <TabsTrigger value="advanced">דשבורד הזדמנויות</TabsTrigger>
           <TabsTrigger value="sales">ביצועי מכירות</TabsTrigger>
@@ -77,6 +79,10 @@ export default function ReportsPage() {
           <TabsTrigger value="activity">דוח פעילות</TabsTrigger>
           <TabsTrigger value="custom_reports">דוחות מותאמים</TabsTrigger>
           <TabsTrigger value="custom_dashboard">דשבורד אישי</TabsTrigger>
+          <TabsTrigger value="ai_insights" className="text-indigo-600 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
+            <BrainCircuit className="w-4 h-4 mr-2" />
+            תובנות AI
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-6">
@@ -105,6 +111,10 @@ export default function ReportsPage() {
 
         <TabsContent value="custom_dashboard" className="mt-6">
           <CustomDashboard />
+        </TabsContent>
+
+        <TabsContent value="ai_insights" className="mt-6">
+          <AiInsights />
         </TabsContent>
       </Tabs>
     </div>
