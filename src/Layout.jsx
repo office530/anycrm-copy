@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
+import MobileNav from '@/components/layout/MobileNav';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -30,9 +31,9 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-neutral-50 font-heebo text-neutral-900 flex" dir="rtl">
       
-      {/* Sidebar Desktop */}
+      {/* Sidebar / Drawer */}
       <aside className={`
-        fixed inset-y-0 right-0 z-50 w-72 bg-white text-neutral-800 border-l border-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-sm
+        fixed inset-y-0 right-0 z-[60] w-72 bg-white text-neutral-800 border-l border-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-2xl lg:shadow-sm
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
@@ -103,11 +104,20 @@ function LayoutContent({ children, currentPageName }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
         {/* Mobile Header */}
-        <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-            <span className="font-bold text-lg">{branding.companyName}</span>
-            <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-                {isSidebarOpen ? <X /> : <Menu />}
-            </Button>
+        <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40 h-16">
+            <div className="flex items-center gap-2">
+                {branding.logoUrl ? (
+                    <img src={branding.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />
+                ) : (
+                    <div className="bg-red-700 rounded-lg p-1.5">
+                        <Database className="w-4 h-4 text-white" />
+                    </div>
+                )}
+                <span className="font-bold text-lg text-slate-800">{branding.companyName}</span>
+            </div>
+            <div className="flex items-center gap-1">
+               <Notifications />
+            </div>
         </header>
 
         {/* Topbar Desktop */}
@@ -125,16 +135,21 @@ function LayoutContent({ children, currentPageName }) {
         </header>
 
         {/* Page Content Scrollable Area */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8 pb-24 lg:pb-8 scroll-smooth bg-neutral-50">
             <div className="max-w-7xl mx-auto">
                 {children}
             </div>
         </main>
+        
+        <MobileNav 
+            currentPageName={currentPageName} 
+            onMenuClick={() => setIsSidebarOpen(true)} 
+        />
       </div>
 
       {/* Overlay for Mobile */}
       {isSidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
       )}
     </div>
   );
