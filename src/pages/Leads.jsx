@@ -42,7 +42,7 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // Default to list view
-  const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
+  const [filters, setFilters] = useState({ search: "", year: "all", statuses: [], tag: "all" });
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
@@ -171,20 +171,18 @@ export default function LeadsPage() {
   // סינון
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
-      // Special case: revival list
-      if (filters.status === "revival_2023") {
-        return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
-      }
-
-      // Search filter - only by name
+      // Search filter - name, phone, or city
       const searchTerm = filters.search.toLowerCase().trim();
-      const matchesSearch = !searchTerm || (lead.full_name || "").toLowerCase().includes(searchTerm);
+      const matchesSearch = !searchTerm || 
+        (lead.full_name || "").toLowerCase().includes(searchTerm) ||
+        (lead.phone_number || "").includes(searchTerm) ||
+        (lead.city || "").toLowerCase().includes(searchTerm);
 
       // Year filter
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
 
-      // Status filter
-      const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
+      // Status filter - multi-select
+      const matchesStatus = filters.statuses.length === 0 || filters.statuses.includes(lead.lead_status);
 
       // Tag filter
       const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
@@ -221,46 +219,24 @@ export default function LeadsPage() {
       </div>
 
       {/* סרגל כלים וחיפוש */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-        <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
-          <div className="relative flex-1">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
-              placeholder="חיפוש לפי שם..."
-              className="pr-10 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
+              placeholder="חיפוש לפי שם, טלפון או עיר..."
+              className="pr-10 pl-20 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
               value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
-
-          </div>
-          <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger className="w-full md:w-[160px] border-slate-300 text-slate-700 font-medium rounded-lg">
-                    <Filter className="w-4 h-4 ml-2 text-slate-500" />
-                    <SelectValue placeholder="סטטוס" />
-                </SelectTrigger>
-                <SelectContent className="bg-white text-slate-900 text-right">
-                    <SelectItem value="all" className="text-right">כל הסטטוסים</SelectItem>
-                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-right hover:bg-slate-50">{opt.label}</SelectItem>)}
-                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
-                </SelectContent>
-          </Select>
-
-          <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
-                <SelectTrigger className="w-full md:w-[140px] border-slate-300 text-slate-700 font-medium rounded-lg">
-                    <Tag className="w-4 h-4 ml-2 text-slate-500" />
-                    <SelectValue placeholder="תגיות" />
-                </SelectTrigger>
-                <SelectContent className="bg-white text-slate-900 text-right">
-                    <SelectItem value="all" className="text-right">כל התגיות</SelectItem>
-                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-right hover:bg-slate-50">{tag}</SelectItem>)}
-                </SelectContent>
-          </Select>
-
-
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            />
+            <kbd className="absolute left-3 top-1/2 -translate-y-1/2 px-2 py-0.5 text-xs text-slate-400 bg-slate-50 border border-slate-200 rounded font-mono">
+              Ctrl+K
+            </kbd>
           </div>
 
           <div className="flex gap-2 w-full md:w-auto items-center">
              {/* View Toggle */}
-             <div className="bg-slate-100 p-1 rounded-lg flex border border-slate-200 mr-2">
+             <div className="bg-slate-100 p-1 rounded-lg flex border border-slate-200">
                 <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-7 px-2 ${viewMode === 'kanban' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500'}`}>
                     <LayoutGrid className="w-4 h-4" />
                 </Button>
@@ -269,24 +245,93 @@ export default function LeadsPage() {
                 </Button>
              </div>
 
-             <Button 
-                variant="outline" 
-                onClick={() => setShowAiImport(true)}
-                className="hidden md:flex bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
-             >
-                <Sparkles className="w-4 h-4 ml-2" />
-                ייבוא AI
-             </Button>
-             <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
-                <Button variant="outline" className="bg-white text-slate-600 border-slate-300 hover:bg-slate-50">
-                    <Upload className="w-4 h-4 ml-2" />
-                    ייבוא רגיל
+             {/* Split Button - New Lead with Import Options */}
+             <div className="flex border border-red-700 rounded-lg overflow-hidden shadow-md shadow-red-900/10">
+                <Button 
+                  onClick={() => setShowLeadForm(true)} 
+                  className="flex-1 bg-red-700 hover:bg-red-800 text-white font-bold rounded-none border-none"
+                >
+                  <Plus className="w-4 h-4 ml-2" />
+                  ליד חדש
                 </Button>
-             </Link>
-            <Button onClick={() => setShowLeadForm(true)} className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10">
-                <Plus className="w-4 h-4 ml-2" />
-                ליד חדש
-            </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="bg-red-700 hover:bg-red-800 text-white border-none rounded-none border-r border-red-600 px-2">
+                      <ArrowDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => setShowAiImport(true)} className="gap-2">
+                      <Sparkles className="w-4 h-4 text-purple-600" />
+                      ייבוא AI
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl('ImportLeads')} className="flex items-center gap-2 cursor-pointer">
+                        <Upload className="w-4 h-4 text-slate-600" />
+                        ייבוא מאקסל
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+             </div>
+          </div>
+        </div>
+
+        {/* Status Filter Chips */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-slate-500 ml-2">סינון לפי סטטוס:</span>
+          <FilterChip
+            label="הכל"
+            active={filters.statuses.length === 0}
+            onClick={() => setFilters({ ...filters, statuses: [] })}
+            color="bg-slate-100 text-slate-700"
+          />
+          <FilterChip
+            label="חדש"
+            active={filters.statuses.includes("New")}
+            onClick={() => {
+              const newStatuses = filters.statuses.includes("New")
+                ? filters.statuses.filter(s => s !== "New")
+                : [...filters.statuses, "New"];
+              setFilters({ ...filters, statuses: newStatuses });
+            }}
+            color="bg-red-100 text-red-700"
+          />
+          <FilterChip
+            label="בטיפול"
+            active={filters.statuses.includes("Attempting Contact") || filters.statuses.includes("Contacted - Qualifying")}
+            onClick={() => {
+              const statuses = ["Attempting Contact", "Contacted - Qualifying"];
+              const hasAny = statuses.some(s => filters.statuses.includes(s));
+              const newStatuses = hasAny
+                ? filters.statuses.filter(s => !statuses.includes(s))
+                : [...filters.statuses, ...statuses];
+              setFilters({ ...filters, statuses: newStatuses });
+            }}
+            color="bg-slate-200 text-slate-800"
+          />
+          <FilterChip
+            label="המרה"
+            active={filters.statuses.includes("Converted")}
+            onClick={() => {
+              const newStatuses = filters.statuses.includes("Converted")
+                ? filters.statuses.filter(s => s !== "Converted")
+                : [...filters.statuses, "Converted"];
+              setFilters({ ...filters, statuses: newStatuses });
+            }}
+            color="bg-emerald-100 text-emerald-700"
+          />
+          <FilterChip
+            label="לא רלוונטי"
+            active={filters.statuses.includes("Lost / Unqualified")}
+            onClick={() => {
+              const newStatuses = filters.statuses.includes("Lost / Unqualified")
+                ? filters.statuses.filter(s => s !== "Lost / Unqualified")
+                : [...filters.statuses, "Lost / Unqualified"];
+              setFilters({ ...filters, statuses: newStatuses });
+            }}
+            color="bg-slate-100 text-slate-500"
+          />
         </div>
       </div>
 
@@ -544,6 +589,19 @@ function StatusBadge({ lead, statuses, updateLead, convert }) {
         const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
         return <Badge variant="outline" className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}>{s?.label || val}</Badge>;
       }} />);
+}
 
-
+function FilterChip({ label, active, onClick, color }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${
+        active 
+          ? `${color} border-transparent shadow-sm` 
+          : 'bg-white text-slate-600 border-slate-300 hover:border-slate-400'
+      }`}
+    >
+      {label}
+    </button>
+  );
 }
