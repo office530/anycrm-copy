@@ -580,14 +580,15 @@ export default function LeadsPage() {
             lead={editingLead}
             onSubmit={(data) => {
               if (data.lead_status === 'Converted') {
-                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });else
-                createLead.mutate(data);
+                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
+                else createLead.mutate(data);
               } else {
                 editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
               }
             }}
             onCancel={() => setShowLeadForm(false)}
-            isSubmitting={createLead.isPending || updateLead.isPending} />
+            isSubmitting={createLead.isPending || updateLead.isPending}
+          />
         </DialogContent>
       </Dialog>
 
