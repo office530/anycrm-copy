@@ -42,7 +42,7 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // Default to list view
-  const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
+  const [filters, setFilters] = useState({ search: "", year: "all", statuses: [], tag: "all" }); // statuses is now an array for multi-select
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
@@ -168,14 +168,23 @@ export default function LeadsPage() {
     }
   });
 
+  // Toggle status filter
+  const toggleStatusFilter = (status) => {
+    setFilters(prev => {
+      const current = prev.statuses || [];
+      if (current.includes(status)) {
+        // Remove if already selected
+        return { ...prev, statuses: current.filter(s => s !== status) };
+      } else {
+        // Add to selection
+        return { ...prev, statuses: [...current, status] };
+      }
+    });
+  };
+
   // סינון
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
-      // Special case: revival list
-      if (filters.status === "revival_2023") {
-        return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
-      }
-
       // Search filter - only by name
       const searchTerm = filters.search.toLowerCase().trim();
       const matchesSearch = !searchTerm || (lead.full_name || "").toLowerCase().includes(searchTerm);
@@ -183,8 +192,8 @@ export default function LeadsPage() {
       // Year filter
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
 
-      // Status filter
-      const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
+      // Status filter - multi-select: if no statuses selected, show all
+      const matchesStatus = filters.statuses.length === 0 || filters.statuses.includes(lead.lead_status);
 
       // Tag filter
       const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
@@ -331,57 +340,57 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Filter Pills */}
+      {/* Multi-Select Filter Chips */}
       <div className="flex flex-wrap gap-2">
         <Button 
-          variant={filters.status === 'all' ? 'default' : 'outline'} 
+          variant="outline"
           size="sm"
-          onClick={() => setFilters({ ...filters, status: 'all' })}
-          className={filters.status === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+          onClick={() => setFilters({ ...filters, statuses: [] })}
+          className={filters.statuses.length === 0 ? 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
         >
           הכל
         </Button>
         <Button 
-          variant={filters.status === 'New' ? 'default' : 'outline'} 
+          variant="outline"
           size="sm"
-          onClick={() => setFilters({ ...filters, status: 'New' })}
-          className={filters.status === 'New' ? 'bg-red-600 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+          onClick={() => toggleStatusFilter('New')}
+          className={filters.statuses.includes('New') ? 'bg-red-600 text-white border-red-600 hover:bg-red-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
         >
           חדש
-          <Badge className="mr-1.5 bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0">
+          <Badge className={filters.statuses.includes('New') ? 'mr-1.5 bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
             {leads.filter(l => l.lead_status === 'New').length}
           </Badge>
         </Button>
         <Button 
-          variant={filters.status === 'Attempting Contact' ? 'default' : 'outline'} 
+          variant="outline"
           size="sm"
-          onClick={() => setFilters({ ...filters, status: 'Attempting Contact' })}
-          className={filters.status === 'Attempting Contact' ? 'bg-blue-600 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+          onClick={() => toggleStatusFilter('Attempting Contact')}
+          className={filters.statuses.includes('Attempting Contact') ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
         >
           בטיפול
-          <Badge className="mr-1.5 bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
+          <Badge className={filters.statuses.includes('Attempting Contact') ? 'mr-1.5 bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
             {leads.filter(l => l.lead_status === 'Attempting Contact').length}
           </Badge>
         </Button>
         <Button 
-          variant={filters.status === 'Converted' ? 'default' : 'outline'} 
+          variant="outline"
           size="sm"
-          onClick={() => setFilters({ ...filters, status: 'Converted' })}
-          className={filters.status === 'Converted' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+          onClick={() => toggleStatusFilter('Converted')}
+          className={filters.statuses.includes('Converted') ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
         >
           המרה
-          <Badge className="mr-1.5 bg-emerald-100 text-emerald-700 border-0 text-[10px] px-1.5 py-0">
+          <Badge className={filters.statuses.includes('Converted') ? 'mr-1.5 bg-emerald-100 text-emerald-700 border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
             {leads.filter(l => l.lead_status === 'Converted').length}
           </Badge>
         </Button>
         <Button 
-          variant={filters.status === 'Lost / Unqualified' ? 'default' : 'outline'} 
+          variant="outline"
           size="sm"
-          onClick={() => setFilters({ ...filters, status: 'Lost / Unqualified' })}
-          className={filters.status === 'Lost / Unqualified' ? 'bg-slate-500 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+          onClick={() => toggleStatusFilter('Lost / Unqualified')}
+          className={filters.statuses.includes('Lost / Unqualified') ? 'bg-slate-500 text-white border-slate-500 hover:bg-slate-600' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
         >
           לא רלוונטי
-          <Badge className="mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0">
+          <Badge className={filters.statuses.includes('Lost / Unqualified') ? 'mr-1.5 bg-white/30 text-white border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
             {leads.filter(l => l.lead_status === 'Lost / Unqualified').length}
           </Badge>
         </Button>
