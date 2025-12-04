@@ -7,13 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2 } from
-"lucide-react";
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2, LayoutGrid, List as ListIcon 
+} from "lucide-react";
 
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from
 "@/components/ui/dropdown-menu";
 import LeadForm from "@/components/crm/LeadForm";
+import LeadsKanban from "@/components/crm/LeadsKanban";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import { Link } from "react-router-dom";
@@ -36,6 +37,7 @@ export default function LeadsPage() {
 
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
+  const [viewMode, setViewMode] = useState('kanban'); // Default to Kanban on mobile mostly
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -224,9 +226,19 @@ export default function LeadsPage() {
 
           </div>
 
-          <div className="flex gap-2 w-full md:w-auto">
-             <Link to={createPageUrl('ImportLeads')} className="flex-1 md:flex-none">
-                <Button variant="outline" className="bg-slate-400 text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm h-9 w-full border-slate-300 hover:text-red-700 hover:bg-red-50 hover:border-red-200">
+          <div className="flex gap-2 w-full md:w-auto items-center">
+             {/* View Toggle */}
+             <div className="bg-slate-100 p-1 rounded-lg flex border border-slate-200 mr-2">
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-7 px-2 ${viewMode === 'kanban' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500'}`}>
+                    <LayoutGrid className="w-4 h-4" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-7 px-2 ${viewMode === 'list' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500'}`}>
+                    <ListIcon className="w-4 h-4" />
+                </Button>
+             </div>
+
+             <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
+                <Button variant="outline" className="bg-white text-slate-600 border-slate-300 hover:bg-slate-50">
                     <Upload className="w-4 h-4 ml-2" />
                     ייבוא
                 </Button>
@@ -238,7 +250,23 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* --- תצוגת דסקטופ (טבלה) --- */}
+      {/* --- תצוגת קאנבן --- */}
+      {viewMode === 'kanban' && (
+        <div className="h-[calc(100vh-280px)]">
+            <LeadsKanban 
+                leads={filteredLeads} 
+                statuses={displayStatuses}
+                onStatusChange={(id, status) => updateLead.mutate({ id, data: { lead_status: status } })}
+                onEdit={(lead) => { setEditingLead(lead); setShowLeadForm(true); }}
+                onDelete={(id) => { if (window.confirm('למחוק ליד?')) deleteLead.mutate(id); }}
+                onConvert={(lead) => convertToOpportunity.mutate(lead)}
+            />
+        </div>
+      )}
+
+      {/* --- תצוגת רשימה (דסקטופ + מובייל) --- */}
+      {viewMode === 'list' && (
+        <>
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
@@ -340,7 +368,7 @@ export default function LeadsPage() {
       </div>
 
       {/* --- תצוגת מובייל (כרטיסים) --- */}
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-4 pb-20">
          {filteredLeads.map((lead) =>
         <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
                 <div className="flex justify-between items-start">

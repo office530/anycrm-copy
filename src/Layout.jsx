@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
-// MobileNav removed
+import MobileBottomNav from '@/components/layout/MobileBottomNav';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -138,7 +138,7 @@ function LayoutContent({ children, currentPageName }) {
             </div>
         </main>
         
-        {/* Mobile Nav Removed */}
+        <MobileBottomNav />
       </div>
 
       {/* Overlay for Mobile */}
