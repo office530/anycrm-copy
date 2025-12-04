@@ -8,8 +8,6 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import SearchResults from './pages/SearchResults';
 import Tasks from './pages/Tasks';
-import ApiIntegration from './pages/ApiIntegration';
-import ApiSettings from './pages/ApiSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -24,8 +22,6 @@ export const PAGES = {
     "Settings": Settings,
     "SearchResults": SearchResults,
     "Tasks": Tasks,
-    "ApiIntegration": ApiIntegration,
-    "ApiSettings": ApiSettings,
 }
 
 export const pagesConfig = {

@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from '@tanstack/react-query';
-import { createPageUrl } from "@/utils";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("organization");
@@ -25,18 +24,6 @@ export default function SettingsPage() {
     { id: "tags", label: "ניהול נתונים", icon: Database, description: "תגיות מערכת ושדות מותאמים" },
     { id: "notifications", label: "התראות", icon: Bell, description: "ניהול התראות ודיוורים" },
   ];
-
-  const externalLink = (
-    <a 
-      href={createPageUrl('ApiSettings')}
-      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-right text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-    >
-      <Settings className="w-4 h-4 text-slate-400" />
-      <div className="flex flex-col items-start">
-        <span>API & חיבורים</span>
-      </div>
-    </a>
-  );
 
   return (
     <div className="max-w-7xl mx-auto pb-20" dir="rtl">
@@ -50,7 +37,6 @@ export default function SettingsPage() {
             {/* Sidebar Menu */}
             <aside className="w-full lg:w-64 flex-shrink-0">
                 <nav className="flex flex-col gap-1 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                    {externalLink}
                     {menuItems.map((item) => {
                         const isActive = activeTab === item.id;
                         return (

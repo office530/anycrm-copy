@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +20,6 @@ import LastTouchInfo from "./LastTouchInfo";
 import QuickTaskCreator from "./QuickTaskCreator";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
-  const navigate = useNavigate();
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: lead || {
       full_name: "",
@@ -83,16 +81,6 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
       if (Number.isNaN(sanitized[f])) sanitized[f] = null;
     });
     onSubmit(sanitized);
-  };
-
-  const onFormSubmitAndReturn = async (data) => {
-    const sanitized = { ...data };
-    const numberFields = ['age', 'spouse_age', 'estimated_property_value', 'existing_mortgage_balance'];
-    numberFields.forEach((f) => {
-      if (Number.isNaN(sanitized[f])) sanitized[f] = null;
-    });
-    await onSubmit(sanitized);
-    navigate(-1);
   };
 
   const onFormError = (formErrors) => {
@@ -349,10 +337,6 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
               }
               <div className="flex justify-end gap-3 w-full">
                 <Button type="button" variant="outline" onClick={onCancel} className="bg-background text-slate-800 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-slate-300 hover:bg-slate-50">ביטול</Button>
-                <Button type="button" onClick={handleSubmit(onFormSubmitAndReturn, onFormError)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 shadow-sm shadow-blue-900/20" disabled={isSubmitting}>
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-                  שמור וחזור
-                </Button>
                 <Button onClick={handleSubmit(onFormSubmit, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
                   {lead ? "עדכן תיק לקוח" : "צור ליד חדש"}

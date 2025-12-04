@@ -42,7 +42,7 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // Default to list view
-  const [filters, setFilters] = useState({ search: "", year: "all", statuses: [], tag: "all" }); // statuses is now an array for multi-select
+  const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
@@ -168,23 +168,14 @@ export default function LeadsPage() {
     }
   });
 
-  // Toggle status filter
-  const toggleStatusFilter = (status) => {
-    setFilters(prev => {
-      const current = prev.statuses || [];
-      if (current.includes(status)) {
-        // Remove if already selected
-        return { ...prev, statuses: current.filter(s => s !== status) };
-      } else {
-        // Add to selection
-        return { ...prev, statuses: [...current, status] };
-      }
-    });
-  };
-
   // סינון
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
+      // Special case: revival list
+      if (filters.status === "revival_2023") {
+        return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
+      }
+
       // Search filter - only by name
       const searchTerm = filters.search.toLowerCase().trim();
       const matchesSearch = !searchTerm || (lead.full_name || "").toLowerCase().includes(searchTerm);
@@ -192,8 +183,8 @@ export default function LeadsPage() {
       // Year filter
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
 
-      // Status filter - multi-select: if no statuses selected, show all
-      const matchesStatus = filters.statuses.length === 0 || filters.statuses.includes(lead.lead_status);
+      // Status filter
+      const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
 
       // Tag filter
       const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
@@ -219,61 +210,6 @@ export default function LeadsPage() {
     });
   }, [leads, filters, sortConfig]);
 
-  // Helper components
-  const StatCard = ({ icon, label, value, color }) => {
-    const IconComponent = icon;
-    return (
-      <Card className="border-none shadow-sm bg-white">
-        <CardContent className="p-4 flex items-center gap-4">
-          <div className={`p-3 rounded-xl ${color}`}>
-            <IconComponent className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-slate-500">{label}</p>
-            <p className="text-2xl font-bold text-slate-800">{value}</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const WhatsAppBtn = ({ phone }) => {
-    const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
-    return (
-      <Button
-        size="icon" 
-        variant="ghost" 
-        className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
-        onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}
-      >
-        <MessageCircle className="w-4 h-4" />
-      </Button>
-    );
-  };
-
-  const StatusBadge = ({ lead, statuses, updateLead, convert }) => {
-    return (
-      <InlineEdit
-        type="select"
-        value={lead.lead_status}
-        options={statuses}
-        onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
-        formatDisplay={(val) => {
-          const s = statuses.find((o) => o.value === val);
-          const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
-          return (
-            <Badge 
-              variant="outline" 
-              className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}
-            >
-              {s?.label || val}
-            </Badge>
-          );
-        }}
-      />
-    );
-  };
-
   return (
     <div className="space-y-6 pb-24 font-sans text-slate-900">
       
@@ -285,16 +221,41 @@ export default function LeadsPage() {
       </div>
 
       {/* סרגל כלים וחיפוש */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-          <div className="relative flex-1 max-w-md">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+        <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
+          <div className="relative flex-1">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
-              placeholder="חיפוש לפי שם, טלפון או עיר..."
-              className="pr-10 pl-20 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
+              placeholder="חיפוש לפי שם..."
+              className="pr-10 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
-            <kbd className="absolute left-3 top-1/2 -translate-y-1/2 px-2 py-0.5 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded shadow-sm">Ctrl+K</kbd>
+
+          </div>
+          <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
+                <SelectTrigger className="w-full md:w-[160px] border-slate-300 text-slate-700 font-medium rounded-lg">
+                    <Filter className="w-4 h-4 ml-2 text-slate-500" />
+                    <SelectValue placeholder="סטטוס" />
+                </SelectTrigger>
+                <SelectContent className="bg-white text-slate-900 text-right">
+                    <SelectItem value="all" className="text-right">כל הסטטוסים</SelectItem>
+                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-right hover:bg-slate-50">{opt.label}</SelectItem>)}
+                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
+                </SelectContent>
+          </Select>
+
+          <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
+                <SelectTrigger className="w-full md:w-[140px] border-slate-300 text-slate-700 font-medium rounded-lg">
+                    <Tag className="w-4 h-4 ml-2 text-slate-500" />
+                    <SelectValue placeholder="תגיות" />
+                </SelectTrigger>
+                <SelectContent className="bg-white text-slate-900 text-right">
+                    <SelectItem value="all" className="text-right">כל התגיות</SelectItem>
+                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-right hover:bg-slate-50">{tag}</SelectItem>)}
+                </SelectContent>
+          </Select>
+
+
           </div>
 
           <div className="flex gap-2 w-full md:w-auto items-center">
@@ -308,92 +269,25 @@ export default function LeadsPage() {
                 </Button>
              </div>
 
-             {/* Split Button */}
-             <DropdownMenu>
-                <div className="flex">
-                  <Button 
-                    onClick={() => setShowLeadForm(true)} 
-                    className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 rounded-l-lg rounded-r-none border-l border-t border-b border-red-800"
-                  >
-                      <Plus className="w-4 h-4 ml-2" />
-                      ליד חדש +
-                  </Button>
-                  <DropdownMenuTrigger asChild>
-                    <Button className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 rounded-r-lg rounded-l-none border-r border-t border-b border-red-800 px-2">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </div>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setShowAiImport(true)} className="gap-2">
-                    <Sparkles className="w-4 h-4 text-purple-600" />
-                    ייבוא AI
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl('ImportLeads')} className="gap-2 cursor-pointer">
-                      <Upload className="w-4 h-4 text-blue-600" />
-                      ייבוא מאקסל
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-             </DropdownMenu>
+             <Button 
+                variant="outline" 
+                onClick={() => setShowAiImport(true)}
+                className="hidden md:flex bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
+             >
+                <Sparkles className="w-4 h-4 ml-2" />
+                ייבוא AI
+             </Button>
+             <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
+                <Button variant="outline" className="bg-white text-slate-600 border-slate-300 hover:bg-slate-50">
+                    <Upload className="w-4 h-4 ml-2" />
+                    ייבוא רגיל
+                </Button>
+             </Link>
+            <Button onClick={() => setShowLeadForm(true)} className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10">
+                <Plus className="w-4 h-4 ml-2" />
+                ליד חדש
+            </Button>
         </div>
-      </div>
-
-      {/* Multi-Select Filter Chips */}
-      <div className="flex flex-wrap gap-2">
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => setFilters({ ...filters, statuses: [] })}
-          className={filters.statuses.length === 0 ? 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
-        >
-          הכל
-        </Button>
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => toggleStatusFilter('New')}
-          className={filters.statuses.includes('New') ? 'bg-red-600 text-white border-red-600 hover:bg-red-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
-        >
-          חדש
-          <Badge className={filters.statuses.includes('New') ? 'mr-1.5 bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
-            {leads.filter(l => l.lead_status === 'New').length}
-          </Badge>
-        </Button>
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => toggleStatusFilter('Attempting Contact')}
-          className={filters.statuses.includes('Attempting Contact') ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
-        >
-          בטיפול
-          <Badge className={filters.statuses.includes('Attempting Contact') ? 'mr-1.5 bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
-            {leads.filter(l => l.lead_status === 'Attempting Contact').length}
-          </Badge>
-        </Button>
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => toggleStatusFilter('Converted')}
-          className={filters.statuses.includes('Converted') ? 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
-        >
-          המרה
-          <Badge className={filters.statuses.includes('Converted') ? 'mr-1.5 bg-emerald-100 text-emerald-700 border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
-            {leads.filter(l => l.lead_status === 'Converted').length}
-          </Badge>
-        </Button>
-        <Button 
-          variant="outline"
-          size="sm"
-          onClick={() => toggleStatusFilter('Lost / Unqualified')}
-          className={filters.statuses.includes('Lost / Unqualified') ? 'bg-slate-500 text-white border-slate-500 hover:bg-slate-600' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
-        >
-          לא רלוונטי
-          <Badge className={filters.statuses.includes('Lost / Unqualified') ? 'mr-1.5 bg-white/30 text-white border-0 text-[10px] px-1.5 py-0' : 'mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0'}>
-            {leads.filter(l => l.lead_status === 'Lost / Unqualified').length}
-          </Badge>
-        </Button>
       </div>
 
       {/* --- תצוגת קאנבן --- */}
@@ -414,8 +308,8 @@ export default function LeadsPage() {
       {/* --- תצוגת רשימה (דסקטופ + מובייל) --- */}
       {viewMode === 'list' && (
         <div className="space-y-6">
-          {/* --- תצוגת דסקטופ (טבלה) --- */}
-          <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      {/* --- תצוגת דסקטופ (טבלה) --- */}
+      <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
             <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
                 לקוח
@@ -519,66 +413,67 @@ export default function LeadsPage() {
         </div>
       </div>
 
-          {/* --- תצוגת מובייל (כרטיסים) --- */}
-          <div className="md:hidden space-y-4 pb-20">
-            {filteredLeads.map((lead) =>
-              <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
+      {/* --- תצוגת מובייל (כרטיסים) --- */}
+      <div className="md:hidden space-y-4 pb-20">
+         {filteredLeads.map((lead) =>
+        <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
-                      {lead.full_name?.charAt(0)}
-                    </div>
-                    <div>
-                      <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
-                        {lead.full_name}
-                      </Link>
-                      <div className="text-sm text-slate-500">{lead.city}</div>
-                      {getLastActivityDate(lead.id) && (
-                        <div className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
-                          ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
+                            {lead.full_name?.charAt(0)}
                         </div>
-                      )}
-                      {lead.tags && lead.tags.length > 0 &&
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {lead.tags.map((tag, i) =>
-                            <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
-                          )}
-                        </div>
-                      }
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => {
-                      if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה?')) deleteLead.mutate(lead.id);
-                    }} className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    {lead.lead_status === 'Converted' ?
-                      <div className="h-8 w-8 flex items-center justify-center text-emerald-600">
-                        <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
-                      </div> :
-                      <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </Button>
+                        <div>
+                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
+                                {lead.full_name}
+                            </Link>
+                            <div className="text-sm text-slate-500">{lead.city}</div>
+                            {getLastActivityDate(lead.id) && (
+                              <div className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
+                                ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                              </div>
+                            )}
+                            {lead.tags && lead.tags.length > 0 &&
+                    <div className="flex flex-wrap gap-1 mt-1">
+                                    {lead.tags.map((tag, i) =>
+                    <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
+                    )}
+                                </div>
                     }
-                  </div>
-                </div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => {
+                if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה?')) deleteLead.mutate(lead.id);
+              }} className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50">
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+                            <Pencil className="w-4 h-4" />
+                        </Button>
+                        {lead.lead_status === 'Converted' ?
+              <div className="h-8 w-8 flex items-center justify-center text-emerald-600">
+                                <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
+                            </div> :
 
-                <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
-                  <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
-                  {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
-                </div>
+              <Button variant="ghost" size="icon" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 w-8 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50">
+                                <CheckCircle2 className="w-4 h-4" />
+                            </Button>
+              }
+                    </div>
+                    </div>
 
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+                    <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
+                     <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
+                     {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
+                    </div>
+
+                    <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
+                    </div>
+            </div>
+        )}
+      </div>
+      </div>
       )}
 
       {/* דיאלוג עריכה */}
@@ -588,15 +483,15 @@ export default function LeadsPage() {
             lead={editingLead}
             onSubmit={(data) => {
               if (data.lead_status === 'Converted') {
-                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
-                else createLead.mutate(data);
+                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });else
+                createLead.mutate(data);
               } else {
                 editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
               }
             }}
             onCancel={() => setShowLeadForm(false)}
-            isSubmitting={createLead.isPending || updateLead.isPending}
-          />
+            isSubmitting={createLead.isPending || updateLead.isPending} />
+
         </DialogContent>
       </Dialog>
 
@@ -606,6 +501,49 @@ export default function LeadsPage() {
         onOpenChange={setShowAiImport}
         onLeadCreated={(leadData) => createLead.mutate(leadData)}
       />
-    </div>
-  );
+      </div>
+      );
+      }
+
+// קומפוננטות עזר קטנות
+function StatCard({ icon: Icon, label, value, color }) {
+  return (
+    <Card className="border-none shadow-sm bg-white">
+            <CardContent className="p-4 flex items-center gap-4">
+                <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
+                <div>
+                    <p className="text-sm font-medium text-slate-500">{label}</p>
+                    <p className="text-2xl font-bold text-slate-800">{value}</p>
+                </div>
+            </CardContent>
+        </Card>);
+
+}
+
+function WhatsAppBtn({ phone }) {
+  const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
+  return (
+    <Button
+      size="icon" variant="ghost" className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
+      onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}>
+
+            <MessageCircle className="w-4 h-4" />
+        </Button>);
+
+}
+
+function StatusBadge({ lead, statuses, updateLead, convert }) {
+  return (
+    <InlineEdit
+      type="select"
+      value={lead.lead_status}
+      options={statuses}
+      onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
+      formatDisplay={(val) => {
+        const s = statuses.find((o) => o.value === val);
+        const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
+        return <Badge variant="outline" className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}>{s?.label || val}</Badge>;
+      }} />);
+
+
 }
