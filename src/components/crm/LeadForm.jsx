@@ -16,6 +16,7 @@ import DiscoveryScript from "./DiscoveryScript";
 import FileUpload from "../common/FileUpload";
 import TagManager from "./TagManager";
 import LeadAiAnalysis from "./LeadAiAnalysis";
+import LastTouchInfo from "./LastTouchInfo";
 
 export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -133,6 +134,8 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
 
         <TabsContent value="details">
           <div className="space-y-6">
+            {lead && <LastTouchInfo entity={lead} entityType="Lead" />}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
                   <Label className={labelClass}>תגיות לקוח</Label>

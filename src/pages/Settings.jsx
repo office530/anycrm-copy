@@ -223,12 +223,8 @@ function ProfileSettings() {
         e.preventDefault();
         setLoading(true);
         try {
-            // Simulated update - user entity is restricted for regular updates usually, 
-            // but `base44.auth.updateMe` is the correct way if available.
-            // Assuming we can only update metadata or allowed fields.
             await base44.auth.updateMe({
                 full_name: user.full_name,
-                // email is usually read-only
             });
             alert("הפרופיל עודכן בהצלחה");
         } catch (err) {
@@ -250,13 +246,15 @@ function ProfileSettings() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSave} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label>שם מלא</Label>
+                                <Label>שם תצוגה (מופיע ביומן פעילות)</Label>
                                 <Input 
                                     value={user.full_name || ''} 
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
+                                    placeholder="איך תרצה שיופיע השם שלך במערכת"
                                 />
+                                <p className="text-[11px] text-slate-400">שם זה יוצג בכל הפעילויות והעדכונים שלך</p>
                             </div>
                             <div className="space-y-2">
                                 <Label>כתובת אימייל</Label>
