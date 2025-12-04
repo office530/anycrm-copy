@@ -7,6 +7,7 @@ import ImportLeads from './pages/ImportLeads';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import SearchResults from './pages/SearchResults';
+import Tasks from './pages/Tasks';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "Reports": Reports,
     "Settings": Settings,
     "SearchResults": SearchResults,
+    "Tasks": Tasks,
 }
 
 export const pagesConfig = {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +20,7 @@ function LayoutContent({ children, currentPageName }) {
     { name: 'לוח בקרה', path: 'Dashboard', icon: LayoutDashboard },
     { name: 'מאגר לידים', path: 'Leads', icon: Users },
     { name: 'הזדמנויות', path: 'Opportunities', icon: Briefcase },
+    { name: 'משימות', path: 'Tasks', icon: CheckSquare },
     { name: 'דוחות', path: 'Reports', icon: BarChart3 },
     { name: 'אוטומציות', path: 'Automation', icon: Zap },
   ];

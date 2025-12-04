@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import moment from 'moment';
+import TasksWidget from "@/components/dashboard/TasksWidget";
 
 export default function Dashboard() {
   const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
@@ -229,54 +230,8 @@ export default function Dashboard() {
           {/* Right Column: Tasks & Quick Stats */}
           <div className="space-y-6">
               
-              {/* Tasks List */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200 h-full max-h-[600px] flex flex-col">
-                  <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center justify-between">
-                          <span className="text-zinc-800 flex items-center gap-2">משימות קרובות</span>
-                          <Badge variant="outline" className="text-slate-800 px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{stats.upcomingTasks.length}</Badge>
-                      </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-1 overflow-y-auto pr-2">
-                      {stats.upcomingTasks.length === 0 ?
-              <div className="text-center py-10 text-neutral-500">
-                              <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
-                              <p>אין משימות דחופות</p>
-                          </div> :
-
-              <div className="space-y-3">
-                              {stats.upcomingTasks.map((task) => {
-                  const isToday = moment(task.due_date).isSame(moment(), 'day');
-                  const isOverdue = moment(task.due_date).isBefore(moment(), 'day');
-
-                  return (
-                    <div key={task.id} className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 group hover:border-red-200 transition-colors">
-                                          <div className="flex justify-between items-start mb-1">
-                                              <h4 className="font-medium text-sm line-clamp-1">{task.title}</h4>
-                                              {isOverdue ?
-                        <Badge variant="destructive" className="text-[10px] h-5 px-1.5">באיחור</Badge> :
-                        isToday ?
-                        <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">היום</Badge> :
-
-                        <span className="text-xs text-neutral-500">{moment(task.due_date).format('DD/MM')}</span>
-                        }
-                                          </div>
-                                          <p className="text-xs text-neutral-600 line-clamp-1">{task.description || "ללא תיאור"}</p>
-                                          <div className="mt-2 flex items-center gap-2 text-[10px] text-neutral-500">
-                                              {task.priority && <Badge variant="outline" className="text-[10px] py-0 h-4">{task.priority}</Badge>}
-                                          </div>
-                                      </div>);
-
-                })}
-                          </div>
-              }
-                  </CardContent>
-                  <div className="p-4 border-t border-neutral-100 dark:border-neutral-300">
-                      <Button variant="ghost" className="w-full text-neutral-600 text-xs h-8" onClick={() => window.location.href = '/tasks'}>
-                          כל המשימות
-                      </Button>
-                  </div>
-              </Card>
+              {/* Tasks Widget */}
+              <TasksWidget />
 
               {/* Pipeline Summary Mini-Card */}
               <Card className="bg-red-900 text-white border-none rounded-2xl p-6 relative overflow-hidden">
