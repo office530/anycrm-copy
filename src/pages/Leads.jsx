@@ -501,9 +501,9 @@ export default function LeadsPage() {
         onOpenChange={setShowAiImport}
         onLeadCreated={(leadData) => createLead.mutate(leadData)}
       />
-      </div>
-      );
-      }
+    </div>
+  );
+}
 
 // קומפוננטות עזר קטנות
 function StatCard({ icon: Icon, label, value, color }) {
