@@ -578,9 +578,9 @@ export default function LeadsPage() {
                 </div>
             </div>
         )}
+      </div>
         </div>
-        </div>
-        )}
+      )}
 
       {/* דיאלוג עריכה */}
       <Dialog open={showLeadForm} onOpenChange={(open) => {setShowLeadForm(open);if (!open) setEditingLead(null);}}>
