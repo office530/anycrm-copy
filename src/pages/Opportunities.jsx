@@ -271,82 +271,107 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className="bg-white dark:bg-neutral-200 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-300 overflow-hidden">
-             <Table>
-               <TableHeader className="bg-neutral-50 dark:bg-neutral-300">
-                 <TableRow>
-                   <TableHead className="text-right">לקוח</TableHead>
-                   <TableHead className="text-right">מוצר</TableHead>
-                   <TableHead className="text-right">שלב</TableHead>
-                   <TableHead className="text-right">סכום</TableHead>
-                   <TableHead className="text-right">הסתברות</TableHead>
-                   <TableHead className="text-right">צפי סגירה</TableHead>
-                   <TableHead className="text-left">פעולות</TableHead>
-                 </TableRow>
-               </TableHeader>
-               <TableBody>
-                 {opportunities.map((opp) => (
-                   <TableRow key={opp.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-300/50 transition-colors">
-                     <TableCell className="font-medium">
-                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => { setEditingOpp(opp); setShowForm(true); }}>
-                            <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs">
-                                {opp.lead_name?.charAt(0)}
-                            </div>
-                            <span className="hover:text-teal-600 underline-offset-4 hover:underline">{opp.lead_name}</span>
-                        </div>
-                     </TableCell>
-                     <TableCell>{opp.product_type}</TableCell>
-                     <TableCell>
-                        <InlineEdit 
-                            type="select"
-                            value={opp.deal_stage}
-                            options={activeStages.map(s => ({ value: s.id, label: s.label }))}
-                            onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { deal_stage: val } })}
-                            formatDisplay={(val) => {
-                                const stage = activeStages.find(s => s.id === val);
-                                return <Badge variant="outline" className={`${stage?.light} border-0`}>{stage?.label || val}</Badge>;
-                            }}
-                        />
-                     </TableCell>
-                     <TableCell>
-                        <InlineEdit 
-                             value={opp.loan_amount_requested}
-                             type="number"
-                             formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
-                             onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
-                             className="font-mono"
-                        />
-                     </TableCell>
-                     <TableCell>
-                        <InlineEdit 
-                             value={opp.probability}
-                             type="number"
-                             formatDisplay={(val) => `${val}%`}
-                             onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { probability: Number(val) } })}
-                        />
-                     </TableCell>
-                     <TableCell>
-                        <InlineEdit 
-                             value={opp.expected_close_date}
-                             type="date"
-                             formatDisplay={(val) => val ? moment(val).format("DD/MM/YYYY") : "-"}
-                             onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
-                        />
-                     </TableCell>
-                     <TableCell className="text-left">
-                        <Button variant="ghost" size="sm" 
-                            onClick={() => {
-                                if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
-                            }} 
-                            className="text-neutral-400 hover:text-red-600 hover:bg-red-50"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </Button>
-                     </TableCell>
-                   </TableRow>
-                 ))}
-               </TableBody>
-             </Table>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide">
+            <div className="col-span-3 text-right">לקוח</div>
+            <div className="col-span-2 text-right">מוצר</div>
+            <div className="col-span-2 text-right">שלב</div>
+            <div className="col-span-2 text-right">סכום מבוקש</div>
+            <div className="col-span-1 text-right">הסתברות</div>
+            <div className="col-span-2 text-left pl-4">פעולות</div>
+          </div>
+          
+          <div className="divide-y divide-slate-100">
+            {opportunities.map((opp) => {
+              const stage = activeStages.find(s => s.id === opp.deal_stage);
+              return (
+                <div key={opp.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
+                  <div className="col-span-3 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-sm">
+                      {opp.lead_name?.charAt(0) || '?'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div 
+                        className="font-bold text-slate-800 hover:text-purple-600 transition-colors cursor-pointer truncate"
+                        onClick={() => { setEditingOpp(opp); setShowForm(true); }}
+                      >
+                        {opp.lead_name || 'לקוח ללא שם'}
+                      </div>
+                      <div className="text-xs text-slate-500">{opp.phone_number || '-'}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="col-span-2 text-sm text-slate-700 font-medium">
+                    {opp.product_type}
+                  </div>
+                  
+                  <div className="col-span-2">
+                    <InlineEdit 
+                      type="select"
+                      value={opp.deal_stage}
+                      options={activeStages.map(s => ({ value: s.id, label: s.label }))}
+                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { deal_stage: val } })}
+                      formatDisplay={(val) => {
+                        const currentStage = activeStages.find(s => s.id === val);
+                        return <Badge variant="outline" className={`${currentStage?.light || 'bg-slate-100 text-slate-700'} border-0 px-3 py-1 font-medium`}>{currentStage?.label || val}</Badge>;
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="col-span-2 text-sm font-mono text-slate-700">
+                    <InlineEdit 
+                      value={opp.loan_amount_requested}
+                      type="number"
+                      formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
+                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
+                      className="font-bold"
+                    />
+                  </div>
+                  
+                  <div className="col-span-1 text-sm text-slate-600">
+                    <InlineEdit 
+                      value={opp.probability}
+                      type="number"
+                      formatDisplay={(val) => (
+                        <Badge variant="outline" className={`
+                          ${Number(val) >= 70 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
+                            Number(val) >= 40 ? 'bg-amber-50 text-amber-700 border-amber-200' : 
+                            'bg-slate-50 text-slate-600 border-slate-200'} 
+                          font-semibold
+                        `}>
+                          {val}%
+                        </Badge>
+                      )}
+                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { probability: Number(val) } })}
+                    />
+                  </div>
+                  
+                  <div className="col-span-2 flex justify-end gap-1">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => { setEditingOpp(opp); setShowForm(true); }}
+                      className="h-8 px-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50"
+                      title="פתח הזדמנות"
+                    >
+                      <Briefcase className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                      }} 
+                      className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                      title="מחק הזדמנות"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
