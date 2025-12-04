@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
-import MobileNav from '@/components/layout/MobileNav';
+// MobileNav removed
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -31,72 +31,72 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-neutral-50 font-heebo text-neutral-900 flex" dir="rtl">
       
-      {/* Sidebar / Drawer */}
+      {/* Sidebar / Drawer - Adaptive */}
       <aside className={`
-        fixed inset-y-0 right-0 z-[60] w-72 bg-white text-neutral-800 border-l border-neutral-100 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-2xl lg:shadow-sm
+        fixed inset-0 z-[60] bg-white text-neutral-800 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-l border-neutral-100 lg:shadow-sm
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
-        <div className="flex flex-col h-full">
-            {/* Logo */}
-            <div className="p-6 border-b border-neutral-50">
-                <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3 text-2xl font-bold tracking-tight text-neutral-900">
-                        {branding.logoUrl ? (
-                            <img src={branding.logoUrl} alt="Logo" className="w-10 h-10 object-contain bg-white rounded-lg p-1" />
-                        ) : (
-                            <div className="bg-red-700 rounded-lg p-2 shadow-md shadow-red-900/20">
-                                <Database className="w-6 h-6 text-white" />
-                            </div>
-                        )}
-                        <span className="truncate">{branding.companyName}</span>
-                    </div>
-                    {/* Close button for mobile */}
-                    <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-neutral-400 hover:text-red-600">
-                        <X className="w-5 h-5" />
-                    </Button>
+        <div className="flex flex-col h-full relative">
+            {/* Mobile Close Button - Absolute Top Left */}
+            <div className="absolute top-4 left-4 lg:hidden z-10">
+                <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)} className="h-10 w-10 rounded-full bg-neutral-100 text-neutral-500">
+                    <X className="w-6 h-6" />
+                </Button>
+            </div>
+
+            {/* Logo Area */}
+            <div className="p-6 lg:p-6 border-b border-neutral-50 flex flex-col items-center lg:items-start mt-10 lg:mt-0">
+                <div className="flex items-center gap-3 text-2xl lg:text-2xl font-bold tracking-tight text-neutral-900">
+                    {branding.logoUrl ? (
+                        <img src={branding.logoUrl} alt="Logo" className="w-16 h-16 lg:w-10 lg:h-10 object-contain bg-white rounded-xl p-1" />
+                    ) : (
+                        <div className="bg-red-700 rounded-xl lg:rounded-lg p-4 lg:p-2 shadow-lg shadow-red-900/20">
+                            <Database className="w-8 h-8 lg:w-6 lg:h-6 text-white" />
+                        </div>
+                    )}
+                    <span className="hidden lg:inline truncate">{branding.companyName}</span>
                 </div>
-                <p className="text-xs text-neutral-500 mt-2 font-medium tracking-wide opacity-80 dark:text-neutral-600">OLD SALES DATABASE</p>
+                <p className="lg:hidden text-xl font-bold mt-4 text-neutral-900">{branding.companyName}</p>
+                <p className="text-sm text-neutral-500 mt-2 font-medium tracking-wide opacity-80">OLD SALES DATABASE</p>
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 px-4 py-8 space-y-2">
+            <nav className="flex-1 px-6 lg:px-4 py-8 space-y-3 lg:space-y-2 overflow-y-auto">
                 {navigation.map((item) => {
                 const isActive = currentPageName === item.path;
                 return (
                     <Link
                     key={item.path}
                     to={createPageUrl(item.path)}
-                    onClick={() => setIsSidebarOpen(false)} // Close on mobile
+                    onClick={() => setIsSidebarOpen(false)}
                     className={`
-                        group flex items-center gap-3 px-4 py-3.5 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
+                        group flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-5 lg:py-3.5 text-lg lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
-                        ? activeClass
-                        : 'text-neutral-600 hover:bg-red-50 hover:text-red-600'}
+                        ? 'bg-red-50 text-red-700 font-bold shadow-sm'
+                        : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/50 lg:bg-transparent'}
                     `}
                     >
-                    <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-red-700' : 'text-neutral-400 group-hover:text-red-600'}`} />
+                    <item.icon className={`w-6 h-6 lg:w-5 lg:h-5 transition-colors ${isActive ? 'text-red-700' : 'text-neutral-400 group-hover:text-red-600'}`} />
                     <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-red-600 rounded-r-full" />}
+                    {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 lg:h-6 bg-red-600 rounded-r-full" />}
                     </Link>
                 );
                 })}
             </nav>
 
-            {/* Settings & User Profile */}
-            <div className="p-4 m-4 space-y-2">
+            {/* Footer / Settings */}
+            <div className="p-6 lg:p-4 border-t border-neutral-50">
                 <Link
                     to={createPageUrl('Settings')}
                     onClick={() => setIsSidebarOpen(false)}
                     className={`
-                        flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200
-                        ${currentPageName === 'Settings' ? 'bg-red-50 text-red-700 font-bold' : 'text-neutral-600 hover:bg-red-50 hover:text-red-600'}
+                        flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-4 lg:py-3 text-base lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200
+                        ${currentPageName === 'Settings' ? 'bg-red-50 text-red-700 font-bold' : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/30 lg:bg-transparent'}
                     `}
                 >
-                    <SettingsIcon className="w-5 h-5" />
+                    <SettingsIcon className="w-6 h-6 lg:w-5 lg:h-5" />
                     הגדרות מערכת
                 </Link>
-
-
             </div>
         </div>
       </aside>
@@ -104,19 +104,16 @@ function LayoutContent({ children, currentPageName }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
         {/* Mobile Header */}
-        <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40 h-16">
-            <div className="flex items-center gap-2">
-                {branding.logoUrl ? (
-                    <img src={branding.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />
-                ) : (
-                    <div className="bg-red-700 rounded-lg p-1.5">
-                        <Database className="w-4 h-4 text-white" />
-                    </div>
-                )}
-                <span className="font-bold text-lg text-slate-800">{branding.companyName}</span>
+        <header className="lg:hidden bg-white/95 backdrop-blur-sm border-b border-neutral-100 px-4 h-16 flex items-center justify-between sticky top-0 z-40 transition-all duration-200">
+            <div className="flex items-center gap-3">
+                <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className="hover:bg-neutral-100 -mr-2">
+                    <Menu className="w-6 h-6 text-neutral-700" />
+                </Button>
+                <span className="font-bold text-lg text-neutral-900">{branding.companyName}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
                <Notifications />
+               {branding.logoUrl && <img src={branding.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />}
             </div>
         </header>
 
@@ -135,16 +132,13 @@ function LayoutContent({ children, currentPageName }) {
         </header>
 
         {/* Page Content Scrollable Area */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 pb-24 lg:pb-8 scroll-smooth bg-neutral-50">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth bg-neutral-50">
             <div className="max-w-7xl mx-auto">
                 {children}
             </div>
         </main>
         
-        <MobileNav 
-            currentPageName={currentPageName} 
-            onMenuClick={() => setIsSidebarOpen(true)} 
-        />
+        {/* Mobile Nav Removed */}
       </div>
 
       {/* Overlay for Mobile */}
