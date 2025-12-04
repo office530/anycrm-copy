@@ -171,21 +171,35 @@ export default function LeadsPage() {
   // סינון
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
+      // Special case: revival list
       if (filters.status === "revival_2023") {
         return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
       }
+
+      // Search filter
       const searchTerm = filters.search.toLowerCase().trim();
-      const leadName = (lead.full_name || "").toLowerCase();
-      const leadPhone = (lead.phone_number || "").replace(/\D/g, '');
-      const searchPhone = searchTerm.replace(/\D/g, '');
-      const matchesSearch = !searchTerm || leadName.includes(searchTerm) || leadPhone.includes(searchPhone);
+      let matchesSearch = true;
+      if (searchTerm) {
+        const leadName = (lead.full_name || "").toLowerCase();
+        const leadPhone = (lead.phone_number || "").replace(/\D/g, '');
+        const searchPhone = searchTerm.replace(/\D/g, '');
+        const leadEmail = (lead.email || "").toLowerCase();
+        const leadCity = (lead.city || "").toLowerCase();
+        
+        matchesSearch = leadName.includes(searchTerm) || 
+                       leadPhone.includes(searchPhone) || 
+                       leadEmail.includes(searchTerm) ||
+                       leadCity.includes(searchTerm);
+      }
+
+      // Year filter
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
 
-      // Status Logic: Show all leads including converted ones
+      // Status filter
       const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
 
-      // Tag Logic
-      const matchesTag = filters.tag === "all" || lead.tags && lead.tags.includes(filters.tag);
+      // Tag filter
+      const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
 
       return matchesSearch && matchesYear && matchesStatus && matchesTag;
     }).sort((a, b) => {
