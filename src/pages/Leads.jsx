@@ -284,6 +284,7 @@ export default function LeadsPage() {
             <LeadsKanban 
                 leads={filteredLeads} 
                 statuses={displayStatuses}
+                activities={activities}
                 onStatusChange={(id, status) => updateLead.mutate({ id, data: { lead_status: status } })}
                 onEdit={(lead) => { setEditingLead(lead); setShowLeadForm(true); }}
                 onDelete={(id) => { if (window.confirm('למחוק ליד?')) deleteLead.mutate(id); }}

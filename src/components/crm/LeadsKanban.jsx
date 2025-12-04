@@ -7,10 +7,18 @@ import { Phone, Trash2, Pencil, CheckCircle2, MessageCircle } from "lucide-react
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
-export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, onDelete, onConvert }) {
+export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, onDelete, onConvert, activities }) {
   
   const getLeadsByStatus = (statusValue) => {
     return leads.filter(l => l.lead_status === statusValue);
+  };
+
+  const getLastActivityDate = (leadId) => {
+    if (!activities) return null;
+    const leadActivities = activities.filter(a => a.lead_id === leadId);
+    if (!leadActivities.length) return null;
+    const sorted = leadActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return sorted[0]?.date;
   };
 
   const onDragEnd = (result) => {
@@ -70,6 +78,11 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                                     <div>
                                         <h4 className="font-bold text-slate-900 line-clamp-1">{lead.full_name}</h4>
                                         <p className="text-xs text-slate-500">{lead.city || 'אין כתובת'}</p>
+                                        {getLastActivityDate(lead.id) && (
+                                          <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
+                                            ✓ פעילות: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                                          </div>
+                                        )}
                                     </div>
                                 </div>
                                 {lead.phone_number && (
