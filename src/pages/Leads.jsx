@@ -548,7 +548,8 @@ export default function LeadsPage() {
       }
 
 // קומפוננטות עזר קטנות
-function StatCard({ icon: Icon, label, value, color }) {
+function StatCard({ icon, label, value, color }) {
+  const Icon = icon;
   return (
     <Card className="border-none shadow-sm bg-white">
             <CardContent className="p-4 flex items-center gap-4">
