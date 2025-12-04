@@ -46,7 +46,7 @@ export default function LeadsPage() {
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
-  // Check for action=new in URL
+  // Check for action=new or action=ai-import in URL
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get('action') === 'new') {
@@ -54,15 +54,12 @@ export default function LeadsPage() {
         setShowLeadForm(true);
         // Clean URL
         window.history.replaceState({}, '', location.pathname);
+    } else if (params.get('action') === 'ai-import') {
+        setShowAiImport(true);
+        // Clean URL
+        window.history.replaceState({}, '', location.pathname);
     }
   }, [location]);
-
-  // Listen for AI import trigger from mobile FAB
-  React.useEffect(() => {
-    const handleOpenAiImport = () => setShowAiImport(true);
-    window.addEventListener('openAiImport', handleOpenAiImport);
-    return () => window.removeEventListener('openAiImport', handleOpenAiImport);
-  }, []);
 
   const handleSort = (key) => {
     let direction = 'asc';

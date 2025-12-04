@@ -50,13 +50,10 @@ export default function MobileBottomNav() {
                              </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                            onClick={() => {
-                                window.dispatchEvent(new CustomEvent('openAiImport'));
-                            }}
-                            className="cursor-pointer flex items-center gap-2 text-purple-700 bg-gradient-to-r from-purple-50 to-blue-50"
-                        >
-                            <Sparkles className="w-4 h-4" /> ייבוא ליד AI
+                        <DropdownMenuItem asChild>
+                             <Link to={`${createPageUrl('Leads')}?action=ai-import`} className="cursor-pointer flex items-center gap-2 text-purple-700 bg-gradient-to-r from-purple-50 to-blue-50">
+                                <Sparkles className="w-4 h-4" /> ייבוא ליד AI
+                             </Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
