@@ -221,41 +221,16 @@ export default function LeadsPage() {
       </div>
 
       {/* סרגל כלים וחיפוש */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-        <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
-          <div className="relative flex-1">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
-              placeholder="חיפוש לפי שם..."
-              className="pr-10 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
+              placeholder="חיפוש לפי שם, טלפון או עיר..."
+              className="pr-10 pl-20 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
-
-          </div>
-          <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger className="w-full md:w-[160px] border-slate-300 text-slate-700 font-medium rounded-lg">
-                    <Filter className="w-4 h-4 ml-2 text-slate-500" />
-                    <SelectValue placeholder="סטטוס" />
-                </SelectTrigger>
-                <SelectContent className="bg-white text-slate-900 text-right">
-                    <SelectItem value="all" className="text-right">כל הסטטוסים</SelectItem>
-                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-right hover:bg-slate-50">{opt.label}</SelectItem>)}
-                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
-                </SelectContent>
-          </Select>
-
-          <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
-                <SelectTrigger className="w-full md:w-[140px] border-slate-300 text-slate-700 font-medium rounded-lg">
-                    <Tag className="w-4 h-4 ml-2 text-slate-500" />
-                    <SelectValue placeholder="תגיות" />
-                </SelectTrigger>
-                <SelectContent className="bg-white text-slate-900 text-right">
-                    <SelectItem value="all" className="text-right">כל התגיות</SelectItem>
-                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-right hover:bg-slate-50">{tag}</SelectItem>)}
-                </SelectContent>
-          </Select>
-
-
+            <kbd className="absolute left-3 top-1/2 -translate-y-1/2 px-2 py-0.5 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 rounded shadow-sm">Ctrl+K</kbd>
           </div>
 
           <div className="flex gap-2 w-full md:w-auto items-center">
@@ -269,25 +244,92 @@ export default function LeadsPage() {
                 </Button>
              </div>
 
-             <Button 
-                variant="outline" 
-                onClick={() => setShowAiImport(true)}
-                className="hidden md:flex bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
-             >
-                <Sparkles className="w-4 h-4 ml-2" />
-                ייבוא AI
-             </Button>
-             <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
-                <Button variant="outline" className="bg-white text-slate-600 border-slate-300 hover:bg-slate-50">
-                    <Upload className="w-4 h-4 ml-2" />
-                    ייבוא רגיל
-                </Button>
-             </Link>
-            <Button onClick={() => setShowLeadForm(true)} className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10">
-                <Plus className="w-4 h-4 ml-2" />
-                ליד חדש
-            </Button>
+             {/* Split Button */}
+             <DropdownMenu>
+                <div className="flex">
+                  <Button 
+                    onClick={() => setShowLeadForm(true)} 
+                    className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 rounded-l-lg rounded-r-none border-l border-t border-b border-red-800"
+                  >
+                      <Plus className="w-4 h-4 ml-2" />
+                      ליד חדש +
+                  </Button>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 rounded-r-lg rounded-l-none border-r border-t border-b border-red-800 px-2">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </div>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => setShowAiImport(true)} className="gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
+                    ייבוא AI
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('ImportLeads')} className="gap-2 cursor-pointer">
+                      <Upload className="w-4 h-4 text-blue-600" />
+                      ייבוא מאקסל
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+             </DropdownMenu>
         </div>
+      </div>
+
+      {/* Filter Pills */}
+      <div className="flex flex-wrap gap-2">
+        <Button 
+          variant={filters.status === 'all' ? 'default' : 'outline'} 
+          size="sm"
+          onClick={() => setFilters({ ...filters, status: 'all' })}
+          className={filters.status === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+        >
+          הכל
+        </Button>
+        <Button 
+          variant={filters.status === 'New' ? 'default' : 'outline'} 
+          size="sm"
+          onClick={() => setFilters({ ...filters, status: 'New' })}
+          className={filters.status === 'New' ? 'bg-red-600 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+        >
+          חדש
+          <Badge className="mr-1.5 bg-red-100 text-red-700 border-0 text-[10px] px-1.5 py-0">
+            {leads.filter(l => l.lead_status === 'New').length}
+          </Badge>
+        </Button>
+        <Button 
+          variant={filters.status === 'Attempting Contact' ? 'default' : 'outline'} 
+          size="sm"
+          onClick={() => setFilters({ ...filters, status: 'Attempting Contact' })}
+          className={filters.status === 'Attempting Contact' ? 'bg-blue-600 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+        >
+          בטיפול
+          <Badge className="mr-1.5 bg-blue-100 text-blue-700 border-0 text-[10px] px-1.5 py-0">
+            {leads.filter(l => l.lead_status === 'Attempting Contact').length}
+          </Badge>
+        </Button>
+        <Button 
+          variant={filters.status === 'Converted' ? 'default' : 'outline'} 
+          size="sm"
+          onClick={() => setFilters({ ...filters, status: 'Converted' })}
+          className={filters.status === 'Converted' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+        >
+          המרה
+          <Badge className="mr-1.5 bg-emerald-100 text-emerald-700 border-0 text-[10px] px-1.5 py-0">
+            {leads.filter(l => l.lead_status === 'Converted').length}
+          </Badge>
+        </Button>
+        <Button 
+          variant={filters.status === 'Lost / Unqualified' ? 'default' : 'outline'} 
+          size="sm"
+          onClick={() => setFilters({ ...filters, status: 'Lost / Unqualified' })}
+          className={filters.status === 'Lost / Unqualified' ? 'bg-slate-500 text-white' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}
+        >
+          לא רלוונטי
+          <Badge className="mr-1.5 bg-slate-100 text-slate-600 border-0 text-[10px] px-1.5 py-0">
+            {leads.filter(l => l.lead_status === 'Lost / Unqualified').length}
+          </Badge>
+        </Button>
       </div>
 
       {/* --- תצוגת קאנבן --- */}
