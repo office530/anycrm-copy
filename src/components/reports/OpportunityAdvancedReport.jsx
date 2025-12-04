@@ -78,7 +78,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
 
   // Chart 2: Conversion by Source
   const sourceData = useMemo(() => {
-    const wonDeals = filteredData.filter(o => o.deal_stage?.includes('Won') || o.deal_stage?.includes('נחתם'));
+    const wonDeals = filteredData.filter(o => o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה'));
     const counts = {};
     
     wonDeals.forEach(o => {
@@ -101,7 +101,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         if (!data[month]) data[month] = { month, expected: 0, actual: 0 };
         
         data[month].expected += (o.loan_amount_requested || 0) * ((o.probability || 0) / 100);
-        if (o.deal_stage?.includes('Won') || o.deal_stage?.includes('נחתם')) {
+        if (o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה')) {
             data[month].actual += (o.loan_amount_requested || 0);
         }
     });
@@ -113,7 +113,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
     const productCycles = {}; // { Product: [days, days...] }
     
     filteredData.forEach(o => {
-        if ((o.deal_stage?.includes('Won') || o.deal_stage?.includes('נחתם')) && o.created_date) {
+        if ((o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה')) && o.created_date) {
             const start = moment(o.created_date);
             const end = o.updated_date ? moment(o.updated_date) : moment();
             const days = end.diff(start, 'days');
@@ -134,7 +134,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
   const totalPipeline = filteredData.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
   const weightedPipeline = filteredData.reduce((sum, o) => sum + ((o.loan_amount_requested || 0) * ((o.probability || 0) / 100)), 0);
   const winRate = filteredData.length > 0 
-    ? (filteredData.filter(o => o.deal_stage?.includes('Won') || o.deal_stage?.includes('נחתם')).length / filteredData.length) * 100 
+    ? (filteredData.filter(o => o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה')).length / filteredData.length) * 100 
     : 0;
 
   return (
