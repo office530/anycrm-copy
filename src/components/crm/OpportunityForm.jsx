@@ -170,10 +170,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white p-4 md:p-6 rounded-xl shadow-xl border border-slate-100"
+      className="bg-white rounded-xl shadow-xl border border-slate-100 flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden"
       dir="rtl">
 
-      <div className="mb-4 flex items-center gap-3 border-b pb-4">
+      <div className="p-4 md:p-6 border-b shrink-0 flex items-center gap-3 bg-white z-10">
         <div className="bg-blue-100 p-2 rounded-full">
           <Briefcase className="w-6 h-6 text-blue-600" />
         </div>
@@ -186,6 +186,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </p>
         </div>
       </div>
+      
+      <div className="overflow-y-auto p-4 md:p-6 flex-1">
       
       {/* Lead Selector if no lead linked */}
       {!selectedLead && !opportunity?.lead_id && (
@@ -564,6 +566,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           }
         </TabsContent>
         </Tabs>
+        </div>
         </motion.div>);
 
 }
