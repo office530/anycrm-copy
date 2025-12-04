@@ -548,19 +548,22 @@ export default function LeadsPage() {
 }
 
 // Helper components
-const StatCard = ({ icon: Icon, label, value, color }) => (
-  <Card className="border-none shadow-sm bg-white">
-    <CardContent className="p-4 flex items-center gap-4">
-      <div className={`p-3 rounded-xl ${color}`}>
-        <Icon className="w-5 h-5" />
-      </div>
-      <div>
-        <p className="text-sm font-medium text-slate-500">{label}</p>
-        <p className="text-2xl font-bold text-slate-800">{value}</p>
-      </div>
-    </CardContent>
-  </Card>
-);
+const StatCard = ({ icon, label, value, color }) => {
+  const IconComponent = icon;
+  return (
+    <Card className="border-none shadow-sm bg-white">
+      <CardContent className="p-4 flex items-center gap-4">
+        <div className={`p-3 rounded-xl ${color}`}>
+          <IconComponent className="w-5 h-5" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-slate-500">{label}</p>
+          <p className="text-2xl font-bold text-slate-800">{value}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const WhatsAppBtn = ({ phone }) => {
   const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
