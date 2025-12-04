@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import {
   Phone,
@@ -18,7 +19,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Voicemail } from
+  Voicemail,
+  User } from
 "lucide-react";
 
 export default function ActivityLog({ leadId, opportunityId }) {
@@ -38,6 +40,18 @@ export default function ActivityLog({ leadId, opportunityId }) {
     queryFn: () => base44.entities.Activity.filter({ lead_id: leadId }),
     enabled: !!leadId
   });
+
+  // Fetch all users for display names
+  const { data: users } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => base44.entities.User.list()
+  });
+
+  const getUserDisplayName = (email) => {
+    if (!email) return "לא ידוע";
+    const user = users?.find(u => u.email === email);
+    return user?.full_name || email;
+  };
 
   // Create Activity Mutation
   const createActivity = useMutation({
@@ -198,7 +212,7 @@ export default function ActivityLog({ leadId, opportunityId }) {
             </div> :
 
           activities?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((activity) =>
-          <div key={activity.id} className="flex gap-3 p-3 bg-white rounded-lg border shadow-sm">
+          <div key={activity.id} className="flex gap-3 p-3 bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow">
                 <div className={`p-2 rounded-full h-fit ${
             activity.type === 'Call' ? 'bg-blue-100 text-blue-600' :
             activity.type === 'Meeting' ? 'bg-purple-100 text-purple-600' :
@@ -214,10 +228,16 @@ export default function ActivityLog({ leadId, opportunityId }) {
                     </span>
                   </div>
                   <p className="text-sm text-slate-600">{activity.summary}</p>
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex gap-2 mt-2 flex-wrap">
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(activity.status)}`}>
                       {getStatusLabel(activity.status)}
                     </span>
+                    {activity.created_by && (
+                      <Badge variant="outline" className="text-xs bg-slate-50 border-slate-200 text-slate-600 font-normal flex items-center gap-1">
+                        <User className="w-3 h-3" />
+                        {getUserDisplayName(activity.created_by)}
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </div>
