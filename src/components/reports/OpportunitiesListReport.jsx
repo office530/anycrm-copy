@@ -111,13 +111,12 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <div className="w-full md:w-64 space-y-1">
           <label className="text-xs font-medium text-neutral-500">חיפוש לקוח</label>
           <div className="relative">
-            <Search className="absolute right-3 top-1/2 -tranneutral-y-1/2 w-4 h-4 text-neutral-400" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
             <Input
               placeholder="שם לקוח..."
               value={searchClient}
               onChange={(e) => setSearchClient(e.target.value)}
               className="pr-9" />
-
           </div>
         </div>
 
@@ -170,14 +169,14 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
               {filteredData.length > 0 ?
               filteredData.map((o) =>
               <TableRow key={o.id}>
-                    <TableCell className="text-slate-50 p-2 font-medium align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">{o.lead_name || 'ללא שם'}</TableCell>
-                    <TableCell className="text-slate-50 p-2 font-mono align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
+                    <TableCell className="font-medium">{o.lead_name || 'ללא שם'}</TableCell>
+                    <TableCell className="font-mono">₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="bg-white border-neutral-200 font-normal text-neutral-600">
                         {o.deal_stage}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-50 p-2 text-sm align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                    <TableCell className="text-sm">
                       {o.created_date ? moment(o.created_date).format('DD/MM/YYYY') : '-'}
                     </TableCell>
                     <TableCell className="text-neutral-500 text-sm">
@@ -185,7 +184,6 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
                     </TableCell>
                   </TableRow>
               ) :
-
               <TableRow>
                   <TableCell colSpan={5} className="h-24 text-center text-neutral-500">
                     לא נמצאו הזדמנויות התואמות את הסינון
