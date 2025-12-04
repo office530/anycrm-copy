@@ -73,6 +73,20 @@ export default function LeadsPage() {
     initialData: []
   });
 
+  const { data: activities } = useQuery({
+    queryKey: ['activities'],
+    queryFn: () => base44.entities.Activity.list(),
+    initialData: []
+  });
+
+  // Get last activity date for each lead
+  const getLastActivityDate = (leadId) => {
+    const leadActivities = activities.filter(a => a.lead_id === leadId);
+    if (!leadActivities.length) return null;
+    const sorted = leadActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return sorted[0]?.date;
+  };
+
   const uniqueTags = useMemo(() => {
     const tags = new Set();
     leads.forEach((lead) => {
@@ -330,13 +344,18 @@ export default function LeadsPage() {
                                 {lead.full_name}
                             </Link>
                             <div className="text-xs text-slate-500">{lead.city}</div>
+                            {getLastActivityDate(lead.id) && (
+                              <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
+                                ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                              </div>
+                            )}
                             {lead.tags && lead.tags.length > 0 &&
-                <div className="flex flex-wrap gap-1 mt-1">
+                    <div className="flex flex-wrap gap-1 mt-1">
                                     {lead.tags.map((tag, i) =>
-                  <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
-                  )}
+                    <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
+                    )}
                                 </div>
-                }
+                    }
                          </div>
                     </div>
                     <div className="col-span-2">
@@ -395,13 +414,18 @@ export default function LeadsPage() {
                                 {lead.full_name}
                             </Link>
                             <div className="text-sm text-slate-500">{lead.city}</div>
+                            {getLastActivityDate(lead.id) && (
+                              <div className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
+                                ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                              </div>
+                            )}
                             {lead.tags && lead.tags.length > 0 &&
-                <div className="flex flex-wrap gap-1 mt-1">
+                    <div className="flex flex-wrap gap-1 mt-1">
                                     {lead.tags.map((tag, i) =>
-                  <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
-                  )}
+                    <span key={i} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">{tag}</span>
+                    )}
                                 </div>
-                }
+                    }
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
