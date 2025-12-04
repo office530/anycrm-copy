@@ -12,6 +12,7 @@ import ActivityLog from "./ActivityLog";
 import { base44 } from "@/api/base44Client";
 import FileUpload from "../common/FileUpload";
 import { useQuery } from "@tanstack/react-query";
+import LeadSelector from "./LeadSelector";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const { pipelineStages } = useSettings();
@@ -23,6 +24,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     propertyDetails: true,
     createTask: false
   });
+  
+  const [selectedLead, setSelectedLead] = React.useState(initialLead || null);
 
   const { register, handleSubmit, setValue, watch, getValues, reset, formState: { errors } } = useForm({
     defaultValues: opportunity || {
@@ -62,20 +65,32 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     }
   };
 
-  const leadId = opportunity?.lead_id || initialLead?.id;
+  const leadId = opportunity?.lead_id || selectedLead?.id;
 
   const { data: originalLeadData, isLoading: isLoadingLead } = useQuery({
     queryKey: ['lead', leadId],
     queryFn: () => base44.entities.Lead.list().then((leads) => leads.find((l) => l.id === leadId)),
     enabled: !!leadId
   });
+  
+  // Handler for Lead Selection
+  const handleLeadSelect = (lead) => {
+      setSelectedLead(lead);
+      setValue("lead_id", lead.id);
+      setValue("lead_name", lead.full_name);
+      setValue("phone_number", lead.phone_number);
+      setValue("email", lead.email);
+      
+      // Auto populate property value if setting is on or default behavior
+      setValue("property_value", lead.estimated_property_value || "");
+  };
 
-  // Update form values when checkboxes change (only if initialLead exists)
+  // Update form values when checkboxes change
   React.useEffect(() => {
-    if (!initialLead) return;
+    if (!selectedLead) return;
 
     if (transferSettings.propertyDetails) {
-      setValue("property_value", initialLead.estimated_property_value || "");
+      setValue("property_value", selectedLead.estimated_property_value || "");
     } else {
       setValue("property_value", ""); // Clear if unchecked
     }
@@ -155,7 +170,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white p-6 rounded-xl shadow-xl border border-slate-100"
+      className="bg-white p-4 md:p-6 rounded-xl shadow-xl border border-slate-100"
       dir="rtl">
 
       <div className="mb-4 flex items-center gap-3 border-b pb-4">
@@ -167,12 +182,29 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
             {title || (opportunity ? "ניהול הזדמנות" : "הזדמנות חדשה")}
           </h2>
           <p className="text-neutral-600 text-sm">
-            {initialLead ? `עבור לקוח: ${initialLead.full_name}` : "ניהול פרטי עסקה"}
+            {selectedLead ? `עבור לקוח: ${selectedLead.full_name}` : "ניהול פרטי עסקה"}
           </p>
         </div>
       </div>
+      
+      {/* Lead Selector if no lead linked */}
+      {!selectedLead && !opportunity?.lead_id && (
+          <LeadSelector onSelect={handleLeadSelect} />
+      )}
+      
+      {/* Hidden validation input for lead_id */}
+      <input 
+          type="hidden" 
+          {...register("lead_id", { required: "חובה לשייך ליד לעסקה" })} 
+      />
+      {errors.lead_id && (
+          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              {errors.lead_id.message}
+          </div>
+      )}
 
-      {initialLead &&
+      {selectedLead &&
       <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-lg p-4 space-y-3">
             <h3 className="font-semibold text-emerald-800 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
@@ -233,7 +265,6 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         <TabsContent value="details">
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         {/* Hidden fields for linking */}
-        <input type="hidden" {...register("lead_id")} />
         <input type="hidden" {...register("lead_name")} />
 
         {/* Checklist Section */}
@@ -385,7 +416,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
         {/* AI Section */}
         <div className="space-y-4 pt-2">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center flex-wrap gap-2">
             <Label className="text-purple-700 font-medium flex items-center gap-2">
               <BrainCircuit className="w-4 h-4" />
               המוח המלאכותי (AI Consultant)
@@ -395,7 +426,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                     size="sm"
                     variant="outline"
                     onClick={generateAiInsights}
-                    disabled={aiLoading} className="bg-slate-50 text-purple-600 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-8 border-purple-200 hover:bg-purple-50">
+                    disabled={aiLoading} className="bg-slate-50 text-purple-600 px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-8 border-purple-200 hover:bg-purple-50 w-full md:w-auto">
 
 
               {aiLoading ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <Sparkles className="w-3 h-3 mr-2" />}
