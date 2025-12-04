@@ -1,18 +1,20 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { LayoutDashboard, Users, Briefcase, Plus, Menu } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, Plus, Menu, Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 
 export default function MobileBottomNav() {
     const location = useLocation();
     const currentPath = location.pathname.split('/').pop() || 'Dashboard';
+    const [showAiImport, setShowAiImport] = React.useState(false);
 
     const isActive = (path) => currentPath === path;
 
@@ -46,6 +48,15 @@ export default function MobileBottomNav() {
                              <Link to={`${createPageUrl('Opportunities')}?action=new`} className="cursor-pointer flex items-center gap-2">
                                 <Briefcase className="w-4 h-4" /> הזדמנות חדשה
                              </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                            onClick={() => {
+                                window.dispatchEvent(new CustomEvent('openAiImport'));
+                            }}
+                            className="cursor-pointer flex items-center gap-2 text-purple-700 bg-gradient-to-r from-purple-50 to-blue-50"
+                        >
+                            <Sparkles className="w-4 h-4" /> ייבוא ליד AI
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

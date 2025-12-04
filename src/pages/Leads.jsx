@@ -57,6 +57,13 @@ export default function LeadsPage() {
     }
   }, [location]);
 
+  // Listen for AI import trigger from mobile FAB
+  React.useEffect(() => {
+    const handleOpenAiImport = () => setShowAiImport(true);
+    window.addEventListener('openAiImport', handleOpenAiImport);
+    return () => window.removeEventListener('openAiImport', handleOpenAiImport);
+  }, []);
+
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
