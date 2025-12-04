@@ -210,6 +210,61 @@ export default function LeadsPage() {
     });
   }, [leads, filters, sortConfig]);
 
+  // Helper components
+  const StatCard = ({ icon, label, value, color }) => {
+    const IconComponent = icon;
+    return (
+      <Card className="border-none shadow-sm bg-white">
+        <CardContent className="p-4 flex items-center gap-4">
+          <div className={`p-3 rounded-xl ${color}`}>
+            <IconComponent className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-slate-500">{label}</p>
+            <p className="text-2xl font-bold text-slate-800">{value}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const WhatsAppBtn = ({ phone }) => {
+    const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
+    return (
+      <Button
+        size="icon" 
+        variant="ghost" 
+        className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
+        onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}
+      >
+        <MessageCircle className="w-4 h-4" />
+      </Button>
+    );
+  };
+
+  const StatusBadge = ({ lead, statuses, updateLead, convert }) => {
+    return (
+      <InlineEdit
+        type="select"
+        value={lead.lead_status}
+        options={statuses}
+        onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
+        formatDisplay={(val) => {
+          const s = statuses.find((o) => o.value === val);
+          const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
+          return (
+            <Badge 
+              variant="outline" 
+              className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}
+            >
+              {s?.label || val}
+            </Badge>
+          );
+        }}
+      />
+    );
+  };
+
   return (
     <div className="space-y-6 pb-24 font-sans text-slate-900">
       
@@ -546,58 +601,3 @@ export default function LeadsPage() {
     </div>
   );
 }
-
-// Helper components
-const StatCard = ({ icon, label, value, color }) => {
-  const IconComponent = icon;
-  return (
-    <Card className="border-none shadow-sm bg-white">
-      <CardContent className="p-4 flex items-center gap-4">
-        <div className={`p-3 rounded-xl ${color}`}>
-          <IconComponent className="w-5 h-5" />
-        </div>
-        <div>
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="text-2xl font-bold text-slate-800">{value}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const WhatsAppBtn = ({ phone }) => {
-  const cleanNum = phone.replace(/\D/g, '').replace(/^0/, '');
-  return (
-    <Button
-      size="icon" 
-      variant="ghost" 
-      className="h-7 w-7 text-green-600 bg-green-50 hover:bg-green-100 rounded-full"
-      onClick={() => window.open(`https://wa.me/972${cleanNum}`, '_blank')}
-    >
-      <MessageCircle className="w-4 h-4" />
-    </Button>
-  );
-};
-
-const StatusBadge = ({ lead, statuses, updateLead, convert }) => {
-  return (
-    <InlineEdit
-      type="select"
-      value={lead.lead_status}
-      options={statuses}
-      onSave={(val) => val === 'Converted' ? convert.mutate(lead) : updateLead.mutate({ id: lead.id, data: { lead_status: val } })}
-      formatDisplay={(val) => {
-        const s = statuses.find((o) => o.value === val);
-        const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
-        return (
-          <Badge 
-            variant="outline" 
-            className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}
-          >
-            {s?.label || val}
-          </Badge>
-        );
-      }}
-    />
-  );
-};
