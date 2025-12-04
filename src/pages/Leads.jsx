@@ -43,7 +43,7 @@ export default function LeadsPage() {
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // Default to list view
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
   // Check for action=new in URL
