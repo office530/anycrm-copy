@@ -92,16 +92,17 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white p-6 rounded-xl shadow-lg border border-slate-100"
+      className="bg-white rounded-xl shadow-lg border border-slate-100 flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden"
       dir="rtl">
 
-      <div className="mb-6 pb-4 border-b border-slate-100">
+      <div className="p-4 md:p-6 border-b shrink-0 bg-white z-10">
         <h2 className="text-2xl font-bold text-slate-900">
           {lead ? "תיק לקוח" : "הוספת ליד חדש"}
         </h2>
         <p className="text-slate-500 text-sm mt-1">ניהול פרטים ופעילויות</p>
       </div>
 
+      <div className="overflow-y-auto p-4 md:p-6 flex-1">
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-6 bg-slate-100/80 p-1 h-auto gap-1">
           <TabsTrigger value="details" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
@@ -401,6 +402,7 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
            {lead ? <LeadAiAnalysis lead={lead} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
         </TabsContent>
       </Tabs>
+      </div>
     </motion.div>);
 
 }
