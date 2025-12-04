@@ -588,7 +588,6 @@ export default function LeadsPage() {
             }}
             onCancel={() => setShowLeadForm(false)}
             isSubmitting={createLead.isPending || updateLead.isPending} />
-
         </DialogContent>
       </Dialog>
 
