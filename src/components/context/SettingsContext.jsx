@@ -1,8 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { Loader2 } from "lucide-react";
 
 const SettingsContext = createContext();
 
-// ברירת מחדל - סטטוסים של לידים
+// Defaults
 export const defaultLeadStatuses = [
   { value: "New", label: "חדש", color: "bg-red-100 text-red-800 border border-red-200 font-medium" },
   { value: "Attempting Contact", label: "בטיפול", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
@@ -12,58 +15,41 @@ export const defaultLeadStatuses = [
   { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-neutral-100 text-neutral-500 border border-neutral-200" }
 ];
 
-// ברירת מחדל - שלבי הזדמנויות
 export const defaultPipelineStages = [
   { 
     id: "New (חדש)", 
     label: "חדש", 
     color: "bg-red-400", 
     light: "bg-red-50 text-red-700",
-    checklist: [
-      { id: "c1", text: "אימות פרטי ליד" },
-      { id: "c2", text: "בדיקת היתכנות ראשונית" }
-    ]
+    checklist: [{ id: "c1", text: "אימות פרטי ליד" }]
   },
   { 
     id: "Discovery Call (שיחת בירור צרכים)", 
     label: "בירור צרכים", 
     color: "bg-orange-400", 
     light: "bg-orange-50 text-orange-700",
-    checklist: [
-      { id: "c3", text: "מילוי תסריט שיחה" },
-      { id: "c4", text: "הבנת צורך מרכזי" }
-    ]
+    checklist: [{ id: "c3", text: "מילוי תסריט שיחה" }]
   },
   { 
     id: "Meeting Scheduled (נקבעת פגישה)", 
     label: "נקבעת פגישה", 
     color: "bg-amber-400", 
     light: "bg-amber-50 text-amber-700",
-    checklist: [
-      { id: "c5", text: "שליחת זימון ליומן" },
-      { id: "c6", text: "וידוא הגעת כל הלווים" }
-    ]
+    checklist: []
   },
   { 
     id: "Documents Collection (איסוף מסמכים)", 
     label: "איסוף מסמכים", 
     color: "bg-stone-400", 
     light: "bg-stone-50 text-stone-700",
-    checklist: [
-      { id: "c7", text: "תעודות זהות" },
-      { id: "c8", text: "נסח טאבו" },
-      { id: "c9", text: "דפי חשבון בנק" }
-    ]
+    checklist: []
   },
   { 
     id: "Request Sent to Harel (בקשה נשלחה להראל)", 
     label: "נשלח להראל", 
     color: "bg-neutral-400", 
     light: "bg-neutral-50 text-neutral-700",
-    checklist: [
-      { id: "c10", text: "בדיקת תקינות בקשה" },
-      { id: "c11", text: "קבלת אישור קבלה" }
-    ]
+    checklist: []
   },
   { 
     id: "Closed Won (נחתם - בהצלחה)", 
@@ -81,8 +67,6 @@ export const defaultPipelineStages = [
   }
 ];
 
-export const defaultStages = defaultPipelineStages;
-
 export const defaultBranding = {
   companyName: "Gisher's",
   logoUrl: "", 
@@ -91,49 +75,107 @@ export const defaultBranding = {
 };
 
 export function SettingsProvider({ children }) {
-  // טעינת הגדרות מ-localStorage או שימוש בברירת מחדל
-  const [branding, setBranding] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('crm_branding')) || defaultBranding; } catch { return defaultBranding; }
+  const queryClient = useQueryClient();
+
+  // 1. Fetch Organization Settings from DB
+  const { data: orgSettings, isLoading } = useQuery({
+    queryKey: ['organization_settings'],
+    queryFn: async () => {
+      const res = await base44.entities.OrganizationSettings.list();
+      if (res && res.length > 0) return res[0];
+      
+      // If no settings exist, create default
+      const defaultSettings = {
+        company_name: defaultBranding.companyName,
+        logo_url: defaultBranding.logoUrl,
+        primary_color: defaultBranding.primaryColor,
+        currency: defaultBranding.currency,
+        pipeline_stages: defaultPipelineStages,
+        lead_statuses: defaultLeadStatuses,
+        system_tags: ["VIP", "Hot Lead", "Referral", "Investor"]
+      };
+      
+      try {
+        const newSettings = await base44.entities.OrganizationSettings.create(defaultSettings);
+        return newSettings;
+      } catch (e) {
+        console.error("Failed to init settings", e);
+        return defaultSettings; // Fallback
+      }
+    },
+    staleTime: 1000 * 60 * 5 // 5 minutes
   });
 
-  const [leadStatuses, setLeadStatuses] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('crm_lead_statuses')) || defaultLeadStatuses; } catch { return defaultLeadStatuses; }
+  // 2. Mutations
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (newData) => {
+        if (orgSettings?.id) {
+            return base44.entities.OrganizationSettings.update(orgSettings.id, newData);
+        }
+        return null;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['organization_settings']);
+    }
   });
 
-  const [pipelineStages, setPipelineStages] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('crm_pipeline_stages')) || defaultPipelineStages; } catch { return defaultPipelineStages; }
-  });
+  // 3. Derived State (for compatibility with existing components)
+  const branding = {
+    companyName: orgSettings?.company_name || defaultBranding.companyName,
+    logoUrl: orgSettings?.logo_url || defaultBranding.logoUrl,
+    primaryColor: orgSettings?.primary_color || defaultBranding.primaryColor,
+    currency: orgSettings?.currency || defaultBranding.currency
+  };
 
-  const [theme, setTheme] = useState('light');
+  const pipelineStages = orgSettings?.pipeline_stages || defaultPipelineStages;
+  const leadStatuses = orgSettings?.lead_statuses || defaultLeadStatuses;
+  const systemTags = orgSettings?.system_tags || [];
 
-  // אפקטים לשמירה ושינוי Theme
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add('light'); // Force light mode
-    localStorage.setItem('crm_theme', 'light');
-  }, [theme]);
+  // 4. Update Functions
+  const updateBranding = (key, value) => {
+    // Map frontend keys to DB keys
+    const dbKeys = {
+        companyName: 'company_name',
+        logoUrl: 'logo_url',
+        primaryColor: 'primary_color',
+        currency: 'currency'
+    };
+    if (dbKeys[key]) {
+        updateSettingsMutation.mutate({ [dbKeys[key]]: value });
+    }
+  };
 
-  useEffect(() => localStorage.setItem('crm_branding', JSON.stringify(branding)), [branding]);
-  useEffect(() => localStorage.setItem('crm_lead_statuses', JSON.stringify(leadStatuses)), [leadStatuses]);
-  useEffect(() => localStorage.setItem('crm_pipeline_stages', JSON.stringify(pipelineStages)), [pipelineStages]);
+  const setPipelineStages = (newStages) => {
+    updateSettingsMutation.mutate({ pipeline_stages: newStages });
+  };
 
-  // פונקציות עדכון
-  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-  const updateBranding = (key, value) => setBranding(prev => ({ ...prev, [key]: value }));
+  const setLeadStatuses = (newStatuses) => {
+    updateSettingsMutation.mutate({ lead_statuses: newStatuses });
+  };
   
   const updateStage = (index, field, value) => {
     const newStages = [...pipelineStages];
     newStages[index][field] = value;
     setPipelineStages(newStages);
   };
-  
+
+  const updateSystemTags = (newTags) => {
+    updateSettingsMutation.mutate({ system_tags: newTags });
+  };
+
+  // Theme is still local for now as it's per user/device preference often, but could be moved to user settings
+  const [theme, setTheme] = useState('light');
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
   return (
     <SettingsContext.Provider value={{ 
       branding, updateBranding, 
       leadStatuses, setLeadStatuses, 
       pipelineStages, setPipelineStages, updateStage,
-      theme, toggleTheme 
+      systemTags, updateSystemTags,
+      theme, toggleTheme,
+      isLoading,
+      saveSettings: updateSettingsMutation.mutate
     }}>
       {children}
     </SettingsContext.Provider>
