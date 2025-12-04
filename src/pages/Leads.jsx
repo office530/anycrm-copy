@@ -176,21 +176,9 @@ export default function LeadsPage() {
         return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
       }
 
-      // Search filter
+      // Search filter - only by name
       const searchTerm = filters.search.toLowerCase().trim();
-      let matchesSearch = true;
-      if (searchTerm) {
-        const leadName = (lead.full_name || "").toLowerCase();
-        const leadPhone = (lead.phone_number || "").replace(/\D/g, '');
-        const searchPhone = searchTerm.replace(/\D/g, '');
-        const leadEmail = (lead.email || "").toLowerCase();
-        const leadCity = (lead.city || "").toLowerCase();
-        
-        matchesSearch = leadName.includes(searchTerm) || 
-                       leadPhone.includes(searchPhone) || 
-                       leadEmail.includes(searchTerm) ||
-                       leadCity.includes(searchTerm);
-      }
+      const matchesSearch = !searchTerm || (lead.full_name || "").toLowerCase().includes(searchTerm);
 
       // Year filter
       const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
@@ -238,7 +226,7 @@ export default function LeadsPage() {
           <div className="relative flex-1">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
-              placeholder="חיפוש שם או טלפון..."
+              placeholder="חיפוש לפי שם..."
               className="pr-10 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
