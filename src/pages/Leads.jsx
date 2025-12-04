@@ -560,14 +560,14 @@ export default function LeadsPage() {
                     </div>
 
                     <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
-                     <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
-                     {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
+                    <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
+                    {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
 
                     <div className="flex items-center justify-between mt-1">
                     <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
                     </div>
-            </div>
+                    </div>
         )}
       </div>
       </div>
