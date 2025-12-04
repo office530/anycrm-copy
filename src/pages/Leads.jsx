@@ -574,9 +574,9 @@ export default function LeadsPage() {
                     </div>
 
                     <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
+                      <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
                     </div>
-                    </div>
+                </div>
         )}
       </div>
       </div>
