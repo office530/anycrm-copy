@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import moment from 'moment';
+import TasksWidget from '@/components/dashboard/TasksWidget';
 
 export default function Dashboard() {
   const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
@@ -171,10 +172,10 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
           {/* Left Column: Charts */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:col-span-2">
               
               {/* Sales Trend Chart */}
               <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200">
@@ -226,8 +227,9 @@ export default function Dashboard() {
               </Card>
           </div>
 
-          {/* Right Column: Pipeline Summary */}
-          <Card className="bg-white border-slate-200 shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden h-full">
+          {/* Right Column: Pipeline Summary & Tasks */}
+          <div className="space-y-6">
+          <Card className="bg-white border-slate-200 shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden">
               <div className="relative z-10 space-y-6">
                   {/* Header */}
                   <div>
@@ -278,8 +280,12 @@ export default function Dashboard() {
               {/* Decorations */}
               <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-red-50 blur-3xl rounded-full pointer-events-none"></div>
               <div className="absolute -top-10 -left-10 w-40 h-40 bg-slate-50 blur-2xl rounded-full pointer-events-none"></div>
-          </Card>
-      </div>
+              </Card>
+
+              {/* Tasks Widget */}
+              <TasksWidget />
+              </div>
+              </div>
     </div>);
 
 }
