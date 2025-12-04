@@ -145,8 +145,8 @@ export default function Dashboard() {
       </div>
 
       {/* Header & Filter */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-8">
-        <div>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-right">
+        <div className="w-full md:w-auto">
             <h2 className="text-2xl font-bold text-neutral-800">סקירת ביצועים</h2>
             <p className="text-neutral-600">נתונים עבור: {dateRangeLabel}</p>
         </div>
@@ -293,12 +293,12 @@ export default function Dashboard() {
 function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
   return (
     <div className="bg-white dark:bg-neutral-200 p-5 md:p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-300 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4">
+            <div className="relative z-10 text-center">
+                <div className="flex items-center justify-center mb-4">
                     <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-neutral-500 dark:text-neutral-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full">{total} סה״כ</span>}
+                    {total && <span className="text-xs font-bold text-neutral-500 dark:text-neutral-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full mr-2">{total} סה״כ</span>}
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-800 mb-1">{value}</h3>
                 <p className="text-sm text-neutral-600 dark:text-neutral-700 font-medium">{title}</p>
