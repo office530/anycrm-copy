@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Upload, FileImage, Type, Camera } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, Sparkles, Upload, FileImage, Type, Camera, CheckCircle2, Edit3, ArrowRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
   const [input, setInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [mode, setMode] = useState("text"); // text or image
   const [selectedFile, setSelectedFile] = useState(null);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [extractedData, setExtractedData] = useState(null);
 
   const processTextInput = async () => {
     if (!input.trim() && !selectedFile) return;
@@ -93,7 +98,7 @@ ${textToAnalyze}`,
         response_json_schema: leadSchema
       });
 
-      // יצירת הליד
+      // הכנת נתונים לתצוגה מקדימה
       const leadData = {
         ...aiResult,
         lead_status: "New",
@@ -101,22 +106,37 @@ ${textToAnalyze}`,
         last_contact_date: new Date().toISOString().split('T')[0]
       };
 
-      onLeadCreated(leadData);
-      
-      // הודעת הצלחה
-      alert(`✅ הליד נקלט בהצלחה!\n\nשם: ${leadData.full_name}\nטלפון: ${leadData.phone_number}`);
-      
-      // איפוס הטופס וסגירה
-      setInput("");
-      setSelectedFile(null);
+      setExtractedData(leadData);
+      setPreviewMode(true);
       setIsProcessing(false);
-      onOpenChange(false);
 
     } catch (error) {
       console.error("Error processing lead:", error);
-      alert(`❌ שגיאה בעיבוד הנתונים\n\n${error.message}\n\nנסה שוב או פנה לתמיכה.`);
+      toast.error("שגיאה בעיבוד הנתונים", {
+        description: error.message,
+        duration: 5000
+      });
       setIsProcessing(false);
     }
+  };
+
+  const handleSaveLead = () => {
+    onLeadCreated(extractedData);
+    toast.success("הליד נקלט בהצלחה!", {
+      description: `${extractedData.full_name} • ${extractedData.phone_number}`,
+      duration: 3000
+    });
+    
+    // איפוס הטופס וסגירה
+    setInput("");
+    setSelectedFile(null);
+    setPreviewMode(false);
+    setExtractedData(null);
+    onOpenChange(false);
+  };
+
+  const handleEditPreview = () => {
+    setPreviewMode(false);
   };
 
   const handleFileSelect = (e) => {
@@ -128,11 +148,14 @@ ${textToAnalyze}`,
 
   return (
     <Dialog open={open} onOpenChange={(newOpen) => {
-      if (!isProcessing) {
+      if (!isProcessing && !previewMode) {
         onOpenChange(newOpen);
+        setInput("");
+        setSelectedFile(null);
+        setExtractedData(null);
       }
     }}>
-      <DialogContent className="max-w-2xl" dir="rtl" onPointerDownOutside={(e) => {
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl" onPointerDownOutside={(e) => {
         if (isProcessing) {
           e.preventDefault();
         }
@@ -141,15 +164,24 @@ ${textToAnalyze}`,
           e.preventDefault();
         }
       }}>
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-purple-600" />
-            ייבוא ליד חכם עם AI
-          </DialogTitle>
-          <p className="text-sm text-slate-500 mt-2">
-            הדבק טקסט חופשי או העלה תמונה, וה-AI יחלץ את הפרטים באופן אוטומטי
-          </p>
-        </DialogHeader>
+        <AnimatePresence mode="wait">
+          {!previewMode ? (
+            <motion.div
+              key="input"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-purple-600" />
+                  ייבוא ליד חכם עם AI
+                </DialogTitle>
+                <p className="text-sm text-slate-500 mt-2">
+                  הדבק טקסט חופשי או העלה תמונה, וה-AI יחלץ את הפרטים באופן אוטומטי
+                </p>
+              </DialogHeader>
 
         <Tabs value={mode} onValueChange={setMode} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -268,7 +300,118 @@ ${textToAnalyze}`,
             )}
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="preview"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-6 h-6 text-green-600" />
+                בדוק את הפרטים שזוהו
+              </DialogTitle>
+              <p className="text-sm text-slate-500 mt-2">
+                ה-AI חילץ את המידע הבא - ערוך אם צריך ושמור
+              </p>
+            </DialogHeader>
+
+            <div className="space-y-4 mt-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">שם מלא *</label>
+                  <Input
+                    value={extractedData?.full_name || ""}
+                    onChange={(e) => setExtractedData({...extractedData, full_name: e.target.value})}
+                    className="border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">טלפון *</label>
+                  <Input
+                    value={extractedData?.phone_number || ""}
+                    onChange={(e) => setExtractedData({...extractedData, phone_number: e.target.value})}
+                    className="border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">אימייל</label>
+                  <Input
+                    value={extractedData?.email || ""}
+                    onChange={(e) => setExtractedData({...extractedData, email: e.target.value})}
+                    className="border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">עיר</label>
+                  <Input
+                    value={extractedData?.city || ""}
+                    onChange={(e) => setExtractedData({...extractedData, city: e.target.value})}
+                    className="border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">גיל</label>
+                  <Input
+                    type="number"
+                    value={extractedData?.age || ""}
+                    onChange={(e) => setExtractedData({...extractedData, age: parseInt(e.target.value)})}
+                    className="border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">מצב משפחתי</label>
+                  <Input
+                    value={extractedData?.marital_status || ""}
+                    onChange={(e) => setExtractedData({...extractedData, marital_status: e.target.value})}
+                    className="border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              {extractedData?.notes && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700">הערות</label>
+                  <Textarea
+                    value={extractedData.notes}
+                    onChange={(e) => setExtractedData({...extractedData, notes: e.target.value})}
+                    className="border-purple-200 focus:border-purple-500"
+                    rows={3}
+                  />
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={handleEditPreview}
+                  className="flex-1"
+                >
+                  <Edit3 className="w-4 h-4 ml-2" />
+                  חזור לעריכה
+                </Button>
+                <Button
+                  onClick={handleSaveLead}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <CheckCircle2 className="w-4 h-4 ml-2" />
+                  שמור ליד
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        </AnimatePresence>
+        </DialogContent>
+        </Dialog>
+        );
+        }

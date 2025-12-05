@@ -22,13 +22,20 @@ import {
   Voicemail,
   User,
   Sparkles,
-  Loader2 } from
+  Loader2,
+  Undo2,
+  Zap,
+  Flag,
+  Target } from
 "lucide-react";
+import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ActivityLog({ leadId, opportunityId }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [aiSummary, setAiSummary] = useState(null);
+  const [lastLeadSnapshot, setLastLeadSnapshot] = useState(null);
   const [newActivity, setNewActivity] = useState({
     type: "Call",
     status: "Completed",
@@ -87,6 +94,12 @@ export default function ActivityLog({ leadId, opportunityId }) {
 
     setIsSummarizing(true);
     try {
+      // Save current lead state for undo
+      const leads = await base44.entities.Lead.filter({ id: leadId });
+      if (leads[0]) {
+        setLastLeadSnapshot(leads[0]);
+      }
+
       const response = await base44.functions.invoke('summarizeActivity', {
         activityText: newActivity.summary,
         leadId: leadId
@@ -103,15 +116,44 @@ export default function ActivityLog({ leadId, opportunityId }) {
 
         // Show success message if fields were updated
         if (response.data.updatedFieldsCount > 0) {
-          alert(`✨ סיכום הושלם בהצלחה!\n${response.data.updatedFieldsCount} שדות עודכנו בפרופיל הלקוח.`);
+          toast.success("סיכום הושלם בהצלחה!", {
+            description: `${response.data.updatedFieldsCount} שדות עודכנו בפרופיל הלקוח`,
+            duration: 5000
+          });
           queryClient.invalidateQueries(['leads']);
+        } else {
+          toast.success("סיכום הושלם!", {
+            description: "הטקסט סוכם באופן מקצועי",
+            duration: 3000
+          });
         }
       }
     } catch (error) {
       console.error('Error summarizing:', error);
-      alert('שגיאה בסיכום הפעילות. נסה שוב.');
+      toast.error("שגיאה בסיכום הפעילות", {
+        description: "נסה שוב או פנה לתמיכה",
+        duration: 4000
+      });
     } finally {
       setIsSummarizing(false);
+    }
+  };
+
+  const handleUndoAiChanges = async () => {
+    if (!lastLeadSnapshot || !leadId) return;
+
+    try {
+      await base44.entities.Lead.update(leadId, lastLeadSnapshot);
+      queryClient.invalidateQueries(['leads']);
+      setAiSummary(null);
+      setLastLeadSnapshot(null);
+      toast.success("השינויים בוטלו", {
+        description: "הפרופיל חזר למצב הקודם",
+        duration: 3000
+      });
+    } catch (error) {
+      console.error('Error undoing changes:', error);
+      toast.error("שגיאה בביטול השינויים");
     }
   };
 
@@ -255,43 +297,95 @@ export default function ActivityLog({ leadId, opportunityId }) {
             }}
             className="h-24" />
             
-            {aiSummary && (
-              <div className="mt-3 p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border border-purple-200 space-y-3">
-                <div className="flex items-center gap-2 text-purple-900 font-semibold text-sm">
-                  <Sparkles className="w-4 h-4" />
-                  ניתוח AI
-                </div>
-                
-                {aiSummary.key_points && aiSummary.key_points.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-slate-700 mb-1">נקודות מפתח:</p>
-                    <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
-                      {aiSummary.key_points.map((point, i) => (
-                        <li key={i}>{point}</li>
-                      ))}
-                    </ul>
+            <AnimatePresence>
+              {aiSummary && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-3 p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-200 space-y-3 shadow-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-purple-900 font-semibold text-sm">
+                      <Sparkles className="w-4 h-4" />
+                      ניתוח AI
+                    </div>
+                    {lastLeadSnapshot && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleUndoAiChanges}
+                        className="text-xs text-slate-600 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <Undo2 className="w-3 h-3 ml-1" />
+                        בטל שינויים
+                      </Button>
+                    )}
                   </div>
-                )}
-                
-                {aiSummary.call_to_action && (
-                  <div className="bg-white/70 p-2 rounded border border-purple-200">
-                    <p className="text-xs font-medium text-slate-700">פעולה נדרשת:</p>
-                    <p className="text-xs text-purple-800 font-semibold">{aiSummary.call_to_action}</p>
-                  </div>
-                )}
-                
-                {aiSummary.next_steps && aiSummary.next_steps.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-slate-700 mb-1">צעדים הבאים:</p>
-                    <ul className="list-decimal list-inside space-y-1 text-xs text-slate-600">
-                      {aiSummary.next_steps.map((step, i) => (
-                        <li key={i}>{step}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
+                  
+                  {aiSummary.key_points && aiSummary.key_points.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="bg-white/80 rounded-lg p-3 border border-purple-100"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <Flag className="w-3.5 h-3.5 text-purple-600" />
+                        <p className="text-xs font-bold text-purple-900">נקודות מפתח</p>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {aiSummary.key_points.map((point, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                            <span className="text-purple-500 font-bold">•</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  )}
+                  
+                  {aiSummary.call_to_action && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="bg-gradient-to-r from-orange-50 to-red-50 p-3 rounded-lg border border-orange-200 shadow-sm"
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Zap className="w-3.5 h-3.5 text-orange-600" />
+                        <p className="text-xs font-bold text-orange-900">פעולה נדרשת</p>
+                      </div>
+                      <p className="text-xs text-orange-800 font-semibold">{aiSummary.call_to_action}</p>
+                    </motion.div>
+                  )}
+                  
+                  {aiSummary.next_steps && aiSummary.next_steps.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="bg-white/80 rounded-lg p-3 border border-blue-100"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <Target className="w-3.5 h-3.5 text-blue-600" />
+                        <p className="text-xs font-bold text-blue-900">צעדים הבאים</p>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {aiSummary.next_steps.map((step, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                            <span className="text-blue-600 font-bold">{i + 1}.</span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="text-slate-800 flex justify-end">
