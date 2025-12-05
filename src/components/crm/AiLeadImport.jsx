@@ -26,29 +26,61 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
 
       // אם זו תמונה, נחלץ תחילה את הטקסט
       if (mode === "image" && selectedFile) {
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-        
         // העלאת התמונה
         const uploadResult = await base44.integrations.Core.UploadFile({ file: selectedFile });
         const fileUrl = uploadResult.file_url;
 
-        // חילוץ טקסט מהתמונה
-        const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
-          file_url: fileUrl,
-          json_schema: {
+        // חילוץ מידע ישירות מהתמונה עם AI Vision
+        const visionResult = await base44.integrations.Core.InvokeLLM({
+          prompt: `נא לחלץ את כל המידע הבא מהתמונה:
+- שם מלא
+- מספר טלפון
+- כתובת אימייל
+- גיל
+- עיר מגורים
+- שווי נכס משוער
+- יתרת משכנתא קיימת
+- מצב משפחתי
+- האם יש ילדים
+- גיל בן/בת זוג
+- כל מידע נוסף רלוונטי
+
+חשוב:
+1. אם לא רואה שדה מסוים - השאר אותו ריק
+2. מספרי טלפון בפורמט ישראלי (050-1234567)
+3. אם יש טקסט בעברית - חלץ אותו בדיוק
+4. שים כל מידע נוסף שלא שייך לשדה ספציפי בשדה "notes"`,
+          file_urls: [fileUrl],
+          response_json_schema: {
             type: "object",
             properties: {
-              text: { type: "string", description: "כל הטקסט שנמצא בתמונה" }
+              full_name: { type: "string" },
+              phone_number: { type: "string" },
+              email: { type: "string" },
+              age: { type: "number" },
+              city: { type: "string" },
+              estimated_property_value: { type: "number" },
+              existing_mortgage_balance: { type: "number" },
+              marital_status: { type: "string", enum: ["Married", "Widowed", "Divorced", "Single"] },
+              has_children: { type: "boolean" },
+              spouse_age: { type: "number" },
+              notes: { type: "string" }
             }
           }
         });
 
-        if (extractResult.status === "success" && extractResult.output?.text) {
-          textToAnalyze = extractResult.output.text;
-        } else {
-          throw new Error("לא הצלחתי לחלץ טקסט מהתמונה. ודא שהתמונה ברורה ומכילה טקסט קריא.");
-        }
+        // הכנת נתונים לתצוגה מקדימה
+        const leadData = {
+          ...visionResult,
+          lead_status: "New",
+          source_year: new Date().getFullYear().toString(),
+          last_contact_date: new Date().toISOString().split('T')[0]
+        };
+
+        setExtractedData(leadData);
+        setPreviewMode(true);
+        setIsProcessing(false);
+        return; // Skip text analysis
       }
 
       // ניתוח הטקסט ע"י AI
@@ -255,22 +287,51 @@ ${textToAnalyze}`,
             </div>
 
             {selectedFile && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                <p className="text-sm font-medium text-green-800">✓ {selectedFile.name}</p>
-                <p className="text-xs text-green-600 mt-1">התמונה מוכנה לעיבוד</p>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={URL.createObjectURL(selectedFile)} 
+                      alt="preview" 
+                      className="w-20 h-20 rounded-lg object-cover border-2 border-green-300"
+                    />
+                  </div>
+                  <div className="flex-1 text-right">
+                    <p className="text-sm font-medium text-green-800">✓ {selectedFile.name}</p>
+                    <p className="text-xs text-green-600 mt-1">התמונה מוכנה לסריקה עם AI Vision</p>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setSelectedFile(null)}
+                      className="text-xs text-red-600 hover:bg-red-50 mt-2 h-7"
+                    >
+                      הסר תמונה
+                    </Button>
+                  </div>
+                </div>
               </div>
             )}
           </TabsContent>
         </Tabs>
 
         {isProcessing && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-            <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin text-blue-600" />
-            <p className="text-sm font-medium text-blue-900">מעבד את הנתונים...</p>
-            <p className="text-xs text-blue-700 mt-1">
-              {mode === "image" ? "מחלץ טקסט מהתמונה ומנתח עם AI" : "מנתח את הטקסט עם AI"}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 text-center shadow-sm"
+          >
+            <Loader2 className="w-12 h-12 mx-auto mb-3 animate-spin text-blue-600" />
+            <p className="text-base font-bold text-blue-900 mb-2">מעבד את הנתונים...</p>
+            <p className="text-sm text-blue-700">
+              {mode === "image" ? "🔍 AI Vision סורק את התמונה ומחלץ את כל הפרטים" : "🤖 AI מנתח את הטקסט"}
             </p>
-          </div>
+            <div className="mt-4 flex justify-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+            </div>
+          </motion.div>
         )}
 
         <div className="flex gap-3 pt-4 border-t">
