@@ -42,7 +42,7 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
         if (extractResult.status === "success" && extractResult.output?.text) {
           textToAnalyze = extractResult.output.text;
         } else {
-          throw new Error("לא הצלחתי לחלץ טקסט מהתמונה");
+          throw new Error("לא הצלחתי לחלץ טקסט מהתמונה. ודא שהתמונה ברורה ומכילה טקסט קריא.");
         }
       }
 
@@ -103,15 +103,18 @@ ${textToAnalyze}`,
 
       onLeadCreated(leadData);
       
-      // איפוס הטופס
+      // הודעת הצלחה
+      alert(`✅ הליד נקלט בהצלחה!\n\nשם: ${leadData.full_name}\nטלפון: ${leadData.phone_number}`);
+      
+      // איפוס הטופס וסגירה
       setInput("");
       setSelectedFile(null);
+      setIsProcessing(false);
       onOpenChange(false);
 
     } catch (error) {
       console.error("Error processing lead:", error);
-      alert("שגיאה בעיבוד הנתונים: " + error.message);
-    } finally {
+      alert(`❌ שגיאה בעיבוד הנתונים\n\n${error.message}\n\nנסה שוב או פנה לתמיכה.`);
       setIsProcessing(false);
     }
   };
@@ -124,8 +127,20 @@ ${textToAnalyze}`,
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl" dir="rtl">
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      if (!isProcessing) {
+        onOpenChange(newOpen);
+      }
+    }}>
+      <DialogContent className="max-w-2xl" dir="rtl" onPointerDownOutside={(e) => {
+        if (isProcessing) {
+          e.preventDefault();
+        }
+      }} onEscapeKeyDown={(e) => {
+        if (isProcessing) {
+          e.preventDefault();
+        }
+      }}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-purple-600" />
@@ -216,6 +231,16 @@ ${textToAnalyze}`,
           </TabsContent>
         </Tabs>
 
+        {isProcessing && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+            <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin text-blue-600" />
+            <p className="text-sm font-medium text-blue-900">מעבד את הנתונים...</p>
+            <p className="text-xs text-blue-700 mt-1">
+              {mode === "image" ? "מחלץ טקסט מהתמונה ומנתח עם AI" : "מנתח את הטקסט עם AI"}
+            </p>
+          </div>
+        )}
+
         <div className="flex gap-3 pt-4 border-t">
           <Button
             variant="outline"
@@ -228,7 +253,7 @@ ${textToAnalyze}`,
           <Button
             onClick={processTextInput}
             disabled={isProcessing || (!input.trim() && !selectedFile)}
-            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50"
           >
             {isProcessing ? (
               <>
