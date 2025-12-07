@@ -31,17 +31,48 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
 
   const activityTypeData = useMemo(() => {
     const counts = {};
+    const typeMapping = {
+        'Call': 'שיחות',
+        'Meeting': 'פגישות',
+        'Email': 'מיילים',
+        'Note': 'הערות',
+        'SMS': 'SMS',
+        'Document Collection': 'איסוף מסמכים'
+    };
+
     activities.forEach(a => {
-        const type = a.type === 'Call' ? 'שיחות' : 
-                     a.type === 'Meeting' ? 'פגישות' : 
-                     a.type === 'Email' ? 'מיילים' : 
-                     a.type === 'Note' ? 'הערות' : 
-                     a.type === 'SMS' ? 'SMS' : 'אחר';
+        const type = typeMapping[a.type] || 'אחר';
         counts[type] = (counts[type] || 0) + 1;
     });
     
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [activities]);
+
+  const getActivitiesByType = (typeName) => {
+      const typeMappingReverse = {
+        'שיחות': 'Call',
+        'פגישות': 'Meeting',
+        'מיילים': 'Email',
+        'הערות': 'Note',
+        'SMS': 'SMS',
+        'איסוף מסמכים': 'Document Collection'
+      };
+      
+      const targetType = typeMappingReverse[typeName];
+      if (!targetType) return [];
+      
+      return sortedActivities.filter(a => a.type === targetType);
+  };
+
+  const getUserName = (email) => {
+      const u = users?.find(user => user.email === email);
+      return u ? u.full_name : email;
+  };
+
+  const getLeadName = (leadId) => {
+      const l = leads?.find(lead => lead.id === leadId);
+      return l ? l.full_name : 'לא ידוע';
+  };
 
   const taskStatusData = [
     { name: 'בוצעו', value: stats.completedTasks },
