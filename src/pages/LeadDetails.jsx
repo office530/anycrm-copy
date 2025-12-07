@@ -1,14 +1,15 @@
 import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 import LeadForm from "@/components/crm/LeadForm";
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 export default function LeadDetailsPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const leadId = queryParams.get('id') || queryParams.get('leadId');
   const queryClient = useQueryClient();
@@ -32,34 +33,36 @@ export default function LeadDetailsPage() {
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['lead', leadId]);
-      // Also invalidate list
       queryClient.invalidateQueries(['leads']);
+      navigate(createPageUrl('Leads'));
     }
   });
 
-  if (!leadId) return <div className="p-8 text-center">לא נבחר ליד</div>;
+  const handleClose = () => {
+    navigate(createPageUrl('Leads'));
+  };
+
+  if (!leadId) {
+    navigate(createPageUrl('Leads'));
+    return null;
+  }
+
   if (isLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!lead) return <div className="p-8 text-center">הליד לא נמצא</div>;
+  if (!lead) {
+    navigate(createPageUrl('Leads'));
+    return null;
+  }
 
   return (
-    <div className="space-y-6 p-6" dir="rtl">
-      <div className="flex items-center gap-4">
-        <Link to={createPageUrl('Leads')}>
-            <Button variant="outline" size="icon">
-                <ArrowRight className="w-4 h-4" />
-            </Button>
-        </Link>
-        <h1 className="text-2xl font-bold text-slate-800">תיק לקוח: {lead.full_name}</h1>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border p-1">
+    <Dialog open={!!lead} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
         <LeadForm 
-            lead={lead} 
-            onSubmit={(data) => updateLead.mutate({ id: lead.id, data })}
-            onCancel={() => window.history.back()} // Or navigate back
-            isSubmitting={updateLead.isPending}
+          lead={lead} 
+          onSubmit={(data) => updateLead.mutate({ id: lead.id, data })}
+          onCancel={handleClose}
+          isSubmitting={updateLead.isPending}
         />
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
