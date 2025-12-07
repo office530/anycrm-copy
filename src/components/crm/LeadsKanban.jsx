@@ -1,14 +1,58 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, Trash2, Pencil, CheckCircle2, MessageCircle } from "lucide-react";
+import { Phone, Trash2, Pencil, CheckCircle2, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
 export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, onDelete, onConvert, activities }) {
   
+  // Scroll Logic
+  const scrollContainerRef = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const scrollAbs = Math.abs(scrollLeft);
+      const maxScroll = scrollWidth - clientWidth;
+      
+      if (scrollWidth <= clientWidth) {
+        setShowLeftArrow(false);
+        setShowRightArrow(false);
+        return;
+      }
+
+      const isAtStart = scrollAbs < 5;
+      const isAtEnd = scrollAbs >= maxScroll - 5;
+
+      // RTL: Start (Right) -> Can scroll Left (Show Left Arrow)
+      // End (Left) -> Can scroll Right (Show Right Arrow)
+      setShowLeftArrow(!isAtEnd);
+      setShowRightArrow(!isAtStart);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [leads, statuses]); // Re-check when data changes
+
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 320;
+      scrollContainerRef.current.scrollBy({ 
+        left: direction === 'left' ? -scrollAmount : scrollAmount, 
+        behavior: 'smooth' 
+      });
+      setTimeout(checkScroll, 300);
+    }
+  };
+
   const getLeadsByStatus = (statusValue) => {
     return leads.filter(l => l.lead_status === statusValue);
   };
@@ -34,7 +78,35 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4 overflow-x-auto pb-20 h-full items-start scrollbar-hide px-2">
+      <div className="relative h-full group/kanban isolate">
+         {/* Scroll Hints */}
+         {showRightArrow && (
+            <Button 
+                variant="secondary" 
+                size="icon" 
+                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none bg-white shadow-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-90 hover:opacity-100 transition-all"
+                onClick={() => scroll('right')}
+            >
+                <ChevronRight className="w-5 h-5" />
+            </Button>
+          )}
+          
+          {showLeftArrow && (
+            <Button 
+                variant="secondary" 
+                size="icon" 
+                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none bg-white shadow-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-90 hover:opacity-100 transition-all"
+                onClick={() => scroll('left')}
+            >
+                <ChevronLeft className="w-5 h-5" />
+            </Button>
+          )}
+
+      <div 
+        ref={scrollContainerRef}
+        onScroll={checkScroll}
+        className="flex gap-4 overflow-x-auto pb-20 h-full items-start scrollbar-hide px-2 scroll-smooth"
+      >
         {statuses.map((status) => {
           const statusLeads = getLeadsByStatus(status.value);
           
@@ -121,6 +193,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
             </div>
           );
         })}
+      </div>
       </div>
     </DragDropContext>
   );
