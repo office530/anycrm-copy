@@ -4,9 +4,13 @@ import OrganizationSettings from '@/components/settings/OrganizationSettings';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import PipelineSettings from '@/components/settings/PipelineSettings';
 import TagSettings from '@/components/settings/TagSettings';
+import TeamSettings from '@/components/settings/TeamSettings';
+import CustomFieldSettings from '@/components/settings/CustomFieldSettings';
+import IntegrationSettings from '@/components/settings/IntegrationSettings';
+import AuditLogSettings from '@/components/settings/AuditLogSettings';
 import { 
     Building2, GitMerge, Tags, Bell, User, Shield, 
-    Database
+    Database, Users, Puzzle, Activity, PenTool
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -17,13 +21,17 @@ export default function SettingsPage() {
         title: "כללי",
         items: [
             { id: "organization", label: "הגדרות ארגון", icon: Building2 },
+            { id: "team", label: "צוות ומשתמשים", icon: Users },
+            { id: "audit", label: "יומן פעילות", icon: Activity },
         ]
     },
     {
         title: "הגדרות מערכת",
         items: [
             { id: "pipeline", label: "תהליכי מכירה", icon: GitMerge },
-            { id: "tags", label: "תגיות ונתונים", icon: Tags },
+            { id: "tags", label: "תגיות מערכת", icon: Tags },
+            { id: "custom_fields", label: "שדות מותאמים", icon: PenTool },
+            { id: "integrations", label: "אינטגרציות", icon: Puzzle },
         ]
     },
     {
@@ -92,6 +100,10 @@ export default function SettingsPage() {
                 {activeTab === "profile" && <ProfileSettings />}
                 {activeTab === "pipeline" && <PipelineSettings />}
                 {activeTab === "tags" && <TagSettings />}
+                {activeTab === "custom_fields" && <CustomFieldSettings />}
+                {activeTab === "integrations" && <IntegrationSettings />}
+                {activeTab === "team" && <TeamSettings />}
+                {activeTab === "audit" && <AuditLogSettings />}
                 {activeTab === "notifications" && <NotificationSettings />}
             </main>
         </div>

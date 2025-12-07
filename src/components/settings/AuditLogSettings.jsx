@@ -1,0 +1,95 @@
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Loader2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { format } from "date-fns";
+
+export default function AuditLogSettings() {
+    const [searchTerm, setSearchTerm] = useState("");
+    
+    // In a real scenario, we would use backend filtering, but for now fetching all (usually limited by default)
+    const { data: logs, isLoading } = useQuery({
+        queryKey: ['audit_logs'],
+        queryFn: () => base44.entities.AuditLog.list('-timestamp', 50),
+        initialData: []
+    });
+
+    const filteredLogs = logs.filter(log => 
+        (log.user_email && log.user_email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (log.action && log.action.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (log.entity && log.entity.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    return (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Card>
+                <CardHeader>
+                    <CardTitle>יומן פעילות מערכת</CardTitle>
+                    <CardDescription>מעקב אחר שינויים ופעולות שבוצעו במערכת</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex gap-4 mb-4">
+                        <div className="relative flex-1">
+                            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Input 
+                                placeholder="חיפוש לפי משתמש, פעולה או ישות..." 
+                                className="pr-10"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="rounded-md border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="text-right w-[180px]">תאריך ושעה</TableHead>
+                                    <TableHead className="text-right">משתמש</TableHead>
+                                    <TableHead className="text-right">פעולה</TableHead>
+                                    <TableHead className="text-right">ישות</TableHead>
+                                    <TableHead className="text-right">פרטים</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoading ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center py-8">
+                                            <Loader2 className="w-6 h-6 animate-spin mx-auto text-slate-400" />
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filteredLogs.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                                            לא נמצאו רשומות
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filteredLogs.map((log) => (
+                                    <TableRow key={log.id}>
+                                        <TableCell className="text-slate-500 font-mono text-xs">
+                                            {log.timestamp ? format(new Date(log.timestamp), 'dd/MM/yyyy HH:mm') : '-'}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{log.user_email}</TableCell>
+                                        <TableCell>
+                                            <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">
+                                                {log.action}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>{log.entity} #{log.entity_id}</TableCell>
+                                        <TableCell className="max-w-xs truncate text-xs text-slate-500" title={log.details}>
+                                            {log.details}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
