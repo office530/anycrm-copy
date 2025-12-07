@@ -18,10 +18,40 @@ export default function RelatedTasks({ leadId, opportunityId }) {
   const { data: tasks = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
-      const filter = {};
-      if (leadId) filter.related_lead_id = leadId;
-      if (opportunityId) filter.related_opportunity_id = opportunityId;
-      return base44.entities.Task.filter(filter);
+      let fetchedTasks = [];
+      
+      if (leadId) {
+        // 1. Fetch tasks directly linked to the lead
+        const leadTasks = await base44.entities.Task.filter({ related_lead_id: leadId });
+        fetchedTasks = [...leadTasks];
+
+        // 2. Fetch tasks linked to opportunities of this lead
+        try {
+            const opportunities = await base44.entities.Opportunity.filter({ lead_id: leadId });
+            if (opportunities.length > 0) {
+                // Fetch tasks for each opportunity
+                const oppTasksPromises = opportunities.map(opp => 
+                    base44.entities.Task.filter({ related_opportunity_id: opp.id })
+                    .then(tasks => tasks.map(t => ({ ...t, _opportunityContext: opp }))) // Tag for UI
+                );
+                const oppTasksArrays = await Promise.all(oppTasksPromises);
+                oppTasksArrays.forEach(list => fetchedTasks.push(...list));
+            }
+        } catch (err) {
+            console.error("Failed to fetch opportunity tasks", err);
+        }
+
+      } else if (opportunityId) {
+        fetchedTasks = await base44.entities.Task.filter({ related_opportunity_id: opportunityId });
+      }
+
+      // Deduplicate by ID
+      const uniqueTasks = fetchedTasks.filter((task, index, self) => 
+        index === self.findIndex((t) => t.id === task.id)
+      );
+      
+      // Sort by due date (descending) or created_date
+      return uniqueTasks.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
     enabled: !!(leadId || opportunityId)
   });
@@ -100,6 +130,11 @@ export default function RelatedTasks({ leadId, opportunityId }) {
                 </div>
                 {task.description && (
                   <p className="text-xs text-slate-500 truncate mt-0.5">{task.description}</p>
+                )}
+                {task._opportunityContext && (
+                    <div className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded inline-block mb-1">
+                        הזדמנות: {task._opportunityContext.product_type}
+                    </div>
                 )}
                 <div className="flex items-center gap-2 mt-1.5">
                     {task.due_date && (
