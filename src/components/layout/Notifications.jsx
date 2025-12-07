@@ -119,15 +119,32 @@ export default function Notifications() {
 
     // Combine all
     const allNotifications = useMemo(() => {
-        const dbNotifs = persistentNotifications.map(n => ({
-            id: n.id,
-            type: n.type || 'info',
-            title: n.title,
-            message: n.message,
-            date: n.created_date,
-            isPersistent: true,
-            link: null
-        }));
+        const dbNotifs = persistentNotifications.map(n => {
+            let link = null;
+            let actionLabel = null;
+
+            if (n.related_entity_type === 'Lead' && n.related_entity_id) {
+                link = `${createPageUrl('LeadDetails')}?id=${n.related_entity_id}`;
+                actionLabel = 'תיק לקוח';
+            } else if (n.related_entity_type === 'Opportunity') {
+                link = createPageUrl('Opportunities');
+                actionLabel = 'לוח הזדמנויות';
+            } else if (n.related_entity_type === 'Task') {
+                link = createPageUrl('Tasks');
+                actionLabel = 'משימות';
+            }
+
+            return {
+                id: n.id,
+                type: n.type || 'info',
+                title: n.title,
+                message: n.message,
+                date: n.created_date,
+                isPersistent: true,
+                link,
+                actionLabel
+            };
+        });
 
         return [...dbNotifs, ...taskAlerts, ...oppAlerts].sort((a, b) => 
             new Date(b.date) - new Date(a.date)
