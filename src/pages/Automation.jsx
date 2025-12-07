@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2, Power, PowerOff, History, CheckCircle2, XCircle, Activity } from "lucide-react";
+import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2, Power, PowerOff, History, CheckCircle2, XCircle, Activity, Copy, Search, Filter, TrendingUp } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -29,6 +29,9 @@ const templates = [
 export default function AutomationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('rules');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterEntity, setFilterEntity] = useState('all');
+  const [editingRule, setEditingRule] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: rules, isLoading } = useQuery({
@@ -45,7 +48,11 @@ export default function AutomationPage() {
 
   const createRule = useMutation({
     mutationFn: (data) => base44.entities.AutomationRule.create(data),
-    onSuccess: () => queryClient.invalidateQueries(['automationRules'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['automationRules']);
+      setIsDialogOpen(false);
+      setEditingRule(null);
+    }
   });
 
   const deleteRule = useMutation({
@@ -58,19 +65,96 @@ export default function AutomationPage() {
     onSuccess: () => queryClient.invalidateQueries(['automationRules'])
   });
 
+  const duplicateRule = (rule) => {
+    const newRule = {
+      ...rule,
+      name: `${rule.name} (עותק)`,
+      is_active: false
+    };
+    delete newRule.id;
+    delete newRule.created_date;
+    delete newRule.updated_date;
+    delete newRule.created_by;
+    createRule.mutate(newRule);
+  };
+
+  // Filter rules
+  const filteredRules = rules.filter(rule => {
+    const matchesSearch = rule.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         rule.action_type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesEntity = filterEntity === 'all' || rule.trigger_entity === filterEntity;
+    return matchesSearch && matchesEntity;
+  });
+
+  // Stats
+  const stats = {
+    total: rules.length,
+    active: rules.filter(r => r.is_active !== false).length,
+    inactive: rules.filter(r => r.is_active === false).length,
+    successRate: logs.length > 0 ? Math.round((logs.filter(l => l.status === 'success').length / logs.length) * 100) : 0
+  };
+
   return (
     <div className="space-y-8 pb-20 font-sans text-slate-900" dir="rtl">
       
-      {/* כותרת */}
+      {/* כותרת + Stats */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">אוטומציות</h1>
           <p className="text-slate-500 font-medium">ניהול חוקים ותהליכים אוטומטיים</p>
         </div>
-        <Button onClick={() => setIsDialogOpen(true)} className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-lg shadow-red-900/10">
+        <Button onClick={() => { setEditingRule(null); setIsDialogOpen(true); }} className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-lg shadow-red-900/10">
             <Plus className="w-4 h-4 ml-2" />
             חוק חדש
         </Button>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-500">סה"כ חוקים</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
+              </div>
+              <Zap className="w-8 h-8 text-slate-300" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-500">פעילים</p>
+                <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+              </div>
+              <CheckCircle2 className="w-8 h-8 text-green-200" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-500">מושבתים</p>
+                <p className="text-2xl font-bold text-slate-400">{stats.inactive}</p>
+              </div>
+              <PowerOff className="w-8 h-8 text-slate-200" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-500">אחוז הצלחה</p>
+                <p className="text-2xl font-bold text-blue-600">{stats.successRate}%</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-blue-200" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Tabs */}
@@ -108,14 +192,38 @@ export default function AutomationPage() {
           </div>
       </div>
 
+      {/* חיפוש וסינון */}
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Input
+            placeholder="חפש חוקים..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pr-10"
+          />
+        </div>
+        <Select value={filterEntity} onValueChange={setFilterEntity}>
+          <SelectTrigger className="w-full md:w-48">
+            <Filter className="w-4 h-4 ml-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">כל הישויות</SelectItem>
+            <SelectItem value="Lead">לידים בלבד</SelectItem>
+            <SelectItem value="Opportunity">הזדמנויות בלבד</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* רשימת חוקים פעילים */}
       <div className="space-y-4 mt-8">
         <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <Zap className="w-5 h-5 text-red-600" />
-              חוקים פעילים ({rules.length})
+              חוקים פעילים ({filteredRules.length})
         </h3>
         
-        {isLoading ? <div className="text-center py-10 text-slate-500">טוען נתונים...</div> : rules.map((rule) =>
+        {isLoading ? <div className="text-center py-10 text-slate-500">טוען נתונים...</div> : filteredRules.map((rule) =>
         <Card key={rule.id} className={`flex flex-row items-center justify-between p-6 bg-white border shadow-sm transition-colors ${rule.is_active ? 'border-slate-200 hover:border-red-200' : 'border-slate-200 bg-slate-50/50 opacity-60'}`}>
                 <div className="flex items-center gap-5 flex-1">
                     <div className={`p-3 rounded-full border ${rule.is_active ? 'bg-slate-50 text-slate-600 border-slate-100' : 'bg-slate-100 text-slate-400 border-slate-200'}`}>
@@ -143,12 +251,29 @@ export default function AutomationPage() {
                         onCheckedChange={(checked) => toggleRule.mutate({ id: rule.id, isActive: checked })}
                       />
                     </div>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => deleteRule.mutate(rule.id)}>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="text-slate-400 hover:text-blue-600 hover:bg-blue-50" 
+                      onClick={() => duplicateRule(rule)}
+                      title="שכפל חוק"
+                    >
+                        <Copy className="w-5 h-5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => {
+                      if(confirm('למחוק חוק זה?')) deleteRule.mutate(rule.id);
+                    }}>
                         <Trash2 className="w-5 h-5" />
                     </Button>
                 </div>
             </Card>
         )}
+        
+        {filteredRules.length === 0 && !isLoading && rules.length > 0 &&
+        <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                <p className="text-slate-500 font-medium">לא נמצאו חוקים תואמים</p>
+            </div>
+        }
         
         {rules.length === 0 && !isLoading &&
         <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
@@ -224,21 +349,32 @@ export default function AutomationPage() {
       </TabsContent>
       </Tabs>
 
-      {/* מודל יצירה (הושאר פשוט לקריאה) */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-slate-50 p-6 fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-2xl"><RuleForm onSuccess={() => setIsDialogOpen(false)} /></DialogContent>
+      {/* מודל יצירה/עריכה */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) setEditingRule(null);
+      }}>
+        <DialogContent className="bg-slate-50 p-6 fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-2xl">
+          <RuleForm 
+            editingRule={editingRule} 
+            onSuccess={() => {
+              setIsDialogOpen(false);
+              setEditingRule(null);
+            }} 
+          />
+        </DialogContent>
       </Dialog>
     </div>);
 
 }
 
 // טופס יצירה (עם AI)
-function RuleForm({ onSuccess }) {
+function RuleForm({ onSuccess, editingRule }) {
   const queryClient = useQueryClient();
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(editingRule || {
     name: "",
     trigger_entity: "Lead",
     trigger_event: "create",
