@@ -263,9 +263,9 @@ export default function LeadsPage() {
 
           </div>
 
-          <div className="flex gap-2 w-full md:w-auto items-center">
+          <div className="flex gap-2 w-full md:w-auto items-center flex-wrap md:flex-nowrap">
              {/* View Toggle */}
-             <div className="bg-slate-100 p-1 rounded-lg flex border border-slate-200 mr-2">
+             <div className="bg-slate-100 p-1 rounded-lg flex border border-slate-200">
                 <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-7 px-2 ${viewMode === 'kanban' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500'}`}>
                     <LayoutGrid className="w-4 h-4" />
                 </Button>
@@ -288,7 +288,7 @@ export default function LeadsPage() {
                     ייבוא רגיל
                 </Button>
              </Link>
-            <Button onClick={() => setShowLeadForm(true)} className="flex-1 md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10">
+            <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 order-first md:order-last">
                 <Plus className="w-4 h-4 ml-2" />
                 ליד חדש
             </Button>
