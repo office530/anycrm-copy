@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, LayoutGrid, List as ListIcon, TrendingUp, Calendar, AlertCircle, DollarSign, Briefcase, Trophy, Trash2, Search } from "lucide-react";
+import { Loader2, LayoutGrid, List as ListIcon, Phone, Calendar, DollarSign, Briefcase, Trophy, Trash2, Search } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -241,88 +241,47 @@ export default function OpportunitiesPage() {
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
                             <div className={`absolute top-0 right-0 w-1 h-full ${stage.color || 'bg-neutral-300'}`} />
-                            <CardContent className="p-4 pr-5 space-y-3">
-                              
-                              {/* שם הלקוח */}
-                              <div className="flex justify-between items-start">
-                                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-400 hover:text-red-600 hover:bg-red-50"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
-                                        }}
-                                    >
-                                        <Trash2 className="w-3 h-3" />
-                                    </Button>
-                                </div>
-                                <div className="flex-1">
-                                  <span className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors block">
-                                    {opp.lead_name || "לקוח ללא שם"}
-                                  </span>
-                                  {(() => {
-                                    const lead = leads.find(l => l.id === opp.lead_id);
-                                    return lead?.phone_number ? (
-                                      <span className="text-[10px] text-neutral-500 dark:text-neutral-600 block mt-0.5">
-                                        {lead.phone_number}
-                                      </span>
-                                    ) : null;
-                                  })()}
-                                </div>
-                                <Badge variant="outline" className="text-[10px] bg-neutral-50 dark:bg-neutral-300 border-neutral-100 dark:border-neutral-300 text-neutral-500 dark:text-neutral-600 flex-shrink-0">
-                                  {opp.probability}%
-                                </Badge>
-                              </div>
-                              
-                              {/* עריכה מהירה: סכום ותאריך */}
-                              <div className="space-y-2 bg-neutral-50/50 dark:bg-neutral-300/50 p-2 rounded-lg border border-neutral-100/50 dark:border-neutral-300/50">
-                                <div className="flex justify-between items-center text-xs">
-                                  <span className="text-neutral-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> סכום</span>
-                                  <div className="w-24 text-right">
-                                      <InlineEdit 
-                                        value={opp.loan_amount_requested}
-                                        type="number"
-                                        formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
-                                        onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
-                                        className="font-bold text-neutral-700 dark:text-neutral-800 justify-end h-6 bg-white dark:bg-neutral-300 shadow-sm"
-                                      />
-                                  </div>
-                                </div>
-                                <div className="flex justify-between items-center text-xs">
-                                  <span className="text-neutral-400 flex items-center gap-1"><Calendar className="w-3 h-3" /> צפי</span>
-                                  <div className="w-28 text-right">
-                                      <InlineEdit 
-                                        value={opp.expected_close_date}
-                                        type="date"
-                                        placeholder="קבע תאריך"
-                                        onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { expected_close_date: val } })}
-                                        className="justify-end h-6 text-neutral-600 dark:text-neutral-700"
-                                        formatDisplay={(val) => val ? moment(val).format("DD/MM/YYYY") : "אין תאריך"}
-                                      />
-                                  </div>
-                                </div>
+                            <CardContent className="p-5 space-y-4">
+                              <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                                      onClick={(e) => {
+                                          e.stopPropagation();
+                                          if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                                      }}
+                                  >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                  </Button>
                               </div>
 
-                              {/* משימה הבאה */}
-                              {opp.next_task && (
-                                <div className="flex items-center gap-2 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded border border-orange-100">
-                                  <AlertCircle className="w-3 h-3 flex-shrink-0" />
-                                  <span className="truncate">{opp.next_task}</span>
-                                </div>
-                              )}
-
-                              {/* הערות ומגע אחרון */}
                               {(() => {
                                 const lead = leads.find(l => l.id === opp.lead_id);
                                 return (
                                   <>
+                                    {/* שם */}
+                                    <div className="text-xl font-bold text-neutral-800 dark:text-neutral-900 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                      {opp.lead_name || "לקוח ללא שם"}
+                                    </div>
+
+                                    {/* טלפון */}
+                                    {lead?.phone_number && (
+                                      <div className="flex items-center gap-2 text-base text-neutral-700 dark:text-neutral-800 font-medium">
+                                        <Phone className="w-4 h-4 text-neutral-400" />
+                                        {lead.phone_number}
+                                      </div>
+                                    )}
+
+                                    {/* הערות */}
                                     {lead?.notes && (
-                                      <div className="text-[10px] text-neutral-500 dark:text-neutral-600 bg-neutral-50/50 dark:bg-neutral-300/50 p-2 rounded border border-neutral-100/50 dark:border-neutral-300/50 line-clamp-2">
+                                      <div className="text-sm text-neutral-600 dark:text-neutral-700 bg-neutral-50 dark:bg-neutral-300/50 p-3 rounded-lg line-clamp-3 leading-relaxed">
                                         {lead.notes}
                                       </div>
                                     )}
+
+                                    {/* שיחה אחרונה */}
                                     {lead?.last_contact_date && (
-                                      <div className="text-[10px] text-neutral-400 dark:text-neutral-500">
-                                        שיחה אחרונה: {moment(lead.last_contact_date).format('DD/MM/YY')}
+                                      <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-600">
+                                        <Calendar className="w-4 h-4" />
+                                        <span>שיחה אחרונה: {moment(lead.last_contact_date).format('DD/MM/YYYY')}</span>
                                       </div>
                                     )}
                                   </>
@@ -345,117 +304,77 @@ export default function OpportunitiesPage() {
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide">
             <div className="col-span-3 text-right">לקוח</div>
-            <div className="col-span-2 text-right">מוצר</div>
-            <div className="col-span-2 text-right">שלב</div>
-            <div className="col-span-2 text-right">סכום מבוקש</div>
-            <div className="col-span-1 text-right">הסתברות</div>
-            <div className="col-span-2 text-left pl-4">פעולות</div>
+            <div className="col-span-2 text-right">טלפון</div>
+            <div className="col-span-4 text-right">הערות</div>
+            <div className="col-span-2 text-right">שיחה אחרונה</div>
+            <div className="col-span-1 text-left pl-4">פעולות</div>
           </div>
           
           <div className="divide-y divide-slate-100">
             {filteredOpportunities.map((opp) => {
               const stage = activeStages.find(s => s.id === opp.deal_stage);
               return (
-                <div key={opp.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
-                  <div className="col-span-3 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-sm">
-                      {opp.lead_name?.charAt(0) || '?'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div 
-                        className="font-bold text-slate-800 hover:text-purple-600 transition-colors cursor-pointer truncate"
-                        onClick={() => { setEditingOpp(opp); setShowForm(true); }}
-                      >
-                        {opp.lead_name || 'לקוח ללא שם'}
-                      </div>
-                      {(() => {
-                        const lead = leads.find(l => l.id === opp.lead_id);
-                        return (
-                          <>
-                            <div className="text-xs text-slate-500">{lead?.phone_number || opp.phone_number || '-'}</div>
-                            {lead?.last_contact_date && (
-                              <div className="text-xs text-slate-400">
-                                שיחה: {moment(lead.last_contact_date).format('DD/MM/YY')}
-                              </div>
-                            )}
-                            {lead?.notes && (
-                              <div className="text-xs text-slate-400 line-clamp-1" title={lead.notes}>
-                                {lead.notes}
-                              </div>
-                            )}
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                  
-                  <div className="col-span-2 text-sm text-slate-700 font-medium">
-                    {opp.product_type}
-                  </div>
-                  
-                  <div className="col-span-2">
-                    <InlineEdit 
-                      type="select"
-                      value={opp.deal_stage}
-                      options={activeStages.map(s => ({ value: s.id, label: s.label }))}
-                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { deal_stage: val } })}
-                      formatDisplay={(val) => {
-                        const currentStage = activeStages.find(s => s.id === val);
-                        return <Badge variant="outline" className={`${currentStage?.light || 'bg-slate-100 text-slate-700'} border-0 px-3 py-1 font-medium`}>{currentStage?.label || val}</Badge>;
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="col-span-2 text-sm font-mono text-slate-700">
-                    <InlineEdit 
-                      value={opp.loan_amount_requested}
-                      type="number"
-                      formatDisplay={(val) => `${branding?.currency}${Number(val || 0).toLocaleString()}`}
-                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { loan_amount_requested: Number(val) } })}
-                      className="font-bold"
-                    />
-                  </div>
-                  
-                  <div className="col-span-1 text-sm text-slate-600">
-                    <InlineEdit 
-                      value={opp.probability}
-                      type="number"
-                      formatDisplay={(val) => (
-                        <Badge variant="outline" className={`
-                          ${Number(val) >= 70 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
-                            Number(val) >= 40 ? 'bg-amber-50 text-amber-700 border-amber-200' : 
-                            'bg-slate-50 text-slate-600 border-slate-200'} 
-                          font-semibold
-                        `}>
-                          {val}%
-                        </Badge>
-                      )}
-                      onSave={(val) => updateOppMutation.mutate({ id: opp.id, data: { probability: Number(val) } })}
-                    />
-                  </div>
-                  
-                  <div className="col-span-2 flex justify-end gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => { setEditingOpp(opp); setShowForm(true); }}
-                      className="h-8 px-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50"
-                      title="פתח הזדמנות"
-                    >
-                      <Briefcase className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => {
-                        if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
-                      }} 
-                      className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50"
-                      title="מחק הזדמנות"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+                <div key={opp.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-start hover:bg-slate-50/80 transition-colors group">
+                  {(() => {
+                    const lead = leads.find(l => l.id === opp.lead_id);
+                    return (
+                      <>
+                        {/* שם */}
+                        <div className="col-span-3 flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-base">
+                            {opp.lead_name?.charAt(0) || '?'}
+                          </div>
+                          <div 
+                            className="text-base font-bold text-slate-800 hover:text-purple-600 transition-colors cursor-pointer"
+                            onClick={() => { setEditingOpp(opp); setShowForm(true); }}
+                          >
+                            {opp.lead_name || 'לקוח ללא שם'}
+                          </div>
+                        </div>
+                        
+                        {/* טלפון */}
+                        <div className="col-span-2 text-base text-slate-700 font-medium flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-slate-400" />
+                          {lead?.phone_number || '-'}
+                        </div>
+                        
+                        {/* הערות */}
+                        <div className="col-span-4 text-sm text-slate-600 line-clamp-2" title={lead?.notes}>
+                          {lead?.notes || '-'}
+                        </div>
+                        
+                        {/* שיחה אחרונה */}
+                        <div className="col-span-2 text-sm text-slate-600 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-slate-400" />
+                          {lead?.last_contact_date ? moment(lead.last_contact_date).format('DD/MM/YYYY') : '-'}
+                        </div>
+                        
+                        {/* פעולות */}
+                        <div className="col-span-1 flex justify-end gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => { setEditingOpp(opp); setShowForm(true); }}
+                            className="h-8 px-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50"
+                            title="פתח הזדמנות"
+                          >
+                            <Briefcase className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                            }} 
+                            className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            title="מחק הזדמנות"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               );
             })}
