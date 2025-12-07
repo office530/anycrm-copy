@@ -99,13 +99,13 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             1. פרטים אישיים
           </CardTitle>
         </CardHeader>
-        <CardContent className="bg-slate-600 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 col-span-2 md:col-span-1">
-            <Label className="text-slate-50">שם הלווה/ים</Label>
+            <Label className="text-slate-700">שם הלווה/ים</Label>
             <Input {...register("borrower_names")} placeholder="שמות מלאים" />
           </div>
           <div className="space-y-2 col-span-2 md:col-span-1">
-            <Label className="text-slate-50">מצב משפחתי</Label>
+            <Label className="text-slate-700">מצב משפחתי</Label>
             <Select onValueChange={(v) => setValue("marital_status", v)} defaultValue={initialData?.marital_status}>
               <SelectTrigger><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
               <SelectContent>
@@ -118,16 +118,16 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-50">גיל לווה א'</Label>
+              <Label className="text-slate-700">גיל לווה א'</Label>
               <Input type="number" {...register("age_borrower_1", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-50">גיל לווה ב'</Label>
+              <Label className="text-slate-700">גיל לווה ב'</Label>
               <Input type="number" {...register("age_borrower_2", { valueAsNumber: true })} />
             </div>
           </div>
           <div className="space-y-2 col-span-2">
-            <Label className="text-slate-50">מצב בריאותי / צלילות (ייפוי כוח מתמשך?)</Label>
+            <Label className="text-slate-700">מצב בריאותי / צלילות (ייפוי כוח מתמשך?)</Label>
             <Textarea {...register("health_status")} placeholder="פרט לגבי צלילות, ייפוי כוח וכו'..." className="h-20 text-right placeholder:text-right" />
           </div>
         </CardContent>
@@ -141,14 +141,14 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             2. הילדים והיורשים (קריטי!)
           </CardTitle>
         </CardHeader>
-        <CardContent className="bg-slate-600 p-6 space-y-6">
+        <CardContent className="bg-white p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-50">כמה ילדים יש?</Label>
+              <Label className="text-slate-700">כמה ילדים יש?</Label>
               <Input type="number" {...register("children_count", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-50">מודעות הילדים לתהליך</Label>
+              <Label className="text-slate-700">מודעות הילדים לתהליך</Label>
               <Select onValueChange={(v) => setValue("children_awareness", v)} defaultValue={initialData?.children_awareness}>
                 <SelectTrigger><SelectValue placeholder="בחר מצב" /></SelectTrigger>
                 <SelectContent>
@@ -161,7 +161,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-slate-50">פירוט ילדים (שם + עיר/מדינה - מיקום חשוב!)</Label>
+            <Label className="text-slate-700">פירוט ילדים (שם + עיר/מדינה - מיקום חשוב!)</Label>
             <Textarea
               {...register("children_details")}
               placeholder={`ילד 1: שם, עיר...
@@ -173,7 +173,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-50">תוכנית לנכס ביום שאחרי (120)</Label>
+              <Label className="text-slate-700">תוכנית לנכס ביום שאחרי (120)</Label>
               <Select onValueChange={(v) => setValue("property_after_120", v)} defaultValue={initialData?.property_after_120}>
                 <SelectTrigger><SelectValue placeholder="מה הילדים יעשו?" /></SelectTrigger>
                 <SelectContent>
@@ -184,7 +184,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-50">הערות מיוחדות (סכסוכים/אפוטרופוס)</Label>
+              <Label className="text-slate-700">הערות מיוחדות (סכסוכים/אפוטרופוס)</Label>
               <Input {...register("heirs_notes")} />
             </div>
           </div>
@@ -199,18 +199,18 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             3. הנכס והבטוחה
           </CardTitle>
         </CardHeader>
-        <CardContent className="bg-slate-600 p-6 space-y-6">
+        <CardContent className="bg-white p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-50">כתובת הנכס</Label>
+              <Label className="text-slate-700">כתובת הנכס</Label>
               <Input {...register("property_address")} placeholder="עיר + רחוב" />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-50">שווי מוערך (₪)</Label>
+              <Label className="text-slate-700">שווי מוערך (₪)</Label>
               <Input type="number" {...register("property_estimated_value", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-50">סוג הנכס</Label>
+              <Label className="text-slate-700">סוג הנכס</Label>
               <Select onValueChange={(v) => setValue("property_type", v)} defaultValue={initialData?.property_type}>
                 <SelectTrigger><SelectValue placeholder="בחר סוג" /></SelectTrigger>
                 <SelectContent>
@@ -222,7 +222,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-50">מצב רישומי</Label>
+              <Label className="text-slate-700">מצב רישומי</Label>
               <Select onValueChange={(v) => setValue("registration_status", v)} defaultValue={initialData?.registration_status}>
                 <SelectTrigger><SelectValue placeholder="בחר רישום" /></SelectTrigger>
                 <SelectContent>
@@ -243,12 +243,12 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
                 onCheckedChange={(v) => setValue("existing_mortgage", v)}
                 id="mortgage" />
 
-              <Label htmlFor="mortgage" className="font-medium text-slate-50">האם קיימת משכנתא/חוב על הבית?</Label>
+              <Label htmlFor="mortgage" className="font-medium text-slate-700">האם קיימת משכנתא/חוב על הבית?</Label>
             </div>
             
             {watch("existing_mortgage") &&
             <div className="space-y-2 animate-in fade-in">
-                <Label className="text-red-200">יתרה לסילוק (₪)</Label>
+                <Label className="text-red-600">יתרה לסילוק (₪)</Label>
                 <Input type="number" {...register("mortgage_balance_to_clear", { valueAsNumber: true })} />
               </div>
             }
@@ -264,17 +264,17 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             4. צרכים ומטרות (הכסף)
           </CardTitle>
         </CardHeader>
-        <CardContent className="bg-slate-600 pt-6 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="bg-white pt-6 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 col-span-2">
-             <Label className="text-slate-50">מה מטרת הכסף?</Label>
+             <Label className="text-slate-700">מה מטרת הכסף?</Label>
              <Input {...register("loan_purpose")} placeholder="עזרה לילדים / מחייה / סגירת חובות..." />
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-50">סכום מבוקש (₪)</Label>
+            <Label className="text-slate-700">סכום מבוקש (₪)</Label>
             <Input type="number" {...register("requested_amount", { valueAsNumber: true })} className="text-lg font-bold" />
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-50">מסלול מועדף</Label>
+            <Label className="text-slate-700">מסלול מועדף</Label>
             <Select onValueChange={(v) => setValue("payment_preference", v)} defaultValue={initialData?.payment_preference}>
               <SelectTrigger><SelectValue placeholder="בחר מסלול" /></SelectTrigger>
               <SelectContent>
@@ -295,16 +295,16 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             5. מסמכים לבקשה ראשונית
           </CardTitle>
         </CardHeader>
-        <CardContent className="bg-slate-600 pt-6 p-6">
+        <CardContent className="bg-white pt-6 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {docs.map((doc) =>
-            <div key={doc} className="flex items-center space-x-3 space-x-reverse p-3 rounded-lg border border-slate-500 hover:bg-slate-500 transition-colors">
+            <div key={doc} className="flex items-center space-x-3 space-x-reverse p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
                 <Checkbox
                 id={doc}
                 checked={currentDocs.includes(doc)}
                 onCheckedChange={() => handleDocToggle(doc)} />
 
-                <Label htmlFor={doc} className="cursor-pointer flex-1 text-slate-50">{doc}</Label>
+                <Label htmlFor={doc} className="cursor-pointer flex-1 text-slate-700">{doc}</Label>
               </div>
             )}
           </div>
