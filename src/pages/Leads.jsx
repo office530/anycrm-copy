@@ -489,20 +489,33 @@ export default function LeadsPage() {
           <LeadForm
             lead={editingLead}
             onSaveAndClose={(data) => {
-              if (data.lead_status === 'Converted') {
-                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
-                else createLead.mutate(data);
+              const wasConverted = editingLead?.lead_status === 'Converted';
+              const isNowConverted = data.lead_status === 'Converted';
+              
+              if (isNowConverted && !wasConverted) {
+                // המרה חדשה - צריך ליצור הזדמנות
+                if (editingLead) {
+                  convertToOpportunity.mutate({ ...editingLead, ...data });
+                } else {
+                  // ליד חדש שנוצר כבר כ-Converted
+                  createLead.mutate(data);
+                }
               } else {
+                // עדכון רגיל או יצירה רגילה
                 editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
               }
               setShowLeadForm(false);
               setEditingLead(null);
             }}
             onSaveAndStay={(data) => {
-              if (data.lead_status === 'Converted') {
-                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
-                else createLead.mutate(data);
-              } else {
+              const wasConverted = editingLead?.lead_status === 'Converted';
+              const isNowConverted = data.lead_status === 'Converted';
+              
+              if (isNowConverted && !wasConverted && editingLead) {
+                // המרה חדשה - צריך ליצור הזדמנות ולהישאר בתיק
+                convertToOpportunity.mutate({ ...editingLead, ...data });
+              } else if (editingLead) {
+                // עדכון רגיל
                 updateLead.mutate({ id: editingLead.id, data });
               }
             }}

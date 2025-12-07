@@ -34,7 +34,26 @@ export default function LeadDetailsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries(['lead', leadId]);
       queryClient.invalidateQueries(['leads']);
-      // No automatic navigation - handled by handlers
+    }
+  });
+
+  const convertToOpportunity = useMutation({
+    mutationFn: async (leadData) => {
+      await base44.entities.Lead.update(leadData.id, { lead_status: "Converted" });
+      return await base44.entities.Opportunity.create({
+        lead_id: leadData.id,
+        lead_name: leadData.full_name,
+        phone_number: leadData.phone_number,
+        email: leadData.email,
+        product_type: "Reverse Mortgage",
+        deal_stage: "New (חדש)",
+        probability: 10
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['opportunities']);
+      queryClient.invalidateQueries(['leads']);
+      queryClient.invalidateQueries(['lead', leadId]);
     }
   });
 
@@ -59,14 +78,28 @@ export default function LeadDetailsPage() {
         <LeadForm 
           lead={lead} 
           onSaveAndClose={(data) => {
-            updateLead.mutate({ id: lead.id, data });
+            const wasConverted = lead.lead_status === 'Converted';
+            const isNowConverted = data.lead_status === 'Converted';
+            
+            if (isNowConverted && !wasConverted) {
+              convertToOpportunity.mutate({ ...lead, ...data });
+            } else {
+              updateLead.mutate({ id: lead.id, data });
+            }
             handleClose();
           }}
           onSaveAndStay={(data) => {
-            updateLead.mutate({ id: lead.id, data });
+            const wasConverted = lead.lead_status === 'Converted';
+            const isNowConverted = data.lead_status === 'Converted';
+            
+            if (isNowConverted && !wasConverted) {
+              convertToOpportunity.mutate({ ...lead, ...data });
+            } else {
+              updateLead.mutate({ id: lead.id, data });
+            }
           }}
           onCancel={handleClose}
-          isSubmitting={updateLead.isPending}
+          isSubmitting={updateLead.isPending || convertToOpportunity.isPending}
         />
       </DialogContent>
     </Dialog>
