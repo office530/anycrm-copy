@@ -138,24 +138,26 @@ function ReportEditor({ onCancel, onSave }) {
     useEffect(() => {
         async function fetchSchema() {
             try {
-                // Try standard schema fetch
                 let s = null;
                 try {
                     s = await base44.entities[config.entity_type].schema();
                 } catch (err) {
-                    console.warn("Schema fetch failed, trying fallback", err);
+                    // Fallback handled below
                 }
 
                 if (!s || !s.properties || Object.keys(s.properties).length === 0) {
-                     // Fallback: fetch one item to guess schema
-                     const items = await base44.entities[config.entity_type].list(1);
-                     if (items && items.length > 0) {
-                         const props = {};
-                         Object.keys(items[0]).forEach(key => {
-                             props[key] = { description: key };
-                         });
-                         s = { properties: props };
-                     }
+                    try {
+                        const items = await base44.entities[config.entity_type].list(1);
+                        if (items && items.length > 0) {
+                            const props = {};
+                            Object.keys(items[0]).forEach(key => {
+                                props[key] = { description: key };
+                            });
+                            s = { properties: props };
+                        }
+                    } catch (e) {
+                         console.error("Fallback schema fetch failed", e);
+                    }
                 }
                 
                 setSchema(s);

@@ -57,36 +57,39 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-8" dir="rtl">
-      <div className="flex justify-between items-center">
+      <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-800">דוחות וניתוח נתונים</h1>
-          <p className="text-neutral-500">סקירה מקיפה של ביצועים, המרות ופעילות</p>
+          <h1 className="text-3xl font-bold text-neutral-900">דוחות וניתוח נתונים</h1>
+          <p className="text-neutral-500 mt-1">סקירה מקיפה של ביצועים, המרות ופעילות עסקית</p>
         </div>
         
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="טווח זמן" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">כל הזמנים</SelectItem>
-            <SelectItem value="this_month">החודש הנוכחי</SelectItem>
-            <SelectItem value="last_month">חודש שעבר</SelectItem>
-            <SelectItem value="this_year">השנה הנוכחית</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-neutral-600 hidden md:inline-block">טווח תצוגה:</span>
+            <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className="w-[180px] bg-white border-neutral-200">
+                <SelectValue placeholder="טווח זמן" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem value="all">כל הזמנים</SelectItem>
+                <SelectItem value="this_month">החודש הנוכחי</SelectItem>
+                <SelectItem value="last_month">חודש שעבר</SelectItem>
+                <SelectItem value="this_year">השנה הנוכחית</SelectItem>
+            </SelectContent>
+            </Select>
+        </div>
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="flex flex-wrap justify-start lg:grid lg:grid-cols-8 w-full h-auto p-1 gap-2">
-          <TabsTrigger value="list">דוח מפורט</TabsTrigger>
-          <TabsTrigger value="advanced">דשבורד הזדמנויות</TabsTrigger>
-          <TabsTrigger value="sales">ביצועי מכירות</TabsTrigger>
-          <TabsTrigger value="conversion">יחסי המרה</TabsTrigger>
-          <TabsTrigger value="activity">דוח פעילות</TabsTrigger>
-          <TabsTrigger value="custom_reports">דוחות מותאמים</TabsTrigger>
-          <TabsTrigger value="custom_dashboard">דשבורד אישי</TabsTrigger>
-          <TabsTrigger value="ai_insights" className="text-indigo-600 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
-            <BrainCircuit className="w-4 h-4 mr-2" />
+        <TabsList className="flex flex-wrap lg:flex-nowrap justify-start w-full h-auto p-1 gap-1 bg-neutral-100/50 rounded-xl mb-6 overflow-x-auto">
+          <TabsTrigger value="list" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">דוח מפורט</TabsTrigger>
+          <TabsTrigger value="advanced" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">דשבורד הזדמנויות</TabsTrigger>
+          <TabsTrigger value="sales" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">ביצועי מכירות</TabsTrigger>
+          <TabsTrigger value="conversion" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">יחסי המרה</TabsTrigger>
+          <TabsTrigger value="activity" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">דוח פעילות</TabsTrigger>
+          <TabsTrigger value="custom_reports" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">דוחות מותאמים</TabsTrigger>
+          <TabsTrigger value="custom_dashboard" className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-red-600 data-[state=active]:shadow-sm transition-all py-2.5">דשבורד אישי</TabsTrigger>
+          <TabsTrigger value="ai_insights" className="flex-1 min-w-[120px] rounded-lg text-indigo-600 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 transition-all py-2.5">
+            <BrainCircuit className="w-4 h-4 mr-2 inline-block" />
             תובנות AI
           </TabsTrigger>
         </TabsList>
