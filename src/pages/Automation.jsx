@@ -6,8 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2, Power, PowerOff } from "lucide-react";
+import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2, Power, PowerOff, History, CheckCircle2, XCircle, Activity } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -25,11 +28,18 @@ const templates = [
 
 export default function AutomationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('rules');
   const queryClient = useQueryClient();
 
   const { data: rules, isLoading } = useQuery({
     queryKey: ['automationRules'],
     queryFn: () => base44.entities.AutomationRule.list(),
+    initialData: []
+  });
+
+  const { data: logs, isLoading: logsLoading } = useQuery({
+    queryKey: ['automationLogs'],
+    queryFn: () => base44.entities.AutomationLog.list('-execution_time', 50),
     initialData: []
   });
 
@@ -52,7 +62,7 @@ export default function AutomationPage() {
     <div className="space-y-8 pb-20 font-sans text-slate-900" dir="rtl">
       
       {/* כותרת */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">אוטומציות</h1>
           <p className="text-slate-500 font-medium">ניהול חוקים ותהליכים אוטומטיים</p>
@@ -63,7 +73,21 @@ export default function AutomationPage() {
         </Button>
       </div>
 
-      {/* תבניות */}
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+          <TabsTrigger value="rules" className="gap-2">
+            <Zap className="w-4 h-4" />
+            חוקים פעילים
+          </TabsTrigger>
+          <TabsTrigger value="logs" className="gap-2">
+            <History className="w-4 h-4" />
+            יומן הפעלות
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="rules" className="space-y-6">{/* תבניות */}
+
       <div>
           <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
               <Wand2 className="w-5 h-5 text-red-600" />
@@ -132,6 +156,73 @@ export default function AutomationPage() {
             </div>
         }
       </div>
+      </TabsContent>
+
+      <TabsContent value="logs">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-5 h-5 text-slate-600" />
+              <h3 className="text-lg font-bold">יומן הפעלות אחרונות</h3>
+            </div>
+            
+            {logsLoading ? (
+              <div className="text-center py-10"><Loader2 className="animate-spin mx-auto" /></div>
+            ) : logs.length === 0 ? (
+              <div className="text-center py-10 text-slate-400">אין הפעלות להצגה</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-right">זמן</TableHead>
+                      <TableHead className="text-right">חוק</TableHead>
+                      <TableHead className="text-right">ישות</TableHead>
+                      <TableHead className="text-right">סטטוס</TableHead>
+                      <TableHead className="text-right">פעולה</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {logs.map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="text-sm">
+                          {new Date(log.execution_time).toLocaleString('he-IL')}
+                        </TableCell>
+                        <TableCell className="font-medium">{log.rule_name}</TableCell>
+                        <TableCell>
+                          <span className="text-xs bg-slate-100 px-2 py-1 rounded">
+                            {log.entity_type}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          {log.status === 'success' ? (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                              <CheckCircle2 className="w-3 h-3 ml-1" />
+                              הצליח
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                              <XCircle className="w-3 h-3 ml-1" />
+                              נכשל
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-xs text-slate-600 max-w-xs truncate">
+                          {log.action_taken}
+                          {log.error_message && (
+                            <div className="text-red-600 mt-1">{log.error_message}</div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+      </Tabs>
 
       {/* מודל יצירה (הושאר פשוט לקריאה) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -166,6 +257,28 @@ function RuleForm({ onSuccess }) {
       update_value: ""
     }
   });
+
+  // Dynamic field options based on entity
+  const leadFields = [
+    { value: 'lead_status', label: 'סטטוס ליד', values: ['New', 'Attempting Contact', 'Contacted - Qualifying', 'Sales Ready', 'Converted', 'Lost / Unqualified'] },
+    { value: 'source_year', label: 'שנת מקור', values: ['2023', '2024', '2025'] },
+    { value: 'age', label: 'גיל', type: 'number' },
+    { value: 'city', label: 'עיר', type: 'text' },
+    { value: 'estimated_property_value', label: 'שווי נכס משוער', type: 'number' },
+    { value: 'lead_temperature', label: 'טמפרטורת ליד', values: ['Warm (חם)', 'Cold (קר)', 'Hot History (היה חם בעבר)'] }
+  ];
+
+  const opportunityFields = [
+    { value: 'deal_stage', label: 'שלב עסקה', values: ['New (חדש)', 'Discovery Call (שיחת בירור צרכים)', 'Meeting Scheduled (נקבעת פגישה)', 'Documents Collection (איסוף מסמכים)', 'Request Sent to Harel (בקשה נשלחה להראל)', 'Closed Won (נחתם - בהצלחה)', 'Closed Lost (אבוד)'] },
+    { value: 'product_type', label: 'סוג מוצר', values: ['Reverse Mortgage', 'Savings/Insurance', 'Loan', 'Other'] },
+    { value: 'probability', label: 'הסתברות', type: 'number' },
+    { value: 'property_value', label: 'שווי נכס', type: 'number' },
+    { value: 'loan_amount_requested', label: 'סכום מבוקש', type: 'number' }
+  ];
+
+  const availableFields = formData.trigger_entity === 'Lead' ? leadFields : opportunityFields;
+  const selectedField = availableFields.find(f => f.value === formData.condition_field);
+  const needsOperatorValue = formData.condition_operator !== 'is_empty' && formData.condition_operator !== 'is_not_empty';
 
   const createRule = useMutation({
     mutationFn: (data) => base44.entities.AutomationRule.create(data),
@@ -336,10 +449,15 @@ function RuleForm({ onSuccess }) {
                 <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
                         <Label>שדה לתנאי (אופציונלי)</Label>
-                        <Input
-                value={formData.condition_field}
-                onChange={(e) => setFormData({ ...formData, condition_field: e.target.value })}
-                placeholder="למשל: lead_status" />
+                        <Select value={formData.condition_field} onValueChange={(v) => setFormData({ ...formData, condition_field: v, condition_value: '' })}>
+                            <SelectTrigger><SelectValue placeholder="בחר שדה..." /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={null}>ללא תנאי</SelectItem>
+                                {availableFields.map(field => (
+                                    <SelectItem key={field.value} value={field.value}>{field.label}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div className="space-y-2">
                         <Label>אופרטור</Label>
@@ -358,11 +476,23 @@ function RuleForm({ onSuccess }) {
                     </div>
                     <div className="space-y-2">
                         <Label>ערך לתנאי</Label>
-                        <Input
-                value={formData.condition_value}
-                onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
-                placeholder="למשל: New"
-                disabled={formData.condition_operator === 'is_empty' || formData.condition_operator === 'is_not_empty'} />
+                        {selectedField?.values && needsOperatorValue ? (
+                            <Select value={formData.condition_value} onValueChange={(v) => setFormData({ ...formData, condition_value: v })}>
+                                <SelectTrigger><SelectValue placeholder="בחר ערך..." /></SelectTrigger>
+                                <SelectContent>
+                                    {selectedField.values.map(val => (
+                                        <SelectItem key={val} value={val}>{val}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <Input
+                                value={formData.condition_value}
+                                onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
+                                placeholder={selectedField?.type === 'number' ? 'הכנס מספר' : 'הכנס ערך'}
+                                type={selectedField?.type === 'number' ? 'number' : 'text'}
+                                disabled={!needsOperatorValue} />
+                        )}
                     </div>
                 </div>
             </div>
