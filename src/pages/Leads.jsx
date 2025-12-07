@@ -133,8 +133,6 @@ export default function LeadsPage() {
               is_read: false
           });
       } catch (e) { console.error("Failed to create notification", e); }
-
-      if (data.lead_status === 'Converted') convertToOpportunity.mutate(data);
     }
   });
 
