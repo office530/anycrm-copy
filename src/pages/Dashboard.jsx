@@ -135,9 +135,9 @@ export default function Dashboard() {
           </div>
           <div className="relative z-10">
               <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/692ea53ece3f48d4695254eb/413fe96bb_image.png"
-            alt="Gishers Logo"
-            className="h-32 object-contain" />
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69360168d7acf9f690aed166/c1a956565_image.png"
+              alt="AnyCRM Logo"
+              className="h-32 object-contain" />
 
           </div>
           {/* Decorative Background */}
