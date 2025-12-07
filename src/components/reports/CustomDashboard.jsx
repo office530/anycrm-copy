@@ -88,7 +88,29 @@ function WidgetBuilder({ onSave, onCancel }) {
     const [schema, setSchema] = useState(null);
 
     useEffect(() => {
-        base44.entities[config.entity_type].schema().then(setSchema);
+        async function fetchSchema() {
+            try {
+                let s = null;
+                try {
+                    s = await base44.entities[config.entity_type].schema();
+                } catch (err) {
+                    console.warn("Schema fetch failed, trying fallback", err);
+                }
+
+                if (!s || !s.properties || Object.keys(s.properties).length === 0) {
+                     const items = await base44.entities[config.entity_type].list(1);
+                     if (items && items.length > 0) {
+                         const props = {};
+                         Object.keys(items[0]).forEach(key => {
+                             props[key] = { description: key };
+                         });
+                         s = { properties: props };
+                     }
+                }
+                setSchema(s);
+            } catch (e) { console.error(e); }
+        }
+        fetchSchema();
     }, [config.entity_type]);
 
     const saveMutation = useMutation({
@@ -179,8 +201,11 @@ function DashboardWidget({ config, onDelete }) {
                 <CardTitle className="text-base font-bold">{config.name}</CardTitle>
                 <Button 
                     variant="ghost" size="icon" 
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 transition-opacity"
-                    onClick={onDelete}
+                    className="h-6 w-6 opacity-100 md:opacity-0 md:group-hover:opacity-100 text-slate-400 hover:text-red-600 transition-opacity"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                    }}
                 >
                     <Trash2 className="w-3 h-3" />
                 </Button>

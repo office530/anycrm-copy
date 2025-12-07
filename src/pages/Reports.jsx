@@ -43,6 +43,12 @@ export default function ReportsPage() {
     initialData: []
   });
 
+  const { data: users } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => base44.entities.User.list(),
+    initialData: []
+  });
+
   const isLoading = leadsLoading || oppsLoading || tasksLoading || activitiesLoading;
 
   if (isLoading) {
@@ -102,7 +108,7 @@ export default function ReportsPage() {
         </TabsContent>
 
         <TabsContent value="activity" className="mt-6">
-          <ActivityReport tasks={tasks} activities={activities} timeRange={timeRange} />
+          <ActivityReport tasks={tasks} activities={activities} leads={leads} users={users} timeRange={timeRange} />
         </TabsContent>
 
         <TabsContent value="custom_reports" className="mt-6">

@@ -1,9 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { CheckSquare, Phone, CalendarDays, ListTodo } from "lucide-react";
+import { CheckSquare, Phone, CalendarDays, ListTodo, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
-export default function ActivityReport({ tasks, activities, timeRange }) {
+export default function ActivityReport({ tasks, activities, leads, users, timeRange }) {
+  const [selectedType, setSelectedType] = useState(null);
+
+  const sortedActivities = useMemo(() => {
+    return [...activities].sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [activities]);
   
   const stats = useMemo(() => {
     const completedTasks = tasks.filter(t => t.status === 'done').length;
@@ -91,12 +99,16 @@ export default function ActivityReport({ tasks, activities, timeRange }) {
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={activityTypeData}>
+              <BarChart data={activityTypeData} onClick={(data) => {
+                  if (data && data.activePayload && data.activePayload[0]) {
+                      setSelectedType(data.activePayload[0].payload.name);
+                  }
+              }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#ef4444" name="כמות" />
+                <Bar dataKey="value" fill="#ef4444" name="כמות" cursor="pointer" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -108,7 +120,7 @@ export default function ActivityReport({ tasks, activities, timeRange }) {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4 max-h-[260px] overflow-y-auto pr-2">
-                    {activities.slice(0, 5).map((act, i) => (
+                    {sortedActivities.slice(0, 5).map((act, i) => (
                         <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0">
                             <div>
                                 <p className="font-medium text-sm text-slate-800">
@@ -126,6 +138,41 @@ export default function ActivityReport({ tasks, activities, timeRange }) {
             </CardContent>
         </Card>
       </div>
+
+      <Dialog open={!!selectedType} onOpenChange={(open) => !open && setSelectedType(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+            <DialogHeader>
+                <DialogTitle>פירוט פעילויות: {selectedType}</DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 overflow-auto">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="text-right">תאריך</TableHead>
+                            <TableHead className="text-right">לקוח</TableHead>
+                            <TableHead className="text-right">בוצע ע"י</TableHead>
+                            <TableHead className="text-right">פרטים</TableHead>
+                            <TableHead className="text-right">סטטוס</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {selectedType && getActivitiesByType(selectedType).map((act) => (
+                            <TableRow key={act.id}>
+                                <TableCell>{new Date(act.date).toLocaleDateString('he-IL')} {new Date(act.date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'})}</TableCell>
+                                <TableCell className="font-medium">{getLeadName(act.lead_id)}</TableCell>
+                                <TableCell>{getUserName(act.created_by)}</TableCell>
+                                <TableCell className="max-w-xs truncate" title={act.summary}>{act.summary}</TableCell>
+                                <TableCell>{act.status}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+            <div className="flex justify-end pt-2">
+                <Button variant="outline" onClick={() => setSelectedType(null)}>סגור</Button>
+            </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
