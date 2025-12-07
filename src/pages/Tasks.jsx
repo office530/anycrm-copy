@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Plus, CheckCircle2, Clock, Calendar, Trash2, Archive, CheckSquare, Square, AlertCircle, Filter, Link as LinkIcon, Briefcase, User
+  Plus, CheckCircle2, Clock, Calendar, Trash2, Archive, CheckSquare, Square, AlertCircle, Filter, Link as LinkIcon, Briefcase, User, X
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -224,7 +224,12 @@ export default function TasksPage() {
       }}>
         <DialogContent className="max-w-lg" dir="rtl">
           <DialogHeader>
-            <DialogTitle>{editingTask ? "עריכת משימה" : "משימה חדשה"}</DialogTitle>
+            <div className="flex justify-between items-center">
+              <DialogTitle>{editingTask ? "עריכת משימה" : "משימה חדשה"}</DialogTitle>
+              <Button variant="ghost" size="icon" onClick={() => setShowTaskForm(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </DialogHeader>
           <TaskForm
             task={editingTask}

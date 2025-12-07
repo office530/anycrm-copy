@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Loader2, Sparkles, Upload, FileImage, Type, Camera, CheckCircle2, Edit3, ArrowRight } from "lucide-react";
+import { Loader2, Sparkles, Upload, FileImage, Type, Camera, CheckCircle2, Edit3, ArrowRight, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -206,10 +206,15 @@ ${textToAnalyze}`,
               transition={{ duration: 0.2 }}
             >
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
-                  ייבוא ליד חכם עם AI
-                </DialogTitle>
+                <div className="flex justify-between items-start">
+                    <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                        <Sparkles className="w-6 h-6 text-purple-600" />
+                        ייבוא ליד חכם עם AI
+                    </DialogTitle>
+                    <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-slate-400 hover:text-slate-600 -mt-2 -ml-2">
+                        <X className="w-5 h-5" />
+                    </Button>
+                </div>
                 <p className="text-sm text-slate-500 mt-2">
                   הדבק טקסט חופשי או העלה תמונה, וה-AI יחלץ את הפרטים באופן אוטומטי
                 </p>

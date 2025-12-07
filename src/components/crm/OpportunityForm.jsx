@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText, User, CheckSquare, AlertCircle } from "lucide-react";
+import { Loader2, Briefcase, Sparkles, MessageSquare, BrainCircuit, Activity, FileText, User, CheckSquare, AlertCircle, X } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ActivityLog from "./ActivityLog";
@@ -174,18 +174,23 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       className="bg-white rounded-xl shadow-xl border border-slate-100 flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden"
       dir="rtl">
 
-      <div className="p-4 md:p-6 border-b shrink-0 flex items-center gap-3 bg-white z-10">
-        <div className="bg-blue-100 p-2 rounded-full">
-          <Briefcase className="w-6 h-6 text-blue-600" />
+      <div className="p-4 md:p-6 border-b shrink-0 flex items-center justify-between bg-white z-10">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-100 p-2 rounded-full">
+            <Briefcase className="w-6 h-6 text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-neutral-900">
+              {title || (opportunity ? "ניהול הזדמנות" : "הזדמנות חדשה")}
+            </h2>
+            <p className="text-neutral-600 text-sm">
+              {selectedLead ? `עבור לקוח: ${selectedLead.full_name}` : "ניהול פרטי עסקה"}
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-neutral-900">
-            {title || (opportunity ? "ניהול הזדמנות" : "הזדמנות חדשה")}
-          </h2>
-          <p className="text-neutral-600 text-sm">
-            {selectedLead ? `עבור לקוח: ${selectedLead.full_name}` : "ניהול פרטי עסקה"}
-          </p>
-        </div>
+        <Button variant="ghost" size="icon" onClick={onCancel} className="text-slate-400 hover:text-slate-600">
+          <X className="w-5 h-5" />
+        </Button>
       </div>
       
       <div className="overflow-y-auto p-4 md:p-6 flex-1">

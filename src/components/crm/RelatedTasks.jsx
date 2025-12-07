@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle2, Circle, Clock, Plus, Trash2, Calendar } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Plus, Trash2, Calendar, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -173,7 +173,12 @@ export default function RelatedTasks({ leadId, opportunityId }) {
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent dir="rtl">
             <DialogHeader>
-                <DialogTitle>משימה חדשה ל{leadId ? 'ליד' : 'הזדמנות'}</DialogTitle>
+                <div className="flex justify-between items-center">
+                    <DialogTitle>משימה חדשה ל{leadId ? 'ליד' : 'הזדמנות'}</DialogTitle>
+                    <Button variant="ghost" size="icon" onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+                        <X className="w-4 h-4" />
+                    </Button>
+                </div>
             </DialogHeader>
             <SimpleTaskForm 
                 onSubmit={(data) => createTask.mutate(data)} 

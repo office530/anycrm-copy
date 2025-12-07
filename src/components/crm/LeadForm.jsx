@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles, CheckSquare } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles, CheckSquare, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -107,11 +107,16 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
       className="bg-white rounded-xl shadow-lg border border-slate-100 flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden"
       dir="rtl">
 
-      <div className="p-4 md:p-6 border-b shrink-0 bg-white z-10">
-        <h2 className="text-2xl font-bold text-slate-900">
-          {lead ? "תיק לקוח" : "הוספת ליד חדש"}
-        </h2>
-        <p className="text-slate-500 text-sm mt-1">ניהול פרטים ופעילויות</p>
+      <div className="p-4 md:p-6 border-b shrink-0 bg-white z-10 flex justify-between items-start">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">
+            {lead ? "תיק לקוח" : "הוספת ליד חדש"}
+          </h2>
+          <p className="text-slate-500 text-sm mt-1">ניהול פרטים ופעילויות</p>
+        </div>
+        <Button variant="ghost" size="icon" onClick={onCancel} className="text-slate-400 hover:text-slate-600">
+          <X className="w-5 h-5" />
+        </Button>
       </div>
 
       <div className="overflow-y-auto p-4 md:p-6 flex-1">
