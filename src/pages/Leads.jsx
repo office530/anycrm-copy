@@ -140,7 +140,11 @@ export default function LeadsPage() {
 
   const updateLead = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries(['leads'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['leads']);
+      setShowLeadForm(false);
+      setEditingLead(null);
+    }
   });
 
   const deleteLead = useMutation({
