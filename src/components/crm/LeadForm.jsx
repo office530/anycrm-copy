@@ -19,7 +19,7 @@ import LeadAiAnalysis from "./LeadAiAnalysis";
 import LastTouchInfo from "./LastTouchInfo";
 import QuickTaskCreator from "./QuickTaskCreator";
 
-export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
+export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: lead || {
       full_name: "",
@@ -74,13 +74,22 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
     setValue(field, value);
   };
 
-  const onFormSubmit = (data) => {
+  const handleSaveAndClose = (data) => {
     const sanitized = { ...data };
     const numberFields = ['age', 'spouse_age', 'estimated_property_value', 'existing_mortgage_balance'];
     numberFields.forEach((f) => {
       if (Number.isNaN(sanitized[f])) sanitized[f] = null;
     });
-    onSubmit(sanitized);
+    onSaveAndClose(sanitized);
+  };
+
+  const handleSaveAndStay = (data) => {
+    const sanitized = { ...data };
+    const numberFields = ['age', 'spouse_age', 'estimated_property_value', 'existing_mortgage_balance'];
+    numberFields.forEach((f) => {
+      if (Number.isNaN(sanitized[f])) sanitized[f] = null;
+    });
+    onSaveAndStay(sanitized);
   };
 
   const onFormError = (formErrors) => {
@@ -336,16 +345,23 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
                   </span>
               }
               <div className="flex justify-between items-center w-full">
-                <Button onClick={handleSubmit(onFormSubmit, onFormError)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6" disabled={isSubmitting}>
+                <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6" disabled={isSubmitting}>
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
                   שמור
                 </Button>
                 <div className="flex gap-3">
                   <Button type="button" variant="outline" onClick={onCancel} className="border-slate-300 hover:bg-slate-50">ביטול</Button>
-                  <Button onClick={handleSubmit(onFormSubmit, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
-                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-                    {lead ? "עדכן תיק לקוח" : "צור ליד חדש"}
-                  </Button>
+                  {lead ? (
+                    <Button onClick={handleSubmit(handleSaveAndStay, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
+                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+                      עדכן תיק לקוח
+                    </Button>
+                  ) : (
+                    <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
+                      {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
+                      צור ליד חדש
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -392,7 +408,7 @@ export default function LeadForm({ lead, onSubmit, onCancel, isSubmitting }) {
           
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
              <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
-             <Button onClick={handleSubmit(onFormSubmit, onFormError)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
+             <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
                {lead ? "שמור שינויים" : "צור ליד"}
              </Button>
           </div>

@@ -34,7 +34,7 @@ export default function LeadDetailsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries(['lead', leadId]);
       queryClient.invalidateQueries(['leads']);
-      navigate(createPageUrl('Leads'));
+      // No automatic navigation - handled by handlers
     }
   });
 
@@ -58,7 +58,13 @@ export default function LeadDetailsPage() {
       <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
         <LeadForm 
           lead={lead} 
-          onSubmit={(data) => updateLead.mutate({ id: lead.id, data })}
+          onSaveAndClose={(data) => {
+            updateLead.mutate({ id: lead.id, data });
+            handleClose();
+          }}
+          onSaveAndStay={(data) => {
+            updateLead.mutate({ id: lead.id, data });
+          }}
           onCancel={handleClose}
           isSubmitting={updateLead.isPending}
         />

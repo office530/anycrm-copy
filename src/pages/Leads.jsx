@@ -116,7 +116,7 @@ export default function LeadsPage() {
     mutationFn: (data) => base44.entities.Lead.create(data),
     onSuccess: async (data) => {
       queryClient.invalidateQueries(['leads']);
-      setShowLeadForm(false);
+      // No automatic close - handled by handlers
       processAutomation('Lead', 'create', data);
 
       // Create notification
@@ -142,8 +142,7 @@ export default function LeadsPage() {
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['leads']);
-      setShowLeadForm(false);
-      setEditingLead(null);
+      // No automatic close - handled by handlers
     }
   });
 
@@ -489,15 +488,25 @@ export default function LeadsPage() {
         <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
           <LeadForm
             lead={editingLead}
-            onSubmit={(data) => {
+            onSaveAndClose={(data) => {
               if (data.lead_status === 'Converted') {
-                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });else
-                createLead.mutate(data);
+                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
+                else createLead.mutate(data);
               } else {
                 editingLead ? updateLead.mutate({ id: editingLead.id, data }) : createLead.mutate(data);
               }
+              setShowLeadForm(false);
+              setEditingLead(null);
             }}
-            onCancel={() => setShowLeadForm(false)}
+            onSaveAndStay={(data) => {
+              if (data.lead_status === 'Converted') {
+                if (editingLead) convertToOpportunity.mutate({ ...editingLead, ...data });
+                else createLead.mutate(data);
+              } else {
+                updateLead.mutate({ id: editingLead.id, data });
+              }
+            }}
+            onCancel={() => { setShowLeadForm(false); setEditingLead(null); }}
             isSubmitting={createLead.isPending || updateLead.isPending} />
 
         </DialogContent>
