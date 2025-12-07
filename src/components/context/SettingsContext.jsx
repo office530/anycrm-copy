@@ -68,8 +68,8 @@ export const defaultPipelineStages = [
 ];
 
 export const defaultBranding = {
-  companyName: "Gisher",
-  logoUrl: "", 
+  companyName: "AnyCRM",
+  logoUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69360168d7acf9f690aed166/c1a956565_image.png", 
   primaryColor: "red",
   currency: "₪"
 };
