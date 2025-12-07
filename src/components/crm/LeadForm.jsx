@@ -116,7 +116,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
       <div className="overflow-y-auto p-4 md:p-6 flex-1">
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 mb-6 bg-slate-100/80 p-1 h-auto gap-1">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-7 mb-6 bg-slate-100/80 p-1 h-auto gap-1">
           <TabsTrigger value="details" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
             <User className="w-4 h-4" />
             <span className="text-xs md:text-sm">פרופיל 360</span>

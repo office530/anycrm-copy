@@ -27,11 +27,15 @@ export default function RelatedTasks({ leadId, opportunityId }) {
   });
 
   const createTask = useMutation({
-    mutationFn: (data) => base44.entities.Task.create({
-      ...data,
-      related_lead_id: leadId,
-      related_opportunity_id: opportunityId
-    }),
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return base44.entities.Task.create({
+        ...data,
+        assigned_to: user?.email,
+        related_lead_id: leadId,
+        related_opportunity_id: opportunityId
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(queryKey);
       queryClient.invalidateQueries(['tasks']); // Main tasks list
