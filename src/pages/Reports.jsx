@@ -94,8 +94,27 @@ export default function ReportsPage() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 items-start">
-              {/* Sidebar Navigation */}
-              <div className="col-span-12 lg:col-span-2 space-y-1">
+              {/* Mobile Navigation (Dropdown) */}
+              <div className="col-span-12 lg:hidden mb-4">
+                  <Select value={activeReport} onValueChange={setActiveReport}>
+                      <SelectTrigger className="w-full bg-white border-neutral-200">
+                          <SelectValue placeholder="בחר דוח להצגה" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {reports.map((report) => (
+                              <SelectItem key={report.id} value={report.id}>
+                                  <div className="flex items-center gap-2">
+                                      <report.icon className="w-4 h-4 text-slate-500" />
+                                      {report.name}
+                                  </div>
+                              </SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+              </div>
+
+              {/* Sidebar Navigation (Desktop) */}
+              <div className="hidden lg:block lg:col-span-2 space-y-1">
                   {reports.map((report) => {
                       const isActive = activeReport === report.id;
                       const Icon = report.icon;

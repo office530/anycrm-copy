@@ -168,7 +168,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                                             {leadName}
                                         </a>
                                     </div>
-                                    <p className="text-xs text-slate-500 truncate w-56" title={act.summary}>{act.summary}</p>
+                                    <p className="text-xs text-slate-500 truncate w-40 md:w-56" title={act.summary}>{act.summary}</p>
                                 </div>
                                 <div className="text-right">
                                     <div className="text-xs font-medium text-slate-600">
@@ -193,6 +193,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                 <DialogTitle>פירוט פעילויות: {selectedType}</DialogTitle>
             </DialogHeader>
             <div className="flex-1 overflow-auto">
+                <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -215,6 +216,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                         ))}
                     </TableBody>
                 </Table>
+                </div>
             </div>
             <div className="flex justify-end pt-2">
                 <Button variant="outline" onClick={() => setSelectedType(null)}>סגור</Button>
