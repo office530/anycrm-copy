@@ -318,14 +318,16 @@ function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
     }`}>
             <div className="relative z-10 text-center">
                 <div className="flex items-center justify-center mb-4">
-                    <div className={`p-3 rounded-2xl ${color} bg-opacity-10 text-${color.split('-')[1]}-600 dark:bg-opacity-20`}>
+                    <div className={`p-3 rounded-2xl ${color} ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-10'}`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className="text-xs font-bold text-neutral-500 dark:text-neutral-600 bg-neutral-50 dark:bg-red-950 px-2 py-1 rounded-full mr-2">{total} סה״כ</span>}
+                    {total && <span className={`text-xs font-bold px-2 py-1 rounded-full mr-2 ${
+                        theme === 'dark' ? 'text-cyan-400 bg-slate-700' : 'text-neutral-500 bg-neutral-50'
+                    }`}>{total} סה״כ</span>}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-800 mb-1">{value}</h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-700 font-medium">{title}</p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-600 mt-2">{subtext}</p>
+                <h3 className={`text-2xl md:text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>{value}</h3>
+                <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>{title}</p>
+                <p className={`text-xs mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>{subtext}</p>
             </div>
         </div>);
 
