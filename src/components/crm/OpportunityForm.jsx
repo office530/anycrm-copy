@@ -263,6 +263,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
             <Activity className="w-4 h-4" />
             תיעוד פעילות
           </TabsTrigger>
+          <TabsTrigger value="tasks" className="flex items-center gap-2" disabled={!opportunity?.id}>
+            <CheckSquare className="w-4 h-4" />
+            משימות
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="details">
