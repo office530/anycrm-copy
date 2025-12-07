@@ -384,6 +384,7 @@ export default function OpportunitiesPage() {
             </div>
           )})}
         </div>
+        </div>
       </DragDropContext>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
