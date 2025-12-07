@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Plus, CheckCircle2, Clock, Calendar, Trash2, Archive, CheckSquare, Square, AlertCircle, Filter
+  Plus, CheckCircle2, Clock, Calendar, Trash2, Archive, CheckSquare, Square, AlertCircle, Filter, Link as LinkIcon, Briefcase, User
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 
@@ -26,6 +28,18 @@ export default function TasksPage() {
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks'],
     queryFn: () => base44.entities.Task.list()
+  });
+
+  const { data: leads = [] } = useQuery({
+    queryKey: ['leads_basic'],
+    queryFn: () => base44.entities.Lead.list(), // Optimized list would be better, but basic list is okay for now
+    staleTime: 5 * 60 * 1000
+  });
+
+  const { data: opportunities = [] } = useQuery({
+    queryKey: ['opportunities_basic'],
+    queryFn: () => base44.entities.Opportunity.list(),
+    staleTime: 5 * 60 * 1000
   });
 
   const createTask = useMutation({
@@ -299,6 +313,24 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
             </div>
           </div>
 
+          {/* Related Entities Links */}
+          {(task.related_lead_id || task.related_opportunity_id) && (
+             <div className="flex gap-2 mb-2">
+                {task.related_lead_id && (
+                    <Link to={`${createPageUrl('LeadDetails')}?leadId=${task.related_lead_id}`} className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] hover:bg-blue-100 transition-colors">
+                        <User className="w-3 h-3" />
+                        ליד
+                    </Link>
+                )}
+                {task.related_opportunity_id && (
+                     <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px]">
+                        <Briefcase className="w-3 h-3" />
+                        הזדמנות
+                    </div>
+                )}
+             </div>
+          )}
+
           {task.description && (
             <p className={`text-sm text-slate-600 mb-2 ${isDone ? 'line-through text-slate-400' : ''}`}>
               {task.description}
@@ -354,12 +386,19 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
 }
 
 function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
+  const queryClient = useQueryClient();
+  // Fetch leads and opportunities for selection
+  const { data: leads = [] } = useQuery({ queryKey: ['leads_basic'], queryFn: () => base44.entities.Lead.list(), staleTime: 60000 });
+  const { data: opportunities = [] } = useQuery({ queryKey: ['opportunities_basic'], queryFn: () => base44.entities.Opportunity.list(), staleTime: 60000 });
+
   const [formData, setFormData] = useState({
     title: task?.title || "",
     description: task?.description || "",
     due_date: task?.due_date || "",
     status: task?.status || "todo",
     assigned_to: task?.assigned_to || "",
+    related_lead_id: task?.related_lead_id || "",
+    related_opportunity_id: task?.related_opportunity_id || ""
   });
 
   const handleSubmit = async (e) => {
@@ -422,6 +461,38 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
             <SelectItem value="done">הושלם</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Relational Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+         <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-700">שיוך לליד</label>
+            <Select value={formData.related_lead_id || "none"} onValueChange={(v) => setFormData({ ...formData, related_lead_id: v === "none" ? null : v })}>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue placeholder="בחר ליד..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">-- ללא שיוך --</SelectItem>
+                {leads.map(l => (
+                    <SelectItem key={l.id} value={l.id}>{l.full_name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+         </div>
+         <div className="space-y-1">
+            <label className="text-xs font-semibold text-slate-700">שיוך להזדמנות</label>
+            <Select value={formData.related_opportunity_id || "none"} onValueChange={(v) => setFormData({ ...formData, related_opportunity_id: v === "none" ? null : v })}>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue placeholder="בחר הזדמנות..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">-- ללא שיוך --</SelectItem>
+                {opportunities.map(o => (
+                    <SelectItem key={o.id} value={o.id}>{o.product_type} - {o.lead_name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+         </div>
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t">
