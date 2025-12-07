@@ -203,9 +203,9 @@ export default function OpportunitiesPage() {
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col">
       
-      {/* Search Bar */}
-      <div className="mb-4">
-        <div className="relative max-w-md">
+      {/* Search Bar & Actions */}
+      <div className="mb-4 flex justify-between items-center gap-4">
+        <div className="relative max-w-md w-full">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <Input
             placeholder="חיפוש לקוח, טלפון, אימייל או מוצר..."
@@ -214,6 +214,15 @@ export default function OpportunitiesPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        <Button 
+            onClick={() => { setEditingOpp(null); setShowForm(true); }} 
+            className="bg-purple-600 hover:bg-purple-700 text-white shadow-md shadow-purple-900/10"
+        >
+            <div className="flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4" /> 
+                <span>הזדמנות חדשה</span>
+            </div>
+        </Button>
       </div>
 
       {/* Stats Header (New!) */}
