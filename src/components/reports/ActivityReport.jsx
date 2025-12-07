@@ -151,19 +151,36 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
             </CardHeader>
             <CardContent>
                 <div className="space-y-4 max-h-[260px] overflow-y-auto pr-2">
-                    {sortedActivities.slice(0, 5).map((act, i) => (
-                        <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0">
-                            <div>
-                                <p className="font-medium text-sm text-slate-800">
-                                    {act.type === 'Call' ? '📞 שיחה' : act.type === 'Meeting' ? '📅 פגישה' : '📝 פעילות'}
-                                </p>
-                                <p className="text-xs text-slate-500 truncate w-48" title={act.summary}>{act.summary}</p>
+                    {sortedActivities.slice(0, 5).map((act, i) => {
+                        const leadName = getLeadName(act.lead_id);
+                        return (
+                            <div key={i} className="flex items-center justify-between border-b pb-3 last:border-0 hover:bg-slate-50 p-1 rounded-lg transition-colors">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <p className="font-bold text-sm text-slate-800">
+                                            {act.type === 'Call' ? '📞 שיחה' : act.type === 'Meeting' ? '📅 פגישה' : '📝 פעילות'}
+                                        </p>
+                                        <span className="text-xs text-slate-400">•</span>
+                                        <a 
+                                            href={`/LeadDetails?id=${act.lead_id}`}
+                                            className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                        >
+                                            {leadName}
+                                        </a>
+                                    </div>
+                                    <p className="text-xs text-slate-500 truncate w-56" title={act.summary}>{act.summary}</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-xs font-medium text-slate-600">
+                                        {act.date ? new Date(act.date).toLocaleDateString('he-IL') : '-'}
+                                    </div>
+                                    <div className="text-[10px] text-slate-400">
+                                        {act.date ? new Date(act.date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) : ''}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-xs text-slate-400">
-                                {act.date ? new Date(act.date).toLocaleDateString('he-IL') : '-'}
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                     {activities.length === 0 && <p className="text-center text-slate-500 py-4">אין פעילויות להצגה</p>}
                 </div>
             </CardContent>
