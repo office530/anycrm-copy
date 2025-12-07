@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles, CheckSquare } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ import TagManager from "./TagManager";
 import LeadAiAnalysis from "./LeadAiAnalysis";
 import LastTouchInfo from "./LastTouchInfo";
 import QuickTaskCreator from "./QuickTaskCreator";
+import RelatedTasks from "./RelatedTasks";
 
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
@@ -127,6 +128,10 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
           <TabsTrigger value="activity" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
             <Activity className="w-4 h-4" />
             <span className="text-xs md:text-sm">פעילות</span>
+          </TabsTrigger>
+          <TabsTrigger value="tasks" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
+            <CheckSquare className="w-4 h-4" />
+            <span className="text-xs md:text-sm">משימות</span>
           </TabsTrigger>
           <TabsTrigger value="documents" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
             <FileText className="w-4 h-4" />
@@ -396,6 +401,10 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
               <TabsContent value="activity" className="h-[600px]">
               {lead ? <ActivityLog leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
+              </TabsContent>
+
+              <TabsContent value="tasks" className="h-[600px]">
+                {lead ? <RelatedTasks leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
               </TabsContent>
 
               <TabsContent value="documents" className="space-y-6">

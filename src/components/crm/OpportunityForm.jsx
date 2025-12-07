@@ -13,6 +13,7 @@ import { base44 } from "@/api/base44Client";
 import FileUpload from "../common/FileUpload";
 import { useQuery } from "@tanstack/react-query";
 import LeadSelector from "./LeadSelector";
+import RelatedTasks from "./RelatedTasks";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const { pipelineStages } = useSettings();
@@ -564,6 +565,13 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           יש לשמור את ההזדמנות לפני שניתן להוסיף פעילויות
         </div>
           }
+        </TabsContent>
+
+        <TabsContent value="tasks" className="h-[600px]">
+           {opportunity?.id ? 
+              <RelatedTasks opportunityId={opportunity.id} leadId={opportunity.lead_id} /> : 
+              <div className="text-center py-10 text-neutral-600">יש לשמור את ההזדמנות תחילה</div>
+           }
         </TabsContent>
         </Tabs>
         </div>
