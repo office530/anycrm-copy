@@ -53,6 +53,7 @@ export default function TeamSettings() {
                                     <TableHead className="text-right">תפקיד</TableHead>
                                     <TableHead className="text-right">סטטוס</TableHead>
                                     <TableHead className="text-right">תאריך הצטרפות</TableHead>
+                                    <TableHead className="text-right w-[50px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -83,6 +84,22 @@ export default function TeamSettings() {
                                         </TableCell>
                                         <TableCell className="text-slate-500 text-sm">
                                             {user.created_date ? format(new Date(user.created_date), 'dd/MM/yyyy') : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                onClick={() => {
+                                                     if(confirm('האם אתה בטוח שברצונך להסיר משתמש זה?')) {
+                                                         base44.entities.User.delete(user.id)
+                                                            .then(() => queryClient.invalidateQueries(['users']))
+                                                            .catch(err => alert("שגיאה במחיקת המשתמש: " + err.message));
+                                                     }
+                                                }}
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
