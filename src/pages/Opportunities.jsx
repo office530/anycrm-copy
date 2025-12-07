@@ -28,11 +28,19 @@ export default function OpportunitiesPage() {
   
   const activeStages = pipelineStages || [];
 
-  const { data: opportunities, isLoading } = useQuery({
+  const { data: opportunities, isLoading: isLoadingOpp } = useQuery({
     queryKey: ['opportunities'],
     queryFn: () => base44.entities.Opportunity.list(),
     initialData: []
   });
+
+  const { data: leads, isLoading: isLoadingLeads } = useQuery({
+    queryKey: ['leads'],
+    queryFn: () => base44.entities.Lead.list(),
+    initialData: []
+  });
+
+  const isLoading = isLoadingOpp || isLoadingLeads;
 
   // Check for action=new in URL
   React.useEffect(() => {
@@ -247,10 +255,20 @@ export default function OpportunitiesPage() {
                                         <Trash2 className="w-3 h-3" />
                                     </Button>
                                 </div>
-                                <span className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                                  {opp.lead_name || "לקוח ללא שם"}
-                                </span>
-                                <Badge variant="outline" className="text-[10px] bg-neutral-50 dark:bg-neutral-300 border-neutral-100 dark:border-neutral-300 text-neutral-500 dark:text-neutral-600">
+                                <div className="flex-1">
+                                  <span className="font-bold text-neutral-800 dark:text-neutral-900 line-clamp-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors block">
+                                    {opp.lead_name || "לקוח ללא שם"}
+                                  </span>
+                                  {(() => {
+                                    const lead = leads.find(l => l.id === opp.lead_id);
+                                    return lead?.phone_number ? (
+                                      <span className="text-[10px] text-neutral-500 dark:text-neutral-600 block mt-0.5">
+                                        {lead.phone_number}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
+                                <Badge variant="outline" className="text-[10px] bg-neutral-50 dark:bg-neutral-300 border-neutral-100 dark:border-neutral-300 text-neutral-500 dark:text-neutral-600 flex-shrink-0">
                                   {opp.probability}%
                                 </Badge>
                               </div>
@@ -291,6 +309,25 @@ export default function OpportunitiesPage() {
                                   <span className="truncate">{opp.next_task}</span>
                                 </div>
                               )}
+
+                              {/* הערות ומגע אחרון */}
+                              {(() => {
+                                const lead = leads.find(l => l.id === opp.lead_id);
+                                return (
+                                  <>
+                                    {lead?.notes && (
+                                      <div className="text-[10px] text-neutral-500 dark:text-neutral-600 bg-neutral-50/50 dark:bg-neutral-300/50 p-2 rounded border border-neutral-100/50 dark:border-neutral-300/50 line-clamp-2">
+                                        {lead.notes}
+                                      </div>
+                                    )}
+                                    {lead?.last_contact_date && (
+                                      <div className="text-[10px] text-neutral-400 dark:text-neutral-500">
+                                        שיחה אחרונה: {moment(lead.last_contact_date).format('DD/MM/YY')}
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })()}
                             </CardContent>
                           </Card>
                         )}
@@ -331,7 +368,24 @@ export default function OpportunitiesPage() {
                       >
                         {opp.lead_name || 'לקוח ללא שם'}
                       </div>
-                      <div className="text-xs text-slate-500">{opp.phone_number || '-'}</div>
+                      {(() => {
+                        const lead = leads.find(l => l.id === opp.lead_id);
+                        return (
+                          <>
+                            <div className="text-xs text-slate-500">{lead?.phone_number || opp.phone_number || '-'}</div>
+                            {lead?.last_contact_date && (
+                              <div className="text-xs text-slate-400">
+                                שיחה: {moment(lead.last_contact_date).format('DD/MM/YY')}
+                              </div>
+                            )}
+                            {lead?.notes && (
+                              <div className="text-xs text-slate-400 line-clamp-1" title={lead.notes}>
+                                {lead.notes}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                   
