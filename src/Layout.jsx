@@ -133,7 +133,7 @@ function LayoutContent({ children, currentPageName }) {
         </header>
 
         {/* Page Content Scrollable Area */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth bg-neutral-50">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8 pb-24 lg:pb-24 scroll-smooth bg-neutral-50">
             <div className="max-w-7xl mx-auto">
                 {children}
             </div>
