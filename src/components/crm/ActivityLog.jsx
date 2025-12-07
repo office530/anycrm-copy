@@ -26,22 +26,16 @@ import {
   Undo2,
   Zap,
   Flag,
-  Target } from
+  Target,
+  Pencil } from
 "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import ActivityForm from "./ActivityForm";
 
 export default function ActivityLog({ leadId, opportunityId }) {
   const [isAdding, setIsAdding] = useState(false);
-  const [isSummarizing, setIsSummarizing] = useState(false);
-  const [aiSummary, setAiSummary] = useState(null);
-  const [lastLeadSnapshot, setLastLeadSnapshot] = useState(null);
-  const [newActivity, setNewActivity] = useState({
-    type: "Call",
-    status: "Completed",
-    summary: "",
-    date: new Date().toISOString().slice(0, 16) // Format for datetime-local
-  });
+  const [editingActivity, setEditingActivity] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -75,85 +69,28 @@ export default function ActivityLog({ leadId, opportunityId }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['activities', leadId]);
       setIsAdding(false);
-      setNewActivity({
-        type: "Call",
-        status: "Completed",
-        summary: "",
-        date: new Date().toISOString().slice(0, 16)
-      });
+      toast.success("הפעילות נוספה בהצלחה");
     }
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    createActivity.mutate(newActivity);
-  };
-
-  const handleAiSummarize = async () => {
-    if (!newActivity.summary.trim() || !leadId) return;
-
-    setIsSummarizing(true);
-    try {
-      // Save current lead state for undo
-      const leads = await base44.entities.Lead.filter({ id: leadId });
-      if (leads[0]) {
-        setLastLeadSnapshot(leads[0]);
-      }
-
-      const response = await base44.functions.invoke('summarizeActivity', {
-        activityText: newActivity.summary,
-        leadId: leadId
-      });
-
-      if (response.data) {
-        setAiSummary(response.data.summary);
-        
-        // Update the summary field with professional version
-        setNewActivity({
-          ...newActivity,
-          summary: response.data.summary.professional_summary
-        });
-
-        // Show success message if fields were updated
-        if (response.data.updatedFieldsCount > 0) {
-          toast.success("סיכום הושלם בהצלחה!", {
-            description: `${response.data.updatedFieldsCount} שדות עודכנו בפרופיל הלקוח`,
-            duration: 5000
-          });
-          queryClient.invalidateQueries(['leads']);
-        } else {
-          toast.success("סיכום הושלם!", {
-            description: "הטקסט סוכם באופן מקצועי",
-            duration: 3000
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error summarizing:', error);
-      toast.error("שגיאה בסיכום הפעילות", {
-        description: "נסה שוב או פנה לתמיכה",
-        duration: 4000
-      });
-    } finally {
-      setIsSummarizing(false);
+  // Update Activity Mutation
+  const updateActivity = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Activity.update(id, {
+      ...data,
+      date: new Date(data.date).toISOString()
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['activities', leadId]);
+      setEditingActivity(null);
+      toast.success("הפעילות עודכנה בהצלחה");
     }
-  };
+  });
 
-  const handleUndoAiChanges = async () => {
-    if (!lastLeadSnapshot || !leadId) return;
-
-    try {
-      await base44.entities.Lead.update(leadId, lastLeadSnapshot);
-      queryClient.invalidateQueries(['leads']);
-      setAiSummary(null);
-      setLastLeadSnapshot(null);
-      toast.success("השינויים בוטלו", {
-        description: "הפרופיל חזר למצב הקודם",
-        duration: 3000
-      });
-    } catch (error) {
-      console.error('Error undoing changes:', error);
-      toast.error("שגיאה בביטול השינויים");
+  const handleFormSubmit = (data) => {
+    if (editingActivity) {
+      updateActivity.mutate({ id: editingActivity.id, data });
+    } else {
+      createActivity.mutate(data);
     }
   };
 
@@ -205,196 +142,22 @@ export default function ActivityLog({ leadId, opportunityId }) {
         <h3 className="font-semibold text-slate-800">תיעוד אינטראקציות</h3>
         <Button
           size="sm"
-          variant={isAdding ? "secondary" : "default"}
-          onClick={() => setIsAdding(!isAdding)}>
-
-          {isAdding ? "ביטול" : <><Plus className="w-4 h-4 mr-2" /> פעילות חדשה</>}
+          variant="default"
+          onClick={() => { setIsAdding(true); setEditingActivity(null); }}
+        >
+          <Plus className="w-4 h-4 mr-2" /> פעילות חדשה
         </Button>
       </div>
 
-      {isAdding &&
-      <form onSubmit={handleSubmit} className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 space-y-4 animate-in slide-in-from-top-2">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-slate-900 text-sm font-medium">סוג פעילות</label>
-              <Select
-              value={newActivity.type}
-              onValueChange={(val) => setNewActivity({ ...newActivity, type: val })}>
-
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Call">📞 שיחה טלפונית</SelectItem>
-                  <SelectItem value="Email">📧 אימייל</SelectItem>
-                  <SelectItem value="SMS">💬 הודעת SMS</SelectItem>
-                  <SelectItem value="Meeting">📅 פגישה</SelectItem>
-                  <SelectItem value="Document Collection">📁 איסוף מסמכים</SelectItem>
-                  <SelectItem value="Note">📝 הערה כללית</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-slate-800 text-sm font-medium">תוצאה / סטטוס</label>
-              <Select
-              value={newActivity.status}
-              onValueChange={(val) => setNewActivity({ ...newActivity, status: val })}>
-
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Completed">✅ הושלם בהצלחה</SelectItem>
-                  <SelectItem value="Scheduled">🕒 מתוכנן לעתיד</SelectItem>
-                  <SelectItem value="No Answer">❌ אין מענה</SelectItem>
-                  <SelectItem value="Left Message">📢 הושארה הודעה</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <label className="text-slate-800 text-sm font-medium">תאריך ושעה</label>
-            <Input
-            type="datetime-local"
-            value={newActivity.date}
-            onChange={(e) => setNewActivity({ ...newActivity, date: e.target.value })} />
-
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <label className="text-slate-800 text-sm font-medium">סיכום / תוכן</label>
-              {newActivity.summary.trim() && (
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={handleAiSummarize}
-                  disabled={isSummarizing}
-                  className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100"
-                >
-                  {isSummarizing ? (
-                    <>
-                      <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                      מעבד...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-3 h-3 mr-2" />
-                      סכם עם AI
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
-            <Textarea
-            placeholder="כתוב כאן סיכום של השיחה או הפעילות בצורה חופשית..."
-            value={newActivity.summary}
-            onChange={(e) => {
-              setNewActivity({ ...newActivity, summary: e.target.value });
-              setAiSummary(null); // Clear AI summary when user edits
-            }}
-            className="h-24" />
-            
-            <AnimatePresence>
-              {aiSummary && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="mt-3 p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-200 space-y-3 shadow-sm"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-purple-900 font-semibold text-sm">
-                      <Sparkles className="w-4 h-4" />
-                      ניתוח AI
-                    </div>
-                    {lastLeadSnapshot && (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleUndoAiChanges}
-                        className="text-xs text-slate-600 hover:text-red-600 hover:bg-red-50"
-                      >
-                        <Undo2 className="w-3 h-3 ml-1" />
-                        בטל שינויים
-                      </Button>
-                    )}
-                  </div>
-                  
-                  {aiSummary.key_points && aiSummary.key_points.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.1 }}
-                      className="bg-white/80 rounded-lg p-3 border border-purple-100"
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <Flag className="w-3.5 h-3.5 text-purple-600" />
-                        <p className="text-xs font-bold text-purple-900">נקודות מפתח</p>
-                      </div>
-                      <ul className="space-y-1.5">
-                        {aiSummary.key_points.map((point, i) => (
-                          <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                            <span className="text-purple-500 font-bold">•</span>
-                            <span>{point}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </motion.div>
-                  )}
-                  
-                  {aiSummary.call_to_action && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="bg-gradient-to-r from-orange-50 to-red-50 p-3 rounded-lg border border-orange-200 shadow-sm"
-                    >
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <Zap className="w-3.5 h-3.5 text-orange-600" />
-                        <p className="text-xs font-bold text-orange-900">פעולה נדרשת</p>
-                      </div>
-                      <p className="text-xs text-orange-800 font-semibold">{aiSummary.call_to_action}</p>
-                    </motion.div>
-                  )}
-                  
-                  {aiSummary.next_steps && aiSummary.next_steps.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="bg-white/80 rounded-lg p-3 border border-blue-100"
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <Target className="w-3.5 h-3.5 text-blue-600" />
-                        <p className="text-xs font-bold text-blue-900">צעדים הבאים</p>
-                      </div>
-                      <ul className="space-y-1.5">
-                        {aiSummary.next_steps.map((step, i) => (
-                          <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                            <span className="text-blue-600 font-bold">{i + 1}.</span>
-                            <span>{step}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </motion.div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="text-slate-800 flex justify-end">
-            <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
-              שמור פעילות
-            </Button>
-          </div>
-        </form>
-      }
+      {(isAdding || editingActivity) && (
+        <ActivityForm
+          initialData={editingActivity}
+          leadId={leadId}
+          onSubmit={handleFormSubmit}
+          onCancel={() => { setIsAdding(false); setEditingActivity(null); }}
+          isSubmitting={createActivity.isPending || updateActivity.isPending}
+        />
+      )}
 
       <ScrollArea className="flex-1 pr-4 -mr-4">
         <div className="space-y-4 pb-4">
@@ -418,9 +181,27 @@ export default function ActivityLog({ leadId, opportunityId }) {
                 <div className="flex-1 space-y-1">
                   <div className="flex justify-between items-start">
                     <p className="font-medium text-sm">{getTypeLabel(activity.type)}</p>
-                    <span className="text-xs text-slate-400">
-                      {format(new Date(activity.date), 'dd/MM/yy HH:mm')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-400">
+                        {format(new Date(activity.date), 'dd/MM/yy HH:mm')}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-slate-400 hover:text-blue-600"
+                        onClick={() => {
+                            // Ensure date is properly formatted for datetime-local input
+                            const date = new Date(activity.date);
+                            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+                            const formattedDate = date.toISOString().slice(0, 16);
+                            
+                            setEditingActivity({ ...activity, date: formattedDate });
+                            setIsAdding(false);
+                        }}
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
                   </div>
                   <p className="text-sm text-slate-600">{activity.summary}</p>
                   <div className="flex gap-2 mt-2 flex-wrap">
