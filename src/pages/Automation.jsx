@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2 } from "lucide-react";
+import { Trash2, Plus, Zap, Sparkles, Wand2, Bell, Mail, Clock, Loader2, Power, PowerOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -39,6 +40,11 @@ export default function AutomationPage() {
 
   const deleteRule = useMutation({
     mutationFn: (id) => base44.entities.AutomationRule.delete(id),
+    onSuccess: () => queryClient.invalidateQueries(['automationRules'])
+  });
+
+  const toggleRule = useMutation({
+    mutationFn: ({ id, isActive }) => base44.entities.AutomationRule.update(id, { is_active: isActive }),
     onSuccess: () => queryClient.invalidateQueries(['automationRules'])
   });
 
@@ -86,25 +92,37 @@ export default function AutomationPage() {
         </h3>
         
         {isLoading ? <div className="text-center py-10 text-slate-500">טוען נתונים...</div> : rules.map((rule) =>
-        <Card key={rule.id} className="flex flex-row items-center justify-between p-6 bg-white border border-slate-200 shadow-sm hover:border-red-200 transition-colors">
-                <div className="flex items-center gap-5">
-                    <div className="bg-slate-50 p-3 rounded-full text-slate-600 border border-slate-100">
+        <Card key={rule.id} className={`flex flex-row items-center justify-between p-6 bg-white border shadow-sm transition-colors ${rule.is_active ? 'border-slate-200 hover:border-red-200' : 'border-slate-200 bg-slate-50/50 opacity-60'}`}>
+                <div className="flex items-center gap-5 flex-1">
+                    <div className={`p-3 rounded-full border ${rule.is_active ? 'bg-slate-50 text-slate-600 border-slate-100' : 'bg-slate-100 text-slate-400 border-slate-200'}`}>
                         <Zap className="w-6 h-6" />
                     </div>
-                    <div>
-                        <h3 className="font-bold text-lg text-slate-900">{rule.name}</h3>
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-bold text-lg text-slate-900">{rule.name}</h3>
+                          {!rule.is_active && <span className="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full">מושבת</span>}
+                        </div>
                         <p className="text-sm text-slate-600 mt-1">
                             <span className="font-semibold text-slate-800">טריגר:</span> {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'} {rule.trigger_event === 'create' ? 'נוצר' : 'עודכן'}
+                            {rule.condition_field && ` | ${rule.condition_field} ${rule.condition_operator || 'equals'} ${rule.condition_value}`}
                         </p>
                         <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                            {rule.action_type === 'send_email' ? <Mail className="w-3 h-3" /> : <Bell className="w-3 h-3" />}
-                            פעולה: {rule.action_type === 'send_email' ? 'שליחת אימייל' : 'יצירת משימה'}
+                            {rule.action_type === 'send_email' ? <Mail className="w-3 h-3" /> : rule.action_type === 'create_task' ? <Bell className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
+                            פעולה: {rule.action_type === 'send_email' ? 'שליחת אימייל' : rule.action_type === 'create_task' ? 'יצירת משימה' : 'עדכון ישות'}
                         </p>
                     </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => deleteRule.mutate(rule.id)}>
-                    <Trash2 className="w-5 h-5" />
-                </Button>
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 px-3">
+                      <Switch 
+                        checked={rule.is_active !== false} 
+                        onCheckedChange={(checked) => toggleRule.mutate({ id: rule.id, isActive: checked })}
+                      />
+                    </div>
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => deleteRule.mutate(rule.id)}>
+                        <Trash2 className="w-5 h-5" />
+                    </Button>
+                </div>
             </Card>
         )}
         
@@ -134,6 +152,7 @@ function RuleForm({ onSuccess }) {
     trigger_entity: "Lead",
     trigger_event: "create",
     condition_field: "",
+    condition_operator: "equals",
     condition_value: "",
     action_type: "create_task",
     action_config: {
@@ -142,7 +161,9 @@ function RuleForm({ onSuccess }) {
       email_body: "",
       task_title: "",
       task_description: "",
-      task_due_days: 1
+      task_due_days: 1,
+      update_field: "",
+      update_value: ""
     }
   });
 
@@ -311,22 +332,38 @@ function RuleForm({ onSuccess }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 border-t pt-4">
-                 <div className="space-y-2">
-                    <Label>שדה לתנאי (אופציונלי)</Label>
-                    <Input
-            value={formData.condition_field}
-            onChange={(e) => setFormData({ ...formData, condition_field: e.target.value })}
-            placeholder="למשל: lead_status" />
-
-                </div>
-                <div className="space-y-2">
-                    <Label>ערך לתנאי</Label>
-                    <Input
-            value={formData.condition_value}
-            onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
-            placeholder="למשל: New" />
-
+            <div className="border-t pt-4 space-y-4">
+                <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                        <Label>שדה לתנאי (אופציונלי)</Label>
+                        <Input
+                value={formData.condition_field}
+                onChange={(e) => setFormData({ ...formData, condition_field: e.target.value })}
+                placeholder="למשל: lead_status" />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>אופרטור</Label>
+                        <Select value={formData.condition_operator} onValueChange={(v) => setFormData({ ...formData, condition_operator: v })}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="equals">שווה ל</SelectItem>
+                                <SelectItem value="not_equals">שונה מ</SelectItem>
+                                <SelectItem value="contains">מכיל</SelectItem>
+                                <SelectItem value="greater_than">גדול מ</SelectItem>
+                                <SelectItem value="less_than">קטן מ</SelectItem>
+                                <SelectItem value="is_empty">ריק</SelectItem>
+                                <SelectItem value="is_not_empty">לא ריק</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>ערך לתנאי</Label>
+                        <Input
+                value={formData.condition_value}
+                onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
+                placeholder="למשל: New"
+                disabled={formData.condition_operator === 'is_empty' || formData.condition_operator === 'is_not_empty'} />
+                    </div>
                 </div>
             </div>
 
@@ -338,6 +375,7 @@ function RuleForm({ onSuccess }) {
                         <SelectContent>
                             <SelectItem value="create_task">יצירת משימה</SelectItem>
                             <SelectItem value="send_email">שליחת אימייל</SelectItem>
+                            <SelectItem value="update_entity">עדכון ישות</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -359,7 +397,7 @@ function RuleForm({ onSuccess }) {
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_description: e.target.value } })} />
 
                         </div>
-                    </div> :
+                    </div> : formData.action_type === 'send_email' ?
 
         <div className="space-y-3 bg-slate-100 p-3 rounded">
                         <div className="space-y-2">
@@ -382,6 +420,25 @@ function RuleForm({ onSuccess }) {
                             <Input
               value={formData.action_config.email_body}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_body: e.target.value } })} />
+
+                        </div>
+                    </div> :
+        
+        <div className="space-y-3 bg-slate-100 p-3 rounded">
+                        <div className="space-y-2">
+                            <Label>שדה לעדכון</Label>
+                            <Input
+              value={formData.action_config.update_field}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, update_field: e.target.value } })}
+              placeholder="למשל: lead_status" />
+
+                        </div>
+                        <div className="space-y-2">
+                            <Label>ערך חדש</Label>
+                            <Input
+              value={formData.action_config.update_value}
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, update_value: e.target.value } })}
+              placeholder="למשל: Sales Ready" />
 
                         </div>
                     </div>

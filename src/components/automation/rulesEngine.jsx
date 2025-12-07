@@ -21,29 +21,75 @@ export const processAutomation = async (entityName, eventType, newData, previous
         // No condition, always run (e.g. on create)
         conditionMet = true;
       } else {
-        const currentValue = newData[rule.condition_field];
-        // For update, we might want to check if it CHANGED to this value
-        if (eventType === 'update' && previousData) {
-            const previousValue = previousData[rule.condition_field];
-            if (previousValue !== rule.condition_value && currentValue === rule.condition_value) {
-                conditionMet = true;
-            }
-        } else {
-            // For create or simple match
-            // For update without previousData, we just check if current value matches (stateless check)
-            if (currentValue === rule.condition_value) {
-                conditionMet = true;
-            }
-        }
+        conditionMet = evaluateCondition(rule, newData, previousData, eventType);
       }
 
       if (conditionMet) {
         console.log(`Executing rule: ${rule.name}`);
-        await executeAction(rule, newData);
+        try {
+          await executeAction(rule, newData);
+          await logExecution(rule, newData, 'success');
+        } catch (error) {
+          console.error(`Rule execution failed: ${rule.name}`, error);
+          await logExecution(rule, newData, 'failed', error.message);
+        }
       }
     }
   } catch (error) {
     console.error("Automation Error:", error);
+  }
+};
+
+const evaluateCondition = (rule, newData, previousData, eventType) => {
+  const operator = rule.condition_operator || 'equals';
+  const fieldValue = newData[rule.condition_field];
+  const conditionValue = rule.condition_value;
+
+  switch (operator) {
+    case 'equals':
+      if (eventType === 'update' && previousData) {
+        const previousValue = previousData[rule.condition_field];
+        return previousValue !== conditionValue && fieldValue === conditionValue;
+      }
+      return fieldValue === conditionValue;
+    
+    case 'not_equals':
+      return fieldValue !== conditionValue;
+    
+    case 'contains':
+      return String(fieldValue || '').includes(conditionValue);
+    
+    case 'greater_than':
+      return Number(fieldValue) > Number(conditionValue);
+    
+    case 'less_than':
+      return Number(fieldValue) < Number(conditionValue);
+    
+    case 'is_empty':
+      return !fieldValue || fieldValue === '';
+    
+    case 'is_not_empty':
+      return fieldValue && fieldValue !== '';
+    
+    default:
+      return fieldValue === conditionValue;
+  }
+};
+
+const logExecution = async (rule, data, status, errorMessage = null) => {
+  try {
+    await base44.entities.AutomationLog.create({
+      rule_id: rule.id,
+      rule_name: rule.name,
+      entity_type: rule.trigger_entity,
+      entity_id: data.id,
+      status,
+      error_message: errorMessage,
+      action_taken: `${rule.action_type}: ${JSON.stringify(rule.action_config)}`,
+      execution_time: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Failed to log automation execution', error);
   }
 };
 
@@ -59,7 +105,6 @@ const executeAction = async (rule, data) => {
   };
 
   if (rule.action_type === 'send_email') {
-    // Handle "Lead" having no email field directly, maybe in custom attributes or use placeholders
     const to = replacePlaceholders(config.email_to);
     
     if (to && to.includes('@')) {
@@ -82,5 +127,15 @@ const executeAction = async (rule, data) => {
         related_lead_id: rule.trigger_entity === 'Lead' ? data.id : (data.lead_id || null),
         related_opportunity_id: rule.trigger_entity === 'Opportunity' ? data.id : null
     });
+  } else if (rule.action_type === 'update_entity') {
+    const updateField = config.update_field;
+    const updateValue = replacePlaceholders(config.update_value);
+    
+    if (updateField) {
+      const entityName = rule.trigger_entity;
+      await base44.entities[entityName].update(data.id, {
+        [updateField]: updateValue
+      });
+    }
   }
 };
