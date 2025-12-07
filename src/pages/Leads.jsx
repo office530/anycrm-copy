@@ -79,6 +79,12 @@ export default function LeadsPage() {
     initialData: []
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 1000 * 60 * 5 // Cache for 5 minutes
+  });
+
   const { data: activities } = useQuery({
     queryKey: ['activities'],
     queryFn: () => base44.entities.Activity.list(),
@@ -145,10 +151,10 @@ export default function LeadsPage() {
   });
 
   const deleteLead = useMutation({
-    mutationFn: (id) => base44.entities.Lead.delete(id),
+    mutationFn: (id) => base44.entities.Lead.update(id, { is_deleted: true }),
     onSuccess: () => {
       queryClient.invalidateQueries(['leads']);
-      alert("הליד נמחק בהצלחה");
+      alert("הליד הועבר לארכיון בהצלחה (מחיקה רכה)");
     }
   });
 
@@ -176,6 +182,16 @@ export default function LeadsPage() {
   // סינון
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
+      // 1. Soft Delete Check
+      if (lead.is_deleted) return false;
+
+      // 2. Row Level Security (Permission Check)
+      if (currentUser && currentUser.role !== 'admin') {
+         const isCreator = lead.created_by === currentUser.email;
+         const isAssigned = lead.assigned_to === currentUser.email;
+         if (!isCreator && !isAssigned) return false;
+      }
+
       // Special case: revival list
       if (filters.status === "revival_2023") {
         return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;

@@ -23,24 +23,25 @@ import RelatedTasks from "./RelatedTasks";
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: lead || {
-      full_name: "",
-      phone_number: "",
-      email: "",
-      documents: [],
-      age: "",
-      city: "",
-      source_year: "2024",
-      original_status_color: "Green",
-      lead_status: "New",
-      last_contact_date: new Date().toISOString().split('T')[0],
-      notes: "",
-      marital_status: "Married",
-      estimated_property_value: "",
-      existing_mortgage_balance: "",
-      has_children: true,
-      spouse_age: "",
-      lead_temperature: "",
-      tags: []
+    full_name: "",
+    phone_number: "",
+    email: "",
+    documents: [],
+    assigned_to: "", // Default empty
+    age: "",
+    city: "",
+    source_year: "2024",
+    original_status_color: "Green",
+    lead_status: "New",
+    last_contact_date: new Date().toISOString().split('T')[0],
+    notes: "",
+    marital_status: "Married",
+    estimated_property_value: "",
+    existing_mortgage_balance: "",
+    has_children: true,
+    spouse_age: "",
+    lead_temperature: "",
+    tags: []
     }
   });
 
@@ -49,6 +50,13 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     queryKey: ['lead_opportunities', lead?.id],
     queryFn: () => base44.entities.Opportunity.filter({ lead_id: lead.id }),
     enabled: !!lead?.id
+  });
+
+  // Fetch users for assignment
+  const { data: users } = useQuery({
+    queryKey: ['users_list'],
+    queryFn: () => base44.entities.User.list(),
+    initialData: []
   });
 
   const leadStatus = watch("lead_status");
@@ -266,6 +274,23 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                     שמירה תוביל לפתיחת הזדמנות חדשה
                   </p>
                 }
+              </div>
+
+              <div className="space-y-1">
+                <Label className={labelClass}>שיוך למשתמש</Label>
+                <Select
+                  defaultValue={lead?.assigned_to || ""}
+                  onValueChange={(val) => handleSelectChange("assigned_to", val)}>
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue placeholder="בחר משתמש אחראי" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unassigned">ללא שיוך</SelectItem>
+                    {users?.map(u => (
+                      <SelectItem key={u.id} value={u.email}>{u.full_name || u.email}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1">
