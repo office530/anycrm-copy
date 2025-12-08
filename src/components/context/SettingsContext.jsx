@@ -17,52 +17,45 @@ export const defaultLeadStatuses = [
 
 export const defaultPipelineStages = [
   { 
-    id: "New (חדש)", 
+    id: "New", 
     label: "New", 
-    color: "bg-red-400", 
-    light: "bg-red-50 text-red-700",
+    color: "bg-blue-400", 
+    light: "bg-blue-50 text-blue-700",
     checklist: [{ id: "c1", text: "Verify Lead Details" }]
   },
   { 
-    id: "Discovery Call (שיחת בירור צרכים)", 
-    label: "Discovery Call", 
-    color: "bg-orange-400", 
-    light: "bg-orange-50 text-orange-700",
-    checklist: [{ id: "c3", text: "Complete Discovery Script" }]
+    id: "Discovery", 
+    label: "Discovery", 
+    color: "bg-indigo-400", 
+    light: "bg-indigo-50 text-indigo-700",
+    checklist: [{ id: "c2", text: "Identify Needs" }]
   },
   { 
-    id: "Meeting Scheduled (נקבעת פגישה)", 
-    label: "Meeting Scheduled", 
+    id: "Proposal", 
+    label: "Proposal", 
+    color: "bg-purple-400", 
+    light: "bg-purple-50 text-purple-700",
+    checklist: [{ id: "c3", text: "Send Proposal" }]
+  },
+  { 
+    id: "Negotiation", 
+    label: "Negotiation", 
     color: "bg-amber-400", 
     light: "bg-amber-50 text-amber-700",
     checklist: []
   },
   { 
-    id: "Documents Collection (איסוף מסמכים)", 
-    label: "Documents Collection", 
-    color: "bg-stone-400", 
-    light: "bg-stone-50 text-stone-700",
-    checklist: []
-  },
-  { 
-    id: "Request Sent to Harel (בקשה נשלחה להראל)", 
-    label: "Request Sent", 
-    color: "bg-neutral-400", 
-    light: "bg-neutral-50 text-neutral-700",
-    checklist: []
-  },
-  { 
-    id: "Closed Won (נחתם - בהצלחה)", 
+    id: "Closed Won", 
     label: "Closed Won", 
     color: "bg-emerald-500", 
     light: "bg-emerald-50 text-emerald-700",
     checklist: []
   },
   { 
-    id: "Closed Lost (אבוד)", 
+    id: "Closed Lost", 
     label: "Closed Lost", 
-    color: "bg-neutral-300", 
-    light: "bg-neutral-50 text-neutral-500",
+    color: "bg-slate-300", 
+    light: "bg-slate-50 text-slate-500",
     checklist: []
   }
 ];
