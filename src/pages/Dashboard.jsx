@@ -20,7 +20,7 @@ import { useSettings } from '@/components/context/SettingsContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function Dashboard() {
-  const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
+  const [timeRange, setTimeRange] = useState('week'); // 'today', 'week', 'month', 'quarter', 'year', 'all'
   const [showAddWidget, setShowAddWidget] = useState(false);
   const { theme, branding, pipelineStages } = useSettings();
   const queryClient = useQueryClient();
@@ -63,6 +63,14 @@ export default function Dashboard() {
     let label = "";
 
     switch (timeRange) {
+      case 'today':
+        start = moment().startOf('day');
+        label = "Today";
+        break;
+      case 'week':
+        start = moment().startOf('week');
+        label = "Current Week";
+        break;
       case 'month':
         start = moment().startOf('month');
         label = "Current Month";
@@ -206,6 +214,8 @@ export default function Dashboard() {
                 <SelectValue placeholder="Select Range" />
             </SelectTrigger>
             <SelectContent>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="week">Current Week</SelectItem>
                 <SelectItem value="month">Current Month</SelectItem>
                 <SelectItem value="quarter">Current Quarter</SelectItem>
                 <SelectItem value="year">Current Year</SelectItem>
