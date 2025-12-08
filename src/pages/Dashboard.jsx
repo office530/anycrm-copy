@@ -149,10 +149,10 @@ export default function Dashboard() {
           </div>
           <div className="relative z-10">
               <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69360168d7acf9f690aed166/c1a956565_image.png"
-            alt="AnyCRM Logo"
-            className="h-32 object-contain" />
-
+                src={branding.logoUrl}
+                alt="AnyCRM Logo"
+                className={`h-40 object-contain transition-all duration-500 ${theme === 'dark' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'drop-shadow-xl'}`} 
+              />
           </div>
           {/* Decorative Background */}
           <div className={`absolute right-0 top-0 w-full md:w-1/3 h-full bg-gradient-to-b md:bg-gradient-to-l opacity-50 pointer-events-none ${
