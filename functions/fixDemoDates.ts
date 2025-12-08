@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
             const simDate = getRandomDate(90);
             promises.push(
                 base44.entities.Lead.update(lead.id, {
-                    custom_data: { ...lead.custom_data, simulated_date: simDate }
+                    custom_data: { ...(lead.custom_data || {}), simulated_date: simDate }
                 })
             );
         }
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
             const simDate = getRandomDate(90);
             promises.push(
                 base44.entities.Opportunity.update(opp.id, {
-                    custom_data: { ...opp.custom_data, simulated_date: simDate }
+                    custom_data: { ...(opp.custom_data || {}), simulated_date: simDate }
                 })
             );
         }

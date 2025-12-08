@@ -49,8 +49,8 @@ export default function Dashboard() {
     }
 
     return {
-      filteredLeads: leads.filter((l) => moment(l.created_date).isSameOrAfter(start)),
-      filteredOpps: opportunities.filter((o) => moment(o.created_date).isSameOrAfter(start)),
+      filteredLeads: leads.filter((l) => moment(l.custom_data?.simulated_date || l.created_date).isSameOrAfter(start)),
+      filteredOpps: opportunities.filter((o) => moment(o.custom_data?.simulated_date || o.created_date).isSameOrAfter(start)),
       dateRangeLabel: label
     };
   }, [leads, opportunities, timeRange]);
@@ -78,13 +78,13 @@ export default function Dashboard() {
     const dateFormat = timeRange === 'year' ? 'MMM' : 'DD/MM';
 
     filteredLeads.forEach((l) => {
-      const date = moment(l.created_date).format(dateFormat);
+      const date = moment(l.custom_data?.simulated_date || l.created_date).format(dateFormat);
       if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
       trendMap[date].leads++;
     });
 
     wonOpps.forEach((o) => {
-      const date = moment(o.updated_date || o.created_date).format(dateFormat);
+      const date = moment(o.custom_data?.simulated_date || o.updated_date || o.created_date).format(dateFormat);
       if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
       trendMap[date].sales++;
     });
