@@ -57,7 +57,7 @@ export default function LeadsPage() {
 
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // Default to list view
+  const [viewMode, setViewMode] = useState('kanban'); // Default to kanban view
   const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
