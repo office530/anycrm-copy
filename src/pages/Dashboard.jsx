@@ -124,8 +124,8 @@ export default function Dashboard() {
       'bg-gradient-to-br from-white to-neutral-50/50 md:bg-white border-neutral-100'}`
       }>
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
-              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>ברוכים הבאים </h1>
-              <p className={`text-base md:text-lg mb-6 ${theme === 'dark' ? 'text-cyan-400' : 'text-neutral-600'}`}>Old Leads Database</p>
+              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>ברוכים הבאים </h1>
+              <p className="text-base md:text-lg mb-6 text-cyan-400">Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
                   <Button className={`rounded-full px-6 text-white transition-all ${
