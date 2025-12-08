@@ -17,6 +17,7 @@ import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
 import { useSettings } from "@/components/context/SettingsContext";
+import TaskForm from "@/components/tasks/TaskForm";
 
 export default function TasksPage() {
   const { theme } = useSettings();
