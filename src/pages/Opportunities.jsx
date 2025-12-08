@@ -129,7 +129,7 @@ export default function OpportunitiesPage() {
       setShowForm(false);
       processAutomation('Opportunity', 'create', data);
       setEditingOpp(null);
-      alert("ההזדמנות נוצרה בהצלחה");
+      alert("Opportunity created successfully");
     }
   });
 
@@ -147,7 +147,7 @@ export default function OpportunitiesPage() {
     mutationFn: (id) => base44.entities.Opportunity.delete(id),
     onSuccess: () => {
         queryClient.invalidateQueries(['opportunities']);
-        alert("ההזדמנות נמחקה בהצלחה");
+        alert("Opportunity deleted successfully");
     }
   });
 
@@ -168,7 +168,7 @@ export default function OpportunitiesPage() {
           // Custom Toast Logic
           const toastEl = document.createElement('div');
           toastEl.className = "fixed top-1/2 left-1/2 transform -tranneutral-x-1/2 -tranneutral-y-1/2 bg-neutral-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
-          toastEl.innerHTML = `<span class="text-2xl">🎉</span> <div><div class="font-bold">ברכות!</div><div class="text-sm opacity-90">עסקה נוספת נסגרה בהצלחה!</div></div>`;
+          toastEl.innerHTML = `<span class="text-2xl">🎉</span> <div><div class="font-bold">Congratulations!</div><div class="text-sm opacity-90">Another deal closed successfully!</div></div>`;
           document.body.appendChild(toastEl);
           setTimeout(() => {
               toastEl.classList.add('opacity-0', 'transition-opacity');
@@ -374,7 +374,7 @@ export default function OpportunitiesPage() {
                                   <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-red-600 hover:bg-red-50"
                                       onClick={(e) => {
                                           e.stopPropagation();
-                                          if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                                          if(window.confirm('Are you sure you want to delete this opportunity?')) deleteOppMutation.mutate(opp.id);
                                       }}
                                   >
                                       <Trash2 className="w-3.5 h-3.5" />
@@ -387,7 +387,7 @@ export default function OpportunitiesPage() {
                                   <>
                                     {/* שם */}
                                     <div className={`text-xl font-bold transition-colors ${theme === 'dark' ? 'text-white group-hover:text-teal-400' : 'text-neutral-800 group-hover:text-teal-600'}`}>
-                                      {opp.lead_name || "לקוח ללא שם"}
+                                      {opp.lead_name || "Unnamed Client"}
                                     </div>
 
                                     {/* טלפון */}
@@ -409,7 +409,7 @@ export default function OpportunitiesPage() {
                                     {lead?.last_contact_date && (
                                       <div className={`flex items-center gap-2 text-sm ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>
                                         <Calendar className="w-4 h-4" />
-                                        <span>שיחה אחרונה: {moment(lead.last_contact_date).format('DD/MM/YYYY')}</span>
+                                        <span>Last Contact: {moment(lead.last_contact_date).format('DD/MM/YYYY')}</span>
                                       </div>
                                     )}
                                   </>
@@ -436,11 +436,11 @@ export default function OpportunitiesPage() {
           <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide transition-colors ${
             theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
           }`}>
-            <div className="col-span-3 text-right">לקוח</div>
-            <div className="col-span-2 text-right">טלפון</div>
-            <div className="col-span-4 text-right">הערות</div>
-            <div className="col-span-2 text-right">שיחה אחרונה</div>
-            <div className="col-span-1 text-left pl-4">פעולות</div>
+            <div className="col-span-3 text-left">Client</div>
+            <div className="col-span-2 text-left">Phone</div>
+            <div className="col-span-4 text-left">Notes</div>
+            <div className="col-span-2 text-left">Last Contact</div>
+            <div className="col-span-1 text-right pr-4">Actions</div>
           </div>
           
           <div className={`divide-y transition-colors ${theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'}`}>
@@ -467,7 +467,7 @@ export default function OpportunitiesPage() {
                             }`}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
-                            {opp.lead_name || 'לקוח ללא שם'}
+                            {opp.lead_name || 'Unnamed Client'}
                           </div>
                         </div>
                         
@@ -495,7 +495,7 @@ export default function OpportunitiesPage() {
                             size="sm" 
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                             className={`h-8 px-2 ${theme === 'dark' ? 'text-slate-500 hover:text-purple-400 hover:bg-purple-900/20' : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'}`}
-                            title={canEdit ? "פתח הזדמנות" : "צפה בהזדמנות"}
+                            title={canEdit ? "Open Opportunity" : "View Opportunity"}
                           >
                             <Briefcase className="w-4 h-4" />
                           </Button>
@@ -507,7 +507,7 @@ export default function OpportunitiesPage() {
                                 if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
                               }} 
                               className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50"
-                              title="מחק הזדמנות"
+                              title="Delete Opportunity"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
