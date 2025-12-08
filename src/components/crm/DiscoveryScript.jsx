@@ -71,12 +71,12 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
   });
 
   const docs = [
-  "תעודות זהות + ספח",
-  "נסח טאבו עדכני",
-  "יתרת סילוק (אם יש)",
+  "תעודות זהות / ח.פ",
+  "מסמכי בעלות על נכס",
+  "פירוט חובות / הלוואות",
   "דפי חשבון 3 חודשים",
-  "אישור ניהול חשבון / צ'ק",
-  "הסכם שכירות (אם יש)"];
+  "אישור ניהול חשבון",
+  "אסמכתאות הכנסה"];
 
 
   const currentDocs = watch("documents_collected") || [];
@@ -133,58 +133,56 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         </CardContent>
       </Card>
 
-      {/* 2. Children & Heirs */}
+      {/* 2. Family / Structure */}
       <Card>
         <CardHeader className="bg-slate-50 pb-3">
           <CardTitle className="text-lg flex items-center gap-2 text-blue-700">
             <Users className="w-5 h-5" />
-            2. הילדים והיורשים (קריטי!)
+            2. מבנה משפחתי / ארגוני
           </CardTitle>
         </CardHeader>
         <CardContent className="bg-white p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-700">כמה ילדים יש?</Label>
+              <Label className="text-slate-700">מספר נפשות / שותפים</Label>
               <Input type="number" {...register("children_count", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-700">מודעות הילדים לתהליך</Label>
+              <Label className="text-slate-700">מעורבות בתהליך</Label>
               <Select onValueChange={(v) => setValue("children_awareness", v)} defaultValue={initialData?.children_awareness}>
                 <SelectTrigger><SelectValue placeholder="בחר מצב" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Know and Support">יודעים ותומכים</SelectItem>
-                  <SelectItem value="Don't Know">לא יודעים (חשש להתנגדות)</SelectItem>
-                  <SelectItem value="Pushed for Process">הילדים דחפו לתהליך</SelectItem>
+                  <SelectItem value="Don't Know">לא מעורבים</SelectItem>
+                  <SelectItem value="Pushed for Process">יוזמי התהליך</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-slate-700">פירוט ילדים (שם + עיר/מדינה - מיקום חשוב!)</Label>
+            <Label className="text-slate-700">פירוט בעלי עניין נוספים</Label>
             <Textarea
               {...register("children_details")}
-              placeholder={`ילד 1: שם, עיר...
-ילד 2: שם, עיר...
-האם יש ילדים בחו"ל?`}
+              placeholder={`פירוט שמות, תפקידים או קרובי משפחה רלוונטיים...`}
               className="h-32 font-mono text-sm" />
 
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-700">תוכנית לנכס ביום שאחרי (120)</Label>
+              <Label className="text-slate-700">יעדים ארוכי טווח</Label>
               <Select onValueChange={(v) => setValue("property_after_120", v)} defaultValue={initialData?.property_after_120}>
-                <SelectTrigger><SelectValue placeholder="מה הילדים יעשו?" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="תוכנית לעתיד" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Keep Property">ישמרו את הנכס (ימחזרו)</SelectItem>
-                  <SelectItem value="Sell Immediately">ימכרו מיד</SelectItem>
+                  <SelectItem value="Keep Property">שימור הנכס/עסק</SelectItem>
+                  <SelectItem value="Sell Immediately">מכירה/אקזיט</SelectItem>
                   <SelectItem value="Unknown">לא ידוע / לא הוחלט</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-700">הערות מיוחדות (סכסוכים/אפוטרופוס)</Label>
+              <Label className="text-slate-700">הערות מיוחדות</Label>
               <Input {...register("heirs_notes")} />
             </div>
           </div>

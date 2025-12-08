@@ -30,16 +30,19 @@ export default function LeadAiAnalysis({ lead }) {
         });
 
         const prompt = `
-          Analyze this mortgage/loan lead and provide a JSON response.
+          Analyze this sales lead and provide a JSON response.
           Lead Data: ${leadData}
 
           Your tasks:
           1. Classify the lead as "Hot", "Warm", or "Cold" based on conversion potential.
           2. Assign a quality score from 0 to 100.
-          3. Provide a brief analysis (in Hebrew) of why you gave this score.
+          3. Provide a brief analysis (in Hebrew) of why you gave this score based on the available data points.
           4. Suggest 3 concrete next actions (in Hebrew) for the sales agent.
           
-          Consider: High property value and low mortgage is good. Recent contact is good. "Sales Ready" status is hot.
+          Consider: 
+          - Completeness of data
+          - Engagement level (last contact, notes)
+          - Fit for the product/service based on available details
           
           Return ONLY valid JSON matching this schema:
           {
