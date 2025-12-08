@@ -32,24 +32,20 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
 
         // חילוץ מידע ישירות מהתמונה עם AI Vision
         const visionResult = await base44.integrations.Core.InvokeLLM({
-          prompt: `נא לחלץ את כל המידע הבא מהתמונה:
-- שם מלא
-- מספר טלפון
-- כתובת אימייל
-- גיל
-- עיר מגורים
-- שווי נכס משוער
-- יתרת משכנתא קיימת
-- מצב משפחתי
-- האם יש ילדים
-- גיל בן/בת זוג
-- כל מידע נוסף רלוונטי
+          prompt: `ניתוח צילום מסך של מערכת CRM/סיילספורס (צולם בטלפון):
+אנא סרוק את התמונה בקפידה וחלץ את פרטי הליד. התמונה עשויה להיות צילום מסך של מערכת ניהול לקוחות.
 
-חשוב:
-1. אם לא רואה שדה מסוים - השאר אותו ריק
-2. מספרי טלפון בפורמט ישראלי (050-1234567)
-3. אם יש טקסט בעברית - חלץ אותו בדיוק
-4. שים כל מידע נוסף שלא שייך לשדה ספציפי בשדה "notes"`,
+עליך לחלץ במדויק:
+1. שם מלא (Full Name) - חפש בראש הכרטיס או בשדה שם.
+2. טלפון (Phone) - בפורמט ישראלי (למשל 050-1234567).
+3. אימייל (Email).
+4. צורך/בקשת הלקוח (Customer Need) - חפש תיאור של מה הלקוח רוצה, מטרת ההלוואה, או סיבת הפנייה.
+5. כל מידע נוסף (Notes) - סכם את *כל* שאר הנתונים המופיעים במסך (כתובת, ת"ז, גיל, סטטוס משפחתי, מצב פיננסי, הערות מערכת קודמות וכו') לתוך טקסט אחד מפורט.
+
+דגשים:
+- אם התמונה מטושטשת, נסה לפענח לפי ההקשר.
+- אם יש מספר טלפונים, קח את הראשי.
+- אל תמציא מידע שלא קיים.`,
           file_urls: [fileUrl],
           response_json_schema: {
             type: "object",
@@ -57,21 +53,23 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
               full_name: { type: "string" },
               phone_number: { type: "string" },
               email: { type: "string" },
-              age: { type: "number" },
-              city: { type: "string" },
-              estimated_property_value: { type: "number" },
-              existing_mortgage_balance: { type: "number" },
-              marital_status: { type: "string", enum: ["Married", "Widowed", "Divorced", "Single"] },
-              has_children: { type: "boolean" },
-              spouse_age: { type: "number" },
-              notes: { type: "string" }
+              customer_need: { type: "string", description: "The main need or reason for contact" },
+              additional_info: { type: "string", description: "Summary of all other visible fields and data" }
             }
           }
         });
 
         // הכנת נתונים לתצוגה מקדימה
+        const combinedNotes = [
+          visionResult.customer_need ? `צורך/בקשה: ${visionResult.customer_need}` : null,
+          visionResult.additional_info
+        ].filter(Boolean).join("\n\n---\nמידע נוסף מהסריקה:\n");
+
         const leadData = {
-          ...visionResult,
+          full_name: visionResult.full_name,
+          phone_number: visionResult.phone_number,
+          email: visionResult.email,
+          notes: combinedNotes,
           lead_status: "New",
           source_year: new Date().getFullYear().toString(),
           last_contact_date: new Date().toISOString().split('T')[0]
@@ -87,52 +85,40 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
       const leadSchema = {
         type: "object",
         properties: {
-          full_name: { type: "string", description: "שם מלא של הליד" },
-          phone_number: { type: "string", description: "מספר טלפון בפורמט ישראלי" },
-          email: { type: "string", description: "כתובת אימייל" },
-          age: { type: "number", description: "גיל הליד" },
-          city: { type: "string", description: "עיר מגורים" },
-          estimated_property_value: { type: "number", description: "שווי נכס משוער" },
-          existing_mortgage_balance: { type: "number", description: "יתרת משכנתא קיימת" },
-          marital_status: { 
-            type: "string", 
-            enum: ["Married", "Widowed", "Divorced", "Single"],
-            description: "מצב משפחתי"
-          },
-          has_children: { type: "boolean", description: "האם יש ילדים" },
-          spouse_age: { type: "number", description: "גיל בן/בת זוג" },
-          notes: { type: "string", description: "כל מידע נוסף שלא מתאים לשדות אחרים" }
+          full_name: { type: "string" },
+          phone_number: { type: "string" },
+          email: { type: "string" },
+          customer_need: { type: "string" },
+          additional_info: { type: "string" }
         },
         required: ["full_name", "phone_number"]
       };
 
       const aiResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `אתה עוזר חכם שמנתח מידע על לקוחות פוטנציאליים.
-קבלת טקסט חופשי או מידע לא מובנה, ועליך לחלץ ממנו את הפרטים הבאים:
-- שם מלא
-- מספר טלפון
-- אימייל
-- גיל
-- עיר
-- שווי נכס משוער
-- יתרת משכנתא
-- מצב משפחתי (Married/Widowed/Divorced/Single)
-- האם יש ילדים
-- גיל בן/בת זוג
-
-חשוב: 
-1. אם לא מצאת שדה מסוים, אל תמציא - השאר אותו ריק/null
-2. מספרי טלפון בפורמט ישראלי (050-1234567)
-3. כל מידע נוסף שלא שייך לאף שדה - שים בשדה notes
+        prompt: `ניתוח טקסט של ליד (העתק-הדבק או טקסט חופשי):
+חלץ את הפרטים הבאים מהטקסט:
+1. שם מלא
+2. טלפון
+3. אימייל
+4. צורך/בקשת הלקוח (מה הלקוח רוצה?)
+5. כל שאר המידע - סכם אותו בצורה מסודרת לשדה additional_info.
 
 הנה הטקסט לניתוח:
 ${textToAnalyze}`,
         response_json_schema: leadSchema
       });
 
+      const combinedNotes = [
+        aiResult.customer_need ? `צורך/בקשה: ${aiResult.customer_need}` : null,
+        aiResult.additional_info
+      ].filter(Boolean).join("\n\n---\nמידע נוסף:\n");
+
       // הכנת נתונים לתצוגה מקדימה
       const leadData = {
-        ...aiResult,
+        full_name: aiResult.full_name,
+        phone_number: aiResult.phone_number,
+        email: aiResult.email,
+        notes: combinedNotes,
         lead_status: "New",
         source_year: new Date().getFullYear().toString(),
         last_contact_date: new Date().toISOString().split('T')[0]
