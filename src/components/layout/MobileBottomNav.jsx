@@ -78,9 +78,9 @@ export default function MobileBottomNav({ activePage }) {
                 <span className={`text-[10px] font-bold ${isActive('Opportunities') ? (theme === 'dark' ? 'text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Deals</span>
             </Link>
 
-            <Link to={createPageUrl('Settings')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Settings') ? (theme === 'dark' ? 'bg-fuchsia-500/10 shadow-[0_0_20px_rgba(232,121,249,0.4)]' : 'bg-red-50') : ''}`}>
-                <Menu className={`w-6 h-6 ${isActive('Settings') ? (theme === 'dark' ? 'text-fuchsia-400 drop-shadow-[0_0_12px_rgba(240,171,252,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
-                <span className={`text-[10px] font-bold ${isActive('Settings') ? (theme === 'dark' ? 'text-fuchsia-400 drop-shadow-[0_0_8px_rgba(240,171,252,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Settings</span>
+            <Link to={createPageUrl('Settings')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Settings') ? (theme === 'dark' ? 'bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.4)]' : 'bg-red-50') : ''}`}>
+                <Menu className={`w-6 h-6 ${isActive('Settings') ? (theme === 'dark' ? 'text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
+                <span className={`text-[10px] font-bold ${isActive('Settings') ? (theme === 'dark' ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Settings</span>
             </Link>
         </div>);
 
