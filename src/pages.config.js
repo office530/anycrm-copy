@@ -8,6 +8,7 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import SearchResults from './pages/SearchResults';
 import Tasks from './pages/Tasks';
+import LandingPage from './pages/LandingPage';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "Settings": Settings,
     "SearchResults": SearchResults,
     "Tasks": Tasks,
+    "LandingPage": LandingPage,
 }
 
 export const pagesConfig = {

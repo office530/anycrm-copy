@@ -14,6 +14,15 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav';
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { branding, theme, toggleTheme } = useSettings();
+
+  // Landing Page Layout (No Sidebar/Chrome)
+  if (currentPageName === 'LandingPage') {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-cyan-500/30">
+        {children}
+      </div>
+    );
+  }
   
   // Exact paths
   const navigation = [
