@@ -8,8 +8,10 @@ import { CheckCircle2, Calendar, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import moment from "moment";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function TasksWidget() {
+  const { theme } = useSettings();
   const queryClient = useQueryClient();
 
   const { data: tasks = [] } = useQuery({
@@ -41,16 +43,18 @@ export default function TasksWidget() {
   };
 
   return (
-    <Card className="border-none shadow-sm rounded-2xl bg-white flex flex-col h-[400px]">
+    <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-[400px] transition-colors ${
+      theme === 'dark' ? 'bg-slate-800' : 'bg-white'
+    }`}>
       <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-lg flex items-center justify-between">
-          <span className="text-slate-800 flex items-center gap-2">משימות קרובות</span>
-          <Badge variant="outline" className="text-xs">{upcomingTasks.length}</Badge>
+          <span className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>משימות קרובות</span>
+          <Badge variant="outline" className={`text-xs ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{upcomingTasks.length}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-2">
         {upcomingTasks.length === 0 ? (
-          <div className="text-center py-10 text-slate-500">
+          <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
             <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
             <p>אין משימות דחופות</p>
           </div>
@@ -65,11 +69,17 @@ export default function TasksWidget() {
                 <div
                   key={task.id}
                   className={`p-3 rounded-xl border group hover:shadow-sm transition-all ${
-                    isDone
-                      ? 'bg-emerald-50/50 border-emerald-200'
-                      : isOverdue
-                      ? 'bg-red-50/50 border-red-200'
-                      : 'bg-slate-50 border-slate-100 hover:border-red-200'
+                    theme === 'dark'
+                      ? isDone 
+                        ? 'bg-emerald-900/20 border-emerald-800' 
+                        : isOverdue 
+                        ? 'bg-red-900/20 border-red-800' 
+                        : 'bg-slate-700/50 border-slate-600 hover:border-red-500/50'
+                      : isDone
+                        ? 'bg-emerald-50/50 border-emerald-200'
+                        : isOverdue
+                        ? 'bg-red-50/50 border-red-200'
+                        : 'bg-slate-50 border-slate-100 hover:border-red-200'
                   }`}
                 >
                   <div className="flex items-start gap-2">
@@ -90,7 +100,9 @@ export default function TasksWidget() {
                       <div className="flex justify-between items-start mb-1">
                         <h4
                           className={`font-medium text-sm line-clamp-1 ${
-                            isDone ? 'line-through text-slate-400' : 'text-slate-900'
+                            isDone 
+                              ? 'line-through text-slate-400' 
+                              : theme === 'dark' ? 'text-white' : 'text-slate-900'
                           }`}
                         >
                           {task.title}
@@ -102,7 +114,7 @@ export default function TasksWidget() {
                         ) : isToday && !isDone ? (
                           <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">היום</Badge>
                         ) : (
-                          <span className="text-xs text-slate-500">
+                          <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                             {moment(task.due_date).format('DD/MM')}
                           </span>
                         )}
@@ -110,7 +122,7 @@ export default function TasksWidget() {
                       {task.description && (
                         <p
                           className={`text-xs line-clamp-1 ${
-                            isDone ? 'text-slate-400' : 'text-slate-600'
+                            isDone ? 'text-slate-400' : theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
                           }`}
                         >
                           {task.description}
@@ -124,9 +136,9 @@ export default function TasksWidget() {
           </div>
         )}
       </CardContent>
-      <div className="p-4 border-t border-slate-100 shrink-0">
+      <div className={`p-4 border-t shrink-0 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
         <Link to={createPageUrl('Tasks')}>
-          <Button variant="ghost" className="w-full text-slate-600 text-xs h-8">
+          <Button variant="ghost" className={`w-full text-xs h-8 ${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-600'}`}>
             כל המשימות
           </Button>
         </Link>
