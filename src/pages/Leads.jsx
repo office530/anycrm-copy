@@ -242,23 +242,35 @@ export default function LeadsPage() {
       </div>
 
       {/* סרגל כלים וחיפוש */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+      <div className={`p-4 rounded-xl shadow-sm border flex flex-col md:flex-row gap-4 justify-between items-start md:items-center transition-colors ${
+        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+      }`}>
         <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
           <div className="relative flex-1">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
               placeholder="חיפוש לפי שם..."
-              className="pr-10 border-slate-300 focus:border-red-500 focus:ring-red-500 rounded-lg"
+              className={`pr-10 rounded-lg transition-colors ${
+                theme === 'dark' 
+                  ? 'bg-slate-900 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-500 focus:ring-cyan-500' 
+                  : 'border-slate-300 focus:border-red-500 focus:ring-red-500'
+              }`}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
 
           </div>
           <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger className="w-full md:w-[160px] border-slate-300 text-slate-700 font-medium rounded-lg">
-                    <Filter className="w-4 h-4 ml-2 text-slate-500" />
+                <SelectTrigger className={`w-full md:w-[160px] font-medium rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'bg-slate-900 border-slate-600 text-white' 
+                    : 'border-slate-300 text-slate-700'
+                }`}>
+                    <Filter className={`w-4 h-4 ml-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                     <SelectValue placeholder="סטטוס" />
                 </SelectTrigger>
-                <SelectContent className="bg-white text-slate-900 text-right">
+                <SelectContent className={`text-right transition-colors ${
+                  theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-slate-900'
+                }`}>
                     <SelectItem value="all" className="text-right">כל הסטטוסים</SelectItem>
                     {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-right hover:bg-slate-50">{opt.label}</SelectItem>)}
                     <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
@@ -266,11 +278,17 @@ export default function LeadsPage() {
           </Select>
 
           <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
-                <SelectTrigger className="w-full md:w-[140px] border-slate-300 text-slate-700 font-medium rounded-lg">
-                    <Tag className="w-4 h-4 ml-2 text-slate-500" />
+                <SelectTrigger className={`w-full md:w-[140px] font-medium rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'bg-slate-900 border-slate-600 text-white' 
+                    : 'border-slate-300 text-slate-700'
+                }`}>
+                    <Tag className={`w-4 h-4 ml-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                     <SelectValue placeholder="תגיות" />
                 </SelectTrigger>
-                <SelectContent className="bg-white text-slate-900 text-right">
+                <SelectContent className={`text-right transition-colors ${
+                  theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-slate-900'
+                }`}>
                     <SelectItem value="all" className="text-right">כל התגיות</SelectItem>
                     {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-right hover:bg-slate-50">{tag}</SelectItem>)}
                 </SelectContent>
@@ -281,11 +299,21 @@ export default function LeadsPage() {
 
           <div className="flex gap-2 w-full md:w-auto items-center flex-wrap md:flex-nowrap">
              {/* View Toggle */}
-             <div className="bg-slate-100 p-1 rounded-lg flex border border-slate-200">
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-7 px-2 ${viewMode === 'kanban' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500'}`}>
+             <div className={`p-1 rounded-lg flex border transition-colors ${
+               theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-200'
+             }`}>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-7 px-2 ${
+                  viewMode === 'kanban' 
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-white shadow-sm text-slate-900'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                }`}>
                     <LayoutGrid className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-7 px-2 ${viewMode === 'list' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500'}`}>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-7 px-2 ${
+                  viewMode === 'list' 
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-white shadow-sm text-slate-900'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                }`}>
                     <ListIcon className="w-4 h-4" />
                 </Button>
              </div>
@@ -299,7 +327,11 @@ export default function LeadsPage() {
                 ייבוא AI
              </Button>
              <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
-                <Button variant="outline" className="bg-white text-slate-600 border-slate-300 hover:bg-slate-50">
+                <Button variant="outline" className={`transition-colors ${
+                  theme === 'dark' 
+                    ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800' 
+                    : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                }`}>
                     <Upload className="w-4 h-4 ml-2" />
                     ייבוא רגיל
                 </Button>
@@ -330,8 +362,12 @@ export default function LeadsPage() {
       {viewMode === 'list' && (
         <div className="space-y-6">
       {/* --- תצוגת דסקטופ (טבלה) --- */}
-      <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-         <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide select-none">
+      <div className={`hidden md:block rounded-xl border shadow-sm overflow-hidden transition-colors ${
+        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+      }`}>
+         <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide select-none transition-colors ${
+           theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+         }`}>
             <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
                 לקוח
                 {sortConfig.key === 'full_name' ?
@@ -365,19 +401,27 @@ export default function LeadsPage() {
             <div className="col-span-2 text-left pl-4">פעולות</div>
         </div>
 
-        <div className="divide-y divide-slate-100">
-            {isLoading ? <div className="p-10 text-center text-slate-500">טוען נתונים...</div> :
+        <div className={`divide-y transition-colors ${
+          theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'
+        }`}>
+            {isLoading ? <div className={`p-10 text-center ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>טוען נתונים...</div> :
           filteredLeads.map((lead) =>
-          <div key={lead.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-slate-50/80 transition-colors group">
+          <div key={lead.id} className={`grid grid-cols-12 gap-4 px-6 py-3 items-center transition-colors group ${
+            theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/80'
+          }`}>
                     <div className="col-span-3 flex items-center gap-3">
-                         <div className="w-9 h-9 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm">
+                         <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${
+                           theme === 'dark' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-red-50 text-red-700'
+                         }`}>
                             {lead.full_name?.charAt(0)}
                          </div>
                          <div className="flex-1">
-                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-800 hover:text-red-600 transition-colors">
+                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className={`font-bold transition-colors ${
+                              theme === 'dark' ? 'text-white hover:text-cyan-400' : 'text-slate-800 hover:text-red-600'
+                            }`}>
                                 {lead.full_name}
                             </Link>
-                            <div className="text-xs text-slate-500">{lead.city}</div>
+                            <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city}</div>
                             {getLastActivityDate(lead.id) && (
                               <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
                                 ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
@@ -395,17 +439,17 @@ export default function LeadsPage() {
                     <div className="col-span-2">
                         <StatusBadge lead={lead} statuses={displayStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     </div>
-                    <div className="col-span-2 text-sm text-slate-600 flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-slate-400" />
+                    <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
                         <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
-                    <div className="col-span-2 text-xs text-slate-500 dir-ltr">
+                    <div className={`col-span-2 text-xs dir-ltr ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                         {lead.created_date ? new Date(lead.created_date).toLocaleDateString('he-IL') : '-'}
                         <br/>
                         <span className="text-[10px] opacity-70">{lead.created_date ? new Date(lead.created_date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                     </div>
-                    <div className="col-span-1 text-sm text-slate-600">
+                    <div className={`col-span-1 text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
                         {lead.source_year}
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
@@ -437,17 +481,23 @@ export default function LeadsPage() {
       {/* --- תצוגת מובייל (כרטיסים) --- */}
       <div className="md:hidden space-y-4 pb-20">
          {filteredLeads.map((lead) =>
-        <div key={lead.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
+        <div key={lead.id} className={`p-4 rounded-xl shadow-sm border flex flex-col gap-3 transition-colors ${
+          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+        }`}>
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-lg">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                          theme === 'dark' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-red-50 text-red-700'
+                        }`}>
                             {lead.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className="font-bold text-slate-900 text-lg hover:text-red-600 transition-colors block">
+                            <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className={`font-bold text-lg transition-colors block ${
+                              theme === 'dark' ? 'text-white hover:text-cyan-400' : 'text-slate-900 hover:text-red-600'
+                            }`}>
                                 {lead.full_name}
                             </Link>
-                            <div className="text-sm text-slate-500">{lead.city}</div>
+                            <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city}</div>
                             {getLastActivityDate(lead.id) && (
                               <div className="text-xs text-emerald-600 flex items-center gap-1 mt-0.5">
                                 ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
@@ -483,13 +533,15 @@ export default function LeadsPage() {
                     </div>
                     </div>
 
-                    <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between border border-slate-100">
-                     <InlineEdit value={lead.phone_number} type="tel" className="font-mono text-slate-700 font-medium" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
+                    <div className={`p-3 rounded-lg flex items-center justify-between border transition-colors ${
+                      theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'
+                    }`}>
+                     <InlineEdit value={lead.phone_number} type="tel" className={`font-mono font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`} onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                      {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
 
                     <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs font-bold text-slate-400">{lead.source_year}</span>
+                    <span className={`text-xs font-bold ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{lead.source_year}</span>
                     </div>
             </div>
         )}
@@ -551,13 +603,16 @@ export default function LeadsPage() {
 
 // קומפוננטות עזר קטנות
 function StatCard({ icon: Icon, label, value, color }) {
+  const { theme } = useSettings();
   return (
-    <Card className="border-none shadow-sm bg-white">
+    <Card className={`border-none shadow-sm transition-colors ${
+      theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'
+    }`}>
             <CardContent className="p-4 flex items-center gap-4">
                 <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
                 <div>
-                    <p className="text-sm font-medium text-slate-500">{label}</p>
-                    <p className="text-2xl font-bold text-slate-800">{value}</p>
+                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
                 </div>
             </CardContent>
         </Card>);
