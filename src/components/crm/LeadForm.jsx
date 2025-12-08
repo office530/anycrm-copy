@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useSettings } from "@/components/context/SettingsContext";
 import ActivityLog from "./ActivityLog";
 import DiscoveryScript from "./DiscoveryScript";
 import FileUpload from "../common/FileUpload";
@@ -21,6 +22,7 @@ import QuickTaskCreator from "./QuickTaskCreator";
 import RelatedTasks from "./RelatedTasks";
 
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
+  const { theme } = useSettings();
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: lead || {
     full_name: "",
@@ -105,24 +107,32 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     console.error("Validation Errors:", formErrors);
   };
 
-  const labelClass = "text-slate-900 font-semibold mb-1.5 block";
-  const inputClass = "text-slate-900 font-medium placeholder:text-slate-400 border-slate-300 focus:border-blue-500";
+  const labelClass = `font-semibold mb-1.5 block ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`;
+  const inputClass = `font-medium placeholder:text-slate-400 focus:border-blue-500 ${
+    theme === 'dark' 
+      ? 'bg-slate-900 border-slate-700 text-white' 
+      : 'bg-white border-slate-300 text-slate-900'
+  }`;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl shadow-lg border border-slate-100 flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden"
+      className={`rounded-xl shadow-lg border flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden ${
+        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
+      }`}
       dir="rtl">
 
-      <div className="p-4 md:p-6 border-b shrink-0 bg-white z-10 flex justify-between items-start">
+      <div className={`p-4 md:p-6 border-b shrink-0 z-10 flex justify-between items-start ${
+        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
+      }`}>
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">
+          <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
             {lead ? "תיק לקוח" : "הוספת ליד חדש"}
           </h2>
-          <p className="text-slate-500 text-sm mt-1">ניהול פרטים ופעילויות</p>
+          <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול פרטים ופעילויות</p>
         </div>
-        <Button variant="ghost" size="icon" onClick={onCancel} className="text-slate-400 hover:text-slate-600">
+        <Button variant="ghost" size="icon" onClick={onCancel} className={`${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600'}`}>
           <X className="w-5 h-5" />
         </Button>
       </div>

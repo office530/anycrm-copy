@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Building2, Check, Save } from "lucide-react";
 
 export default function OrganizationSettings() {
-    const { branding, saveSettings, isLoading } = useSettings();
+    const { branding, saveSettings, isLoading, theme } = useSettings();
     const [localBranding, setLocalBranding] = useState(branding);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -44,42 +44,46 @@ export default function OrganizationSettings() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <Card className={`transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
                 <CardHeader>
-                    <CardTitle>פרטי הארגון</CardTitle>
-                    <CardDescription>הגדרות בסיסיות של החברה המוצגות בכל המערכת</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>פרטי הארגון</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>הגדרות בסיסיות של החברה המוצגות בכל המערכת</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <Label>שם החברה / ארגון</Label>
+                            <Label className={theme === 'dark' ? 'text-slate-200' : ''}>שם החברה / ארגון</Label>
                             <Input 
                                 value={localBranding.companyName || ''} 
                                 onChange={(e) => setLocalBranding({...localBranding, companyName: e.target.value})} 
+                                className={theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>מטבע ראשי (סימול)</Label>
+                            <Label className={theme === 'dark' ? 'text-slate-200' : ''}>מטבע ראשי (סימול)</Label>
                             <Input 
                                 value={localBranding.currency || ''} 
                                 onChange={(e) => setLocalBranding({...localBranding, currency: e.target.value})}
-                                className="font-mono"
+                                className={`font-mono ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`}
                             />
                         </div>
                     </div>
                     
                     <div className="space-y-2">
-                        <Label>כתובת לוגו (URL)</Label>
+                        <Label className={theme === 'dark' ? 'text-slate-200' : ''}>כתובת לוגו (URL)</Label>
                         <div className="flex gap-4">
                             <Input 
                                 value={localBranding.logoUrl || ''} 
                                 onChange={(e) => setLocalBranding({...localBranding, logoUrl: e.target.value})}
                                 placeholder="https://example.com/logo.png"
+                                className={theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white placeholder:text-slate-500' : ''}
                             />
-                            <div className="w-12 h-10 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
+                            <div className={`w-12 h-10 rounded border flex items-center justify-center shrink-0 overflow-hidden ${
+                                theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'
+                            }`}>
                                 {localBranding.logoUrl ? 
                                     <img src={localBranding.logoUrl} className="w-full h-full object-contain" alt="Logo" /> : 
-                                    <Building2 className="w-5 h-5 text-slate-300" />
+                                    <Building2 className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`} />
                                 }
                             </div>
                         </div>
@@ -87,14 +91,14 @@ export default function OrganizationSettings() {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className={`transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
                 <CardHeader>
-                    <CardTitle>נראות ומיתוג</CardTitle>
-                    <CardDescription>התאמת צבעי המערכת למותג שלך</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>נראות ומיתוג</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>התאמת צבעי המערכת למותג שלך</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        <Label>צבע ראשי</Label>
+                        <Label className={theme === 'dark' ? 'text-slate-200' : ''}>צבע ראשי</Label>
                         <div className="flex flex-wrap gap-3">
                             {colors.map((c) => (
                                 <button
@@ -107,7 +111,9 @@ export default function OrganizationSettings() {
                                 </button>
                             ))}
                         </div>
-                        <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 mt-4 flex items-center gap-4">
+                        <div className={`p-4 rounded-lg border mt-4 flex items-center gap-4 transition-colors ${
+                            theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'
+                        }`}>
                             <div className={`px-4 py-2 rounded-md text-white font-medium bg-${localBranding.primaryColor}-600 shadow-sm`}>
                                 כפתור לדוגמה
                             </div>
