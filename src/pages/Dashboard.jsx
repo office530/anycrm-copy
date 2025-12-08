@@ -55,20 +55,7 @@ export default function Dashboard() {
   const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
   const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
   const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ['tasks'], queryFn: () => base44.entities.Task.list() });
-  const { data: customWidgets = [] } = useQuery({ 
-      queryKey: ['dashboard_widgets'], 
-      queryFn: async () => {
-          const configs = await base44.entities.ReportConfig.list();
-          return configs.filter(c => c.show_on_dashboard);
-      }
-  });
-
-  const createWidgetMutation = useMutation({
-      mutationFn: (data) => base44.entities.ReportConfig.create(data),
-      onSuccess: () => {
-          queryClient.invalidateQueries(['dashboard_widgets']);
-      }
-  });
+  const [tempWidgets, setTempWidgets] = useState([]);
 
   // Filter data by time range
   const { filteredLeads, filteredOpps, dateRangeLabel } = useMemo(() => {
@@ -350,7 +337,7 @@ export default function Dashboard() {
           <TasksWidget className="h-full" />
 
           {/* Custom Widgets */}
-          {customWidgets.map((widget) => (
+          {tempWidgets.map((widget) => (
               <CustomWidget key={widget.id} config={widget} theme={theme} />
           ))}
 
@@ -377,7 +364,10 @@ export default function Dashboard() {
       <AddWidgetDialog 
         open={showAddWidget} 
         onOpenChange={setShowAddWidget} 
-        onSave={(data) => createWidgetMutation.mutate(data)} 
+        onSave={(data) => {
+          setTempWidgets([...tempWidgets, { ...data, id: Date.now() }]);
+          setShowAddWidget(false);
+        }} 
       />
     </div>);
 
