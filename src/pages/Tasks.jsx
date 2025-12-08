@@ -244,11 +244,11 @@ export default function TasksPage() {
         setShowTaskForm(open);
         if (!open) setEditingTask(null);
       }}>
-        <DialogContent className="max-w-lg" dir="rtl">
+        <DialogContent className={`max-w-lg ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : ''}`} dir="rtl">
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle>{editingTask ? "עריכת משימה" : "משימה חדשה"}</DialogTitle>
-              <Button variant="ghost" size="icon" onClick={() => setShowTaskForm(false)} className="text-slate-400 hover:text-slate-600">
+              <Button variant="ghost" size="icon" onClick={() => setShowTaskForm(false)} className={`text-slate-400 ${theme === 'dark' ? 'hover:text-white hover:bg-slate-800' : 'hover:text-slate-600'}`}>
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -425,7 +425,9 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
 }
 
 function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
+  const { theme } = useSettings();
   const queryClient = useQueryClient();
+  
   // Fetch leads and opportunities for selection
   const { data: leads = [] } = useQuery({ queryKey: ['leads_basic'], queryFn: () => base44.entities.Lead.list(), staleTime: 60000 });
   const { data: opportunities = [] } = useQuery({ queryKey: ['opportunities_basic'], queryFn: () => base44.entities.Opportunity.list(), staleTime: 60000 });
@@ -456,45 +458,49 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
     onSubmit(formData);
   };
 
+  const labelClass = `text-sm font-semibold ${theme === 'dark' ? 'text-slate-300' : 'text-slate-900'}`;
+  const inputClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500' : 'border-slate-300';
+  const selectContentClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : '';
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-900">כותרת משימה *</label>
+        <label className={labelClass}>כותרת משימה *</label>
         <Input
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           placeholder="מה צריך לעשות?"
-          className="border-slate-300"
+          className={inputClass}
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-900">תיאור</label>
+        <label className={labelClass}>תיאור</label>
         <Textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="פרטים נוספים..."
-          className="border-slate-300 h-24 resize-none"
+          className={`${inputClass} h-24 resize-none`}
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-900">תאריך יעד</label>
+        <label className={labelClass}>תאריך יעד</label>
         <Input
           type="date"
           value={formData.due_date}
           onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-          className="border-slate-300"
+          className={inputClass}
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-900">סטטוס</label>
+        <label className={labelClass}>סטטוס</label>
         <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
-          <SelectTrigger>
+          <SelectTrigger className={inputClass}>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={selectContentClass}>
             <SelectItem value="todo">לביצוע</SelectItem>
             <SelectItem value="in_progress">בתהליך</SelectItem>
             <SelectItem value="done">הושלם</SelectItem>
@@ -503,14 +509,14 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
       </div>
 
       {/* Relational Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+      <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
          <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-700">שיוך לליד</label>
+            <label className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>שיוך לליד</label>
             <Select value={formData.related_lead_id || "none"} onValueChange={(v) => setFormData({ ...formData, related_lead_id: v === "none" ? null : v })}>
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className={`h-9 text-sm ${inputClass}`}>
                 <SelectValue placeholder="בחר ליד..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={selectContentClass}>
                 <SelectItem value="none">-- ללא שיוך --</SelectItem>
                 {leads.map(l => (
                     <SelectItem key={l.id} value={l.id}>{l.full_name}</SelectItem>
@@ -519,12 +525,12 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
             </Select>
          </div>
          <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-700">שיוך להזדמנות</label>
+            <label className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>שיוך להזדמנות</label>
             <Select value={formData.related_opportunity_id || "none"} onValueChange={(v) => setFormData({ ...formData, related_opportunity_id: v === "none" ? null : v })}>
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className={`h-9 text-sm ${inputClass}`}>
                 <SelectValue placeholder="בחר הזדמנות..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={selectContentClass}>
                 <SelectItem value="none">-- ללא שיוך --</SelectItem>
                 {opportunities.map(o => (
                     <SelectItem key={o.id} value={o.id}>{o.product_type} - {o.lead_name}</SelectItem>
@@ -534,8 +540,8 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
          </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-4 border-t">
-        <Button type="button" variant="outline" onClick={onCancel}>
+      <div className={`flex justify-end gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : ''}`}>
+        <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}>
           ביטול
         </Button>
         <Button type="submit" className="bg-red-700 hover:bg-red-800" disabled={isSubmitting}>

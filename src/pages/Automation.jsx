@@ -364,7 +364,7 @@ export default function AutomationPage() {
         setIsDialogOpen(open);
         if (!open) setEditingRule(null);
       }}>
-        <DialogContent className="bg-slate-50 p-6 fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-2xl">
+        <DialogContent className={`fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 sm:rounded-lg max-w-2xl max-h-[90vh] overflow-y-auto p-6 ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : 'bg-slate-50'}`}>
           <RuleForm 
             editingRule={editingRule} 
             onSuccess={() => {
@@ -380,6 +380,7 @@ export default function AutomationPage() {
 
 // טופס יצירה (עם AI)
 function RuleForm({ onSuccess, editingRule }) {
+  const { theme } = useSettings();
   const queryClient = useQueryClient();
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -517,6 +518,12 @@ function RuleForm({ onSuccess, editingRule }) {
     createRule.mutate(formData);
   };
 
+  // Helper Styles
+  const inputClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500' : '';
+  const labelClass = theme === 'dark' ? 'text-slate-300' : '';
+  const sectionBg = theme === 'dark' ? 'bg-slate-800 border border-slate-700' : 'bg-slate-100';
+  const selectContentClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : '';
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
             
@@ -559,31 +566,32 @@ function RuleForm({ onSuccess, editingRule }) {
             </div>
 
             <div className="space-y-2">
-                <Label>שם החוק</Label>
+                <Label className={labelClass}>שם החוק</Label>
                 <Input
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="לדוגמה: משימת מעקב לליד חדש"
+          className={inputClass}
           required />
 
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label>ישות מפעילה</Label>
+                    <Label className={labelClass}>ישות מפעילה</Label>
                     <Select value={formData.trigger_entity} onValueChange={(v) => setFormData({ ...formData, trigger_entity: v })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
+                        <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+                        <SelectContent className={selectContentClass}>
                             <SelectItem value="Lead">ליד</SelectItem>
                             <SelectItem value="Opportunity">הזדמנות</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label>אירוע</Label>
+                    <Label className={labelClass}>אירוע</Label>
                     <Select value={formData.trigger_event} onValueChange={(v) => setFormData({ ...formData, trigger_event: v })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
+                        <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+                        <SelectContent className={selectContentClass}>
                             <SelectItem value="create">יצירה חדשה</SelectItem>
                             <SelectItem value="update">עדכון</SelectItem>
                         </SelectContent>
@@ -591,13 +599,13 @@ function RuleForm({ onSuccess, editingRule }) {
                 </div>
             </div>
 
-            <div className="border-t pt-4 space-y-4">
-                <div className="grid grid-cols-3 gap-4">
+            <div className={`border-t pt-4 space-y-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                        <Label>שדה לתנאי (אופציונלי)</Label>
+                        <Label className={labelClass}>שדה לתנאי (אופציונלי)</Label>
                         <Select value={formData.condition_field} onValueChange={(v) => setFormData({ ...formData, condition_field: v, condition_value: '' })}>
-                            <SelectTrigger><SelectValue placeholder="בחר שדה..." /></SelectTrigger>
-                            <SelectContent>
+                            <SelectTrigger className={inputClass}><SelectValue placeholder="בחר שדה..." /></SelectTrigger>
+                            <SelectContent className={selectContentClass}>
                                 <SelectItem value={null}>ללא תנאי</SelectItem>
                                 {availableFields.map(field => (
                                     <SelectItem key={field.value} value={field.value}>{field.label}</SelectItem>
@@ -606,10 +614,10 @@ function RuleForm({ onSuccess, editingRule }) {
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label>אופרטור</Label>
+                        <Label className={labelClass}>אופרטור</Label>
                         <Select value={formData.condition_operator} onValueChange={(v) => setFormData({ ...formData, condition_operator: v })}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
+                            <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+                            <SelectContent className={selectContentClass}>
                                 <SelectItem value="equals">שווה ל</SelectItem>
                                 <SelectItem value="not_equals">שונה מ</SelectItem>
                                 <SelectItem value="contains">מכיל</SelectItem>
@@ -621,11 +629,11 @@ function RuleForm({ onSuccess, editingRule }) {
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label>ערך לתנאי</Label>
+                        <Label className={labelClass}>ערך לתנאי</Label>
                         {selectedField?.values && needsOperatorValue ? (
                             <Select value={formData.condition_value} onValueChange={(v) => setFormData({ ...formData, condition_value: v })}>
-                                <SelectTrigger><SelectValue placeholder="בחר ערך..." /></SelectTrigger>
-                                <SelectContent>
+                                <SelectTrigger className={inputClass}><SelectValue placeholder="בחר ערך..." /></SelectTrigger>
+                                <SelectContent className={selectContentClass}>
                                     {selectedField.values.map(val => (
                                         <SelectItem key={val} value={val}>{val}</SelectItem>
                                     ))}
@@ -637,18 +645,19 @@ function RuleForm({ onSuccess, editingRule }) {
                                 onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
                                 placeholder={selectedField?.type === 'number' ? 'הכנס מספר' : 'הכנס ערך'}
                                 type={selectedField?.type === 'number' ? 'number' : 'text'}
+                                className={inputClass}
                                 disabled={!needsOperatorValue} />
                         )}
                     </div>
                 </div>
             </div>
 
-            <div className="border-t pt-4 space-y-4">
+            <div className={`border-t pt-4 space-y-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
                 <div className="space-y-2">
-                    <Label>פעולה לביצוע</Label>
+                    <Label className={labelClass}>פעולה לביצוע</Label>
                     <Select value={formData.action_type} onValueChange={(v) => setFormData({ ...formData, action_type: v })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
+                        <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
+                        <SelectContent className={selectContentClass}>
                             <SelectItem value="create_task">יצירת משימה</SelectItem>
                             <SelectItem value="send_email">שליחת אימייל</SelectItem>
                             <SelectItem value="update_entity">עדכון ישות</SelectItem>
@@ -657,64 +666,71 @@ function RuleForm({ onSuccess, editingRule }) {
                 </div>
 
                 {formData.action_type === 'create_task' ?
-        <div className="space-y-3 bg-slate-100 p-3 rounded">
+        <div className={`space-y-3 p-3 rounded ${sectionBg}`}>
                          <div className="space-y-2">
-                            <Label>כותרת משימה</Label>
+                            <Label className={labelClass}>כותרת משימה</Label>
                             <Input
               value={formData.action_config.task_title}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_title: e.target.value } })}
-              placeholder="השתמש ב-{{full_name}} לשילוב שם" />
+              placeholder="השתמש ב-{{full_name}} לשילוב שם"
+              className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label>תיאור</Label>
+                            <Label className={labelClass}>תיאור</Label>
                             <Input
               value={formData.action_config.task_description}
-              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_description: e.target.value } })} />
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_description: e.target.value } })}
+              className={inputClass} />
 
                         </div>
                     </div> : formData.action_type === 'send_email' ?
 
-        <div className="space-y-3 bg-slate-100 p-3 rounded">
+        <div className={`space-y-3 p-3 rounded ${sectionBg}`}>
                         <div className="space-y-2">
-                            <Label>שלח אל</Label>
+                            <Label className={labelClass}>שלח אל</Label>
                             <Input
               value={formData.action_config.email_to}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_to: e.target.value } })}
-              placeholder="כתובת מייל או {{email}}" />
+              placeholder="כתובת מייל או {{email}}"
+              className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label>נושא</Label>
+                            <Label className={labelClass}>נושא</Label>
                             <Input
               value={formData.action_config.email_subject}
-              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_subject: e.target.value } })} />
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_subject: e.target.value } })}
+              className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label>תוכן</Label>
+                            <Label className={labelClass}>תוכן</Label>
                             <Input
               value={formData.action_config.email_body}
-              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_body: e.target.value } })} />
+              onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_body: e.target.value } })}
+              className={inputClass} />
 
                         </div>
                     </div> :
         
-        <div className="space-y-3 bg-slate-100 p-3 rounded">
+        <div className={`space-y-3 p-3 rounded ${sectionBg}`}>
                         <div className="space-y-2">
-                            <Label>שדה לעדכון</Label>
+                            <Label className={labelClass}>שדה לעדכון</Label>
                             <Input
               value={formData.action_config.update_field}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, update_field: e.target.value } })}
-              placeholder="למשל: lead_status" />
+              placeholder="למשל: lead_status"
+              className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label>ערך חדש</Label>
+                            <Label className={labelClass}>ערך חדש</Label>
                             <Input
               value={formData.action_config.update_value}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, update_value: e.target.value } })}
-              placeholder="למשל: Sales Ready" />
+              placeholder="למשל: Sales Ready"
+              className={inputClass} />
 
                         </div>
                     </div>
