@@ -186,10 +186,10 @@ export default function ActNowPage() {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-50'}`}>
-                                        <div className="flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-wider opacity-70">
+                                        <div className={`flex items-center gap-2 mb-1 text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500 opacity-70'}`}>
                                             <Target className="w-3 h-3" /> Why Attack?
                                         </div>
-                                        <p className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                                        <p className={`text-sm ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>
                                             {item.why}
                                         </p>
                                     </div>
