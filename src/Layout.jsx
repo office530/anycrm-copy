@@ -10,10 +10,28 @@ import { SettingsProvider, useSettings } from '@/components/context/SettingsCont
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
+import LandingPage from './pages/LandingPage';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { branding, theme, toggleTheme } = useSettings();
+  const [showIntro, setShowIntro] = React.useState(false);
+
+  React.useEffect(() => {
+    const hasVisited = localStorage.getItem('hasVisited_v2');
+    if (!hasVisited && currentPageName !== 'LandingPage') {
+      setShowIntro(true);
+      const timer = setTimeout(() => {
+        setShowIntro(false);
+        localStorage.setItem('hasVisited_v2', 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentPageName]);
+
+  if (showIntro) {
+    return <LandingPage />;
+  }
 
   // Landing Page Layout (No Sidebar/Chrome)
   if (currentPageName === 'LandingPage') {
