@@ -19,7 +19,34 @@ import { useSettings } from '@/components/context/SettingsContext';
 
 export default function Dashboard() {
   const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
-  const { theme, branding } = useSettings();
+  const { theme, branding, pipelineStages } = useSettings();
+
+  const getStageColor = (stageName) => {
+    // Normalize stage name (remove translations in parens)
+    const normalizedName = stageName?.split('(')[0]?.trim();
+    const stage = pipelineStages?.find(s => s.label === normalizedName || s.id === normalizedName || s.label?.startsWith(normalizedName));
+    const colorClass = stage?.color || 'bg-slate-400';
+    
+    // Map Tailwind classes to Hex for Recharts
+    const colorMap = {
+      'bg-blue-400': '#60A5FA',
+      'bg-blue-500': '#3B82F6',
+      'bg-indigo-400': '#818CF8',
+      'bg-indigo-500': '#6366F1',
+      'bg-purple-400': '#C084FC',
+      'bg-purple-500': '#A855F7',
+      'bg-amber-400': '#FBBF24',
+      'bg-amber-500': '#F59E0B',
+      'bg-emerald-500': '#10B981',
+      'bg-emerald-400': '#34D399',
+      'bg-slate-300': '#CBD5E1',
+      'bg-slate-400': '#94A3B8',
+      'bg-slate-500': '#64748B',
+      'bg-red-500': '#EF4444',
+    };
+
+    return colorMap[colorClass] || '#8884d8';
+  };
 
   const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
   const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
