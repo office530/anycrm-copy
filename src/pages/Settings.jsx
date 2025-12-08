@@ -8,6 +8,7 @@ import TeamSettings from '@/components/settings/TeamSettings';
 import CustomFieldSettings from '@/components/settings/CustomFieldSettings';
 import IntegrationSettings from '@/components/settings/IntegrationSettings';
 import AuditLogSettings from '@/components/settings/AuditLogSettings';
+import { useSettings } from '@/components/context/SettingsContext';
 import { 
     Building2, GitMerge, Tags, Bell, User, Shield, 
     Database, Users, Puzzle, Activity, PenTool
@@ -15,6 +16,7 @@ import {
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("organization");
+  const { theme } = useSettings();
 
   const menuGroups = [
     {
