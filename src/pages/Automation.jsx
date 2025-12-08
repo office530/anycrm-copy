@@ -15,15 +15,15 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
-// תבניות מוכנות עם צבעים חזקים
+// Quick Templates
 const templates = [
 {
-  id: 'welcome_email', title: 'מייל ברוכים הבאים', description: 'שלח מייל אוטומטי לכל ליד חדש', icon: Mail, color: 'bg-slate-700',
-  rule: { name: 'מייל ברוכים הבאים', trigger_entity: 'Lead', trigger_event: 'create', action_type: 'send_email', action_config: { email_subject: 'ברוכים הבאים!', email_to: '{{email}}' } }
+  id: 'welcome_email', title: 'Welcome Email', description: 'Send automated email to new leads', icon: Mail, color: 'bg-slate-700',
+  rule: { name: 'Welcome Email', trigger_entity: 'Lead', trigger_event: 'create', action_type: 'send_email', action_config: { email_subject: 'Welcome!', email_to: '{{email}}' } }
 },
 {
-  id: 'task_big_deal', title: 'התראת "עסקה גדולה"', description: 'פתח משימה למנהל על עסקה מעל 1M ₪', icon: Bell, color: 'bg-red-700',
-  rule: { name: 'עסקה גדולה VIP', trigger_entity: 'Opportunity', trigger_event: 'create', condition_field: 'property_value', condition_value: '1000000', action_type: 'create_task' }
+  id: 'task_big_deal', title: 'Big Deal Alert', description: 'Create task for manager on deals > 1M', icon: Bell, color: 'bg-red-700',
+  rule: { name: 'Big Deal VIP', trigger_entity: 'Opportunity', trigger_event: 'create', condition_field: 'property_value', condition_value: '1000000', action_type: 'create_task' }
 }];
 
 
@@ -97,17 +97,17 @@ export default function AutomationPage() {
   };
 
   return (
-    <div className={`space-y-8 pb-20 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} dir="rtl">
+    <div className={`space-y-8 pb-20 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} dir="ltr">
       
-      {/* כותרת + Stats */}
+      {/* Header + Stats */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>אוטומציות</h1>
-          <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול חוקים ותהליכים אוטומטיים</p>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>Automations</h1>
+          <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage rules and automated workflows</p>
         </div>
         <Button onClick={() => { setEditingRule(null); setIsDialogOpen(true); }} className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-lg shadow-red-900/10">
-            <Plus className="w-4 h-4 ml-2" />
-            חוק חדש
+            <Plus className="w-4 h-4 mr-2" />
+            New Rule
         </Button>
       </div>
 
@@ -117,7 +117,7 @@ export default function AutomationPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>סה"כ חוקים</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Total Rules</p>
                 <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{stats.total}</p>
               </div>
               <Zap className={`w-8 h-8 ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`} />
@@ -128,7 +128,7 @@ export default function AutomationPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>פעילים</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Active</p>
                 <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-green-600'}`}>{stats.active}</p>
               </div>
               <CheckCircle2 className={`w-8 h-8 ${theme === 'dark' ? 'text-emerald-900/50' : 'text-green-200'}`} />
@@ -139,7 +139,7 @@ export default function AutomationPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>מושבתים</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Disabled</p>
                 <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{stats.inactive}</p>
               </div>
               <PowerOff className={`w-8 h-8 ${theme === 'dark' ? 'text-slate-700' : 'text-slate-200'}`} />
@@ -150,7 +150,7 @@ export default function AutomationPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>אחוז הצלחה</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Success Rate</p>
                 <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`}>{stats.successRate}%</p>
               </div>
               <TrendingUp className={`w-8 h-8 ${theme === 'dark' ? 'text-cyan-900/50' : 'text-blue-200'}`} />
@@ -164,11 +164,11 @@ export default function AutomationPage() {
         <TabsList className={`grid w-full max-w-md grid-cols-2 mb-6 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
           <TabsTrigger value="rules" className={`gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400 text-slate-400' : ''}`}>
             <Zap className="w-4 h-4" />
-            חוקים פעילים
+            Active Rules
           </TabsTrigger>
           <TabsTrigger value="logs" className={`gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400 text-slate-400' : ''}`}>
             <History className="w-4 h-4" />
-            יומן הפעלות
+            Execution Log
           </TabsTrigger>
         </TabsList>
 
@@ -177,7 +177,7 @@ export default function AutomationPage() {
       <div>
           <h3 className={`text-lg font-bold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
               <Wand2 className={`w-5 h-5 ${theme === 'dark' ? 'text-purple-400' : 'text-red-600'}`} />
-              תבניות מהירות
+              Quick Templates
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {templates.map((tpl) =>
@@ -194,38 +194,38 @@ export default function AutomationPage() {
           </div>
       </div>
 
-      {/* חיפוש וסינון */}
+      {/* Search & Filter */}
       <div className="flex flex-col md:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
+          <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
           <Input
-            placeholder="חפש חוקים..."
+            placeholder="Search rules..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className={`pr-10 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500' : ''}`}
+            className={`pl-10 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500' : ''}`}
           />
         </div>
         <Select value={filterEntity} onValueChange={setFilterEntity}>
           <SelectTrigger className={`w-full md:w-48 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}`}>
-            <Filter className={`w-4 h-4 ml-2 ${theme === 'dark' ? 'text-slate-400' : ''}`} />
+            <Filter className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-slate-400' : ''}`} />
             <SelectValue />
           </SelectTrigger>
           <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-            <SelectItem value="all">כל הישויות</SelectItem>
-            <SelectItem value="Lead">לידים בלבד</SelectItem>
-            <SelectItem value="Opportunity">הזדמנויות בלבד</SelectItem>
+            <SelectItem value="all">All Entities</SelectItem>
+            <SelectItem value="Lead">Leads Only</SelectItem>
+            <SelectItem value="Opportunity">Opportunities Only</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* רשימת חוקים פעילים */}
+      {/* Active Rules List */}
       <div className="space-y-4 mt-8">
         <h3 className={`text-lg font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
               <Zap className={`w-5 h-5 ${theme === 'dark' ? 'text-cyan-400' : 'text-red-600'}`} />
-              חוקים פעילים ({filteredRules.length})
+              Active Rules ({filteredRules.length})
         </h3>
         
-        {isLoading ? <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>טוען נתונים...</div> : filteredRules.map((rule) =>
+        {isLoading ? <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Loading...</div> : filteredRules.map((rule) =>
         <Card key={rule.id} className={`flex flex-row items-center justify-between p-6 border shadow-sm transition-colors ${
             theme === 'dark'
                 ? rule.is_active ? 'bg-slate-800 border-slate-700 hover:border-cyan-500/50' : 'bg-slate-800/50 border-slate-700 opacity-60'
@@ -242,15 +242,15 @@ export default function AutomationPage() {
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
                           <h3 className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{rule.name}</h3>
-                          {!rule.is_active && <span className={`text-xs px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-slate-700 text-slate-400' : 'bg-slate-200 text-slate-600'}`}>מושבת</span>}
+                          {!rule.is_active && <span className={`text-xs px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-slate-700 text-slate-400' : 'bg-slate-200 text-slate-600'}`}>Disabled</span>}
                         </div>
                         <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                            <span className={`font-semibold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>טריגר:</span> {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'} {rule.trigger_event === 'create' ? 'נוצר' : 'עודכן'}
+                            <span className={`font-semibold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>Trigger:</span> {rule.trigger_entity === 'Lead' ? 'Lead' : 'Opportunity'} {rule.trigger_event === 'create' ? 'Created' : 'Updated'}
                             {rule.condition_field && ` | ${rule.condition_field} ${rule.condition_operator || 'equals'} ${rule.condition_value}`}
                         </p>
                         <p className={`text-xs mt-1 flex items-center gap-1 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
                             {rule.action_type === 'send_email' ? <Mail className="w-3 h-3" /> : rule.action_type === 'create_task' ? <Bell className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
-                            פעולה: {rule.action_type === 'send_email' ? 'שליחת אימייל' : rule.action_type === 'create_task' ? 'יצירת משימה' : 'עדכון ישות'}
+                            Action: {rule.action_type === 'send_email' ? 'Send Email' : rule.action_type === 'create_task' ? 'Create Task' : 'Update Entity'}
                         </p>
                     </div>
                 </div>
@@ -266,12 +266,12 @@ export default function AutomationPage() {
                       size="icon" 
                       className={`${theme === 'dark' ? 'text-slate-400 hover:text-cyan-400 hover:bg-slate-700' : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'}`}
                       onClick={() => duplicateRule(rule)}
-                      title="שכפל חוק"
+                      title="Duplicate Rule"
                     >
                         <Copy className="w-5 h-5" />
                     </Button>
                     <Button variant="ghost" size="icon" className={`${theme === 'dark' ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'}`} onClick={() => {
-                      if(confirm('למחוק חוק זה?')) deleteRule.mutate(rule.id);
+                      if(confirm('Delete this rule?')) deleteRule.mutate(rule.id);
                     }}>
                         <Trash2 className="w-5 h-5" />
                     </Button>
@@ -281,13 +281,13 @@ export default function AutomationPage() {
         
         {filteredRules.length === 0 && !isLoading && rules.length > 0 &&
         <div className={`text-center py-16 rounded-2xl border border-dashed ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
-                <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>לא נמצאו חוקים תואמים</p>
+                <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>No matching rules found</p>
             </div>
         }
         
         {rules.length === 0 && !isLoading &&
         <div className={`text-center py-16 rounded-2xl border border-dashed ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
-                <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>אין אוטומציות מוגדרות</p>
+                <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>No automations defined</p>
             </div>
         }
       </div>
@@ -298,30 +298,30 @@ export default function AutomationPage() {
           <CardContent className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} />
-              <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : ''}`}>יומן הפעלות אחרונות</h3>
+              <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : ''}`}>Recent Execution Log</h3>
             </div>
             
             {logsLoading ? (
               <div className="text-center py-10"><Loader2 className="animate-spin mx-auto" /></div>
             ) : logs.length === 0 ? (
-              <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>אין הפעלות להצגה</div>
+              <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>No executions to show</div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader className={theme === 'dark' ? 'bg-slate-900/50' : ''}>
                     <TableRow className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
-                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>זמן</TableHead>
-                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>חוק</TableHead>
-                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>ישות</TableHead>
-                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סטטוס</TableHead>
-                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>פעולה</TableHead>
+                      <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Time</TableHead>
+                      <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Rule</TableHead>
+                      <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Entity</TableHead>
+                      <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Status</TableHead>
+                      <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {logs.map((log) => (
                       <TableRow key={log.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
                         <TableCell className={`text-sm ${theme === 'dark' ? 'text-slate-300' : ''}`}>
-                          {new Date(log.execution_time).toLocaleString('he-IL')}
+                          {new Date(log.execution_time).toLocaleString('en-US')}
                         </TableCell>
                         <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>{log.rule_name}</TableCell>
                         <TableCell>
@@ -332,13 +332,13 @@ export default function AutomationPage() {
                         <TableCell>
                           {log.status === 'success' ? (
                             <Badge className={`${theme === 'dark' ? 'bg-emerald-900/50 text-emerald-400 hover:bg-emerald-900/50' : 'bg-green-100 text-green-700 hover:bg-green-100'}`}>
-                              <CheckCircle2 className="w-3 h-3 ml-1" />
-                              הצליח
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Success
                             </Badge>
                           ) : (
                             <Badge className={`${theme === 'dark' ? 'bg-red-900/50 text-red-400 hover:bg-red-900/50' : 'bg-red-100 text-red-700 hover:bg-red-100'}`}>
-                              <XCircle className="w-3 h-3 ml-1" />
-                              נכשל
+                              <XCircle className="w-3 h-3 mr-1" />
+                              Failed
                             </Badge>
                           )}
                         </TableCell>
@@ -525,7 +525,7 @@ function RuleForm({ onSuccess, editingRule }) {
   const selectContentClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : '';
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
+    <form onSubmit={handleSubmit} className="space-y-4" dir="ltr">
             
             {/* AI Generator Section */}
             <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg mb-8 border border-slate-800 relative overflow-hidden">
@@ -533,10 +533,10 @@ function RuleForm({ onSuccess, editingRule }) {
                 <div className="relative z-10 space-y-4">
                     <div className="flex items-center gap-2 font-bold text-lg">
                         <Sparkles className="w-5 h-5 text-red-500 animate-pulse" />
-                        <span>מחולל אוטומציות חכם (AI)</span>
+                        <span>Smart AI Automation Generator</span>
                     </div>
                     <p className="text-slate-400 text-sm">
-                        תאר את האוטומציה בשפה חופשית, והבינה המלאכותית תבנה את החוק עבורך.
+                        Describe the automation in free language, and the AI will build the rule for you.
                     </p>
                     
                     <div className="flex gap-3 pt-2">
@@ -544,7 +544,7 @@ function RuleForm({ onSuccess, editingRule }) {
                             <Textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="למשל: כאשר ליד הופך ל'בשל למכירה', שלח לו מייל ברוכים הבאים..."
+                placeholder="E.g. When a lead becomes 'Sales Ready', send them a welcome email..."
                 className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-red-900 focus:bg-slate-800 transition-all" />
 
                         </div>
@@ -557,7 +557,7 @@ function RuleForm({ onSuccess, editingRule }) {
                             {isGenerating ? <Loader2 className="w-6 h-6 animate-spin" /> :
               <div className="flex flex-col items-center gap-1">
                                     <Sparkles className="w-5 h-5" />
-                                    <span>צור חוק</span>
+                                    <span>Create Rule</span>
                                 </div>
               }
                         </Button>
@@ -566,11 +566,11 @@ function RuleForm({ onSuccess, editingRule }) {
             </div>
 
             <div className="space-y-2">
-                <Label className={labelClass}>שם החוק</Label>
+                <Label className={labelClass}>Rule Name</Label>
                 <Input
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="לדוגמה: משימת מעקב לליד חדש"
+          placeholder="E.g. Follow-up task for new lead"
           className={inputClass}
           required />
 
@@ -578,22 +578,22 @@ function RuleForm({ onSuccess, editingRule }) {
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label className={labelClass}>ישות מפעילה</Label>
+                    <Label className={labelClass}>Trigger Entity</Label>
                     <Select value={formData.trigger_entity} onValueChange={(v) => setFormData({ ...formData, trigger_entity: v })}>
                         <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
                         <SelectContent className={selectContentClass}>
-                            <SelectItem value="Lead">ליד</SelectItem>
-                            <SelectItem value="Opportunity">הזדמנות</SelectItem>
+                            <SelectItem value="Lead">Lead</SelectItem>
+                            <SelectItem value="Opportunity">Opportunity</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label className={labelClass}>אירוע</Label>
+                    <Label className={labelClass}>Event</Label>
                     <Select value={formData.trigger_event} onValueChange={(v) => setFormData({ ...formData, trigger_event: v })}>
                         <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
                         <SelectContent className={selectContentClass}>
-                            <SelectItem value="create">יצירה חדשה</SelectItem>
-                            <SelectItem value="update">עדכון</SelectItem>
+                            <SelectItem value="create">Created</SelectItem>
+                            <SelectItem value="update">Updated</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -602,11 +602,11 @@ function RuleForm({ onSuccess, editingRule }) {
             <div className={`border-t pt-4 space-y-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                        <Label className={labelClass}>שדה לתנאי (אופציונלי)</Label>
+                        <Label className={labelClass}>Condition Field (Optional)</Label>
                         <Select value={formData.condition_field} onValueChange={(v) => setFormData({ ...formData, condition_field: v, condition_value: '' })}>
-                            <SelectTrigger className={inputClass}><SelectValue placeholder="בחר שדה..." /></SelectTrigger>
+                            <SelectTrigger className={inputClass}><SelectValue placeholder="Select Field..." /></SelectTrigger>
                             <SelectContent className={selectContentClass}>
-                                <SelectItem value={null}>ללא תנאי</SelectItem>
+                                <SelectItem value={null}>No Condition</SelectItem>
                                 {availableFields.map(field => (
                                     <SelectItem key={field.value} value={field.value}>{field.label}</SelectItem>
                                 ))}
@@ -614,25 +614,25 @@ function RuleForm({ onSuccess, editingRule }) {
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label className={labelClass}>אופרטור</Label>
+                        <Label className={labelClass}>Operator</Label>
                         <Select value={formData.condition_operator} onValueChange={(v) => setFormData({ ...formData, condition_operator: v })}>
                             <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
                             <SelectContent className={selectContentClass}>
-                                <SelectItem value="equals">שווה ל</SelectItem>
-                                <SelectItem value="not_equals">שונה מ</SelectItem>
-                                <SelectItem value="contains">מכיל</SelectItem>
-                                <SelectItem value="greater_than">גדול מ</SelectItem>
-                                <SelectItem value="less_than">קטן מ</SelectItem>
-                                <SelectItem value="is_empty">ריק</SelectItem>
-                                <SelectItem value="is_not_empty">לא ריק</SelectItem>
+                                <SelectItem value="equals">Equals</SelectItem>
+                                <SelectItem value="not_equals">Not Equals</SelectItem>
+                                <SelectItem value="contains">Contains</SelectItem>
+                                <SelectItem value="greater_than">Greater Than</SelectItem>
+                                <SelectItem value="less_than">Less Than</SelectItem>
+                                <SelectItem value="is_empty">Is Empty</SelectItem>
+                                <SelectItem value="is_not_empty">Is Not Empty</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="space-y-2">
-                        <Label className={labelClass}>ערך לתנאי</Label>
+                        <Label className={labelClass}>Condition Value</Label>
                         {selectedField?.values && needsOperatorValue ? (
                             <Select value={formData.condition_value} onValueChange={(v) => setFormData({ ...formData, condition_value: v })}>
-                                <SelectTrigger className={inputClass}><SelectValue placeholder="בחר ערך..." /></SelectTrigger>
+                                <SelectTrigger className={inputClass}><SelectValue placeholder="Select Value..." /></SelectTrigger>
                                 <SelectContent className={selectContentClass}>
                                     {selectedField.values.map(val => (
                                         <SelectItem key={val} value={val}>{val}</SelectItem>
@@ -643,7 +643,7 @@ function RuleForm({ onSuccess, editingRule }) {
                             <Input
                                 value={formData.condition_value}
                                 onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
-                                placeholder={selectedField?.type === 'number' ? 'הכנס מספר' : 'הכנס ערך'}
+                                placeholder={selectedField?.type === 'number' ? 'Enter Number' : 'Enter Value'}
                                 type={selectedField?.type === 'number' ? 'number' : 'text'}
                                 className={inputClass}
                                 disabled={!needsOperatorValue} />
@@ -654,13 +654,13 @@ function RuleForm({ onSuccess, editingRule }) {
 
             <div className={`border-t pt-4 space-y-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
                 <div className="space-y-2">
-                    <Label className={labelClass}>פעולה לביצוע</Label>
+                    <Label className={labelClass}>Action to Perform</Label>
                     <Select value={formData.action_type} onValueChange={(v) => setFormData({ ...formData, action_type: v })}>
                         <SelectTrigger className={inputClass}><SelectValue /></SelectTrigger>
                         <SelectContent className={selectContentClass}>
-                            <SelectItem value="create_task">יצירת משימה</SelectItem>
-                            <SelectItem value="send_email">שליחת אימייל</SelectItem>
-                            <SelectItem value="update_entity">עדכון ישות</SelectItem>
+                            <SelectItem value="create_task">Create Task</SelectItem>
+                            <SelectItem value="send_email">Send Email</SelectItem>
+                            <SelectItem value="update_entity">Update Entity</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -668,16 +668,16 @@ function RuleForm({ onSuccess, editingRule }) {
                 {formData.action_type === 'create_task' ?
         <div className={`space-y-3 p-3 rounded ${sectionBg}`}>
                          <div className="space-y-2">
-                            <Label className={labelClass}>כותרת משימה</Label>
+                            <Label className={labelClass}>Task Title</Label>
                             <Input
               value={formData.action_config.task_title}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_title: e.target.value } })}
-              placeholder="השתמש ב-{{full_name}} לשילוב שם"
+              placeholder="Use {{full_name}} for name placeholder"
               className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label className={labelClass}>תיאור</Label>
+                            <Label className={labelClass}>Description</Label>
                             <Input
               value={formData.action_config.task_description}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, task_description: e.target.value } })}
@@ -688,16 +688,16 @@ function RuleForm({ onSuccess, editingRule }) {
 
         <div className={`space-y-3 p-3 rounded ${sectionBg}`}>
                         <div className="space-y-2">
-                            <Label className={labelClass}>שלח אל</Label>
+                            <Label className={labelClass}>Send To</Label>
                             <Input
               value={formData.action_config.email_to}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_to: e.target.value } })}
-              placeholder="כתובת מייל או {{email}}"
+              placeholder="Email address or {{email}}"
               className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label className={labelClass}>נושא</Label>
+                            <Label className={labelClass}>Subject</Label>
                             <Input
               value={formData.action_config.email_subject}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_subject: e.target.value } })}
@@ -705,7 +705,7 @@ function RuleForm({ onSuccess, editingRule }) {
 
                         </div>
                         <div className="space-y-2">
-                            <Label className={labelClass}>תוכן</Label>
+                            <Label className={labelClass}>Body</Label>
                             <Input
               value={formData.action_config.email_body}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, email_body: e.target.value } })}
@@ -716,20 +716,20 @@ function RuleForm({ onSuccess, editingRule }) {
         
         <div className={`space-y-3 p-3 rounded ${sectionBg}`}>
                         <div className="space-y-2">
-                            <Label className={labelClass}>שדה לעדכון</Label>
+                            <Label className={labelClass}>Field to Update</Label>
                             <Input
               value={formData.action_config.update_field}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, update_field: e.target.value } })}
-              placeholder="למשל: lead_status"
+              placeholder="e.g. lead_status"
               className={inputClass} />
 
                         </div>
                         <div className="space-y-2">
-                            <Label className={labelClass}>ערך חדש</Label>
+                            <Label className={labelClass}>New Value</Label>
                             <Input
               value={formData.action_config.update_value}
               onChange={(e) => setFormData({ ...formData, action_config: { ...formData.action_config, update_value: e.target.value } })}
-              placeholder="למשל: Sales Ready"
+              placeholder="e.g. Sales Ready"
               className={inputClass} />
 
                         </div>
@@ -739,7 +739,7 @@ function RuleForm({ onSuccess, editingRule }) {
 
             <Button type="submit" className="w-full bg-red-700 hover:bg-red-800 text-white font-bold mt-4" disabled={createRule.isPending}>
                 {createRule.isPending && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
-                שמור חוק
+                Save Rule
             </Button>
         </form>);
 

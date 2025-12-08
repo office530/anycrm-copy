@@ -59,41 +59,41 @@ export default function ReportsPage() {
   }
 
   const reports = [
-      { id: 'list', name: 'דוח מפורט', icon: Users },
-      { id: 'advanced', name: 'דשבורד הזדמנויות', icon: TrendingUp },
-      { id: 'sales', name: 'ביצועי מכירות', icon: TrendingUp },
-      { id: 'conversion', name: 'יחסי המרה', icon: CheckCircle2 },
-      { id: 'activity', name: 'דוח פעילות', icon: Calendar },
-      { id: 'custom_reports', name: 'דוחות מותאמים', icon: Users },
-      { id: 'custom_dashboard', name: 'דשבורד אישי', icon: Users },
-      { id: 'ai_insights', name: 'תובנות AI', icon: BrainCircuit, color: 'text-indigo-600' }
+      { id: 'list', name: 'Detailed Report', icon: Users },
+      { id: 'advanced', name: 'Opportunities Dashboard', icon: TrendingUp },
+      { id: 'sales', name: 'Sales Performance', icon: TrendingUp },
+      { id: 'conversion', name: 'Conversion Rates', icon: CheckCircle2 },
+      { id: 'activity', name: 'Activity Report', icon: Calendar },
+      { id: 'custom_reports', name: 'Custom Reports', icon: Users },
+      { id: 'custom_dashboard', name: 'Personal Dashboard', icon: Users },
+      { id: 'ai_insights', name: 'AI Insights', icon: BrainCircuit, color: 'text-indigo-600' }
   ];
 
   return (
-    <div className={`min-h-screen p-6 transition-colors ${theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50/50'}`} dir="rtl">
+    <div className={`min-h-screen p-6 transition-colors ${theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50/50'}`} dir="ltr">
       <div className="max-w-[1600px] mx-auto space-y-6">
           {/* Header */}
           <div className={`rounded-xl shadow-sm border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors ${
               theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
           }`}>
             <div>
-              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>דוחות וניתוח נתונים</h1>
-              <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>סקירה מקיפה של ביצועים, המרות ופעילות עסקית</p>
+              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>Reports & Analytics</h1>
+              <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Comprehensive overview of performance, conversions and business activity</p>
             </div>
             
             <div className="flex items-center gap-3">
-                <span className={`text-sm font-medium hidden md:inline-block ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>טווח תצוגה:</span>
+                <span className={`text-sm font-medium hidden md:inline-block ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>Time Range:</span>
                 <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className={`w-[180px] ${
                     theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-neutral-200'
                 }`}>
-                    <SelectValue placeholder="טווח זמן" />
+                    <SelectValue placeholder="Time Range" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">כל הזמנים</SelectItem>
-                    <SelectItem value="this_month">החודש הנוכחי</SelectItem>
-                    <SelectItem value="last_month">חודש שעבר</SelectItem>
-                    <SelectItem value="this_year">השנה הנוכחית</SelectItem>
+                    <SelectItem value="all">All Time</SelectItem>
+                    <SelectItem value="this_month">This Month</SelectItem>
+                    <SelectItem value="last_month">Last Month</SelectItem>
+                    <SelectItem value="this_year">This Year</SelectItem>
                 </SelectContent>
                 </Select>
             </div>
@@ -108,7 +108,7 @@ export default function ReportsPage() {
                           ? 'bg-slate-800 border-slate-700 text-white' 
                           : 'bg-white border-neutral-200'
                       }`}>
-                          <SelectValue placeholder="בחר דוח להצגה" />
+                          <SelectValue placeholder="Select Report" />
                       </SelectTrigger>
                       <SelectContent>
                           {reports.map((report) => (
@@ -132,7 +132,7 @@ export default function ReportsPage() {
                           <button
                               key={report.id}
                               onClick={() => setActiveReport(report.id)}
-                              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-right
+                              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-left
                                   ${isActive 
                                       ? theme === 'dark'
                                           ? 'bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold'

@@ -111,58 +111,58 @@ export default function TasksPage() {
   }, [activeTasks]);
 
   return (
-    <div className="space-y-6 pb-24" dir="rtl">
-      {/* כותרת וסטטיסטיקות */}
+    <div className="space-y-6 pb-24" dir="ltr">
+      {/* Header & Stats */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>ניהול משימות</h1>
-          <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>תכנון, מעקב ומימוש משימות יומיות</p>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>Task Management</h1>
+          <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Planning, Tracking & Execution</p>
         </div>
         <Button onClick={() => setShowTaskForm(true)} className={`text-white shadow-md ${
             theme === 'dark' 
                 ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
                 : 'bg-red-700 hover:bg-red-800'
         }`}>
-          <Plus className="w-4 h-4 ml-2" />
-          משימה חדשה
+          <Plus className="w-4 h-4 mr-2" />
+          New Task
         </Button>
       </div>
 
-      {/* כרטיסי סטטיסטיקות */}
+      {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard icon={CheckSquare} label="סה״כ משימות" value={stats.total} color="bg-blue-500" />
-        <StatCard icon={CheckCircle2} label="הושלמו" value={stats.completed} color="bg-emerald-500" />
-        <StatCard icon={AlertCircle} label="באיחור" value={stats.overdue} color="bg-red-500" />
-        <StatCard icon={Calendar} label="להיום" value={stats.today} color="bg-orange-500" />
+        <StatCard icon={CheckSquare} label="Total Tasks" value={stats.total} color="bg-blue-500" />
+        <StatCard icon={CheckCircle2} label="Completed" value={stats.completed} color="bg-emerald-500" />
+        <StatCard icon={AlertCircle} label="Overdue" value={stats.overdue} color="bg-red-500" />
+        <StatCard icon={Calendar} label="To Do" value={stats.today} color="bg-orange-500" />
       </div>
 
-      {/* סינון וחיפוש */}
+      {/* Filters & Search */}
       <div className={`p-4 rounded-xl shadow-sm border flex flex-col md:flex-row gap-3 transition-colors ${
           theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
       }`}>
         <div className="relative flex-1">
           <Input
-            placeholder="חיפוש משימה..."
-            className="pr-10"
+            placeholder="Search tasks..."
+            className="pl-10"
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           />
         </div>
         <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
           <SelectTrigger className="w-full md:w-[160px]">
-            <Filter className="w-4 h-4 ml-2" />
-            <SelectValue placeholder="סטטוס" />
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">כל הסטטוסים</SelectItem>
-            <SelectItem value="todo">לביצוע</SelectItem>
-            <SelectItem value="in_progress">בתהליך</SelectItem>
-            <SelectItem value="done">הושלם</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="todo">To Do</SelectItem>
+            <SelectItem value="in_progress">In Progress</SelectItem>
+            <SelectItem value="done">Completed</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* טאבים - פעילות / ארכיון */}
+      {/* Tabs - Active / Archive */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className={`grid w-full grid-cols-2 max-w-md transition-colors ${
           theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'
@@ -170,18 +170,18 @@ export default function TasksPage() {
           <TabsTrigger value="active" className={`data-[state=active]:shadow-sm transition-all ${
             theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : 'data-[state=active]:bg-white'
           }`}>
-            משימות פעילות ({activeTasks.length})
+            Active Tasks ({activeTasks.length})
           </TabsTrigger>
           <TabsTrigger value="archived" className={`data-[state=active]:shadow-sm transition-all ${
             theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : 'data-[state=active]:bg-white'
           }`}>
-            ארכיון ({archivedTasks.length})
+            Archive ({archivedTasks.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="active" className="mt-6">
           {isLoading ? (
-            <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>טוען משימות...</div>
+            <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Loading tasks...</div>
           ) : activeTasks.length === 0 ? (
             <div className={`text-center py-16 rounded-xl border-2 border-dashed transition-colors ${
               theme === 'dark' 
@@ -189,8 +189,8 @@ export default function TasksPage() {
                 : 'bg-slate-50 border-slate-200 text-slate-400'
             }`}>
               <CheckCircle2 className="w-16 h-16 mx-auto mb-4 opacity-20" />
-              <p className="text-lg font-medium">אין משימות פעילות</p>
-              <p className="text-sm mt-1">התחל ביצירת משימה חדשה</p>
+              <p className="text-lg font-medium">No active tasks</p>
+              <p className="text-sm mt-1">Start by creating a new task</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -220,7 +220,7 @@ export default function TasksPage() {
                 : 'bg-slate-50 border-slate-200 text-slate-400'
             }`}>
               <Archive className="w-16 h-16 mx-auto mb-4 opacity-20" />
-              <p className="text-lg font-medium">אין משימות בארכיון</p>
+              <p className="text-lg font-medium">No archived tasks</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -230,7 +230,7 @@ export default function TasksPage() {
                   task={task}
                   isArchived
                   onDelete={() => {
-                    if (confirm('למחוק משימה זו לצמיתות?')) deleteTask.mutate(task.id);
+                    if (confirm('Delete this task permanently?')) deleteTask.mutate(task.id);
                   }}
                 />
               ))}
@@ -239,15 +239,15 @@ export default function TasksPage() {
         </TabsContent>
       </Tabs>
 
-      {/* דיאלוג יצירה/עריכה */}
+      {/* Create/Edit Dialog */}
       <Dialog open={showTaskForm} onOpenChange={(open) => {
         setShowTaskForm(open);
         if (!open) setEditingTask(null);
       }}>
-        <DialogContent className={`max-w-lg ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : ''}`} dir="rtl">
+        <DialogContent className={`max-w-lg ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : ''}`} dir="ltr">
           <DialogHeader>
             <div className="flex justify-between items-center">
-              <DialogTitle>{editingTask ? "עריכת משימה" : "משימה חדשה"}</DialogTitle>
+              <DialogTitle>{editingTask ? "Edit Task" : "New Task"}</DialogTitle>
               <Button variant="ghost" size="icon" onClick={() => setShowTaskForm(false)} className={`text-slate-400 ${theme === 'dark' ? 'hover:text-white hover:bg-slate-800' : 'hover:text-slate-600'}`}>
                 <X className="w-4 h-4" />
               </Button>
@@ -338,10 +338,10 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
             </h3>
             <div className="flex items-center gap-1 flex-shrink-0">
               {isOverdue && !isDone && (
-                <Badge variant="destructive" className="text-xs">באיחור</Badge>
+                <Badge variant="destructive" className="text-xs">Overdue</Badge>
               )}
               {isToday && !isDone && (
-                <Badge className="bg-orange-500 text-xs">היום</Badge>
+                <Badge className="bg-orange-500 text-xs">Today</Badge>
               )}
               {task.due_date && (
                 <span className={`text-xs flex items-center gap-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -358,13 +358,13 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
                 {task.related_lead_id && (
                     <Link to={`${createPageUrl('LeadDetails')}?leadId=${task.related_lead_id}`} className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] hover:bg-blue-100 transition-colors">
                         <User className="w-3 h-3" />
-                        ליד
+                        Lead
                     </Link>
                 )}
                 {task.related_opportunity_id && (
                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px]">
                         <Briefcase className="w-3 h-3" />
-                        הזדמנות
+                        Opportunity
                     </div>
                 )}
              </div>
@@ -376,7 +376,7 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
             </p>
           )}
 
-          {/* פעולות */}
+          {/* Actions */}
           {!isArchived && (
             <div className="flex gap-2 mt-3">
               <Button
@@ -385,7 +385,7 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
                 onClick={onEdit}
                 className="h-7 px-2 text-slate-500 hover:text-blue-600"
               >
-                עריכה
+                Edit
               </Button>
               <Button
                 variant="ghost"
@@ -393,8 +393,8 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
                 onClick={onArchive}
                 className="h-7 px-2 text-slate-500 hover:text-orange-600"
               >
-                <Archive className="w-3 h-3 ml-1" />
-                ארכיון
+                <Archive className="w-3 h-3 mr-1" />
+                Archive
               </Button>
               <Button
                 variant="ghost"
@@ -414,8 +414,8 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
               onClick={onDelete}
               className="h-7 px-2 text-slate-500 hover:text-red-600 mt-2"
             >
-              <Trash2 className="w-3 h-3 ml-1" />
-              מחק לצמיתות
+              <Trash2 className="w-3 h-3 mr-1" />
+              Delete Permanently
             </Button>
           )}
         </div>
@@ -445,11 +445,11 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      alert("נא למלא כותרת משימה");
+      alert("Task title is required");
       return;
     }
 
-    // אם אין assigned_to, נשתמש במשתמש הנוכחי
+    // If no assigned_to, use current user
     if (!formData.assigned_to) {
       const user = await base44.auth.me();
       formData.assigned_to = user.email;
@@ -465,27 +465,27 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label className={labelClass}>כותרת משימה *</label>
+        <label className={labelClass}>Task Title *</label>
         <Input
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          placeholder="מה צריך לעשות?"
+          placeholder="What needs to be done?"
           className={inputClass}
         />
       </div>
 
       <div className="space-y-2">
-        <label className={labelClass}>תיאור</label>
+        <label className={labelClass}>Description</label>
         <Textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="פרטים נוספים..."
+          placeholder="Additional details..."
           className={`${inputClass} h-24 resize-none`}
         />
       </div>
 
       <div className="space-y-2">
-        <label className={labelClass}>תאריך יעד</label>
+        <label className={labelClass}>Due Date</label>
         <Input
           type="date"
           value={formData.due_date}
@@ -495,15 +495,15 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
       </div>
 
       <div className="space-y-2">
-        <label className={labelClass}>סטטוס</label>
+        <label className={labelClass}>Status</label>
         <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
           <SelectTrigger className={inputClass}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent className={selectContentClass}>
-            <SelectItem value="todo">לביצוע</SelectItem>
-            <SelectItem value="in_progress">בתהליך</SelectItem>
-            <SelectItem value="done">הושלם</SelectItem>
+            <SelectItem value="todo">To Do</SelectItem>
+            <SelectItem value="in_progress">In Progress</SelectItem>
+            <SelectItem value="done">Completed</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -511,13 +511,13 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
       {/* Relational Fields */}
       <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
          <div className="space-y-1">
-            <label className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>שיוך לליד</label>
+            <label className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>Assign to Lead</label>
             <Select value={formData.related_lead_id || "none"} onValueChange={(v) => setFormData({ ...formData, related_lead_id: v === "none" ? null : v })}>
               <SelectTrigger className={`h-9 text-sm ${inputClass}`}>
-                <SelectValue placeholder="בחר ליד..." />
+                <SelectValue placeholder="Select Lead..." />
               </SelectTrigger>
               <SelectContent className={selectContentClass}>
-                <SelectItem value="none">-- ללא שיוך --</SelectItem>
+                <SelectItem value="none">-- Unassigned --</SelectItem>
                 {leads.map(l => (
                     <SelectItem key={l.id} value={l.id}>{l.full_name}</SelectItem>
                 ))}
@@ -525,13 +525,13 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
             </Select>
          </div>
          <div className="space-y-1">
-            <label className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>שיוך להזדמנות</label>
+            <label className={`text-xs font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>Assign to Opportunity</label>
             <Select value={formData.related_opportunity_id || "none"} onValueChange={(v) => setFormData({ ...formData, related_opportunity_id: v === "none" ? null : v })}>
               <SelectTrigger className={`h-9 text-sm ${inputClass}`}>
-                <SelectValue placeholder="בחר הזדמנות..." />
+                <SelectValue placeholder="Select Opportunity..." />
               </SelectTrigger>
               <SelectContent className={selectContentClass}>
-                <SelectItem value="none">-- ללא שיוך --</SelectItem>
+                <SelectItem value="none">-- Unassigned --</SelectItem>
                 {opportunities.map(o => (
                     <SelectItem key={o.id} value={o.id}>{o.product_type} - {o.lead_name}</SelectItem>
                 ))}
@@ -542,10 +542,10 @@ function TaskForm({ task, onSubmit, onCancel, isSubmitting }) {
 
       <div className={`flex justify-end gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : ''}`}>
         <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}>
-          ביטול
+          Cancel
         </Button>
         <Button type="submit" className="bg-red-700 hover:bg-red-800" disabled={isSubmitting}>
-          {task ? "עדכן" : "צור משימה"}
+          {task ? "Update" : "Create Task"}
         </Button>
       </div>
     </form>
