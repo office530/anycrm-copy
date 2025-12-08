@@ -203,7 +203,7 @@ export default function OpportunitiesPage() {
   if (isLoading) return <div className="flex justify-center h-96 items-center"><Loader2 className="animate-spin w-8 h-8 text-teal-600" /></div>;
 
   return (
-    <div className={`h-[calc(100vh-140px)] flex flex-col transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Search Bar & Actions */}
       <div className="mb-4 flex justify-between items-center gap-4">
@@ -430,10 +430,10 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className={`flex-1 rounded-xl border shadow-sm overflow-hidden flex flex-col transition-colors ${
+        <div className={`rounded-xl border shadow-sm overflow-hidden flex flex-col transition-colors ${
           theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
         }`}>
-          <div className="flex-1 overflow-auto">
+          <div className="overflow-x-auto">
             <div className="min-w-[800px]">
               <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide sticky top-0 z-10 transition-colors ${
                 theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
