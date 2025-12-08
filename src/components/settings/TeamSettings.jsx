@@ -72,10 +72,10 @@ export default function TeamSettings() {
                                                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold">
                                                     {user.full_name?.charAt(0) || user.email?.charAt(0)}
                                                 </div>
-                                                {user.full_name || 'No Name'}
+                                                <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>{user.full_name || 'No Name'}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell className={theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}>{user.email}</TableCell>
                                         <TableCell>
                                             <Badge variant="outline" className="bg-slate-50">
                                                 {user.role === 'admin' ? 'System Admin' : 'User'}

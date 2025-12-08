@@ -7,8 +7,10 @@ import { Loader2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function AuditLogSettings() {
+    const { theme } = useSettings();
     const [searchTerm, setSearchTerm] = useState("");
     
     // In a real scenario, we would use backend filtering, but for now fetching all (usually limited by default)
@@ -26,10 +28,10 @@ export default function AuditLogSettings() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>System Audit Log</CardTitle>
-                    <CardDescription>Track changes and actions performed in the system</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>System Audit Log</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Track changes and actions performed in the system</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex gap-4 mb-4">
@@ -37,17 +39,17 @@ export default function AuditLogSettings() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <Input 
                                 placeholder="Search by user, action or entity..." 
-                                className="pl-10"
+                                className={`pl-10 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white placeholder:text-slate-500' : ''}`}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
 
-                    <div className="rounded-md border">
+                    <div className={`rounded-md border ${theme === 'dark' ? 'border-slate-700' : ''}`}>
                         <Table>
                             <TableHeader>
-                                <TableRow>
+                                <TableRow className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}>
                                     <TableHead className="text-left w-[180px] text-slate-700 dark:text-slate-300">Date & Time</TableHead>
                                     <TableHead className="text-left text-slate-700 dark:text-slate-300">User</TableHead>
                                     <TableHead className="text-left text-slate-700 dark:text-slate-300">Action</TableHead>
@@ -64,23 +66,23 @@ export default function AuditLogSettings() {
                                     </TableRow>
                                 ) : filteredLogs.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                                        <TableCell colSpan={5} className={`text-center py-8 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                                             No records found
                                         </TableCell>
                                     </TableRow>
                                 ) : filteredLogs.map((log) => (
-                                    <TableRow key={log.id}>
+                                    <TableRow key={log.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
                                         <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-xs">
                                             {log.timestamp ? format(new Date(log.timestamp), 'dd/MM/yyyy HH:mm') : '-'}
                                         </TableCell>
-                                        <TableCell className="font-medium">{log.user_email}</TableCell>
+                                        <TableCell className={`font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>{log.user_email}</TableCell>
                                         <TableCell>
-                                            <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">
+                                            <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${theme === 'dark' ? 'bg-slate-700 text-slate-200' : 'bg-slate-100 text-slate-700'}`}>
                                                 {log.action}
                                             </span>
                                         </TableCell>
-                                        <TableCell>{log.entity} #{log.entity_id}</TableCell>
-                                        <TableCell className="max-w-xs truncate text-xs text-slate-500" title={log.details}>
+                                        <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{log.entity} #{log.entity_id}</TableCell>
+                                        <TableCell className={`max-w-xs truncate text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} title={log.details}>
                                             {log.details}
                                         </TableCell>
                                     </TableRow>
