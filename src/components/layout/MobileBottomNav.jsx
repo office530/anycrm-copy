@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { LayoutDashboard, Users, Briefcase, Plus, Menu, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, Plus, Menu, Sparkles, Brain } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/components/context/SettingsContext";
 import {
@@ -53,6 +53,16 @@ export default function MobileBottomNav({ activePage }) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center" side="top" className={`mb-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : ''}`}>
+                        <DropdownMenuItem asChild>
+                             <Link to={createPageUrl('ActNow')} className={`cursor-pointer flex items-center gap-2 font-bold ${
+                                 theme === 'dark' 
+                                 ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' 
+                                 : 'text-indigo-600'
+                             }`}>
+                                <Brain className={`w-4 h-4 ${theme === 'dark' ? 'text-cyan-400' : 'text-indigo-600'}`} /> Act Now Engine
+                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                              <Link to={`${createPageUrl('Leads')}?action=new`} className="cursor-pointer flex items-center gap-2">
                                 <Users className="w-4 h-4" /> New Lead
