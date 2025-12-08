@@ -3,8 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Sparkles, Brain, Target, ArrowRight, Zap, MessageSquare, Phone } from 'lucide-react';
+import { Sparkles, Brain, Target, ArrowRight, Zap, MessageSquare, Phone, CheckSquare } from 'lucide-react';
 import { useSettings } from '@/components/context/SettingsContext';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from 'react-markdown';
@@ -26,6 +28,26 @@ export default function ActNowPage() {
         queryFn: () => base44.entities.Opportunity.list(),
         staleTime: 1000 * 60 * 5
     });
+
+    const handleCreateTask = async (item) => {
+        if (!confirm(`Create a task to "${item.how}"?`)) return;
+        
+        try {
+            await base44.entities.Task.create({
+                title: `Act Now: ${item.target}`,
+                description: item.how,
+                status: 'todo',
+                priority: item.priority === 'Critical' ? 'high' : 'medium',
+                due_date: new Date().toISOString().split('T')[0],
+                related_lead_id: item.type === 'Lead' ? item.id : undefined,
+                related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
+            });
+            alert("Task created successfully!");
+        } catch (error) {
+            console.error("Failed to create task", error);
+            alert("Failed to create task");
+        }
+    };
 
     const handleMagicButton = async () => {
         if (!leads || !opportunities) return;
@@ -67,11 +89,12 @@ export default function ActNowPage() {
                 3. "Low hanging fruit" - easy wins.
 
                 For each recommendation, provide:
-                1. "target": Name of the lead/opportunity.
-                2. "type": "Opportunity" or "Lead".
-                3. "priority": "High" or "Critical".
-                4. "why": A concise, punchy explanation of why this is urgent (e.g., "Deal worth $50k is stalling in Negotiation").
-                5. "how": A specific, actionable "Attack Plan" (e.g., "Call now and offer X to close by Friday").
+                1. "id": The ID of the lead or opportunity.
+                2. "target": Name of the lead/opportunity.
+                3. "type": "Opportunity" or "Lead".
+                4. "priority": "High" or "Critical".
+                5. "why": A concise, punchy explanation of why this is urgent (e.g., "Deal worth $50k is stalling in Negotiation").
+                6. "how": A specific, actionable "Attack Plan" (e.g., "Call now and offer X to close by Friday").
                 
                 Return a JSON object with a property "recommendations" which is an array of these objects.
                 Data: ${JSON.stringify(contextData)}
@@ -87,6 +110,7 @@ export default function ActNowPage() {
                             items: {
                                 type: "object",
                                 properties: {
+                                    id: { type: "string" },
                                     target: { type: "string" },
                                     type: { type: "string" },
                                     priority: { type: "string" },
@@ -180,8 +204,14 @@ export default function ActNowPage() {
                                         </Badge>
                                         <Badge variant="secondary" className="opacity-70">{item.type}</Badge>
                                     </div>
-                                    <CardTitle className={`text-xl ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                                        {item.target}
+                                    <CardTitle className={`text-xl hover:underline ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                                        <Link to={
+                                            item.type === 'Lead' 
+                                            ? `${createPageUrl('LeadDetails')}?leadId=${item.id}` 
+                                            : `${createPageUrl('Opportunities')}?opportunityId=${item.id}`
+                                        }>
+                                            {item.target}
+                                        </Link>
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
@@ -207,12 +237,13 @@ export default function ActNowPage() {
                                         </p>
                                     </div>
 
-                                    <div className="flex gap-2 pt-2">
-                                        <Button size="sm" className="flex-1 gap-2 bg-slate-900 text-white hover:bg-slate-800">
-                                            <Phone className="w-3 h-3" /> Call
-                                        </Button>
-                                        <Button size="sm" variant="outline" className="flex-1 gap-2">
-                                            <MessageSquare className="w-3 h-3" /> Email
+                                    <div className="pt-2">
+                                        <Button 
+                                            size="sm" 
+                                            className={`w-full gap-2 ${theme === 'dark' ? 'bg-cyan-600 hover:bg-cyan-700 text-white' : 'bg-slate-900 text-white hover:bg-slate-800'}`}
+                                            onClick={() => handleCreateTask(item)}
+                                        >
+                                            <CheckSquare className="w-4 h-4" /> Create Task Now
                                         </Button>
                                     </div>
                                 </CardContent>

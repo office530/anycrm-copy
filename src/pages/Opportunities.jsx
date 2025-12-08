@@ -101,16 +101,23 @@ export default function OpportunitiesPage() {
 
   const isLoading = isLoadingOpp || isLoadingLeads;
 
-  // Check for action=new in URL
+  // Check for action=new or opportunityId in URL
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get('action') === 'new') {
         setEditingOpp(null);
         setShowForm(true);
-        // Clean URL
         window.history.replaceState({}, '', location.pathname);
+    } else if (params.get('opportunityId') && opportunities.length > 0) {
+        const oppId = params.get('opportunityId');
+        const opp = opportunities.find(o => o.id === oppId);
+        if (opp) {
+            setEditingOpp(opp);
+            setShowForm(true);
+            window.history.replaceState({}, '', location.pathname);
+        }
     }
-  }, [location]);
+  }, [location, opportunities]);
 
   // --- Statistics Logic (New!) ---
   const stats = useMemo(() => {
