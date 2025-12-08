@@ -70,7 +70,7 @@ export default function ProfileSettings() {
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
                                     placeholder="איך תרצה שיופיע השם שלך במערכת"
                                 />
-                                <p className="text-[11px] text-slate-500">שם זה יוצג בכל הפעילויות והעדכונים שלך</p>
+                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>שם זה יוצג בכל הפעילויות והעדכונים שלך</p>
                             </div>
                             <div className="space-y-2">
                                 <Label>כתובת אימייל</Label>
@@ -79,7 +79,7 @@ export default function ProfileSettings() {
                                     disabled 
                                     className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-slate-400" : "bg-slate-50 text-slate-600"} 
                                 />
-                                <p className="text-[11px] text-slate-500">לא ניתן לשנות כתובת אימייל</p>
+                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>לא ניתן לשנות כתובת אימייל</p>
                             </div>
                         </div>
 
@@ -106,7 +106,7 @@ export default function ProfileSettings() {
                              isEditor ? <Badge className="bg-emerald-100 text-emerald-700">Editor</Badge> :
                              <Badge variant="secondary">Viewer</Badge>}
                         </div>
-                        <p className="text-xs text-slate-500">
+                        <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                             {isAdmin ? "יש לך גישה מלאה לכל המערכת." :
                              isEditor ? "יש לך הרשאות עריכה ויצירה של נתונים." :
                              "אתה במצב צפייה בלבד. אינך יכול לבצע שינויים."}
