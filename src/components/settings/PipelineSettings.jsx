@@ -86,7 +86,7 @@ export default function PipelineSettings() {
                                                 </Badge>
                                             ))}
                                             <Button 
-                                                variant="ghost" size="sm" className="h-6 text-xs px-2 border border-dashed border-slate-300 text-slate-500 hover:text-blue-600"
+                                                variant="ghost" size="sm" className={`h-6 text-xs px-2 border border-dashed hover:text-blue-600 ${theme === 'dark' ? 'border-slate-600 text-slate-400' : 'border-slate-300 text-slate-500'}`}
                                                 onClick={() => {
                                                     const text = prompt("Enter task name:");
                                                     if (text) {
