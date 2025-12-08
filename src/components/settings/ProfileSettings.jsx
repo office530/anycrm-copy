@@ -69,6 +69,7 @@ export default function ProfileSettings() {
                                     value={user.full_name || ''} 
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
                                     placeholder="How you want your name to appear"
+                                    className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-white placeholder:text-slate-500" : ""}
                                 />
                                 <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>This name will be displayed in all your activities and updates</p>
                             </div>

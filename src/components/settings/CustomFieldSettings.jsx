@@ -74,7 +74,7 @@ export default function CustomFieldSettings() {
                                     </TableRow>
                                 ) : fields.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                                        <TableCell colSpan={5} className={`text-center py-8 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                                             No custom fields defined
                                         </TableCell>
                                     </TableRow>
@@ -178,6 +178,7 @@ function CustomFieldDialog({ open, onOpenChange, field, onSuccess }) {
                                 value={formData.label}
                                 onChange={(e) => setFormData({...formData, label: e.target.value})}
                                 placeholder="e.g. Favorite Color"
+                                className="dark:bg-slate-800 dark:border-slate-700"
                             />
                         </div>
                         <div className="space-y-2">

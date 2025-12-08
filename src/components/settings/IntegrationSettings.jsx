@@ -82,7 +82,7 @@ export default function IntegrationSettings() {
                         ))}
                     </div>
                     
-                    <div className="mt-8 p-4 bg-blue-50 text-blue-800 rounded-lg text-sm border border-blue-100">
+                    <div className={`mt-8 p-4 rounded-lg text-sm border ${theme === 'dark' ? 'bg-blue-900/20 text-blue-200 border-blue-800' : 'bg-blue-50 text-blue-800 border-blue-100'}`}>
                         <strong>Tip:</strong> You can connect more services using Zapier or Make. Contact support for Webhook and API Key.
                     </div>
                 </CardContent>
