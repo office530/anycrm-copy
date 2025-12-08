@@ -46,7 +46,7 @@ export default function PromotionPage() {
     ];
 
     return (
-        <div className={`min-h-screen ${darkBg} ${darkText} p-4 lg:p-8 font-sans selection:bg-cyan-500/30`}>
+        <div className={`min-h-full rounded-3xl ${darkBg} ${darkText} p-6 md:p-12 font-sans selection:bg-cyan-500/30`}>
             {/* Hero Section */}
             <div className="max-w-6xl mx-auto pt-10 pb-20 text-center">
                 <motion.div 
