@@ -312,11 +312,11 @@ ${textToAnalyze}`,
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 text-center shadow-sm"
+            className={`border rounded-xl p-6 text-center shadow-sm ${theme === 'dark' ? 'bg-slate-800 border-blue-900' : 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200'}`}
           >
-            <Loader2 className="w-12 h-12 mx-auto mb-3 animate-spin text-blue-600" />
-            <p className="text-base font-bold text-blue-900 mb-2">מעבד את הנתונים...</p>
-            <p className="text-sm text-blue-700">
+            <Loader2 className={`w-12 h-12 mx-auto mb-3 animate-spin ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+            <p className={`text-base font-bold mb-2 ${theme === 'dark' ? 'text-blue-300' : 'text-blue-900'}`}>מעבד את הנתונים...</p>
+            <p className={`text-sm ${theme === 'dark' ? 'text-blue-400' : 'text-blue-700'}`}>
               {mode === "image" ? "🔍 AI Vision סורק את התמונה ומחלץ את כל הפרטים" : "🤖 AI מנתח את הטקסט"}
             </p>
             <div className="mt-4 flex justify-center gap-2">
@@ -327,12 +327,12 @@ ${textToAnalyze}`,
           </motion.div>
         )}
 
-        <div className="flex gap-3 pt-4 border-t">
+        <div className={`flex gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-800' : ''}`}>
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isProcessing}
-            className="flex-1"
+            className={`flex-1 ${theme === 'dark' ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' : ''}`}
           >
             ביטול
           </Button>
