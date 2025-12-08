@@ -22,9 +22,6 @@ export default function LeadAiAnalysis({ lead }) {
           city: lead.city,
           status: lead.lead_status,
           notes: lead.notes,
-          asset_value: lead.estimated_property_value,
-          liabilities: lead.existing_mortgage_balance,
-          marital_status: lead.marital_status,
           last_contact: lead.last_contact_date,
           tags: lead.tags
         });
