@@ -364,11 +364,11 @@ ${textToAnalyze}`,
             transition={{ duration: 0.2 }}
           >
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <DialogTitle className={`text-2xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                 <CheckCircle2 className="w-6 h-6 text-green-600" />
                 בדוק את הפרטים שזוהו
               </DialogTitle>
-              <p className="text-sm text-slate-500 mt-2">
+              <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                 ה-AI חילץ את המידע הבא - ערוך אם צריך ושמור
               </p>
             </DialogHeader>
@@ -376,79 +376,79 @@ ${textToAnalyze}`,
             <div className="space-y-4 mt-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">שם מלא *</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>שם מלא *</label>
                   <Input
                     value={extractedData?.full_name || ""}
                     onChange={(e) => setExtractedData({...extractedData, full_name: e.target.value})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">טלפון *</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>טלפון *</label>
                   <Input
                     value={extractedData?.phone_number || ""}
                     onChange={(e) => setExtractedData({...extractedData, phone_number: e.target.value})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">אימייל</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>אימייל</label>
                   <Input
                     value={extractedData?.email || ""}
                     onChange={(e) => setExtractedData({...extractedData, email: e.target.value})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">עיר</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>עיר</label>
                   <Input
                     value={extractedData?.city || ""}
                     onChange={(e) => setExtractedData({...extractedData, city: e.target.value})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">גיל</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>גיל</label>
                   <Input
                     type="number"
                     value={extractedData?.age || ""}
                     onChange={(e) => setExtractedData({...extractedData, age: parseInt(e.target.value)})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">מצב משפחתי</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>מצב משפחתי</label>
                   <Input
                     value={extractedData?.marital_status || ""}
                     onChange={(e) => setExtractedData({...extractedData, marital_status: e.target.value})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                   />
                 </div>
               </div>
 
               {extractedData?.notes && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">הערות</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>הערות</label>
                   <Textarea
                     value={extractedData.notes}
                     onChange={(e) => setExtractedData({...extractedData, notes: e.target.value})}
-                    className="border-purple-200 focus:border-purple-500"
+                    className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white focus:border-purple-500' : 'border-purple-200 focus:border-purple-500'}`}
                     rows={3}
                   />
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t">
+              <div className={`flex gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-800' : ''}`}>
                 <Button
                   variant="outline"
                   onClick={handleEditPreview}
-                  className="flex-1"
+                  className={`flex-1 ${theme === 'dark' ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' : ''}`}
                 >
                   <Edit3 className="w-4 h-4 ml-2" />
                   חזור לעריכה
