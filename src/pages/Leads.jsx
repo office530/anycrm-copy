@@ -27,7 +27,7 @@ import AiLeadImport from "@/components/crm/AiLeadImport";
 import { useLocation } from "react-router-dom";
 
 export default function LeadsPage() {
-  const { leadStatuses } = useSettings();
+  const { leadStatuses, theme } = useSettings();
   const location = useLocation();
   // Custom statuses to match LeadForm exactly
   const displayStatuses = [
