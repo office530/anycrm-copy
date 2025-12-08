@@ -40,7 +40,7 @@ export default function PipelineSettings() {
             <div className="flex justify-between items-end">
                 <div>
                      <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>שלבי המכירה (Pipeline)</h2>
-                     <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'} text-sm`}>הגדר את השלבים שעובר ליד עד לסגירת העסקה</p>
+                     <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} text-sm`}>הגדר את השלבים שעובר ליד עד לסגירת העסקה</p>
                 </div>
                 <Button onClick={handleSave} disabled={isSaving} className="bg-slate-900 text-white">
                     {isSaving ? "שומר..." : "שמור שינויים"}
@@ -60,7 +60,7 @@ export default function PipelineSettings() {
                                 
                                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="space-y-1">
-                                        <Label className="text-xs text-slate-400">שם השלב</Label>
+                                        <Label className="text-xs text-slate-600 dark:text-slate-400">שם השלב</Label>
                                         <Input 
                                             value={stage.label} 
                                             onChange={(e) => updateLocalStage(index, 'label', e.target.value)}
@@ -68,7 +68,7 @@ export default function PipelineSettings() {
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <Label className="text-xs text-slate-400">משימות אוטומטיות (צ'ק-ליסט)</Label>
+                                        <Label className="text-xs text-slate-600 dark:text-slate-400">משימות אוטומטיות (צ'ק-ליסט)</Label>
                                         <div className="flex flex-wrap gap-2">
                                             {stage.checklist?.map((item, i) => (
                                                 <Badge key={i} variant="secondary" className="bg-slate-100 font-normal text-slate-600 border-slate-200 flex gap-1 items-center">

@@ -48,11 +48,11 @@ export default function AuditLogSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="text-right w-[180px]">תאריך ושעה</TableHead>
-                                    <TableHead className="text-right">משתמש</TableHead>
-                                    <TableHead className="text-right">פעולה</TableHead>
-                                    <TableHead className="text-right">ישות</TableHead>
-                                    <TableHead className="text-right">פרטים</TableHead>
+                                    <TableHead className="text-right w-[180px] text-slate-700 dark:text-slate-300">תאריך ושעה</TableHead>
+                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">משתמש</TableHead>
+                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">פעולה</TableHead>
+                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">ישות</TableHead>
+                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">פרטים</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -70,7 +70,7 @@ export default function AuditLogSettings() {
                                     </TableRow>
                                 ) : filteredLogs.map((log) => (
                                     <TableRow key={log.id}>
-                                        <TableCell className="text-slate-500 font-mono text-xs">
+                                        <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-xs">
                                             {log.timestamp ? format(new Date(log.timestamp), 'dd/MM/yyyy HH:mm') : '-'}
                                         </TableCell>
                                         <TableCell className="font-medium">{log.user_email}</TableCell>

@@ -50,11 +50,11 @@ export default function TeamSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>שם מלא</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>אימייל</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תפקיד</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סטטוס</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תאריך הצטרפות</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>שם מלא</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>אימייל</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תפקיד</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>סטטוס</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תאריך הצטרפות</TableHead>
                                     <TableHead className="text-right w-[50px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -84,7 +84,7 @@ export default function TeamSettings() {
                                         <TableCell>
                                             <Badge className="bg-green-100 text-green-700 hover:bg-green-100">פעיל</Badge>
                                         </TableCell>
-                                        <TableCell className="text-slate-500 text-sm">
+                                        <TableCell className="text-slate-600 text-sm dark:text-slate-400">
                                             {user.created_date ? format(new Date(user.created_date), 'dd/MM/yyyy') : '-'}
                                         </TableCell>
                                         <TableCell>
@@ -111,7 +111,7 @@ export default function TeamSettings() {
 
                     {invites.length > 0 && (
                         <div className="mt-8">
-                            <h3 className="text-sm font-semibold text-slate-500 mb-4">הזמנות ממתינות</h3>
+                            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">הזמנות ממתינות</h3>
                             <div className={`rounded-md border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50/50'}`}>
                                 <Table>
                                     <TableBody>

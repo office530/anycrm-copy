@@ -58,10 +58,10 @@ export default function CustomFieldSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תווית</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>מזהה מערכת</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סוג שדה</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>שייך ל-</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תווית</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>מזהה מערכת</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>סוג שדה</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>שייך ל-</TableHead>
                                     <TableHead className="text-right w-[100px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -81,7 +81,7 @@ export default function CustomFieldSettings() {
                                 ) : fields.map((field) => (
                                     <TableRow key={field.id}>
                                         <TableCell className="font-medium">{field.label}</TableCell>
-                                        <TableCell className="font-mono text-xs text-slate-500">{field.name}</TableCell>
+                                        <TableCell className="font-mono text-xs text-slate-600 dark:text-slate-400">{field.name}</TableCell>
                                         <TableCell>
                                             <Badge variant="outline">{field.type}</Badge>
                                         </TableCell>

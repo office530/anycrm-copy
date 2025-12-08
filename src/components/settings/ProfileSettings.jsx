@@ -70,16 +70,16 @@ export default function ProfileSettings() {
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
                                     placeholder="איך תרצה שיופיע השם שלך במערכת"
                                 />
-                                <p className="text-[11px] text-slate-400">שם זה יוצג בכל הפעילויות והעדכונים שלך</p>
+                                <p className="text-[11px] text-slate-500">שם זה יוצג בכל הפעילויות והעדכונים שלך</p>
                             </div>
                             <div className="space-y-2">
                                 <Label>כתובת אימייל</Label>
                                 <Input 
                                     value={user.email || ''} 
                                     disabled 
-                                    className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-slate-500" : "bg-slate-50 text-slate-500"} 
+                                    className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-slate-400" : "bg-slate-50 text-slate-600"} 
                                 />
-                                <p className="text-[11px] text-slate-400">לא ניתן לשנות כתובת אימייל</p>
+                                <p className="text-[11px] text-slate-500">לא ניתן לשנות כתובת אימייל</p>
                             </div>
                         </div>
 
@@ -101,7 +101,7 @@ export default function ProfileSettings() {
                 <CardContent className="flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium text-slate-700">תפקיד נוכחי:</span>
+                            <span className="text-sm font-medium text-slate-900 dark:text-slate-200">תפקיד נוכחי:</span>
                             {isAdmin ? <Badge className="bg-purple-100 text-purple-700">Admin</Badge> :
                              isEditor ? <Badge className="bg-emerald-100 text-emerald-700">Editor</Badge> :
                              <Badge variant="secondary">Viewer</Badge>}

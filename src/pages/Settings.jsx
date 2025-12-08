@@ -54,7 +54,7 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="mb-8">
             <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>הגדרות מערכת</h1>
-            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול הגדרות מתקדם עבור הארגון והמשתמשים</p>
+            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>ניהול הגדרות מתקדם עבור הארגון והמשתמשים</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 min-h-[600px]">
@@ -64,7 +64,7 @@ export default function SettingsPage() {
                     {menuGroups.map((group, idx) => (
                         <div key={idx} className="space-y-1">
                             <h3 className={`px-2 text-xs font-semibold uppercase tracking-wider mb-2 ${
-                                theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
+                                theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
                             }`}>
                                 {group.title}
                             </h3>
@@ -81,11 +81,11 @@ export default function SettingsPage() {
                                                         ? "bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold"
                                                         : "bg-white text-slate-900 shadow-sm border border-slate-200 font-bold"
                                                     : theme === 'dark'
-                                                        ? "text-slate-400 hover:bg-slate-800 hover:text-cyan-400"
-                                                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                                        ? "text-slate-300 hover:bg-slate-800 hover:text-cyan-400"
+                                                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                                                 }`}
                                         >
-                                            <item.icon className={`w-4 h-4 ${isActive ? (theme === 'dark' ? 'text-cyan-400' : 'text-slate-900') : 'text-slate-400'}`} />
+                                            <item.icon className={`w-4 h-4 ${isActive ? (theme === 'dark' ? 'text-cyan-400' : 'text-slate-900') : (theme === 'dark' ? 'text-slate-400' : 'text-slate-600')}`} />
                                             <span>{item.label}</span>
                                         </button>
                                     );

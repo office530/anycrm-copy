@@ -64,7 +64,7 @@ export default function IntegrationSettings() {
                                         <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{integration.name}</h4>
                                         {integration.connected && <Badge className="bg-green-100 text-green-700">מחובר</Badge>}
                                     </div>
-                                    <p className="text-sm text-slate-500 line-clamp-2 mb-3">{integration.description}</p>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">{integration.description}</p>
                                     
                                     {integration.connected ? (
                                         <Button variant="outline" size="sm" className="w-full">

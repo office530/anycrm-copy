@@ -46,7 +46,7 @@ export default function TagSettings() {
                     </div>
 
                     <div className={`flex flex-wrap gap-2 p-4 rounded-xl border min-h-[100px] ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
-                        {systemTags.length === 0 && <p className="text-slate-400 text-sm italic w-full text-center pt-8">לא הוגדרו תגיות עדיין</p>}
+                        {systemTags.length === 0 && <p className="text-slate-500 text-sm italic w-full text-center pt-8">לא הוגדרו תגיות עדיין</p>}
                         {systemTags.map(tag => (
                             <Badge key={tag} className={`pl-1 pr-3 py-1.5 text-sm gap-2 shadow-sm ${theme === 'dark' ? 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
                                 {tag}

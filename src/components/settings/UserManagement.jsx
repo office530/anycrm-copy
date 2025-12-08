@@ -59,7 +59,7 @@ export default function UserManagement() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>ניהול הרשאות משתמשים</h2>
-                <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                <div className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
                     סה״כ משתמשים: {users.length}
                 </div>
             </div>
@@ -68,12 +68,12 @@ export default function UserManagement() {
                 <Table>
                     <TableHeader className={theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50'}>
                         <TableRow className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : 'border-slate-200 hover:bg-slate-50'}>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>משתמש</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>אימייל</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תפקיד מערכת</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>הרשאה באפליקציה</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סטטוס בקשה</TableHead>
-                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>פעולות</TableHead>
+                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>משתמש</TableHead>
+                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>אימייל</TableHead>
+                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תפקיד מערכת</TableHead>
+                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>הרשאה באפליקציה</TableHead>
+                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>סטטוס בקשה</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>פעולות</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -93,7 +93,7 @@ export default function UserManagement() {
                                             <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>{user.full_name}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>{user.email}</TableCell>
+                                    <TableCell className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>{user.email}</TableCell>
                                     <TableCell>
                                         {isSystemAdmin ? 
                                             <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200">Admin</Badge> : 
