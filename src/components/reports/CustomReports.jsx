@@ -56,10 +56,10 @@ export default function CustomReports() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">דוחות מותאמים אישית</h2>
+                <h2 className="text-2xl font-bold">Custom Reports</h2>
                 <Button onClick={() => setIsCreating(true)} className="bg-red-600 hover:bg-red-700">
-                    <Plus className="w-4 h-4 ml-2" />
-                    צור דוח חדש
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create New Report
                 </Button>
             </div>
 
@@ -67,11 +67,11 @@ export default function CustomReports() {
                 {/* Sidebar: Saved Reports List */}
                 <Card className="md:col-span-1 h-fit">
                     <CardHeader>
-                        <CardTitle className="text-lg">הדוחות שלי</CardTitle>
+                        <CardTitle className="text-lg">My Reports</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                         {loadingReports ? <Loader2 className="animate-spin mx-auto" /> : 
-                        savedReports.length === 0 ? <p className="text-sm text-slate-400">אין דוחות שמורים</p> :
+                        savedReports.length === 0 ? <p className="text-sm text-slate-400">No saved reports</p> :
                         savedReports.map(report => (
                             <div 
                                 key={report.id} 
@@ -88,7 +88,7 @@ export default function CustomReports() {
                                     className="h-6 w-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        if(confirm('למחוק דוח זה?')) deleteMutation.mutate(report.id);
+                                        if(confirm('Delete this report?')) deleteMutation.mutate(report.id);
                                     }}
                                 >
                                     <Trash2 className="w-3 h-3" />
@@ -114,7 +114,7 @@ export default function CustomReports() {
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-slate-400 py-20">
                                 <FileText className="w-16 h-16 mb-4 opacity-20" />
-                                <p>בחר דוח מהרשימה או צור דוח חדש</p>
+                                <p>Select a report from the list or create a new one</p>
                             </div>
                         )}
                     </CardContent>
@@ -182,35 +182,35 @@ function ReportEditor({ onCancel, onSave }) {
     return (
         <div className="space-y-6 animate-in fade-in">
             <div className="flex justify-between items-center border-b pb-4">
-                <h3 className="text-xl font-bold">יצירת דוח חדש</h3>
-                <Button variant="ghost" onClick={onCancel}>ביטול</Button>
+                <h3 className="text-xl font-bold">Create New Report</h3>
+                <Button variant="ghost" onClick={onCancel}>Cancel</Button>
             </div>
 
             <div className="grid gap-6">
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>שם הדוח</Label>
-                        <Input value={config.name} onChange={e => setConfig({...config, name: e.target.value})} placeholder="לדוגמה: לידים חדשים השבוע" />
+                        <Label>Report Name</Label>
+                        <Input value={config.name} onChange={e => setConfig({...config, name: e.target.value})} placeholder="E.g., New leads this week" />
                     </div>
                     <div className="space-y-2">
-                        <Label>ישות מקור</Label>
+                        <Label>Source Entity</Label>
                         <Select value={config.entity_type} onValueChange={v => setConfig({...config, entity_type: v, config: { fields: [] }})}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="Lead">לידים</SelectItem>
-                                <SelectItem value="Opportunity">הזדמנויות</SelectItem>
-                                <SelectItem value="Task">משימות</SelectItem>
-                                <SelectItem value="Activity">פעילויות</SelectItem>
+                                <SelectItem value="Lead">Leads</SelectItem>
+                                <SelectItem value="Opportunity">Opportunities</SelectItem>
+                                <SelectItem value="Task">Tasks</SelectItem>
+                                <SelectItem value="Activity">Activities</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <Label>שדות להצגה (בחר לפחות אחד)</Label>
+                    <Label>Fields to Display (Select at least one)</Label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg bg-slate-50 max-h-60 overflow-y-auto">
                         {availableFields.map(field => (
-                            <div key={field} className="flex items-center space-x-2 space-x-reverse">
+                            <div key={field} className="flex items-center space-x-2">
                                 <Checkbox 
                                     id={field} 
                                     checked={config.config.fields?.includes(field)}
@@ -231,7 +231,7 @@ function ReportEditor({ onCancel, onSave }) {
                         className="bg-blue-600 hover:bg-blue-700"
                     >
                         {saveMutation.isPending && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
-                        שמור וצור דוח
+                        Save & Create Report
                     </Button>
                 </div>
             </div>
@@ -263,15 +263,15 @@ function ReportViewer({ report }) {
             <div className="flex justify-between items-center">
                 <div>
                     <h3 className="text-xl font-bold">{report.name}</h3>
-                    <p className="text-sm text-slate-500">מקור: {report.entity_type} | {displayData.length} רשומות</p>
+                    <p className="text-sm text-slate-500">Source: {report.entity_type} | {displayData.length} records</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => window.print()}>
-                        הדפס ל-PDF
+                        Print to PDF
                     </Button>
                     <Button variant="outline" onClick={() => exportToCSV(displayData, report.name)}>
                         <Download className="w-4 h-4 ml-2" />
-                        ייצוא CSV
+                        Export CSV
                     </Button>
                 </div>
             </div>
@@ -281,7 +281,7 @@ function ReportViewer({ report }) {
                     <Table>
                         <TableHeader className="bg-slate-50">
                             <TableRow>
-                                {fields.map(f => <TableHead key={f} className="text-right">{f}</TableHead>)}
+                                {fields.map(f => <TableHead key={f} className="text-left">{f}</TableHead>)}
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -293,7 +293,7 @@ function ReportViewer({ report }) {
                             {displayData.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={fields.length} className="text-center py-8 text-slate-500">
-                                        אין נתונים להצגה
+                                        No data to display
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -301,7 +301,7 @@ function ReportViewer({ report }) {
                     </Table>
                 </div>
             </div>
-            {displayData.length > 50 && <p className="text-xs text-slate-400 text-center mt-2">מציג 50 רשומות ראשונות</p>}
+            {displayData.length > 50 && <p className="text-xs text-slate-400 text-center mt-2">Showing first 50 records</p>}
         </div>
     );
 }

@@ -48,7 +48,7 @@ export default function AiInsights() {
       };
 
       const prompt = `
-        You are a senior CRM data analyst. Analyze the following sales data and provide insights in Hebrew.
+        You are a senior CRM data analyst. Analyze the following sales data and provide insights in English.
         Data: ${JSON.stringify(analysisPayload)}
         
         Provide a JSON response with:
@@ -90,10 +90,10 @@ export default function AiInsights() {
         <div>
           <h2 className="text-2xl font-bold text-indigo-900 flex items-center gap-2">
             <BrainCircuit className="w-8 h-8 text-indigo-600" />
-            ניתוח גורמי המרה (AI)
+            Conversion Analysis (AI)
           </h2>
           <p className="text-indigo-700/80 mt-1">
-            המערכת תסרוק את כל הלידים וההזדמנויות כדי לזהות דפוסים נסתרים ולהמליץ על שיפורים.
+            The system will scan all leads and opportunities to identify hidden patterns and recommend improvements.
           </p>
         </div>
         <Button 
@@ -103,7 +103,7 @@ export default function AiInsights() {
           size="lg"
         >
           {isLoadingAI ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Lightbulb className="w-5 h-5 mr-2" />}
-          {insights ? 'רענן תובנות' : 'צור תובנות חדשות'}
+          {insights ? 'Refresh Insights' : 'Generate New Insights'}
         </Button>
       </div>
 
@@ -123,7 +123,7 @@ export default function AiInsights() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-indigo-900">
                 <TrendingUp className="w-5 h-5 text-indigo-500" />
-                ניתוח מגמות כללי
+                General Trend Analysis
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -138,7 +138,7 @@ export default function AiInsights() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-blue-500" />
-                גורמי השפעה מרכזיים
+                Key Influencing Factors
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -158,7 +158,7 @@ export default function AiInsights() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Lightbulb className="w-5 h-5 text-emerald-500" />
-                המלצות אסטרטגיות
+                Strategic Recommendations
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -182,7 +182,7 @@ export default function AiInsights() {
       {!isLoadingAI && !insights && (
         <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
           <BrainCircuit className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <p className="text-slate-500 font-medium">לחץ על הכפתור למעלה כדי להפעיל את מנוע הבינה המלאכותית</p>
+          <p className="text-slate-500 font-medium">Click the button above to start the AI engine</p>
         </div>
       )}
     </div>

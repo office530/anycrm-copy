@@ -32,16 +32,16 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
   const activityTypeData = useMemo(() => {
     const counts = {};
     const typeMapping = {
-        'Call': 'שיחות',
-        'Meeting': 'פגישות',
-        'Email': 'מיילים',
-        'Note': 'הערות',
+        'Call': 'Calls',
+        'Meeting': 'Meetings',
+        'Email': 'Emails',
+        'Note': 'Notes',
         'SMS': 'SMS',
-        'Document Collection': 'איסוף מסמכים'
+        'Document Collection': 'Documents'
     };
 
     activities.forEach(a => {
-        const type = typeMapping[a.type] || 'אחר';
+        const type = typeMapping[a.type] || 'Other';
         counts[type] = (counts[type] || 0) + 1;
     });
     
@@ -50,12 +50,12 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
 
   const getActivitiesByType = (typeName) => {
       const typeMappingReverse = {
-        'שיחות': 'Call',
-        'פגישות': 'Meeting',
-        'מיילים': 'Email',
-        'הערות': 'Note',
+        'Calls': 'Call',
+        'Meetings': 'Meeting',
+        'Emails': 'Email',
+        'Notes': 'Note',
         'SMS': 'SMS',
-        'איסוף מסמכים': 'Document Collection'
+        'Documents': 'Document Collection'
       };
       
       const targetType = typeMappingReverse[typeName];
@@ -71,12 +71,12 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
 
   const getLeadName = (leadId) => {
       const l = leads?.find(lead => lead.id === leadId);
-      return l ? l.full_name : 'לא ידוע';
+      return l ? l.full_name : 'Unknown';
   };
 
   const taskStatusData = [
-    { name: 'בוצעו', value: stats.completedTasks },
-    { name: 'פתוחות', value: stats.pendingTasks },
+    { name: 'Completed', value: stats.completedTasks },
+    { name: 'Open', value: stats.pendingTasks },
   ];
 
   return (
@@ -84,7 +84,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">משימות שבוצעו</CardTitle>
+            <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
             <CheckSquare className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
@@ -94,7 +94,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">משימות פתוחות</CardTitle>
+            <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
             <ListTodo className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
@@ -104,7 +104,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">שיחות שבוצעו</CardTitle>
+            <CardTitle className="text-sm font-medium">Calls Made</CardTitle>
             <Phone className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
@@ -114,7 +114,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">פגישות שהתקיימו</CardTitle>
+            <CardTitle className="text-sm font-medium">Meetings Held</CardTitle>
             <CalendarDays className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
@@ -126,7 +126,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>התפלגות סוגי פעילויות</CardTitle>
+            <CardTitle>Activity Type Distribution</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -139,7 +139,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill="#ef4444" name="כמות" cursor="pointer" />
+                <Bar dataKey="value" fill="#ef4444" name="Count" cursor="pointer" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -147,7 +147,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
 
         <Card>
             <CardHeader>
-                <CardTitle>פעילויות אחרונות</CardTitle>
+                <CardTitle>Recent Activities</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4 max-h-[260px] overflow-y-auto pr-2">
@@ -158,7 +158,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <p className="font-bold text-sm text-slate-800">
-                                            {act.type === 'Call' ? '📞 שיחה' : act.type === 'Meeting' ? '📅 פגישה' : '📝 פעילות'}
+                                            {act.type === 'Call' ? '📞 Call' : act.type === 'Meeting' ? '📅 Meeting' : '📝 Activity'}
                                         </p>
                                         <span className="text-xs text-slate-400">•</span>
                                         <a 
@@ -172,16 +172,16 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                                 </div>
                                 <div className="text-right">
                                     <div className="text-xs font-medium text-slate-600">
-                                        {act.date ? new Date(act.date).toLocaleDateString('he-IL') : '-'}
+                                        {act.date ? new Date(act.date).toLocaleDateString('en-US') : '-'}
                                     </div>
                                     <div className="text-[10px] text-slate-400">
-                                        {act.date ? new Date(act.date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) : ''}
+                                        {act.date ? new Date(act.date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}) : ''}
                                     </div>
                                 </div>
                             </div>
                         );
                     })}
-                    {activities.length === 0 && <p className="text-center text-slate-500 py-4">אין פעילויות להצגה</p>}
+                    {activities.length === 0 && <p className="text-center text-slate-500 py-4">No activities to show</p>}
                 </div>
             </CardContent>
         </Card>
@@ -190,24 +190,24 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       <Dialog open={!!selectedType} onOpenChange={(open) => !open && setSelectedType(null)}>
         <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
             <DialogHeader>
-                <DialogTitle>פירוט פעילויות: {selectedType}</DialogTitle>
+                <DialogTitle>Activity Details: {selectedType}</DialogTitle>
             </DialogHeader>
             <div className="flex-1 overflow-auto">
                 <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="text-right">תאריך</TableHead>
-                            <TableHead className="text-right">לקוח</TableHead>
-                            <TableHead className="text-right">בוצע ע"י</TableHead>
-                            <TableHead className="text-right">פרטים</TableHead>
-                            <TableHead className="text-right">סטטוס</TableHead>
+                            <TableHead className="text-left">Date</TableHead>
+                            <TableHead className="text-left">Client</TableHead>
+                            <TableHead className="text-left">Performed By</TableHead>
+                            <TableHead className="text-left">Details</TableHead>
+                            <TableHead className="text-left">Status</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {selectedType && getActivitiesByType(selectedType).map((act) => (
                             <TableRow key={act.id}>
-                                <TableCell>{new Date(act.date).toLocaleDateString('he-IL')} {new Date(act.date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'})}</TableCell>
+                                <TableCell>{new Date(act.date).toLocaleDateString('en-US')} {new Date(act.date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</TableCell>
                                 <TableCell className="font-medium">{getLeadName(act.lead_id)}</TableCell>
                                 <TableCell>{getUserName(act.created_by)}</TableCell>
                                 <TableCell className="max-w-xs truncate" title={act.summary}>{act.summary}</TableCell>
@@ -219,7 +219,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                 </div>
             </div>
             <div className="flex justify-end pt-2">
-                <Button variant="outline" onClick={() => setSelectedType(null)}>סגור</Button>
+                <Button variant="outline" onClick={() => setSelectedType(null)}>Close</Button>
             </div>
         </DialogContent>
       </Dialog>
