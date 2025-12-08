@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,13 +17,14 @@ function LayoutContent({ children, currentPageName }) {
   
   // Exact paths
   const navigation = [
-    { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard },
-    { name: 'Leads', path: 'Leads', icon: Users },
-    { name: 'Opportunities', path: 'Opportunities', icon: Briefcase },
-    { name: 'Tasks', path: 'Tasks', icon: CheckSquare },
-    { name: 'Reports', path: 'Reports', icon: BarChart3 },
-    { name: 'Automation', path: 'Automation', icon: Zap },
-    { name: 'Promotion', path: 'Promotion', icon: Sparkles },
+  { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard },
+  { name: 'Leads', path: 'Leads', icon: Users },
+  { name: 'Opportunities', path: 'Opportunities', icon: Briefcase },
+  { name: 'Tasks', path: 'Tasks', icon: CheckSquare },
+  { name: 'Reports', path: 'Reports', icon: BarChart3 },
+  { name: 'Act Now', path: 'ActNow', icon: Brain },
+  { name: 'Automation', path: 'Automation', icon: Zap },
+  { name: 'Promotion', path: 'Promotion', icon: Sparkles },
   ];
 
   // Dynamic Colors based on branding
