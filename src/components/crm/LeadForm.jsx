@@ -37,11 +37,6 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     lead_status: "New",
     last_contact_date: new Date().toISOString().split('T')[0],
     notes: "",
-    marital_status: "Married",
-    estimated_property_value: "",
-    existing_mortgage_balance: "",
-    has_children: true,
-    spouse_age: "",
     lead_temperature: "",
     tags: []
     }
@@ -87,7 +82,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
   const handleSaveAndClose = (data) => {
     const sanitized = { ...data };
-    const numberFields = ['age', 'spouse_age', 'estimated_property_value', 'existing_mortgage_balance'];
+    const numberFields = ['age'];
     numberFields.forEach((f) => {
       if (Number.isNaN(sanitized[f])) sanitized[f] = null;
     });
@@ -96,7 +91,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
   const handleSaveAndStay = (data) => {
     const sanitized = { ...data };
-    const numberFields = ['age', 'spouse_age', 'estimated_property_value', 'existing_mortgage_balance'];
+    const numberFields = ['age'];
     numberFields.forEach((f) => {
       if (Number.isNaN(sanitized[f])) sanitized[f] = null;
     });
@@ -306,63 +301,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
               </div>
 
-              {/* Additional Details Section */}
-              <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 pt-6 mt-2">
-                 <div className="space-y-1">
-                  <Label className={`${labelClass} text-left`}>Marital Status</Label>
-                  <Select
-                    defaultValue={lead?.marital_status || "Married"}
-                    onValueChange={(val) => handleSelectChange("marital_status", val)}>
 
-                    <SelectTrigger className={`${inputClass} text-left`}>
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent className={`text-left ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}`}>
-                      <SelectItem value="Married">Married</SelectItem>
-                      <SelectItem value="Widowed">Widowed</SelectItem>
-                      <SelectItem value="Divorced">Divorced</SelectItem>
-                      <SelectItem value="Single">Single</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1">
-                   <div className="flex items-center gap-2 mb-2">
-                     <Label className="text-slate-900 font-semibold m-0">Other Stakeholders?</Label>
-                     <input
-                      type="checkbox"
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300"
-                      {...register("has_children")} />
-
-                   </div>
-                   <Input
-                    type="number"
-                    {...register("spouse_age", { valueAsNumber: true })}
-                    placeholder="Spouse Age (if relevant)"
-                    className={inputClass} />
-
-                </div>
-
-                <div className="space-y-1">
-                  <Label className={`${labelClass} text-left`}>Property Value (₪)</Label>
-                  <Input
-                    type="number"
-                    {...register("estimated_property_value", { valueAsNumber: true })}
-                    placeholder="0.00"
-                    className={`${inputClass} text-left`} />
-
-                </div>
-
-                <div className="space-y-1">
-                  <Label className={`${labelClass} text-left`}>Existing Liabilities (₪)</Label>
-                  <Input
-                    type="number"
-                    {...register("existing_mortgage_balance", { valueAsNumber: true })}
-                    placeholder="0.00"
-                    className={`${inputClass} text-left`} />
-
-                </div>
-              </div>
               </div>
 
               {/* Quick Task Creation */}
@@ -423,7 +362,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                        <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Stage: {opp.deal_stage}</p>
                     </div>
                     <div className="text-left">
-                       <div className={`font-mono font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-red-700'}`}>₪{opp.loan_amount_requested?.toLocaleString()}</div>
+                       <div className={`font-mono font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-red-700'}`}>${opp.amount?.toLocaleString()}</div>
                        <Badge variant="outline" className={`mt-1 ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{opp.probability}% Probability</Badge>
                     </div>
                  </div>

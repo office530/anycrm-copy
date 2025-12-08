@@ -22,7 +22,6 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
   // Conversion State
   const [transferSettings, setTransferSettings] = React.useState({
     contactDetails: true,
-    propertyDetails: true,
     createTask: false
   });
   
@@ -34,10 +33,9 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       lead_name: initialLead?.full_name || "",
       phone_number: initialLead?.phone_number || "",
       email: initialLead?.email || "",
-      product_type: "Reverse Mortgage",
-      property_value: initialLead?.estimated_property_value || "",
-      loan_amount_requested: "",
-      deal_stage: "New (חדש)",
+      product_type: "Consulting",
+      amount: "",
+      deal_stage: "New",
       probability: 20,
       expected_close_date: "",
       next_task: "",
@@ -82,20 +80,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       setValue("phone_number", lead.phone_number);
       setValue("email", lead.email);
       
-      // Auto populate property value if setting is on or default behavior
-      setValue("property_value", lead.estimated_property_value || "");
   };
 
   // Update form values when checkboxes change
   React.useEffect(() => {
-    if (!selectedLead) return;
-
-    if (transferSettings.propertyDetails) {
-      setValue("property_value", selectedLead.estimated_property_value || "");
-    } else {
-      setValue("property_value", ""); // Clear if unchecked
-    }
-
     // You could add more fields here based on the checkboxes
   }, [transferSettings, initialLead, setValue]);
 
@@ -116,33 +104,27 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
       // Strategy Prompt
       const strategyPrompt = `
-        Act as an expert Israeli insurance agent consultant.
+        Act as an expert sales consultant.
         Analyze this lead:
         - Age: ${leadData.age || 'Unknown'}
-        - Marital Status: ${leadData.marital_status || 'Unknown'}
-        - Property Value: ${values.property_value || leadData.estimated_property_value || 'Unknown'} NIS
         - Product Interest: ${values.product_type}
         
         Rules:
-        - IF Age > 70 AND Property > 2.5M NIS -> Suggest "Living Inheritance Strategy (ירושה חיה) - Focus on helping children now."
-        - IF Age > 65 AND Widowed -> Suggest "Income Supplement Strategy (השלמת הכנסה בכבוד)."
-        - IF Product = Savings/Insurance AND Age > 60 -> Suggest "Tax Amendment 190 (תיקון 190) - Focus on tax benefits."
-        - ELSE -> Provide a general tailored strategy based on the data.
+        - Provide a general tailored strategy based on the data.
         
-        Output in Hebrew only. Be concise.
+        Output in English. Be concise.
       `;
 
       // Objection Prompt
       const objectionPrompt = `
-        Act as an expert Israeli sales trainer.
+        Act as an expert sales trainer.
         Handle this objection: "${values.current_objection}"
         
-        Context: Selling Reverse Mortgages/Insurance to seniors in Israel.
+        Context: General Sales.
         
         Rules:
         - Provide a short, empathetic, professional counter-argument.
-        - Example tone: "True, interest is high, but your property value increased more..."
-        - Output in Hebrew only.
+        - Output in English.
       `;
 
       // Execute in parallel
@@ -238,15 +220,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
 
                     Transfer Contact Details
                 </label>
-                <label className={`flex items-center gap-2 text-sm cursor-pointer ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                    <input
-              type="checkbox"
-              checked={transferSettings.propertyDetails}
-              onChange={(e) => setTransferSettings({ ...transferSettings, propertyDetails: e.target.checked })}
-              className="rounded text-emerald-600 focus:ring-emerald-500" />
 
-                    Transfer Property Data
-                </label>
                 <label className={`flex items-center gap-2 text-sm cursor-pointer font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                     <input
               type="checkbox"
@@ -340,16 +314,17 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           <div className="space-y-2">
             <Label className={labelClass}>Product Type</Label>
             <Select
-                  defaultValue={opportunity?.product_type || "Reverse Mortgage"}
+                  defaultValue={opportunity?.product_type || "Consulting"}
                   onValueChange={(val) => handleSelectChange("product_type", val)}>
 
               <SelectTrigger className={inputClass}>
                 <SelectValue placeholder="Select Product" />
               </SelectTrigger>
               <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                <SelectItem value="Reverse Mortgage">Reverse Mortgage</SelectItem>
-                <SelectItem value="Savings/Insurance">Savings / Insurance</SelectItem>
-                <SelectItem value="Loan">Loan</SelectItem>
+                <SelectItem value="Consulting">Consulting</SelectItem>
+                <SelectItem value="Service">Service</SelectItem>
+                <SelectItem value="Product">Product</SelectItem>
+                <SelectItem value="Software">Software</SelectItem>
                 <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
@@ -358,7 +333,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           <div className="space-y-2">
             <Label className={labelClass}>Deal Stage</Label>
             <Select
-                  defaultValue={opportunity?.deal_stage || "Discovery Call (שיחת בירור צרכים)"}
+                  defaultValue={opportunity?.deal_stage || "New"}
                   onValueChange={(val) => handleSelectChange("deal_stage", val)}>
 
               <SelectTrigger className={inputClass}>
@@ -375,20 +350,10 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
 
           <div className="space-y-2">
-            <Label className={labelClass}>Property Value (₪)</Label>
+            <Label className={labelClass}>Deal Value ($)</Label>
             <Input
                   type="number"
-                  {...register("property_value", { valueAsNumber: true })}
-                  placeholder="0.00"
-                  className={inputClass} />
-
-          </div>
-
-          <div className="space-y-2">
-            <Label className={labelClass}>Requested Loan Amount (₪)</Label>
-            <Input
-                  type="number"
-                  {...register("loan_amount_requested", { valueAsNumber: true })}
+                  {...register("amount", { valueAsNumber: true })}
                   placeholder="0.00"
                   className={inputClass} />
 
@@ -433,11 +398,12 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                 <SelectValue placeholder="Select Pain Point" />
               </SelectTrigger>
               <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                <SelectItem value="Help Children Buy Apartment (עזרה לילדים לדירה)">Help Children Buy Apartment</SelectItem>
-                <SelectItem value="Supplement Monthly Income (השלמת הכנסה חודשית)">Supplement Monthly Income</SelectItem>
-                <SelectItem value="Cover Medical Expenses (הוצאות רפואיות)">Cover Medical Expenses</SelectItem>
-                <SelectItem value="Debt Consolidation (סגירת חובות/מינוס)">Debt Consolidation</SelectItem>
-                <SelectItem value="Tax Savings/Amendment 190 (חיסכון מס/תיקון 190)">Tax Savings/Amendment 190</SelectItem>
+                <SelectItem value="Budget">Budget</SelectItem>
+                <SelectItem value="Timeline">Timeline</SelectItem>
+                <SelectItem value="Features">Features</SelectItem>
+                <SelectItem value="Authority">Authority</SelectItem>
+                <SelectItem value="Need">Need</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -567,18 +533,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                   <p className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{originalLeadData.city}</p>
                 </div>
             }
-              {originalLeadData.marital_status &&
-            <div className="space-y-2">
-                  <Label className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>Marital Status</Label>
-                  <p className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{originalLeadData.marital_status}</p>
-                </div>
-            }
-              {originalLeadData.estimated_property_value &&
-            <div className="space-y-2">
-                  <Label className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>Est. Property Value (₪)</Label>
-                  <p className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{originalLeadData.estimated_property_value.toLocaleString()}</p>
-                </div>
-            }
+
               {originalLeadData.notes &&
             <div className="space-y-2 md:col-span-2">
                   <Label className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>Notes</Label>

@@ -11,12 +11,12 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
   
   const stats = useMemo(() => {
     const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("בהצלחה"));
-    const totalRevenue = closedWon.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
+    const totalRevenue = closedWon.reduce((sum, o) => sum + (o.amount || 0), 0);
     const avgDealSize = closedWon.length > 0 ? totalRevenue / closedWon.length : 0;
     
     const pipelineValue = opportunities
-      .filter(o => !o.deal_stage?.includes("Won") && !o.deal_stage?.includes("בהצלחה") && !o.deal_stage?.includes("Lost") && !o.deal_stage?.includes("אבוד"))
-      .reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
+      .filter(o => !o.deal_stage?.includes("Won") && !o.deal_stage?.includes("Lost"))
+      .reduce((sum, o) => sum + (o.amount || 0), 0);
 
     return {
       totalRevenue,
@@ -44,7 +44,7 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [opportunities]);
 
-  const formatCurrency = (val) => `₪${(val || 0).toLocaleString()}`;
+  const formatCurrency = (val) => `$${(val || 0).toLocaleString()}`;
 
   return (
     <div className="space-y-6">

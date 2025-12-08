@@ -42,11 +42,11 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
     let wonCount = 0;
     let wonAmount = 0;
     filteredData.forEach((o) => {
-      const isWon = o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה') || o.deal_stage?.includes('נחתם');
-      const isLost = o.deal_stage?.includes('Lost') || o.deal_stage?.includes('אבוד');
+      const isWon = o.deal_stage?.includes('Won');
+      const isLost = o.deal_stage?.includes('Lost');
       if (isWon) {
         wonCount++;
-        wonAmount += o.loan_amount_requested || 0;
+        wonAmount += o.amount || 0;
       } else if (!isLost) {
         openCount++;
       }
@@ -86,7 +86,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-600'}`}>Total Revenue</p>
-              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-purple-400 drop-shadow-sm' : 'text-purple-900'}`}>₪{stats.wonAmount.toLocaleString()}</h3>
+              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-purple-400 drop-shadow-sm' : 'text-purple-900'}`}>${stats.wonAmount.toLocaleString()}</h3>
             </div>
             <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
               <DollarSign className={`w-6 h-6 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
@@ -148,7 +148,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
             <TableHeader className={theme === 'dark' ? 'bg-slate-900/50' : ''}>
               <TableRow className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}>
                 <TableHead className={`text-left min-w-[150px] ${theme === 'dark' ? 'text-slate-400' : ''}`}>Opportunity / Client</TableHead>
-                <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Requested Amount</TableHead>
+                <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Deal Value</TableHead>
                 <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Sales Stage</TableHead>
                 <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Creation Date</TableHead>
                 <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Expected Close Date</TableHead>
@@ -159,7 +159,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
               filteredData.map((o) =>
               <TableRow key={o.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
                     <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>{o.lead_name || 'No Name'}</TableCell>
-                    <TableCell className={`font-mono ${theme === 'dark' ? 'text-cyan-400' : ''}`}>₪{o.loan_amount_requested?.toLocaleString() || '0'}</TableCell>
+                    <TableCell className={`font-mono ${theme === 'dark' ? 'text-cyan-400' : ''}`}>${o.amount?.toLocaleString() || '0'}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={`${
                         theme === 'dark' 
