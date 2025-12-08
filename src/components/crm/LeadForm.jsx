@@ -37,7 +37,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     lead_status: "New",
     last_contact_date: new Date().toISOString().split('T')[0],
     notes: "",
-    lead_temperature: "Cold (קר)",
+    lead_temperature: "Cold",
     tags: [],
     custom_data: {}
     }
@@ -247,16 +247,16 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               <div className="space-y-1">
                 <Label className={labelClass}>Lead Temperature</Label>
                 <Select
-                  defaultValue={lead?.lead_temperature || "Cold (קר)"}
+                  defaultValue={lead?.lead_temperature || "Cold"}
                   onValueChange={(val) => handleSelectChange("lead_temperature", val)}>
                   <SelectTrigger className={inputClass}>
                     <SelectValue placeholder="Select Temperature" />
                   </SelectTrigger>
                   <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                    <SelectItem value="Hot (לוהט)">Hot (לוהט)</SelectItem>
-                    <SelectItem value="Warm (חם)">Warm (חם)</SelectItem>
-                    <SelectItem value="Cold (קר)">Cold (קר)</SelectItem>
-                    <SelectItem value="Hot History (היה חם בעבר)">Hot History (היה חם בעבר)</SelectItem>
+                    <SelectItem value="Hot">Hot</SelectItem>
+                    <SelectItem value="Warm">Warm</SelectItem>
+                    <SelectItem value="Cold">Cold</SelectItem>
+                    <SelectItem value="Hot History">Hot History</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
