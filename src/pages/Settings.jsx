@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import NotificationSettings from '@/components/notifications/NotificationSettings';
-import OrganizationSettings from '@/components/settings/OrganizationSettings';
+// import OrganizationSettings from '@/components/settings/OrganizationSettings';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import PipelineSettings from '@/components/settings/PipelineSettings';
 import TagSettings from '@/components/settings/TagSettings';
@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("organization");
+  const [activeTab, setActiveTab] = useState("profile");
   const { theme } = useSettings();
   const { isAdmin } = usePermissions();
 
@@ -25,7 +25,7 @@ export default function SettingsPage() {
     {
         title: "כללי",
         items: [
-            { id: "organization", label: "הגדרות ארגון", icon: Building2 },
+            // { id: "organization", label: "הגדרות ארגון", icon: Building2 },
             { id: "team", label: "צוות ומשתמשים", icon: Users },
             { id: "audit", label: "יומן פעילות", icon: Activity },
             ...(isAdmin ? [{ id: "user_management", label: "ניהול הרשאות", icon: Lock }] : []),
@@ -110,7 +110,7 @@ export default function SettingsPage() {
             <main className={`flex-1 rounded-xl shadow-sm border p-1 md:p-6 min-h-[500px] transition-colors ${
                 theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
             }`}>
-                {activeTab === "organization" && <OrganizationSettings />}
+                {/* {activeTab === "organization" && <OrganizationSettings />} */}
                 {activeTab === "profile" && <ProfileSettings />}
                 {activeTab === "pipeline" && <PipelineSettings />}
                 {activeTab === "tags" && <TagSettings />}
