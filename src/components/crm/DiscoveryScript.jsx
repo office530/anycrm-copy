@@ -194,13 +194,13 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         <CardHeader className="bg-slate-50 pb-3">
           <CardTitle className="text-lg flex items-center gap-2 text-blue-700">
             <Home className="w-5 h-5" />
-            3. הנכס והבטוחה
+            3. נכסים וביטחונות
           </CardTitle>
         </CardHeader>
         <CardContent className="bg-white p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-700">כתובת הנכס</Label>
+              <Label className="text-slate-700">כתובת / מיקום</Label>
               <Input {...register("property_address")} placeholder="עיר + רחוב" />
             </div>
             <div className="space-y-2">
@@ -241,12 +241,12 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
                 onCheckedChange={(v) => setValue("existing_mortgage", v)}
                 id="mortgage" />
 
-              <Label htmlFor="mortgage" className="font-medium text-slate-700">האם קיימת משכנתא/חוב על הבית?</Label>
+              <Label htmlFor="mortgage" className="font-medium text-slate-700">האם קיימים חובות או שיעבודים?</Label>
             </div>
             
             {watch("existing_mortgage") &&
             <div className="space-y-2 animate-in fade-in">
-                <Label className="text-red-600">יתרה לסילוק (₪)</Label>
+                <Label className="text-red-600">סך ההתחייבויות (₪)</Label>
                 <Input type="number" {...register("mortgage_balance_to_clear", { valueAsNumber: true })} />
               </div>
             }
@@ -259,7 +259,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         <CardHeader className="bg-slate-50 pb-3">
           <CardTitle className="text-lg flex items-center gap-2 text-blue-700">
             <Wallet className="w-5 h-5" />
-            4. צרכים ומטרות (הכסף)
+            4. צרכים ומטרות פיננסיות
           </CardTitle>
         </CardHeader>
         <CardContent className="bg-white pt-6 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -290,7 +290,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         <CardHeader className="bg-blue-50 pb-3">
           <CardTitle className="text-lg flex items-center gap-2 text-blue-800">
             <ClipboardList className="w-5 h-5" />
-            5. מסמכים לבקשה ראשונית
+            5. מסמכים נדרשים
           </CardTitle>
         </CardHeader>
         <CardContent className="bg-white pt-6 p-6">
