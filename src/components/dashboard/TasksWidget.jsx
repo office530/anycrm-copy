@@ -62,7 +62,7 @@ export default function TasksWidget({ className }) {
         {upcomingTasks.length === 0 ? (
           <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
             <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
-            <p>No urgent tasks</p>
+            <p>No active tasks</p>
           </div>
         ) : (
           <div className="space-y-3">
