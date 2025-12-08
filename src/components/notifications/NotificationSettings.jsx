@@ -83,11 +83,11 @@ export default function NotificationSettings() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                         <Bell className="w-5 h-5 text-red-600" />
                         Notification Preferences
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>
                         Choose which notifications you want to receive
                     </CardDescription>
                 </CardHeader>
@@ -97,7 +97,7 @@ export default function NotificationSettings() {
                         <div className="flex items-center space-x-4">
                             <Users className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
-                                <Label className="text-base">New Leads</Label>
+                                <Label className={`text-base ${theme === 'dark' ? 'text-slate-200' : ''}`}>New Leads</Label>
                                 <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Get notified when a new lead is created</p>
                             </div>
                         </div>
@@ -111,7 +111,7 @@ export default function NotificationSettings() {
                         <div className="flex items-center space-x-4">
                             <CheckSquare className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
-                                <Label className="text-base">My Tasks</Label>
+                                <Label className={`text-base ${theme === 'dark' ? 'text-slate-200' : ''}`}>My Tasks</Label>
                                 <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Get notified about new or overdue tasks</p>
                             </div>
                         </div>
@@ -125,7 +125,7 @@ export default function NotificationSettings() {
                         <div className="flex items-center space-x-4">
                             <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
-                                <Label className="text-base">Opportunities Closing Soon</Label>
+                                <Label className={`text-base ${theme === 'dark' ? 'text-slate-200' : ''}`}>Opportunities Closing Soon</Label>
                                 <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Get a reminder when opportunities are nearing their close date</p>
                             </div>
                         </div>
@@ -136,15 +136,15 @@ export default function NotificationSettings() {
                     </div>
 
                     {watch('notify_opp_closing') && (
-                        <div className="ml-10 pr-4 border-l-2 border-slate-100 pl-4">
+                        <div className={`ml-10 pr-4 border-l-2 pl-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
                             <div className="flex items-center gap-3">
-                                <Label className="whitespace-nowrap">Alert</Label>
+                                <Label className={`whitespace-nowrap ${theme === 'dark' ? 'text-slate-300' : ''}`}>Alert</Label>
                                 <Input 
                                     type="number" 
-                                    className="w-20" 
+                                    className={`w-20 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`}
                                     {...register('days_before_deadline', { min: 1 })}
                                 />
-                                <Label>days before deadline</Label>
+                                <Label className={theme === 'dark' ? 'text-slate-300' : ''}>days before deadline</Label>
                             </div>
                         </div>
                     )}

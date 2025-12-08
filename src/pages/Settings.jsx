@@ -81,11 +81,11 @@ export default function SettingsPage() {
                                                         ? "bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold"
                                                         : "bg-white text-slate-900 shadow-sm border border-slate-200 font-bold"
                                                     : theme === 'dark'
-                                                        ? "text-slate-300 hover:bg-slate-800 hover:text-cyan-400"
+                                                        ? "text-slate-100 hover:bg-slate-800 hover:text-cyan-400"
                                                         : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                                                 }`}
                                         >
-                                            <item.icon className={`w-4 h-4 ${isActive ? (theme === 'dark' ? 'text-cyan-400' : 'text-slate-900') : (theme === 'dark' ? 'text-slate-400' : 'text-slate-600')}`} />
+                                            <item.icon className={`w-4 h-4 ${isActive ? (theme === 'dark' ? 'text-cyan-400' : 'text-slate-900') : (theme === 'dark' ? 'text-slate-200' : 'text-slate-600')}`} />
                                             <span>{item.label}</span>
                                         </button>
                                     );
