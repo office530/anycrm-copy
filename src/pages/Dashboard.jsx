@@ -19,7 +19,7 @@ import { useSettings } from '@/components/context/SettingsContext';
 
 export default function Dashboard() {
   const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
-  const { theme } = useSettings();
+  const { theme, branding } = useSettings();
 
   const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
   const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
