@@ -14,19 +14,14 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
   const [filterDate, setFilterDate] = useState('all');
   const [searchClient, setSearchClient] = useState('');
 
-  // Unique Stages for Filter
   const stages = useMemo(() => {
     const s = new Set(opportunities.map((o) => o.deal_stage).filter(Boolean));
     return Array.from(s);
   }, [opportunities]);
 
-  // Filter Logic
   const filteredData = useMemo(() => {
     return opportunities.filter((o) => {
-      // Stage Filter
       if (filterStage !== 'all' && o.deal_stage !== filterStage) return false;
-
-      // Date Filter (Created Date)
       if (filterDate !== 'all') {
         const created = moment(o.created_date);
         const now = moment();
@@ -34,27 +29,21 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         if (filterDate === 'last_month' && !created.isSame(now.clone().subtract(1, 'month'), 'month')) return false;
         if (filterDate === 'this_year' && !created.isSame(now, 'year')) return false;
       }
-
-      // Client Name Filter
       if (searchClient) {
         const name = o.lead_name || '';
         if (!name.toLowerCase().includes(searchClient.toLowerCase())) return false;
       }
-
       return true;
     });
   }, [opportunities, filterStage, filterDate, searchClient]);
 
-  // Stats Calculation
   const stats = useMemo(() => {
     let openCount = 0;
     let wonCount = 0;
     let wonAmount = 0;
-
     filteredData.forEach((o) => {
       const isWon = o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה') || o.deal_stage?.includes('נחתם');
       const isLost = o.deal_stage?.includes('Lost') || o.deal_stage?.includes('אבוד');
-
       if (isWon) {
         wonCount++;
         wonAmount += o.loan_amount_requested || 0;
@@ -62,14 +51,12 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         openCount++;
       }
     });
-
     return { openCount, wonCount, wonAmount };
   }, [filteredData]);
 
   return (
     <div className="space-y-6" dir="ltr">
       
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'}`}>
           <CardContent className="p-6 flex items-center justify-between">
@@ -108,7 +95,6 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         </Card>
       </div>
 
-      {/* Filters */}
       <div className={`flex flex-col md:flex-row gap-4 items-end p-4 rounded-xl shadow-sm border transition-colors ${
         theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
       }`}>
@@ -127,7 +113,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <div className="w-full md:w-48 space-y-1">
           <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Filter by Stage</label>
           <Select value={filterStage} onValueChange={setFilterStage}>
-            <SelectTrigger className={theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white'}>
+            <SelectTrigger className={theme === 'dark' ? 'bg-slate-900 border-slate-600 text-white' : ''}>
               <SelectValue placeholder="All Stages" />
             </SelectTrigger>
             <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
@@ -140,7 +126,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <div className="w-full md:w-48 space-y-1">
           <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Creation Date</label>
           <Select value={filterDate} onValueChange={setFilterDate}>
-            <SelectTrigger className={theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white'}>
+            <SelectTrigger className={theme === 'dark' ? 'bg-slate-900 border-slate-600 text-white' : ''}>
               <SelectValue placeholder="All Time" />
             </SelectTrigger>
             <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
@@ -153,7 +139,6 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         </div>
       </div>
 
-      {/* Table */}
       <Card className={`shadow-sm overflow-hidden border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'}`}>
         <CardHeader className={`border-b transition-colors ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-neutral-50/50'}`}>
           <CardTitle className={`text-lg font-medium ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>Opportunities Details</CardTitle>
@@ -203,5 +188,4 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         </div>
       </Card>
     </div>);
-
 }

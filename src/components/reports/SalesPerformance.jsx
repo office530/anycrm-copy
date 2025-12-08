@@ -38,7 +38,6 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
   const stageData = useMemo(() => {
     const counts = {};
     opportunities.forEach(o => {
-      // Simplify stage name for chart
       const stageName = o.deal_stage?.split('(')[0]?.trim() || "Unknown";
       counts[stageName] = (counts[stageName] || 0) + 1;
     });
@@ -127,14 +126,14 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader>
-            <CardTitle>Opportunities by Stage</CardTitle>
+            <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Opportunities by Stage</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stageData} layout="vertical" margin={{ left: 50 }}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#e5e7eb'} />
                 <XAxis type="number" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
                 <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px' }} stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
                 <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />

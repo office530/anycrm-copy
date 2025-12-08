@@ -29,26 +29,10 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
   }, [leads, opportunities]);
 
   const funnelData = [
-    {
-      "value": stats.totalLeads,
-      "name": "Total Leads",
-      "fill": "#ef4444"
-    },
-    {
-      "value": stats.convertedLeads,
-      "name": "Converted to Opp",
-      "fill": "#8b5cf6"
-    },
-    {
-      "value": stats.totalOpps,
-      "name": "Active Opportunities",
-      "fill": "#f59e0b"
-    },
-    {
-      "value": stats.closedWon,
-      "name": "Closed Won",
-      "fill": "#10b981"
-    }
+    { "value": stats.totalLeads, "name": "Total Leads", "fill": "#ef4444" },
+    { "value": stats.convertedLeads, "name": "Converted to Opp", "fill": "#8b5cf6" },
+    { "value": stats.totalOpps, "name": "Active Opportunities", "fill": "#f59e0b" },
+    { "value": stats.closedWon, "name": "Closed Won", "fill": "#10b981" }
   ];
 
   return (
@@ -82,7 +66,6 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
                 <Users className={`h-4 w-4 ${theme === 'dark' ? 'text-purple-400 drop-shadow-sm' : 'text-purple-500'}`} />
             </CardHeader>
             <CardContent>
-                {/* Dummy logic for example */}
                 <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-purple-400' : ''}`}>High</div>
                 <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Based on conversion rates</p>
             </CardContent>
@@ -97,10 +80,7 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
           <ResponsiveContainer width="100%" height="100%">
             <FunnelChart>
               <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
-              <Funnel
-                data={funnelData}
-                dataKey="value"
-              >
+              <Funnel data={funnelData} dataKey="value">
                 <LabelList position="right" fill={theme === 'dark' ? '#fff' : '#666'} stroke="none" dataKey="value" />
                 {funnelData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />

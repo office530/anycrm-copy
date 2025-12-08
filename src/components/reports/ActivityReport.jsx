@@ -5,8 +5,10 @@ import { CheckSquare, Phone, CalendarDays, ListTodo, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function ActivityReport({ tasks, activities, leads, users, timeRange }) {
+  const { theme } = useSettings();
   const [selectedType, setSelectedType] = useState(null);
 
   const sortedActivities = useMemo(() => {
@@ -16,51 +18,26 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
   const stats = useMemo(() => {
     const completedTasks = tasks.filter(t => t.status === 'done').length;
     const pendingTasks = tasks.filter(t => t.status !== 'done').length;
-    
     const calls = activities.filter(a => a.type === 'Call').length;
     const meetings = activities.filter(a => a.type === 'Meeting').length;
     
-    return {
-      completedTasks,
-      pendingTasks,
-      calls,
-      meetings,
-      totalActivities: activities.length
-    };
+    return { completedTasks, pendingTasks, calls, meetings, totalActivities: activities.length };
   }, [tasks, activities]);
 
   const activityTypeData = useMemo(() => {
     const counts = {};
-    const typeMapping = {
-        'Call': 'Calls',
-        'Meeting': 'Meetings',
-        'Email': 'Emails',
-        'Note': 'Notes',
-        'SMS': 'SMS',
-        'Document Collection': 'Documents'
-    };
-
+    const typeMapping = { 'Call': 'Calls', 'Meeting': 'Meetings', 'Email': 'Emails', 'Note': 'Notes', 'SMS': 'SMS', 'Document Collection': 'Documents' };
     activities.forEach(a => {
         const type = typeMapping[a.type] || 'Other';
         counts[type] = (counts[type] || 0) + 1;
     });
-    
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [activities]);
 
   const getActivitiesByType = (typeName) => {
-      const typeMappingReverse = {
-        'Calls': 'Call',
-        'Meetings': 'Meeting',
-        'Emails': 'Email',
-        'Notes': 'Note',
-        'SMS': 'SMS',
-        'Documents': 'Document Collection'
-      };
-      
+      const typeMappingReverse = { 'Calls': 'Call', 'Meetings': 'Meeting', 'Emails': 'Email', 'Notes': 'Note', 'SMS': 'SMS', 'Documents': 'Document Collection' };
       const targetType = typeMappingReverse[typeName];
       if (!targetType) return [];
-      
       return sortedActivities.filter(a => a.type === targetType);
   };
 
@@ -74,59 +51,54 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       return l ? l.full_name : 'Unknown';
   };
 
-  const taskStatusData = [
-    { name: 'Completed', value: stats.completedTasks },
-    { name: 'Open', value: stats.pendingTasks },
-  ];
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed Tasks</CardTitle>
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : ''}`}>Completed Tasks</CardTitle>
             <CheckSquare className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.completedTasks}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.completedTasks}</div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : ''}`}>Open Tasks</CardTitle>
             <ListTodo className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingTasks}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.pendingTasks}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Calls Made</CardTitle>
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : ''}`}>Calls Made</CardTitle>
             <Phone className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.calls}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.calls}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Meetings Held</CardTitle>
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : ''}`}>Meetings Held</CardTitle>
             <CalendarDays className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.meetings}</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.meetings}</div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader>
-            <CardTitle>Activity Type Distribution</CardTitle>
+            <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Activity Type Distribution</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -135,29 +107,29 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                       setSelectedType(data.activePayload[0].payload.name);
                   }
               }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#374151' : '#e5e7eb'} />
+                <XAxis dataKey="name" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                <YAxis stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
                 <Bar dataKey="value" fill="#ef4444" name="Count" cursor="pointer" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
             <CardHeader>
-                <CardTitle>Recent Activities</CardTitle>
+                <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Recent Activities</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4 max-h-[260px] overflow-y-auto pr-2">
                     {sortedActivities.slice(0, 5).map((act, i) => {
                         const leadName = getLeadName(act.lead_id);
                         return (
-                            <div key={i} className="flex items-center justify-between border-b pb-3 last:border-0 hover:bg-slate-50 p-1 rounded-lg transition-colors">
+                            <div key={i} className={`flex items-center justify-between border-b pb-3 last:border-0 p-1 rounded-lg transition-colors ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-700' : 'hover:bg-slate-50'}`}>
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <p className="font-bold text-sm text-slate-800">
+                                        <p className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
                                             {act.type === 'Call' ? '📞 Call' : act.type === 'Meeting' ? '📅 Meeting' : '📝 Activity'}
                                         </p>
                                         <span className="text-xs text-slate-400">•</span>
@@ -171,7 +143,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                                     <p className="text-xs text-slate-500 truncate w-40 md:w-56" title={act.summary}>{act.summary}</p>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-xs font-medium text-slate-600">
+                                    <div className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
                                         {act.date ? new Date(act.date).toLocaleDateString('en-US') : '-'}
                                     </div>
                                     <div className="text-[10px] text-slate-400">
@@ -188,30 +160,30 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       </div>
 
       <Dialog open={!!selectedType} onOpenChange={(open) => !open && setSelectedType(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+        <DialogContent className={`max-w-4xl max-h-[80vh] flex flex-col ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : ''}`}>
             <DialogHeader>
                 <DialogTitle>Activity Details: {selectedType}</DialogTitle>
             </DialogHeader>
             <div className="flex-1 overflow-auto">
                 <div className="overflow-x-auto">
                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="text-left">Date</TableHead>
-                            <TableHead className="text-left">Client</TableHead>
-                            <TableHead className="text-left">Performed By</TableHead>
-                            <TableHead className="text-left">Details</TableHead>
-                            <TableHead className="text-left">Status</TableHead>
+                    <TableHeader className={theme === 'dark' ? 'bg-slate-800' : ''}>
+                        <TableRow className={theme === 'dark' ? 'border-slate-700' : ''}>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Date</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Client</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Performed By</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Details</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-400' : ''}`}>Status</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {selectedType && getActivitiesByType(selectedType).map((act) => (
-                            <TableRow key={act.id}>
-                                <TableCell>{new Date(act.date).toLocaleDateString('en-US')} {new Date(act.date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</TableCell>
-                                <TableCell className="font-medium">{getLeadName(act.lead_id)}</TableCell>
-                                <TableCell>{getUserName(act.created_by)}</TableCell>
-                                <TableCell className="max-w-xs truncate" title={act.summary}>{act.summary}</TableCell>
-                                <TableCell>{act.status}</TableCell>
+                            <TableRow key={act.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : ''}>
+                                <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{new Date(act.date).toLocaleDateString('en-US')} {new Date(act.date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</TableCell>
+                                <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>{getLeadName(act.lead_id)}</TableCell>
+                                <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{getUserName(act.created_by)}</TableCell>
+                                <TableCell className={`max-w-xs truncate ${theme === 'dark' ? 'text-slate-400' : ''}`} title={act.summary}>{act.summary}</TableCell>
+                                <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{act.status}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -219,7 +191,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                 </div>
             </div>
             <div className="flex justify-end pt-2">
-                <Button variant="outline" onClick={() => setSelectedType(null)}>Close</Button>
+                <Button variant="outline" onClick={() => setSelectedType(null)} className={theme === 'dark' ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : ''}>Close</Button>
             </div>
         </DialogContent>
       </Dialog>
