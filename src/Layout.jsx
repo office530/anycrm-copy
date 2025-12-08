@@ -145,7 +145,11 @@ function LayoutContent({ children, currentPageName }) {
             </div>
             <div className="flex items-center gap-2">
                <Notifications />
-               {branding.logoUrl && <img src={branding.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-full" />}
+               {branding.logoUrl && (
+                 <Link to={createPageUrl('Dashboard')}>
+                   <img src={branding.logoUrl} alt="Logo" className="w-8 h-8 object-contain rounded-full" />
+                 </Link>
+               )}
             </div>
         </header>
 
