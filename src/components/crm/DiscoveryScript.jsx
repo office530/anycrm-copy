@@ -101,11 +101,11 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         </CardHeader>
         <CardContent className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 col-span-2 md:col-span-1">
-            <Label className="text-slate-700">שם הלווה/ים</Label>
+            <Label className="text-slate-700">שם הלקוח/ות</Label>
             <Input {...register("borrower_names")} placeholder="שמות מלאים" />
           </div>
           <div className="space-y-2 col-span-2 md:col-span-1">
-            <Label className="text-slate-700">מצב משפחתי</Label>
+            <Label className="text-slate-700">סטטוס אישי/משפחתי</Label>
             <Select onValueChange={(v) => setValue("marital_status", v)} defaultValue={initialData?.marital_status}>
               <SelectTrigger><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
               <SelectContent>
@@ -118,17 +118,17 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-slate-700">גיל לווה א'</Label>
+              <Label className="text-slate-700">גיל/וותק לקוח ראשי</Label>
               <Input type="number" {...register("age_borrower_1", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-700">גיל לווה ב'</Label>
+              <Label className="text-slate-700">גיל/וותק לקוח משני</Label>
               <Input type="number" {...register("age_borrower_2", { valueAsNumber: true })} />
             </div>
           </div>
           <div className="space-y-2 col-span-2">
-            <Label className="text-slate-700">מצב בריאותי / צלילות (ייפוי כוח מתמשך?)</Label>
-            <Textarea {...register("health_status")} placeholder="פרט לגבי צלילות, ייפוי כוח וכו'..." className="h-20 text-right placeholder:text-right" />
+            <Label className="text-slate-700">הערות אישיות / מצב משפטי</Label>
+            <Textarea {...register("health_status")} placeholder="פרטים רלוונטיים, ייפוי כוח, הערות מיוחדות..." className="h-20 text-right placeholder:text-right" />
           </div>
         </CardContent>
       </Card>
@@ -144,7 +144,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         <CardContent className="bg-white p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-slate-700">מספר נפשות / שותפים</Label>
+              <Label className="text-slate-700">מספר בעלי עניין / מוטבים</Label>
               <Input type="number" {...register("children_count", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
@@ -275,12 +275,12 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             <Input type="number" {...register("requested_amount", { valueAsNumber: true })} className="text-lg font-bold" />
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-700">מסלול מבוקש</Label>
+            <Label className="text-slate-700">מתווה תשלום מבוקש</Label>
             <Select onValueChange={(v) => setValue("payment_preference", v)} defaultValue={initialData?.payment_preference}>
-              <SelectTrigger><SelectValue placeholder="בחר מסלול" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="בחר מתווה" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Pay Interest Monthly">תשלום שוטף (שפיצר/קרן)</SelectItem>
-                <SelectItem value="Full Balloon (No Payment)">בלון / גרייס (דחיית תשלום)</SelectItem>
+                <SelectItem value="Pay Interest Monthly">תשלום חודשי שוטף</SelectItem>
+                <SelectItem value="Full Balloon (No Payment)">דחיית תשלום (בלון/גרייס)</SelectItem>
                 <SelectItem value="Partial">גמיש / אחר</SelectItem>
               </SelectContent>
             </Select>
