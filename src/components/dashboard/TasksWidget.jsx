@@ -48,7 +48,7 @@ export default function TasksWidget() {
     }`}>
       <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-lg flex items-center justify-between">
-          <span className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>משימות קרובות</span>
+          <span className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>Upcoming Tasks</span>
           <Badge variant="outline" className={`text-xs ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{upcomingTasks.length}</Badge>
         </CardTitle>
       </CardHeader>
@@ -56,7 +56,7 @@ export default function TasksWidget() {
         {upcomingTasks.length === 0 ? (
           <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
             <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
-            <p>אין משימות דחופות</p>
+            <p>No urgent tasks</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -109,10 +109,10 @@ export default function TasksWidget() {
                         </h4>
                         {isOverdue && !isDone ? (
                           <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
-                            באיחור
+                            Overdue
                           </Badge>
                         ) : isToday && !isDone ? (
-                          <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">היום</Badge>
+                          <Badge className="bg-orange-500 text-[10px] h-5 px-1.5">Today</Badge>
                         ) : (
                           <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                             {moment(task.due_date).format('DD/MM')}
@@ -139,7 +139,7 @@ export default function TasksWidget() {
       <div className={`p-4 border-t shrink-0 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
         <Link to={createPageUrl('Tasks')}>
           <Button variant="ghost" className={`w-full text-xs h-8 ${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-600'}`}>
-            כל המשימות
+            All Tasks
           </Button>
         </Link>
       </div>

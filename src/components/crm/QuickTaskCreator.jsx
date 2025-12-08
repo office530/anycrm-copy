@@ -19,7 +19,7 @@ export default function QuickTaskCreator({ leadId, leadName }) {
 
   const handleCreateTask = async () => {
     if (!taskData.title.trim()) {
-      alert("נא למלא כותרת משימה");
+      alert("Please enter a task title");
       return;
     }
 
@@ -43,7 +43,7 @@ export default function QuickTaskCreator({ leadId, leadName }) {
       }, 1500);
     } catch (error) {
       console.error("Failed to create task:", error);
-      alert("שגיאה ביצירת המשימה");
+      alert("Error creating task");
     } finally {
       setIsCreating(false);
     }
@@ -59,8 +59,8 @@ export default function QuickTaskCreator({ leadId, leadName }) {
             onClick={() => setIsOpen(true)}
             className="w-full bg-white hover:bg-blue-50 border-blue-300 text-blue-700 font-medium"
           >
-            <Plus className="w-4 h-4 ml-2" />
-            יצירת משימת מעקב
+            <Plus className="w-4 h-4 mr-2" />
+            Create Follow-up Task
           </Button>
         ) : (
           <AnimatePresence>
@@ -73,7 +73,7 @@ export default function QuickTaskCreator({ leadId, leadName }) {
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-slate-900 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-blue-600" />
-                  משימה חדשה - {leadName}
+                  New Task - {leadName}
                 </h4>
                 <Button
                   type="button"
@@ -82,33 +82,33 @@ export default function QuickTaskCreator({ leadId, leadName }) {
                   onClick={() => setIsOpen(false)}
                   className="text-slate-500 hover:text-slate-700"
                 >
-                  ביטול
+                  Cancel
                 </Button>
               </div>
 
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-slate-800 font-semibold">כותרת משימה *</Label>
+                  <Label className="text-slate-800 font-semibold">Task Title *</Label>
                   <Input
                     value={taskData.title}
                     onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
-                    placeholder="לדוגמה: חזרה ללקוח בנושע הצעת הבנק"
+                    placeholder="e.g., Call back regarding offer"
                     className="border-slate-300 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-slate-800 font-semibold">תיאור (אופציונלי)</Label>
+                  <Label className="text-slate-800 font-semibold">Description (Optional)</Label>
                   <Textarea
                     value={taskData.description}
                     onChange={(e) => setTaskData({ ...taskData, description: e.target.value })}
-                    placeholder="פרטים נוספים..."
+                    placeholder="More details..."
                     className="border-slate-300 focus:border-blue-500 h-20 resize-none"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-slate-800 font-semibold">תאריך יעד</Label>
+                  <Label className="text-slate-800 font-semibold">Due Date</Label>
                   <Input
                     type="date"
                     value={taskData.due_date}
@@ -123,9 +123,9 @@ export default function QuickTaskCreator({ leadId, leadName }) {
                   disabled={isCreating || showSuccess}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
                 >
-                  {isCreating && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
-                  {showSuccess && <CheckCircle2 className="w-4 h-4 ml-2" />}
-                  {showSuccess ? "נוצרה בהצלחה!" : "צור משימה"}
+                  {isCreating && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                  {showSuccess && <CheckCircle2 className="w-4 h-4 mr-2" />}
+                  {showSuccess ? "Created Successfully!" : "Create Task"}
                 </Button>
               </div>
             </motion.div>

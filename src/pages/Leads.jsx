@@ -33,12 +33,12 @@ export default function LeadsPage() {
   const location = useLocation();
   // Custom statuses to match LeadForm exactly
   const displayStatuses = [
-  { value: "New", label: "חדש (New)", color: "bg-red-100 text-red-800 border-red-200" },
-  { value: "Attempting Contact", label: "בטיפול - מנסה ליצור קשר", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
-  { value: "Contacted - Qualifying", label: "נוצר קשר - בירור צרכים", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
-  { value: "Sales Ready", label: "בשל להזדמנות / חם", color: "bg-neutral-800 text-white border-neutral-900" },
-  { value: "Converted", label: "הומר להזדמנות (Converted)", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  { value: "Lost / Unqualified", label: "לא רלוונטי (סופי)", color: "bg-slate-100 text-slate-500 border-slate-200" }];
+  { value: "New", label: "New", color: "bg-red-100 text-red-800 border-red-200" },
+  { value: "Attempting Contact", label: "Attempting Contact", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
+  { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
+  { value: "Sales Ready", label: "Sales Ready", color: "bg-neutral-800 text-white border-neutral-900" },
+  { value: "Converted", label: "Converted", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+  { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-100 text-slate-500 border-slate-200" }];
 
 
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -236,23 +236,23 @@ export default function LeadsPage() {
   return (
     <div className={`space-y-6 pb-24 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
-      {/* כרטיסי מידע עליונים */}
+      {/* Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard icon={Users} label="סה״כ לידים" value={stats.total} color="bg-red-100 text-red-700" />
-        <StatCard icon={CheckCircle2} label="הומרו להזדמנות" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
-        <StatCard icon={Activity} label="פעילים בטיפול" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
+        <StatCard icon={Users} label="Total Leads" value={stats.total} color="bg-red-100 text-red-700" />
+        <StatCard icon={CheckCircle2} label="Converted to Opportunity" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
+        <StatCard icon={Activity} label="Active in Pipeline" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
       </div>
 
-      {/* סרגל כלים וחיפוש */}
+      {/* Toolbar & Search */}
       <div className={`p-4 rounded-xl shadow-sm border flex flex-col md:flex-row gap-4 justify-between items-start md:items-center transition-colors ${
         theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
       }`}>
         <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
           <div className="relative flex-1">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
-              placeholder="חיפוש לפי שם..."
-              className={`pr-10 rounded-lg transition-colors ${
+              placeholder="Search by name..."
+              className={`pl-10 rounded-lg transition-colors ${
                 theme === 'dark' 
                   ? 'bg-slate-900 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-500 focus:ring-cyan-500' 
                   : 'border-slate-300 focus:border-red-500 focus:ring-red-500'
@@ -267,15 +267,15 @@ export default function LeadsPage() {
                     ? 'bg-slate-900 border-slate-600 text-white' 
                     : 'border-slate-300 text-slate-700'
                 }`}>
-                    <Filter className={`w-4 h-4 ml-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
-                    <SelectValue placeholder="סטטוס" />
+                    <Filter className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                    <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent className={`text-right transition-colors ${
+                <SelectContent className={`text-left transition-colors ${
                   theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-slate-900'
                 }`}>
-                    <SelectItem value="all" className="text-right">כל הסטטוסים</SelectItem>
-                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-right hover:bg-slate-50">{opt.label}</SelectItem>)}
-                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-right hover:bg-red-50">♻️ רשימת החייאה</SelectItem>
+                    <SelectItem value="all" className="text-left">All Statuses</SelectItem>
+                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-left hover:bg-slate-50">{opt.label}</SelectItem>)}
+                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-left hover:bg-red-50">♻️ Revival List</SelectItem>
                 </SelectContent>
           </Select>
 
@@ -285,14 +285,14 @@ export default function LeadsPage() {
                     ? 'bg-slate-900 border-slate-600 text-white' 
                     : 'border-slate-300 text-slate-700'
                 }`}>
-                    <Tag className={`w-4 h-4 ml-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
-                    <SelectValue placeholder="תגיות" />
+                    <Tag className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                    <SelectValue placeholder="Tags" />
                 </SelectTrigger>
-                <SelectContent className={`text-right transition-colors ${
+                <SelectContent className={`text-left transition-colors ${
                   theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-slate-900'
                 }`}>
-                    <SelectItem value="all" className="text-right">כל התגיות</SelectItem>
-                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-right hover:bg-slate-50">{tag}</SelectItem>)}
+                    <SelectItem value="all" className="text-left">All Tags</SelectItem>
+                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-left hover:bg-slate-50">{tag}</SelectItem>)}
                 </SelectContent>
           </Select>
 
@@ -327,8 +327,8 @@ export default function LeadsPage() {
                     onClick={() => setShowAiImport(true)}
                     className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
                  >
-                    <Sparkles className="w-4 h-4 ml-2" />
-                    ייבוא AI
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    AI Import
                  </Button>
                  <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
                     <Button variant="outline" className={`transition-colors ${
@@ -336,13 +336,13 @@ export default function LeadsPage() {
                         ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800' 
                         : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
                     }`}>
-                        <Upload className="w-4 h-4 ml-2" />
-                        ייבוא רגיל
+                        <Upload className="w-4 h-4 mr-2" />
+                        Regular Import
                     </Button>
                  </Link>
                 <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 order-first md:order-last">
-                    <Plus className="w-4 h-4 ml-2" />
-                    ליד חדש
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Lead
                 </Button>
                </>
              )}
@@ -374,37 +374,37 @@ export default function LeadsPage() {
          <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide select-none transition-colors ${
            theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
          }`}>
-            <div className="col-span-3 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
-                לקוח
+            <div className="col-span-3 text-left flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
+                Client
                 {sortConfig.key === 'full_name' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
-                סטטוס ליד
+            <div className="col-span-2 text-left flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('lead_status')}>
+                Status
                 {sortConfig.key === 'lead_status' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
-                פרטי קשר
+            <div className="col-span-2 text-left flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('phone_number')}>
+                Contact Info
                 {sortConfig.key === 'phone_number' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-2 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('created_date')}>
-                תאריך יצירה
+            <div className="col-span-2 text-left flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('created_date')}>
+                Created Date
                 {sortConfig.key === 'created_date' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-1 text-right flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('source_year')}>
-                שנה
+            <div className="col-span-1 text-left flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('source_year')}>
+                Year
                 {sortConfig.key === 'source_year' ?
             sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" /> :
             <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-30 hover:opacity-100" />}
             </div>
-            <div className="col-span-2 text-left pl-4">פעולות</div>
+            <div className="col-span-2 text-right pr-4">Actions</div>
         </div>
 
         <div className={`divide-y transition-colors ${
@@ -430,7 +430,7 @@ export default function LeadsPage() {
                             <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city}</div>
                             {getLastActivityDate(lead.id) && (
                               <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
-                                ✓ פעילות אחרונה: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                                ✓ Last Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
                               </div>
                             )}
                             {lead.tags && lead.tags.length > 0 &&
@@ -450,10 +450,10 @@ export default function LeadsPage() {
                         <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
-                    <div className={`col-span-2 text-xs dir-ltr ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                        {lead.created_date ? new Date(lead.created_date).toLocaleDateString('he-IL') : '-'}
+                    <div className={`col-span-2 text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                        {lead.created_date ? new Date(lead.created_date).toLocaleDateString('en-US') : '-'}
                         <br/>
-                        <span className="text-[10px] opacity-70">{lead.created_date ? new Date(lead.created_date).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                        <span className="text-[10px] opacity-70">{lead.created_date ? new Date(lead.created_date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                     </div>
                     <div className={`col-span-1 text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
                         {lead.source_year}
@@ -462,20 +462,20 @@ export default function LeadsPage() {
                         <div className="flex items-center justify-end gap-1">
                             {canDelete && (
                                 <Button variant="ghost" size="sm" onClick={() => {
-                        if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה? פעולה זו לא ניתנת לביטול.')) deleteLead.mutate(lead.id);
-                        }} className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50" title="מחק ליד">
+                        if (window.confirm('Are you sure you want to delete this lead? This action cannot be undone.')) deleteLead.mutate(lead.id);
+                        }} className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50" title="Delete Lead">
                                     <Trash2 className="w-4 h-4" />
                                 </Button>
                             )}
-                            <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title={canEdit ? "ערוך ליד" : "צפה בליד"}>
+                            <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title={canEdit ? "Edit Lead" : "View Lead"}>
                                 {canEdit ? <Pencil className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </Button>
                             {canEdit && (lead.lead_status === 'Converted' ?
-                        <div className="h-8 px-2 flex items-center justify-center text-emerald-600" title="הומר להזדמנות">
+                        <div className="h-8 px-2 flex items-center justify-center text-emerald-600" title="Converted to Opportunity">
                                     <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
                                 </div> :
 
-                        <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="המר להזדמנות מיידי">
+                        <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="Convert to Opportunity">
                                     <CheckCircle2 className="w-4 h-4" />
                                 </Button>
                             )}

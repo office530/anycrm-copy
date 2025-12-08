@@ -25,7 +25,7 @@ export default function Dashboard() {
   const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
   const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ['tasks'], queryFn: () => base44.entities.Task.list() });
 
-  // סינון נתונים לפי טווח זמן
+  // Filter data by time range
   const { filteredLeads, filteredOpps, dateRangeLabel } = useMemo(() => {
     let start = moment();
     let label = "";
@@ -33,19 +33,19 @@ export default function Dashboard() {
     switch (timeRange) {
       case 'month':
         start = moment().startOf('month');
-        label = "החודש הנוכחי";
+        label = "Current Month";
         break;
       case 'quarter':
         start = moment().startOf('quarter');
-        label = "הרבעון הנוכחי";
+        label = "Current Quarter";
         break;
       case 'year':
         start = moment().startOf('year');
-        label = "השנה הנוכחית";
+        label = "Current Year";
         break;
       default:
         start = moment('2000-01-01');
-        label = "כל הזמן";
+        label = "All Time";
     }
 
     return {
@@ -58,14 +58,14 @@ export default function Dashboard() {
   // חישוב מדדים (KPIs)
   const stats = useMemo(() => {
     const totalLeads = filteredLeads.length;
-    const newLeads = filteredLeads.filter((l) => l.lead_status === 'New' || l.lead_status === 'חדש').length;
-    const convertedLeads = filteredLeads.filter((l) => l.lead_status?.includes('Converted') || l.lead_status?.includes('הומר')).length;
+    const newLeads = filteredLeads.filter((l) => l.lead_status === 'New').length;
+    const convertedLeads = filteredLeads.filter((l) => l.lead_status?.includes('Converted')).length;
 
     const totalOpps = filteredOpps.length;
-    const wonOpps = filteredOpps.filter((o) => o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה'));
+    const wonOpps = filteredOpps.filter((o) => o.deal_stage?.includes('Won'));
     const totalWonValue = wonOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
 
-    // חלוקה לשלבים עבור הזדמנויות
+    // Opportunity Stages
     const oppsByStage = filteredOpps.reduce((acc, o) => {
       const stage = o.deal_stage?.split('(')[0]?.trim() || 'Other';
       acc[stage] = (acc[stage] || 0) + 1;
@@ -73,10 +73,8 @@ export default function Dashboard() {
     }, {});
     const stageData = Object.entries(oppsByStage).map(([name, value]) => ({ name, value }));
 
-    // נתונים לגרף מגמות מכירה (לידים vs עסקאות סגורות)
+    // Sales Trends Data (Leads vs Won Deals)
     const trendMap = {};
-    // אתחול המפה לפי טווח הזמן הנבחר (יומי/שבועי/חודשי)
-    // לפשטות נציג לפי ימים ב-30 יום האחרונים או לפי חודשים בשנה
     const dateFormat = timeRange === 'year' ? 'MMM' : 'DD/MM';
 
     filteredLeads.forEach((l) => {
@@ -86,18 +84,14 @@ export default function Dashboard() {
     });
 
     wonOpps.forEach((o) => {
-      const date = moment(o.updated_date || o.created_date).format(dateFormat); // שימוש בתאריך עדכון לזכייה אם אפשר
+      const date = moment(o.updated_date || o.created_date).format(dateFormat);
       if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
       trendMap[date].sales++;
     });
 
-    // המרה למערך ומיון
-    const trendData = Object.values(trendMap).sort((a, b) => {
-      // לוגיקת מיון פשוטה לפי מחרוזת תאריך - במצב אמת צריך לוגיקה חכמה יותר
-      return 0;
-    });
+    const trendData = Object.values(trendMap).sort((a, b) => 0); // Simple sort
 
-    // משימות
+    // Tasks
     const today = moment().endOf('day');
     const upcomingTasks = tasks.filter((t) => {
       if (t.status === 'done') return false;
@@ -123,8 +117,8 @@ export default function Dashboard() {
       'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700' :
       'bg-gradient-to-br from-white to-neutral-50/50 md:bg-white border-neutral-100'}`
       }>
-          <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
-              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>ברוכים הבאים </h1>
+          <div className="relative z-10 max-w-lg text-center md:text-left w-full md:w-auto">
+              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>Welcome Back</h1>
               <p className="text-base md:text-lg mb-6 text-cyan-400">Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
@@ -133,7 +127,7 @@ export default function Dashboard() {
               'bg-cyan-500 hover:bg-cyan-600 shadow-lg shadow-cyan-500/50' :
               'bg-red-700 hover:bg-red-800'}`
               }>
-                      הוסף נתונים חדשים
+                      Add New Data
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Reports')}>
@@ -142,7 +136,7 @@ export default function Dashboard() {
               'border-purple-500/60 text-purple-400 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]' :
               'bg-white border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300'}`
               }>
-                      צפה בדוחות
+                      View Reports
                   </Button>
                 </Link>
               </div>
@@ -163,32 +157,32 @@ export default function Dashboard() {
           </div>
 
       {/* Header & Filter */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-right">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-left">
         <div className="w-full md:w-auto">
-            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>סקירת ביצועים</h2>
-            <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>נתונים עבור: {dateRangeLabel}</p>
+            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>Performance Overview</h2>
+            <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>Data for: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className={`w-[180px] ${
           theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-red-100 focus:ring-red-200'}`
           }>
-                <Calendar className="w-4 h-4 ml-2 text-neutral-600" />
-                <SelectValue placeholder="בחר טווח זמן" />
+                <Calendar className="w-4 h-4 mr-2 text-neutral-600" />
+                <SelectValue placeholder="Select Range" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="month">החודש הנוכחי</SelectItem>
-                <SelectItem value="quarter">הרבעון הנוכחי</SelectItem>
-                <SelectItem value="year">השנה הנוכחית</SelectItem>
-                <SelectItem value="all">כל הזמן</SelectItem>
+                <SelectItem value="month">Current Month</SelectItem>
+                <SelectItem value="quarter">Current Quarter</SelectItem>
+                <SelectItem value="year">Current Year</SelectItem>
+                <SelectItem value="all">All Time</SelectItem>
             </SelectContent>
         </Select>
       </div>
 
       {/* KPIs Row 1: Leads Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <KpiCard title="סה״כ לידים" value={stats.totalLeads} icon={Users} color="bg-red-500" subtext={`${stats.newLeads} חדשים בתקופה זו`} />
-        <KpiCard title="לידים שהומרו" value={stats.convertedLeads} icon={Activity} color="bg-purple-500" subtext={`${(stats.convertedLeads / (stats.totalLeads || 1) * 100).toFixed(1)}% יחס המרה`} />
-        <KpiCard title="הכנסות בפועל" value={`₪${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} עסקאות סגורות`} />
+        <KpiCard title="Total Leads" value={stats.totalLeads} icon={Users} color="bg-red-500" subtext={`${stats.newLeads} new this period`} />
+        <KpiCard title="Converted Leads" value={stats.convertedLeads} icon={Activity} color="bg-purple-500" subtext={`${(stats.convertedLeads / (stats.totalLeads || 1) * 100).toFixed(1)}% conversion rate`} />
+        <KpiCard title="Won Revenue" value={`₪${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} deals won`} />
       </div>
 
       {/* Main Content Grid */}
@@ -201,7 +195,7 @@ export default function Dashboard() {
               <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
                       <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-neutral-500" /> מגמות לידים ומכירות
+                          <Activity className="w-5 h-5 text-neutral-500" /> Sales & Leads Trend
                       </CardTitle>
                   </CardHeader>
                   <CardContent className="h-[300px]">
@@ -221,8 +215,8 @@ export default function Dashboard() {
                             <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
                             <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                            <Area type="monotone" dataKey="leads" name="לידים" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
-                            <Area type="monotone" dataKey="sales" name="מכירות" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="leads" name="Leads" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
+                            <Area type="monotone" dataKey="sales" name="Sales" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
                         </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -231,7 +225,7 @@ export default function Dashboard() {
               {/* Opportunity Stages */}
               <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
-                      <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight">הזדמנויות לפי שלב</CardTitle>
+                      <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight">Opportunities by Stage</CardTitle>
                   </CardHeader>
                   <CardContent className="h-[250px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -259,7 +253,7 @@ export default function Dashboard() {
                     <Plus className="w-8 h-8" />
                   </div>
                   <span className={`font-medium text-lg ${theme === 'dark' ? 'text-slate-400 group-hover:text-purple-300' : 'text-slate-600 group-hover:text-purple-700'}`}>
-                    הוסף דוח חדש
+                    Add New Report
                   </span>
                 </Card>
               </Link>
@@ -273,27 +267,27 @@ export default function Dashboard() {
               <div className="relative z-10 space-y-6">
                   {/* Header */}
                   <div>
-                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>סטטוס Pipeline</div>
+                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>Pipeline Status</div>
                       <div className={`text-4xl md:text-5xl font-bold mb-1 ${theme === 'dark' ? 'text-white drop-shadow-sm' : 'text-slate-900'}`}>{stats.totalOpps - stats.wonOppsCount}</div>
-                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>הזדמנויות פעילות</div>
+                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Active Opportunities</div>
                   </div>
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
                       <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-950/20 border-red-900/30' : 'bg-red-50 border-red-100'}`}>
                           <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
-                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>סה״כ ערך Pipeline</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Total Pipeline Value</div>
                       </div>
                       <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-950/20 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100'}`}>
                           <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'}`}>{stats.wonOppsCount}</div>
-                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>עסקאות נסגרו</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Deals Won</div>
                       </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="space-y-2">
                       <div className={`flex justify-between text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                          <span>יחס הצלחה</span>
+                          <span>Success Rate</span>
                           <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
                       </div>
                       <div className={`w-full rounded-full h-2.5 overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}>
@@ -304,16 +298,16 @@ export default function Dashboard() {
                   {/* Quick Stats */}
                   <div className={`space-y-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
                       <div className="flex justify-between items-center text-sm">
-                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>ממוצע ערך עסקה</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Avg. Deal Value</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>בשלב מתקדם</span>
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Advanced Stage</span>
                           <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter((o) => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>זכייה צפויה החודש</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.loan_amount_requested || 0) * (o.probability || 0) / 100, 0).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Expected Win This Month</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.loan_amount_requested || 0) * (o.probability || 0) / 100, 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
                       </div>
                   </div>
               </div>
@@ -343,9 +337,9 @@ function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
                     <div className={`p-3 rounded-2xl ${color} ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-10'}`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
-                    {total && <span className={`text-xs font-bold px-2 py-1 rounded-full mr-2 ${
+                    {total && <span className={`text-xs font-bold px-2 py-1 rounded-full ml-2 ${
           theme === 'dark' ? 'text-cyan-400 bg-slate-700' : 'text-neutral-500 bg-neutral-50'}`
-          }>{total} סה״כ</span>}
+          }>{total} Total</span>}
                 </div>
                 <h3 className={`text-2xl md:text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>{value}</h3>
                 <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>{title}</p>

@@ -208,10 +208,10 @@ export default function OpportunitiesPage() {
       {/* Search Bar & Actions */}
       <div className="mb-4 flex justify-between items-center gap-4">
         <div className="relative max-w-md w-full">
-          <Search className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+          <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
           <Input
-            placeholder="חיפוש לקוח, טלפון, אימייל או מוצר..."
-            className={`pr-10 rounded-lg ${
+            placeholder="Search client, phone, email or product..."
+            className={`pl-10 rounded-lg ${
                 theme === 'dark' 
                     ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500' 
                     : 'border-slate-300 focus:border-purple-500 focus:ring-purple-500'
@@ -231,7 +231,7 @@ export default function OpportunitiesPage() {
           >
               <div className="flex items-center gap-2">
                   <LayoutGrid className="w-4 h-4" /> 
-                  <span>הזדמנות חדשה</span>
+                  <span>New Opportunity</span>
               </div>
           </Button>
         )}
@@ -244,7 +244,7 @@ export default function OpportunitiesPage() {
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}><DollarSign className="w-5 h-5"/></div>
              <div>
-                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>שווי צנרת כולל</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Total Pipeline Value</div>
                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
              </div>
           </div>
@@ -253,7 +253,7 @@ export default function OpportunitiesPage() {
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}><Briefcase className="w-5 h-5"/></div>
              <div>
-                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>עסקאות פעילות</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Active Deals</div>
                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.activeDeals}</div>
              </div>
           </div>
@@ -262,7 +262,7 @@ export default function OpportunitiesPage() {
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}><Trophy className="w-5 h-5"/></div>
              <div>
-                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>נסגרו בהצלחה</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Closed Won</div>
                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.wonDeals}</div>
              </div>
           </div>
@@ -273,12 +273,12 @@ export default function OpportunitiesPage() {
                 <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' 
                     ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
                     : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
-                    <LayoutGrid className="w-4 h-4 ml-2" /> לוח
+                    <LayoutGrid className="w-4 h-4 mr-2" /> Board
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' 
                     ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
                     : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
-                    <ListIcon className="w-4 h-4 ml-2" /> רשימה
+                    <ListIcon className="w-4 h-4 mr-2" /> List
                 </Button>
             </div>
           </div>

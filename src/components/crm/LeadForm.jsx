@@ -121,16 +121,16 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
       className={`rounded-xl shadow-lg border flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden ${
         theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
       }`}
-      dir="rtl">
+      dir="ltr">
 
       <div className={`p-4 md:p-6 border-b shrink-0 z-10 flex justify-between items-start ${
         theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
       }`}>
         <div>
           <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-            {lead ? "תיק לקוח" : "הוספת ליד חדש"}
+            {lead ? "Lead File" : "Add New Lead"}
           </h2>
-          <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול פרטים ופעילויות</p>
+          <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage details and activities</p>
         </div>
         <Button variant="ghost" size="icon" onClick={onCancel} className={`${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600'}`}>
           <X className="w-5 h-5" />
@@ -142,7 +142,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
         <TabsList className={`grid w-full grid-cols-3 md:grid-cols-7 mb-6 p-1 h-auto gap-1 ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-100/80'}`}>
           {['details', 'opportunities', 'activity', 'tasks', 'documents', 'discovery', 'ai'].map(tab => {
             const icons = { details: User, opportunities: Briefcase, activity: Activity, tasks: CheckSquare, documents: FileText, discovery: ClipboardList, ai: Sparkles };
-            const labels = { details: 'פרופיל 360', opportunities: 'הזדמנויות', activity: 'פעילות', tasks: 'משימות', documents: 'מסמכים', discovery: 'תסריט', ai: 'ניתוח AI' };
+            const labels = { details: '360 Profile', opportunities: 'Opportunities', activity: 'Activity', tasks: 'Tasks', documents: 'Documents', discovery: 'Script', ai: 'AI Analysis' };
             const Icon = icons[tab];
             const isDisabled = !lead && tab !== 'details' && tab !== 'documents';
             
@@ -170,7 +170,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
-                  <Label className={labelClass}>תגיות לקוח</Label>
+                  <Label className={labelClass}>Client Tags</Label>
                   <TagManager
                   tags={watch("tags") || []}
                   onChange={(newTags) => setValue("tags", newTags)} />
@@ -178,23 +178,23 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>שם מלא *</Label>
+                <Label className={labelClass}>Full Name *</Label>
                 <Input
-                  {...register("full_name", { required: "שדה חובה" })}
-                  placeholder="לדוגמה: דוד כהן"
+                  {...register("full_name", { required: "Required" })}
+                  placeholder="e.g., John Doe"
                   className={inputClass} />
 
                 {errors.full_name && <span className="text-red-500 text-sm font-medium">{errors.full_name.message}</span>}
               </div>
               
               <div className="space-y-1">
-                <Label className={labelClass}>מספר טלפון *</Label>
+                <Label className={labelClass}>Phone Number *</Label>
                 <Input
                   {...register("phone_number", {
-                    required: "שדה חובה",
+                    required: "Required",
                     pattern: {
                       value: /^0[0-9]{1,2}-?[0-9]{7}$/,
-                      message: "מספר טלפון לא תקין"
+                      message: "Invalid phone number"
                     }
                   })}
                   placeholder="050-0000000"
@@ -204,12 +204,12 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>אימייל</Label>
+                <Label className={labelClass}>Email</Label>
                 <Input
                   {...register("email", {
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "כתובת אימייל לא תקינה"
+                      message: "Invalid email address"
                     }
                   })}
                   placeholder="email@example.com"
@@ -219,32 +219,32 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>גיל</Label>
+                <Label className={labelClass}>Age</Label>
                 <Input
                   type="number"
                   {...register("age", { valueAsNumber: true })}
-                  placeholder="לדוגמה: 68"
+                  placeholder="e.g., 68"
                   className={inputClass} />
 
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>עיר</Label>
+                <Label className={labelClass}>City</Label>
                 <Input
                   {...register("city")}
-                  placeholder="לדוגמה: תל אביב"
+                  placeholder="e.g., Tel Aviv"
                   className={inputClass} />
 
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>שנת מקור</Label>
+                <Label className={labelClass}>Source Year</Label>
                 <Select
                   defaultValue={lead?.source_year || "2024"}
                   onValueChange={(val) => handleSelectChange("source_year", val)}>
 
                   <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="בחר שנה" />
+                    <SelectValue placeholder="Select Year" />
                   </SelectTrigger>
                   <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
                     <SelectItem value="2023">2023</SelectItem>
@@ -255,41 +255,41 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>סטטוס ליד</Label>
+                <Label className={labelClass}>Lead Status</Label>
                 <Select
                   defaultValue={lead?.lead_status || "New"}
                   onValueChange={(val) => handleSelectChange("lead_status", val)}>
 
                   <SelectTrigger className={`${inputClass} ${leadStatus === 'Converted' ? (theme === 'dark' ? 'bg-emerald-900/30 border-emerald-500 text-emerald-400' : 'bg-emerald-50 border-emerald-500 text-emerald-700') : ''}`}>
-                    <SelectValue placeholder="סטטוס" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                    <SelectItem value="New">חדש (New)</SelectItem>
-                    <SelectItem value="Attempting Contact">בטיפול - מנסה ליצור קשר</SelectItem>
-                    <SelectItem value="Contacted - Qualifying">נוצר קשר - בירור צרכים</SelectItem>
-                    <SelectItem value="Sales Ready">בשל להזדמנות / חם</SelectItem>
-                    <SelectItem value="Lost / Unqualified">לא רלוונטי (סופי)</SelectItem>
-                    <SelectItem value="Converted" className="text-emerald-600 font-bold">הומר להזדמנות (Converted)</SelectItem>
+                    <SelectItem value="New">New</SelectItem>
+                    <SelectItem value="Attempting Contact">Attempting Contact</SelectItem>
+                    <SelectItem value="Contacted - Qualifying">Contacted - Qualifying</SelectItem>
+                    <SelectItem value="Sales Ready">Sales Ready</SelectItem>
+                    <SelectItem value="Lost / Unqualified">Lost / Unqualified</SelectItem>
+                    <SelectItem value="Converted" className="text-emerald-600 font-bold">Converted</SelectItem>
                   </SelectContent>
                 </Select>
                 {leadStatus === 'Converted' &&
                 <p className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
                     <Activity className="w-3 h-3" />
-                    שמירה תוביל לפתיחת הזדמנות חדשה
+                    Saving will create a new opportunity
                   </p>
                 }
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>שיוך למשתמש</Label>
+                <Label className={labelClass}>Assigned To</Label>
                 <Select
                   defaultValue={lead?.assigned_to || ""}
                   onValueChange={(val) => handleSelectChange("assigned_to", val)}>
                   <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="בחר משתמש אחראי" />
+                    <SelectValue placeholder="Select User" />
                   </SelectTrigger>
                   <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                    <SelectItem value="unassigned">ללא שיוך</SelectItem>
+                    <SelectItem value="unassigned">Unassigned</SelectItem>
                     {users?.map(u => (
                       <SelectItem key={u.id} value={u.email}>{u.full_name || u.email}</SelectItem>
                     ))}
@@ -298,7 +298,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </div>
 
               <div className="space-y-1">
-                <Label className={labelClass}>תאריך יצירת קשר אחרון</Label>
+                <Label className={labelClass}>Last Contact Date</Label>
                 <Input
                   type="date"
                   {...register("last_contact_date")}
@@ -309,26 +309,26 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               {/* Additional Details Section */}
               <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 pt-6 mt-2">
                  <div className="space-y-1">
-                  <Label className={`${labelClass} text-right`}>מצב משפחתי</Label>
+                  <Label className={`${labelClass} text-left`}>Marital Status</Label>
                   <Select
                     defaultValue={lead?.marital_status || "Married"}
                     onValueChange={(val) => handleSelectChange("marital_status", val)}>
 
-                    <SelectTrigger className={`${inputClass} text-right`}>
-                      <SelectValue placeholder="בחר סטטוס" />
+                    <SelectTrigger className={`${inputClass} text-left`}>
+                      <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
-                    <SelectContent className={`text-right ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}`}>
-                      <SelectItem value="Married">נשוי/אה (Married)</SelectItem>
-                      <SelectItem value="Widowed">אלמן/ה (Widowed)</SelectItem>
-                      <SelectItem value="Divorced">גרוש/ה (Divorced)</SelectItem>
-                      <SelectItem value="Single">רווק/ה (Single)</SelectItem>
+                    <SelectContent className={`text-left ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}`}>
+                      <SelectItem value="Married">Married</SelectItem>
+                      <SelectItem value="Widowed">Widowed</SelectItem>
+                      <SelectItem value="Divorced">Divorced</SelectItem>
+                      <SelectItem value="Single">Single</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-1">
                    <div className="flex items-center gap-2 mb-2">
-                     <Label className="text-slate-900 font-semibold m-0">בעלי עניין נוספים?</Label>
+                     <Label className="text-slate-900 font-semibold m-0">Other Stakeholders?</Label>
                      <input
                       type="checkbox"
                       className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300"
@@ -338,28 +338,28 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                    <Input
                     type="number"
                     {...register("spouse_age", { valueAsNumber: true })}
-                    placeholder="גיל / וותק שותף (אם רלוונטי)"
+                    placeholder="Spouse Age (if relevant)"
                     className={inputClass} />
 
                 </div>
 
                 <div className="space-y-1">
-                  <Label className={`${labelClass} text-right`}>שווי עסקה / נכס (₪)</Label>
+                  <Label className={`${labelClass} text-left`}>Property Value (₪)</Label>
                   <Input
                     type="number"
                     {...register("estimated_property_value", { valueAsNumber: true })}
                     placeholder="0.00"
-                    className={`${inputClass} text-right`} />
+                    className={`${inputClass} text-left`} />
 
                 </div>
 
                 <div className="space-y-1">
-                  <Label className={`${labelClass} text-right`}>התחייבויות קיימות (₪)</Label>
+                  <Label className={`${labelClass} text-left`}>Existing Liabilities (₪)</Label>
                   <Input
                     type="number"
                     {...register("existing_mortgage_balance", { valueAsNumber: true })}
                     placeholder="0.00"
-                    className={`${inputClass} text-right`} />
+                    className={`${inputClass} text-left`} />
 
                 </div>
               </div>
@@ -369,10 +369,10 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               {lead && <QuickTaskCreator leadId={lead.id} leadName={lead.full_name} />}
 
             <div className="space-y-1">
-              <Label className={labelClass}>הערות</Label>
+              <Label className={labelClass}>Notes</Label>
               <Textarea
                 {...register("notes")}
-                placeholder="הערות חשובות לתיק..."
+                placeholder="Important notes..."
                 className={`${inputClass} h-24 resize-none`} />
 
             </div>
@@ -380,25 +380,25 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
             <div className="flex flex-col items-end gap-2 pt-6 border-t border-slate-100 mt-4">
               {Object.keys(errors).length > 0 &&
               <span className="text-red-600 text-sm font-bold bg-red-50 px-3 py-1 rounded-full animate-pulse">
-                      יש שגיאות בטופס, אנא בדוק את השדות המסומנים
+                      Please check form errors
                   </span>
               }
               <div className="flex justify-between items-center w-full">
                 <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6" disabled={isSubmitting}>
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-                  שמור
+                  Save
                 </Button>
                 <div className="flex gap-3">
-                  <Button type="button" variant="outline" onClick={onCancel} className="border-slate-300 hover:bg-slate-50">ביטול</Button>
+                  <Button type="button" variant="outline" onClick={onCancel} className="border-slate-300 hover:bg-slate-50">Cancel</Button>
                   {lead ? (
                     <Button onClick={handleSubmit(handleSaveAndStay, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
                       {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-                      עדכן תיק לקוח
+                      Update Lead File
                     </Button>
                   ) : (
                     <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
                       {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
-                      צור ליד חדש
+                      Create New Lead
                     </Button>
                   )}
                 </div>
@@ -409,7 +409,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
               <TabsContent value="opportunities" className="h-[600px] overflow-y-auto pr-2">
               {!lead ?
-          <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div> :
+          <div className="text-center py-10 text-slate-400">Save the lead first</div> :
           opportunities?.length > 0 ?
           <div className="space-y-3">
                {opportunities.map((opp) =>
@@ -420,11 +420,11 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
             }`}>
                     <div>
                        <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{opp.product_type}</h4>
-                       <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>שלב: {opp.deal_stage}</p>
+                       <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Stage: {opp.deal_stage}</p>
                     </div>
                     <div className="text-left">
                        <div className={`font-mono font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-red-700'}`}>₪{opp.loan_amount_requested?.toLocaleString()}</div>
-                       <Badge variant="outline" className={`mt-1 ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{opp.probability}% היתכנות</Badge>
+                       <Badge variant="outline" className={`mt-1 ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{opp.probability}% Probability</Badge>
                     </div>
                  </div>
             )}
@@ -432,17 +432,17 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
           <div className={`text-center py-10 text-slate-400 border-2 border-dashed rounded-xl ${theme === 'dark' ? 'border-slate-700' : ''}`}>
               <Briefcase className="w-10 h-10 mx-auto mb-2 opacity-50" />
-              <p>אין הזדמנויות פתוחות ללקוח זה</p>
+              <p>No open opportunities for this lead</p>
               </div>
           }
               </TabsContent>
 
               <TabsContent value="activity" className="h-[600px]">
-              {lead ? <ActivityLog leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
+              {lead ? <ActivityLog leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">Save the lead first</div>}
               </TabsContent>
 
               <TabsContent value="tasks" className="h-[600px]">
-                {lead ? <RelatedTasks leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
+                {lead ? <RelatedTasks leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">Save the lead first</div>}
               </TabsContent>
 
               <TabsContent value="documents" className="space-y-6">
@@ -454,9 +454,9 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
           </div>
           
           <div className={`flex justify-end gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
-             <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}>ביטול</Button>
+             <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}>Cancel</Button>
              <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-               {lead ? "שמור שינויים" : "צור ליד"}
+               {lead ? "Save Changes" : "Create Lead"}
              </Button>
           </div>
         </TabsContent>
@@ -469,13 +469,13 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
           <div className={`flex flex-col items-center justify-center py-16 text-slate-400 rounded-xl border border-dashed ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
               <Activity className="w-10 h-10 mb-3 opacity-50" />
-              <p className="font-medium">יש לשמור את הליד לפני שניתן למלא תסריט שיחה</p>
+              <p className="font-medium">Save the lead first to access Discovery Script</p>
             </div>
           }
         </TabsContent>
 
         <TabsContent value="ai">
-           {lead ? <LeadAiAnalysis lead={lead} /> : <div className="text-center py-10 text-slate-400">יש לשמור את הליד תחילה</div>}
+           {lead ? <LeadAiAnalysis lead={lead} /> : <div className="text-center py-10 text-slate-400">Save the lead first</div>}
         </TabsContent>
       </Tabs>
       </div>
