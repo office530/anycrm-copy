@@ -64,14 +64,14 @@ export default function PipelineSettings() {
                                         <Input 
                                             value={stage.label} 
                                             onChange={(e) => updateLocalStage(index, 'label', e.target.value)}
-                                            className="h-9 font-medium"
+                                            className={`h-9 font-medium ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`}
                                         />
                                     </div>
                                     <div className="space-y-1">
                                         <Label className="text-xs text-slate-600 dark:text-slate-400">Automated Tasks (Checklist)</Label>
                                         <div className="flex flex-wrap gap-2">
                                             {stage.checklist?.map((item, i) => (
-                                                <Badge key={i} variant="secondary" className="bg-slate-100 font-normal text-slate-600 border-slate-200 flex gap-1 items-center">
+                                                <Badge key={i} variant="secondary" className={`font-normal flex gap-1 items-center ${theme === 'dark' ? 'bg-slate-900 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
                                                     {item.text}
                                                     <button 
                                                         onClick={() => {
@@ -79,7 +79,7 @@ export default function PipelineSettings() {
                                                             newStages[index].checklist.splice(i, 1);
                                                             setLocalStages(newStages);
                                                         }}
-                                                        className="hover:text-red-500"
+                                                        className="hover:text-red-500 transition-colors"
                                                     >
                                                         <X className="w-3 h-3" />
                                                     </button>
