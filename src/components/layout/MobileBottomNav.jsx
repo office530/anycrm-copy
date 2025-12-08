@@ -12,10 +12,12 @@ import {
   DropdownMenuSeparator } from
 "@/components/ui/dropdown-menu";
 
-export default function MobileBottomNav() {
+export default function MobileBottomNav({ activePage }) {
   const location = useLocation();
   const { theme } = useSettings();
-  const currentPath = location.pathname.split('/').pop() || 'Dashboard';
+  // Use activePage prop if available, otherwise fallback to URL parsing (handling trailing slashes)
+  const urlPath = location.pathname.replace(/\/$/, '').split('/').pop() || 'Dashboard';
+  const currentPath = activePage || urlPath;
   const [showAiImport, setShowAiImport] = React.useState(false);
 
   const isActive = (path) => currentPath === path;
