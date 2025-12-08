@@ -20,9 +20,9 @@ function LayoutContent({ children, currentPageName }) {
   { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard },
   { name: 'Leads', path: 'Leads', icon: Users },
   { name: 'Opportunities', path: 'Opportunities', icon: Briefcase },
+  { name: 'Act Now', path: 'ActNow', icon: Brain },
   { name: 'Tasks', path: 'Tasks', icon: CheckSquare },
   { name: 'Reports', path: 'Reports', icon: BarChart3 },
-  { name: 'Act Now', path: 'ActNow', icon: Brain },
   { name: 'Automation', path: 'Automation', icon: Zap },
   { name: 'Promotion', path: 'Promotion', icon: Sparkles },
   ];
