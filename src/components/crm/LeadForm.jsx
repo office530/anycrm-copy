@@ -75,6 +75,22 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     setValue(field, value);
   };
 
+  // Calculate Lead Temperature
+  React.useEffect(() => {
+    let temp = "Cold";
+    const daysSinceContact = lastContactDate ?
+    Math.floor((new Date() - new Date(lastContactDate)) / (1000 * 60 * 60 * 24)) :
+    999;
+
+    if (daysSinceContact <= 30) {
+      temp = "Warm";
+    } else if (originalStatusColor === "Green") {
+      temp = "Hot History";
+    }
+
+    setValue("lead_temperature", temp);
+  }, [lastContactDate, originalStatusColor, setValue]);
+
   const handleSaveAndClose = (data) => {
     const sanitized = { ...data };
     const numberFields = ['age'];
