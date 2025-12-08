@@ -24,16 +24,22 @@ export default function TasksWidget({ className }) {
     onSuccess: () => queryClient.invalidateQueries(['tasks'])
   });
 
-  // משימות קרובות - רק פעילות (לא הושלמו) ועד 7 ימים קדימה
+  // Active tasks - sorted by due date (overdue/upcoming first, then no date)
   const upcomingTasks = React.useMemo(() => {
-    const today = moment().endOf('day');
     return tasks
-      .filter((t) => {
-        if (t.status === 'done' || t.status === 'archived') return false;
-        const due = moment(t.due_date);
-        return due.isValid() && due.isSameOrBefore(today.clone().add(7, 'days'));
+      .filter((t) => t.status !== 'done' && t.status !== 'archived')
+      .sort((a, b) => {
+        // If both have due dates, sort by date ascending
+        if (a.due_date && b.due_date) {
+            return moment(a.due_date).valueOf() - moment(b.due_date).valueOf();
+        }
+        // If only a has date, it comes first (urgent)
+        if (a.due_date) return -1;
+        // If only b has date, it comes first
+        if (b.due_date) return 1;
+        // If neither, keep order (or sort by creation if needed)
+        return 0; 
       })
-      .sort((a, b) => moment(a.due_date).valueOf() - moment(b.due_date).valueOf())
       .slice(0, 5);
   }, [tasks]);
 
