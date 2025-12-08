@@ -119,29 +119,29 @@ export default function Dashboard() {
 
       {/* Branding Hero Section */}
       <div className={`rounded-3xl p-6 md:p-8 shadow-sm border flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0 transition-colors duration-300 ${
-          theme === 'dark' 
-              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700' 
-              : 'bg-gradient-to-br from-white to-neutral-50/50 md:bg-white border-neutral-100'
-      }`}>
+      theme === 'dark' ?
+      'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700' :
+      'bg-gradient-to-br from-white to-neutral-50/50 md:bg-white border-neutral-100'}`
+      }>
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
               <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>ברוכים הבאים </h1>
               <p className={`text-base md:text-lg mb-6 ${theme === 'dark' ? 'text-cyan-400' : 'text-neutral-600'}`}>Old Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
                   <Button className={`rounded-full px-6 text-white transition-all ${
-                      theme === 'dark' 
-                          ? 'bg-cyan-500 hover:bg-cyan-600 shadow-lg shadow-cyan-500/50' 
-                          : 'bg-red-700 hover:bg-red-800'
-                  }`}>
+              theme === 'dark' ?
+              'bg-cyan-500 hover:bg-cyan-600 shadow-lg shadow-cyan-500/50' :
+              'bg-red-700 hover:bg-red-800'}`
+              }>
                       הוסף נתונים חדשים
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Reports')}>
                   <Button variant="outline" className={`rounded-full px-6 transition-all ${
-                      theme === 'dark' 
-                          ? 'border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10' 
-                          : 'bg-zinc-200 text-red-700 border-red-200 hover:bg-red-50'
-                  }`}>
+              theme === 'dark' ?
+              'border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10' :
+              'bg-zinc-200 text-red-700 border-red-200 hover:bg-red-50'}`
+              }>
                       צפה בדוחות
                   </Button>
                 </Link>
@@ -149,29 +149,29 @@ export default function Dashboard() {
           </div>
           <div className="relative z-10">
               <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69360168d7acf9f690aed166/c1a956565_image.png"
-              alt="AnyCRM Logo"
-              className="h-32 object-contain" />
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69360168d7acf9f690aed166/c1a956565_image.png"
+            alt="AnyCRM Logo"
+            className="h-32 object-contain" />
 
           </div>
           {/* Decorative Background */}
           <div className={`absolute right-0 top-0 w-full md:w-1/3 h-full bg-gradient-to-b md:bg-gradient-to-l opacity-50 pointer-events-none ${
-              theme === 'dark' 
-                  ? 'from-cyan-500/20 md:from-cyan-500/20 to-transparent' 
-                  : 'from-red-50/50 md:from-red-50 to-transparent'
-          }`}></div>
+        theme === 'dark' ?
+        'from-cyan-500/20 md:from-cyan-500/20 to-transparent' :
+        'from-red-50/50 md:from-red-50 to-transparent'}`
+        }></div>
           </div>
 
       {/* Header & Filter */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-right">
         <div className="w-full md:w-auto">
-            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-800'}`}>סקירת ביצועים</h2>
+            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>סקירת ביצועים</h2>
             <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>נתונים עבור: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className={`w-[180px] ${
-                theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-red-100 focus:ring-red-200'
-            }`}>
+          theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-red-100 focus:ring-red-200'}`
+          }>
                 <Calendar className="w-4 h-4 ml-2 text-neutral-600" />
                 <SelectValue placeholder="בחר טווח זמן" />
             </SelectTrigger>
@@ -200,7 +200,7 @@ export default function Dashboard() {
               {/* Sales Trend Chart */}
               <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
-                      <CardTitle className="text-slate-800 text-lg font-semibold tracking-tight flex items-center gap-2">
+                      <CardTitle className="text-[#28f0d9] text-lg font-semibold tracking-tight flex items-center gap-2">
                           <Activity className="w-5 h-5 text-neutral-500" /> מגמות לידים ומכירות
                       </CardTitle>
                   </CardHeader>
@@ -231,7 +231,7 @@ export default function Dashboard() {
               {/* Opportunity Stages */}
               <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
-                      <CardTitle className="text-slate-800 text-lg font-semibold tracking-tight">הזדמנויות לפי שלב</CardTitle>
+                      <CardTitle className="text-[#28f0d9] text-lg font-semibold tracking-tight">הזדמנויות לפי שלב</CardTitle>
                   </CardHeader>
                   <CardContent className="h-[250px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -250,58 +250,58 @@ export default function Dashboard() {
           {/* Right Column: Pipeline Summary & Tasks */}
           <div className="space-y-6">
           <Card className={`shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden transition-colors ${
-              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
-          }`}>
+          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`
+          }>
               <div className="relative z-10 space-y-6">
                   {/* Header */}
                   <div>
-                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>סטטוס Pipeline</div>
-                      <div className={`text-4xl md:text-5xl font-bold mb-1 ${theme === 'dark' ? 'text-cyan-300 drop-shadow-md' : 'text-slate-900'}`}>{stats.totalOpps - stats.wonOppsCount}</div>
-                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>הזדמנויות פעילות</div>
+                      <div className="text-slate-500 mb-2 text-sm font-medium tracking-wide">סטטוס Pipeline</div>
+                      <div className="text-4xl md:text-5xl font-bold mb-1 text-slate-900">{stats.totalOpps - stats.wonOppsCount}</div>
+                      <div className="text-slate-600 text-sm">הזדמנויות פעילות</div>
                   </div>
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-950/30 border-red-500/30' : 'bg-red-50 border-red-100'}`}>
-                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400 drop-shadow-sm' : 'text-red-700'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
-                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-red-200/70' : 'text-slate-600'}`}>סה״כ ערך Pipeline</div>
+                      <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+                          <div className="text-2xl font-bold text-red-700">₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
+                          <div className="text-xs text-slate-600 mt-1">סה״כ ערך Pipeline</div>
                       </div>
-                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-950/30 border-emerald-500/30' : 'bg-emerald-50 border-emerald-100'}`}>
-                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400 drop-shadow-sm' : 'text-emerald-700'}`}>{stats.wonOppsCount}</div>
-                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-emerald-200/70' : 'text-slate-600'}`}>עסקאות נסגרו</div>
+                      <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                          <div className="text-2xl font-bold text-emerald-700">{stats.wonOppsCount}</div>
+                          <div className="text-xs text-slate-600 mt-1">עסקאות נסגרו</div>
                       </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="space-y-2">
-                      <div className={`flex justify-between text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <div className="flex justify-between text-xs text-slate-600">
                           <span>יחס הצלחה</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-cyan-300' : 'text-slate-900'}`}>{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
+                          <span className="font-bold text-slate-900">{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
                       </div>
-                      <div className={`w-full rounded-full h-2.5 overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
-                          <div className={`bg-gradient-to-r h-full rounded-full transition-all duration-500 ${theme === 'dark' ? 'from-cyan-500 to-purple-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'from-red-500 to-red-600'}`} style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
+                      <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                          <div className="bg-gradient-to-r from-red-500 to-red-600 h-full rounded-full transition-all duration-500" style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
                       </div>
                   </div>
 
                   {/* Quick Stats */}
-                  <div className={`space-y-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
+                  <div className="space-y-3 pt-4 border-t border-slate-100">
                       <div className="flex justify-between items-center text-sm">
-                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>ממוצע ערך עסקה</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className="text-slate-600">ממוצע ערך עסקה</span>
+                          <span className="font-bold text-slate-900">₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>בשלב מתקדם</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter(o => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
+                          <span className="text-slate-600">בשלב מתקדם</span>
+                          <span className="font-bold text-slate-900">{filteredOpps.filter((o) => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>זכייה צפויה החודש</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.filter(o => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + ((o.loan_amount_requested || 0) * (o.probability || 0) / 100), 0)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className="text-slate-600">זכייה צפויה החודש</span>
+                          <span className="font-bold text-slate-900">₪{filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.loan_amount_requested || 0) * (o.probability || 0) / 100, 0).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
                       </div>
                   </div>
               </div>
               {/* Decorations */}
-              <div className={`absolute -bottom-20 -right-20 w-64 h-64 blur-3xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-red-900/10' : 'bg-red-50'}`}></div>
-              <div className={`absolute -top-10 -left-10 w-40 h-40 blur-2xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-slate-700/10' : 'bg-slate-50'}`}></div>
+              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-red-50 blur-3xl rounded-full pointer-events-none"></div>
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-slate-50 blur-2xl rounded-full pointer-events-none"></div>
               </Card>
 
               {/* Tasks Widget */}
@@ -316,18 +316,18 @@ function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
   const { theme } = useSettings();
   return (
     <div className={`p-5 md:p-6 rounded-3xl shadow-sm border relative overflow-hidden group hover:shadow-md transition-all ${
-        theme === 'dark' 
-            ? 'bg-slate-800 border-slate-700 hover:border-cyan-500/50' 
-            : 'bg-white border-neutral-100'
-    }`}>
+    theme === 'dark' ?
+    'bg-slate-800 border-slate-700 hover:border-cyan-500/50' :
+    'bg-white border-neutral-100'}`
+    }>
             <div className="relative z-10 text-center">
                 <div className="flex items-center justify-center mb-4">
                     <div className={`p-3 rounded-2xl ${color} ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-10'}`}>
                         <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
                     </div>
                     {total && <span className={`text-xs font-bold px-2 py-1 rounded-full mr-2 ${
-                        theme === 'dark' ? 'text-cyan-400 bg-slate-700' : 'text-neutral-500 bg-neutral-50'
-                    }`}>{total} סה״כ</span>}
+          theme === 'dark' ? 'text-cyan-400 bg-slate-700' : 'text-neutral-500 bg-neutral-50'}`
+          }>{total} סה״כ</span>}
                 </div>
                 <h3 className={`text-2xl md:text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>{value}</h3>
                 <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>{title}</p>
