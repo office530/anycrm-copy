@@ -15,11 +15,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import moment from 'moment';
 import TasksWidget from '@/components/dashboard/TasksWidget';
+import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
 import { useSettings } from '@/components/context/SettingsContext';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function Dashboard() {
   const [timeRange, setTimeRange] = useState('month'); // 'month', 'quarter', 'year', 'all'
+  const [showAddWidget, setShowAddWidget] = useState(false);
   const { theme, branding, pipelineStages } = useSettings();
+  const queryClient = useQueryClient();
 
   const getStageColor = (stageName) => {
     // Normalize stage name (remove translations in parens)
@@ -51,6 +55,20 @@ export default function Dashboard() {
   const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
   const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
   const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ['tasks'], queryFn: () => base44.entities.Task.list() });
+  const { data: customWidgets = [] } = useQuery({ 
+      queryKey: ['dashboard_widgets'], 
+      queryFn: async () => {
+          const configs = await base44.entities.ReportConfig.list();
+          return configs.filter(c => c.show_on_dashboard);
+      }
+  });
+
+  const createWidgetMutation = useMutation({
+      mutationFn: (data) => base44.entities.ReportConfig.create(data),
+      onSuccess: () => {
+          queryClient.invalidateQueries(['dashboard_widgets']);
+      }
+  });
 
   // Filter data by time range
   const { filteredLeads, filteredOpps, dateRangeLabel } = useMemo(() => {
@@ -331,9 +349,14 @@ export default function Dashboard() {
           {/* Tasks Widget (Span 1) */}
           <TasksWidget className="h-full" />
 
+          {/* Custom Widgets */}
+          {customWidgets.map((widget) => (
+              <CustomWidget key={widget.id} config={widget} theme={theme} />
+          ))}
+
           {/* Add Report Placeholder (Span 1) */}
-          <Link to={createPageUrl('Reports')} className="block h-full">
-            <Card className={`h-full border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all group min-h-[200px] ${
+          <div onClick={() => setShowAddWidget(true)} className="block h-full cursor-pointer">
+            <Card className={`h-full border-2 border-dashed flex flex-col items-center justify-center transition-all group min-h-[200px] ${
               theme === 'dark' ? 
               'bg-slate-800/50 border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 
               'bg-neutral-50/50 border-neutral-200 hover:border-purple-200 hover:bg-white'
@@ -347,11 +370,39 @@ export default function Dashboard() {
                 Add New Report
               </span>
             </Card>
-          </Link>
+          </div>
 
       </div>
+
+      <AddWidgetDialog 
+        open={showAddWidget} 
+        onOpenChange={setShowAddWidget} 
+        onSave={(data) => createWidgetMutation.mutate(data)} 
+      />
     </div>);
 
+}
+
+function CustomWidget({ config, theme }) {
+  // Simple rendering of custom widget placeholder/chart
+  // In a real implementation, this would render the actual chart based on config
+  return (
+      <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full min-h-[300px] ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+          <CardHeader>
+              <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-blue-700'}`}>
+                  {config.name}
+              </CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 flex items-center justify-center text-slate-500">
+             {/* Simplified display for now since we don't have the generic chart component ready in this context */}
+             <div className="text-center">
+                 <Activity className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                 <p className="text-sm">Custom {config.type} for {config.entity_type}</p>
+                 <p className="text-xs opacity-70">Group by: {config.config?.xAxis}</p>
+             </div>
+          </CardContent>
+      </Card>
+  );
 }
 
 function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
