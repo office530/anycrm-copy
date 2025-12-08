@@ -122,12 +122,37 @@ export default function ProfileSettings() {
             
             <Card>
                 <CardHeader>
-                    <CardTitle>אזור סכנה</CardTitle>
+                    <CardTitle>ניהול חשבון</CardTitle>
+                    <CardDescription>פעולות התנתקות ומחיקת חשבון</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <Button variant="outline" className="text-red-600 hover:bg-red-50 border-red-200 w-full sm:w-auto" onClick={() => base44.auth.logout()}>
-                        התנתק מהמערכת
-                    </Button>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Button variant="outline" className="text-slate-600 hover:bg-slate-50 w-full sm:w-auto" onClick={() => base44.auth.logout()}>
+                            התנתק מהמערכת
+                        </Button>
+                        
+                        <Button 
+                            variant="ghost" 
+                            className="text-red-600 hover:bg-red-50 hover:text-red-700 w-full sm:w-auto" 
+                            onClick={async () => {
+                                if (window.confirm('האם אתה בטוח שברצונך למחוק את החשבון שלך לצמיתות? פעולה זו אינה הפיכה.')) {
+                                    try {
+                                        setLoading(true);
+                                        // Call backend function to delete account
+                                        await base44.functions.invoke('deleteAccount', {});
+                                        // Then logout
+                                        base44.auth.logout();
+                                    } catch (e) {
+                                        console.error("Failed to delete account", e);
+                                        alert("אירעה שגיאה במחיקת החשבון. אנא נסה שנית מאוחר יותר.");
+                                        setLoading(false);
+                                    }
+                                }
+                            }}
+                        >
+                            מחק חשבון
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
         </div>
