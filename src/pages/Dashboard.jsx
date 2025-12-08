@@ -186,82 +186,41 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-fr">
+          
+          {/* Sales Trend Chart (Span 2) */}
+          <Card className={`lg:col-span-2 border-none shadow-sm rounded-2xl flex flex-col h-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+              <CardHeader>
+                  <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-neutral-500" /> Sales & Leads Trend
+                  </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 min-h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.trendData}>
+                        <defs>
+                            <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#a3a3a3" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#a3a3a3" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#b91c1c" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                        <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                        <Area type="monotone" dataKey="leads" name="Leads" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="sales" name="Sales" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
+                    </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+          </Card>
 
-          {/* Left Column: Charts */}
-          <div className="space-y-6 lg:col-span-2">
-              
-              {/* Sales Trend Chart */}
-              <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
-                  <CardHeader>
-                      <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight flex items-center gap-2">
-                          <Activity className="w-5 h-5 text-neutral-500" /> Sales & Leads Trend
-                      </CardTitle>
-                  </CardHeader>
-                  <CardContent className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={stats.trendData}>
-                            <defs>
-                                <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#a3a3a3" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#a3a3a3" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#b91c1c" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                            <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                            <Area type="monotone" dataKey="leads" name="Leads" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
-                            <Area type="monotone" dataKey="sales" name="Sales" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-              </Card>
-
-              {/* Opportunity Stages */}
-              <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
-                  <CardHeader>
-                      <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight">Opportunities by Stage</CardTitle>
-                  </CardHeader>
-                  <CardContent className="h-[250px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={stats.stageData}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} interval={0} />
-                            <YAxis hide />
-                            <RechartsTooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '8px' }} />
-                            <Bar dataKey="value" fill="#b91c1c" radius={[4, 4, 0, 0]} barSize={40} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                  </CardContent>
-              </Card>
-
-              {/* Add Report Placeholder */}
-              <Link to={createPageUrl('Reports')}>
-                <Card className={`h-[180px] border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all group ${
-                  theme === 'dark' ? 
-                  'bg-slate-800/50 border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 
-                  'bg-neutral-50/50 border-neutral-200 hover:border-purple-200 hover:bg-white'
-                }`}>
-                  <div className={`p-3 rounded-full mb-3 transition-all duration-300 ${
-                    theme === 'dark' ? 'bg-slate-800 group-hover:bg-purple-500/20 text-slate-400 group-hover:text-purple-400 group-hover:scale-110' : 'bg-white group-hover:bg-purple-50 text-slate-400 group-hover:text-purple-600 shadow-sm group-hover:scale-110'
-                  }`}>
-                    <Plus className="w-8 h-8" />
-                  </div>
-                  <span className={`font-medium text-lg ${theme === 'dark' ? 'text-slate-400 group-hover:text-purple-300' : 'text-slate-600 group-hover:text-purple-700'}`}>
-                    Add New Report
-                  </span>
-                </Card>
-              </Link>
-          </div>
-
-          {/* Right Column: Pipeline Summary & Tasks */}
-          <div className="space-y-6">
-          <Card className={`shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden transition-colors ${
+          {/* Pipeline Summary (Span 1) */}
+          <Card className={`shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden flex flex-col h-full justify-between transition-colors ${
           theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`
           }>
               <div className="relative z-10 space-y-6">
@@ -314,12 +273,48 @@ export default function Dashboard() {
               {/* Decorations */}
               <div className={`absolute -bottom-20 -right-20 w-64 h-64 blur-3xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-red-900/5' : 'bg-red-50'}`}></div>
               <div className={`absolute -top-10 -left-10 w-40 h-40 blur-2xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-slate-800/5' : 'bg-slate-50'}`}></div>
-              </Card>
+          </Card>
 
-              {/* Tasks Widget */}
-              <TasksWidget />
+          {/* Opportunity Stages (Span 1) */}
+          <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+              <CardHeader>
+                  <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight">Opportunities by Stage</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 min-h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stats.stageData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} interval={0} />
+                        <YAxis hide />
+                        <RechartsTooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '8px' }} />
+                        <Bar dataKey="value" fill="#b91c1c" radius={[4, 4, 0, 0]} barSize={40} />
+                    </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+          </Card>
+
+          {/* Tasks Widget (Span 1) */}
+          <TasksWidget className="h-full" />
+
+          {/* Add Report Placeholder (Span 1) */}
+          <Link to={createPageUrl('Reports')} className="block h-full">
+            <Card className={`h-full border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all group min-h-[200px] ${
+              theme === 'dark' ? 
+              'bg-slate-800/50 border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 
+              'bg-neutral-50/50 border-neutral-200 hover:border-purple-200 hover:bg-white'
+            }`}>
+              <div className={`p-3 rounded-full mb-3 transition-all duration-300 ${
+                theme === 'dark' ? 'bg-slate-800 group-hover:bg-purple-500/20 text-slate-400 group-hover:text-purple-400 group-hover:scale-110' : 'bg-white group-hover:bg-purple-50 text-slate-400 group-hover:text-purple-600 shadow-sm group-hover:scale-110'
+              }`}>
+                <Plus className="w-8 h-8" />
               </div>
-              </div>
+              <span className={`font-medium text-lg ${theme === 'dark' ? 'text-slate-400 group-hover:text-purple-300' : 'text-slate-600 group-hover:text-purple-700'}`}>
+                Add New Report
+              </span>
+            </Card>
+          </Link>
+
+      </div>
     </div>);
 
 }
