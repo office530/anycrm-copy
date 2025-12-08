@@ -66,14 +66,22 @@ export default function ProfileSettings() {
                             <div className="space-y-2">
                                 <Label className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>Display Name (appears in audit log)</Label>
                                 <Input 
-                                    value={user.full_name || ''} 
+                                    value={''} 
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
                                     placeholder="How you want your name to appear"
                                     className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-white placeholder:text-slate-500" : ""}
                                 />
                                 <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>This name will be displayed in all your activities and updates</p>
                             </div>
-
+                            <div className="space-y-2">
+                                <Label className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>Email Address</Label>
+                                <Input 
+                                    value={''} 
+                                    disabled 
+                                    className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-slate-400" : "bg-slate-50 text-slate-600"} 
+                                />
+                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Email address cannot be changed</p>
+                            </div>
                         </div>
 
                         <div className="pt-4 border-t">
