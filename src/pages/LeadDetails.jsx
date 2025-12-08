@@ -61,16 +61,21 @@ export default function LeadDetailsPage() {
     navigate(createPageUrl('Leads'));
   };
 
-  if (!leadId) {
-    navigate(createPageUrl('Leads'));
-    return null;
-  }
+  React.useEffect(() => {
+    if (!leadId) {
+      navigate(createPageUrl('Leads'));
+    }
+  }, [leadId, navigate]);
 
+  React.useEffect(() => {
+    if (!isLoading && !lead && leadId) {
+       navigate(createPageUrl('Leads'));
+    }
+  }, [lead, isLoading, leadId, navigate]);
+
+  if (!leadId) return null;
   if (isLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!lead) {
-    navigate(createPageUrl('Leads'));
-    return null;
-  }
+  if (!lead) return null;
 
   return (
     <Dialog open={!!lead} onOpenChange={(open) => !open && handleClose()}>

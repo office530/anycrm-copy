@@ -204,18 +204,22 @@ export default function ActNowPage() {
                                         </Badge>
                                         <Badge variant="secondary" className="opacity-70">{item.type}</Badge>
                                     </div>
-                                    <CardTitle className={`text-xl hover:underline ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                                        <Link 
-                                            to={
-                                                item.type === 'Lead' 
-                                                ? `${createPageUrl('LeadDetails')}?leadId=${item.id}` 
-                                                : `${createPageUrl('Opportunities')}?opportunityId=${item.id}`
-                                            }
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {item.target}
-                                        </Link>
+                                    <CardTitle className={`text-xl ${item.id ? 'hover:underline' : ''} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                                        {item.id ? (
+                                            <Link 
+                                                to={
+                                                    item.type === 'Lead' 
+                                                    ? `${createPageUrl('LeadDetails')}?leadId=${item.id}` 
+                                                    : `${createPageUrl('Opportunities')}?opportunityId=${item.id}`
+                                                }
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {item.target}
+                                            </Link>
+                                        ) : (
+                                            <span>{item.target}</span>
+                                        )}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
