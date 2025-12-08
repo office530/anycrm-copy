@@ -232,7 +232,7 @@ export default function LeadsPage() {
   }, [leads, filters, sortConfig]);
 
   return (
-    <div className="space-y-6 pb-24 font-sans text-slate-900">
+    <div className={`space-y-6 pb-24 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* כרטיסי מידע עליונים */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
