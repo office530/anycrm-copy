@@ -91,6 +91,8 @@ export default function ReportsPage() {
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">All Time</SelectItem>
+                    <SelectItem value="today">Today</SelectItem>
+                    <SelectItem value="this_week">This Week</SelectItem>
                     <SelectItem value="this_month">This Month</SelectItem>
                     <SelectItem value="last_month">Last Month</SelectItem>
                     <SelectItem value="this_year">This Year</SelectItem>
