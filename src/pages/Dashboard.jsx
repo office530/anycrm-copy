@@ -208,18 +208,18 @@ export default function Dashboard() {
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className={`w-[180px] ${
-          theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-red-100 focus:ring-red-200'}`
+          theme === 'dark' ? 'bg-slate-800 border-slate-700 text-purple-400' : 'bg-white border-red-100 focus:ring-red-200'}`
           }>
-                <Calendar className="w-4 h-4 mr-2 text-neutral-600" />
+                <Calendar className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-purple-400' : 'text-neutral-600'}`} />
                 <SelectValue placeholder="Select Range" />
             </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="week">Current Week</SelectItem>
-                <SelectItem value="month">Current Month</SelectItem>
-                <SelectItem value="quarter">Current Quarter</SelectItem>
-                <SelectItem value="year">Current Year</SelectItem>
-                <SelectItem value="all">All Time</SelectItem>
+            <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
+                <SelectItem value="today" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Today</SelectItem>
+                <SelectItem value="week" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Week</SelectItem>
+                <SelectItem value="month" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Month</SelectItem>
+                <SelectItem value="quarter" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Quarter</SelectItem>
+                <SelectItem value="year" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Year</SelectItem>
+                <SelectItem value="all" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>All Time</SelectItem>
             </SelectContent>
         </Select>
       </div>
