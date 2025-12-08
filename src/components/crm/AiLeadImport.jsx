@@ -8,8 +8,10 @@ import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
+  const { theme } = useSettings();
   const [input, setInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [mode, setMode] = useState("text"); // text or image
