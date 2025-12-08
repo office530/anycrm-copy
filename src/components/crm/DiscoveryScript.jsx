@@ -208,25 +208,28 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
               <Input type="number" {...register("property_estimated_value", { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-700">סוג הנכס</Label>
+              <Label className="text-slate-700">סוג הנכס / בטוחה</Label>
               <Select onValueChange={(v) => setValue("property_type", v)} defaultValue={initialData?.property_type}>
                 <SelectTrigger><SelectValue placeholder="בחר סוג" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Apartment">דירה בבניין</SelectItem>
+                  <SelectItem value="Apartment">דירה למגורים</SelectItem>
                   <SelectItem value="Private House">בית פרטי</SelectItem>
-                  <SelectItem value="Farm/Moshav">משק / נחלה</SelectItem>
+                  <SelectItem value="Commercial">נכס מסחרי</SelectItem>
+                  <SelectItem value="Land">קרקע</SelectItem>
+                  <SelectItem value="Financial">תיק ני"ע / פיננסי</SelectItem>
                   <SelectItem value="Other">אחר</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-700">מצב רישומי</Label>
+              <Label className="text-slate-700">סטטוס משפטי / רישום</Label>
               <Select onValueChange={(v) => setValue("registration_status", v)} defaultValue={initialData?.registration_status}>
-                <SelectTrigger><SelectValue placeholder="בחר רישום" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Private Tabu">טאבו פרטי</SelectItem>
-                  <SelectItem value="Hevra Meshakenet/Minhal">חברה משכנת / מנהל</SelectItem>
-                  <SelectItem value="Warnings Exist">יש הערות אזהרה</SelectItem>
+                  <SelectItem value="Private Tabu">בעלות מלאה</SelectItem>
+                  <SelectItem value="Hevra Meshakenet/Minhal">חכירה / מנהל</SelectItem>
+                  <SelectItem value="Warnings Exist">יש מגבלות / הערות</SelectItem>
+                  <SelectItem value="Other">אחר</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -264,7 +267,7 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
         </CardHeader>
         <CardContent className="bg-white pt-6 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 col-span-2">
-             <Label className="text-slate-700">מה מטרת הכסף?</Label>
+             <Label className="text-slate-700">מטרת המימון / הגיוס</Label>
              <Input {...register("loan_purpose")} placeholder="עזרה לילדים / מחייה / סגירת חובות..." />
           </div>
           <div className="space-y-2">
@@ -272,13 +275,13 @@ function DiscoveryFormContent({ initialData, onSubmit, isSaving }) {
             <Input type="number" {...register("requested_amount", { valueAsNumber: true })} className="text-lg font-bold" />
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-700">מסלול מועדף</Label>
+            <Label className="text-slate-700">מסלול מבוקש</Label>
             <Select onValueChange={(v) => setValue("payment_preference", v)} defaultValue={initialData?.payment_preference}>
               <SelectTrigger><SelectValue placeholder="בחר מסלול" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Pay Interest Monthly">תשלום ריבית חודשי</SelectItem>
-                <SelectItem value="Full Balloon (No Payment)">בלון מלא (לא משלמים כלום)</SelectItem>
-                <SelectItem value="Partial">חלקי / אחר</SelectItem>
+                <SelectItem value="Pay Interest Monthly">תשלום שוטף (שפיצר/קרן)</SelectItem>
+                <SelectItem value="Full Balloon (No Payment)">בלון / גרייס (דחיית תשלום)</SelectItem>
+                <SelectItem value="Partial">גמיש / אחר</SelectItem>
               </SelectContent>
             </Select>
           </div>
