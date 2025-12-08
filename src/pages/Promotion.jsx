@@ -18,12 +18,6 @@ export default function PromotionPage() {
     const darkMuted = "text-slate-400";
     const border = "border-slate-800";
 
-    const fadeInUp = {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.5 }
-    };
-
     const features = [
         {
             icon: Brain,
@@ -52,7 +46,7 @@ export default function PromotionPage() {
     ];
 
     return (
-        <div className={`min-h-screen ${darkBg} ${darkText} -m-4 lg:-m-8 p-4 lg:p-8 font-sans selection:bg-cyan-500/30`}>
+        <div className={`min-h-screen ${darkBg} ${darkText} p-4 lg:p-8 font-sans selection:bg-cyan-500/30`}>
             {/* Hero Section */}
             <div className="max-w-6xl mx-auto pt-10 pb-20 text-center">
                 <motion.div 
@@ -66,7 +60,9 @@ export default function PromotionPage() {
                 </motion.div>
 
                 <motion.h1 
-                    {...fadeInUp}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                     className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8"
                 >
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-500">
