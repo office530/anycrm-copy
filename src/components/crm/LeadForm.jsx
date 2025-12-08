@@ -328,7 +328,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
                 <div className="space-y-1">
                    <div className="flex items-center gap-2 mb-2">
-                     <Label className="text-slate-900 font-semibold m-0">יש ילדים?</Label>
+                     <Label className="text-slate-900 font-semibold m-0">בעלי עניין נוספים?</Label>
                      <input
                       type="checkbox"
                       className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300"
@@ -338,13 +338,13 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                    <Input
                     type="number"
                     {...register("spouse_age", { valueAsNumber: true })}
-                    placeholder="גיל בן/ת זוג (אם רלוונטי)"
+                    placeholder="גיל / וותק שותף (אם רלוונטי)"
                     className={inputClass} />
 
                 </div>
 
                 <div className="space-y-1">
-                  <Label className={`${labelClass} text-right`}>שווי נכס מוערך (₪)</Label>
+                  <Label className={`${labelClass} text-right`}>שווי עסקה / נכס (₪)</Label>
                   <Input
                     type="number"
                     {...register("estimated_property_value", { valueAsNumber: true })}
@@ -354,7 +354,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                 </div>
 
                 <div className="space-y-1">
-                  <Label className={`${labelClass} text-right`}>יתרת משכנתא קיימת (₪)</Label>
+                  <Label className={`${labelClass} text-right`}>התחייבויות קיימות (₪)</Label>
                   <Input
                     type="number"
                     {...register("existing_mortgage_balance", { valueAsNumber: true })}
