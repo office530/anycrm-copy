@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
         }
 
         // Execute in batches to avoid rate limits
-        const BATCH_SIZE = 10;
+        const BATCH_SIZE = 2;
         for (let i = 0; i < promises.length; i += BATCH_SIZE) {
             await Promise.all(promises.slice(i, i + BATCH_SIZE));
         }
