@@ -315,9 +315,9 @@ Interested in a reverse mortgage to help the children"
             className={`border rounded-xl p-6 text-center shadow-sm ${theme === 'dark' ? 'bg-slate-800 border-blue-900' : 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200'}`}
           >
             <Loader2 className={`w-12 h-12 mx-auto mb-3 animate-spin ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-            <p className={`text-base font-bold mb-2 ${theme === 'dark' ? 'text-blue-300' : 'text-blue-900'}`}>מעבד את הנתונים...</p>
+            <p className={`text-base font-bold mb-2 ${theme === 'dark' ? 'text-blue-300' : 'text-blue-900'}`}>Processing data...</p>
             <p className={`text-sm ${theme === 'dark' ? 'text-blue-400' : 'text-blue-700'}`}>
-              {mode === "image" ? "🔍 AI Vision סורק את התמונה ומחלץ את כל הפרטים" : "🤖 AI מנתח את הטקסט"}
+              {mode === "image" ? "🔍 AI Vision is scanning the image and extracting details" : "🤖 AI is analyzing the text"}
             </p>
             <div className="mt-4 flex justify-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
@@ -334,7 +334,7 @@ Interested in a reverse mortgage to help the children"
             disabled={isProcessing}
             className={`flex-1 ${theme === 'dark' ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' : ''}`}
           >
-            ביטול
+            Cancel
           </Button>
           <Button
             onClick={processTextInput}
@@ -344,12 +344,12 @@ Interested in a reverse mortgage to help the children"
             {isProcessing ? (
               <>
                 <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                מעבד...
+                Processing...
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4 ml-2" />
-                קלוט ליד
+                Import Lead
               </>
             )}
           </Button>
