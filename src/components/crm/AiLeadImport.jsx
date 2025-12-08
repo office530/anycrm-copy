@@ -366,10 +366,10 @@ Interested in a reverse mortgage to help the children"
             <DialogHeader>
               <DialogTitle className={`text-2xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                 <CheckCircle2 className="w-6 h-6 text-green-600" />
-                בדוק את הפרטים שזוהו
+                Review Identified Details
               </DialogTitle>
               <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                ה-AI חילץ את המידע הבא - ערוך אם צריך ושמור
+                AI extracted the following information - edit if needed and save
               </p>
             </DialogHeader>
 
