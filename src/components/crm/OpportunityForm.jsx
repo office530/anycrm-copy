@@ -344,13 +344,11 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
                 <SelectValue placeholder="בחר שלב" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="New (חדש)">חדש</SelectItem>
-                <SelectItem value="Discovery Call (שיחת בירור צרכים)">שיחת בירור צרכים</SelectItem>
-                <SelectItem value="Meeting Scheduled (נקבעת פגישה)">נקבעת פגישה</SelectItem>
-                <SelectItem value="Documents Collection (איסוף מסמכים)">איסוף מסמכים</SelectItem>
-                <SelectItem value="Request Sent to Harel (בקשה נשלחה להראל)">בקשה נשלחה להראל (סופי)</SelectItem>
-                <SelectItem value="Closed Won (נחתם - בהצלחה)">נחתם - בהצלחה</SelectItem>
-                <SelectItem value="Closed Lost (אבוד)">אבוד</SelectItem>
+                {(pipelineStages || []).map((stage) => (
+                  <SelectItem key={stage.id} value={stage.id}>
+                    {stage.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
