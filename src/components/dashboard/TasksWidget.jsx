@@ -10,7 +10,7 @@ import { createPageUrl } from "@/utils";
 import moment from "moment";
 import { useSettings } from "@/components/context/SettingsContext";
 
-export default function TasksWidget() {
+export default function TasksWidget({ className }) {
   const { theme } = useSettings();
   const queryClient = useQueryClient();
 
@@ -43,9 +43,9 @@ export default function TasksWidget() {
   };
 
   return (
-    <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-[400px] transition-colors ${
+    <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full min-h-[350px] transition-colors ${
       theme === 'dark' ? 'bg-slate-800' : 'bg-white'
-    }`}>
+    } ${className || ''}`}>
       <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-lg flex items-center justify-between">
           <span className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>Upcoming Tasks</span>
