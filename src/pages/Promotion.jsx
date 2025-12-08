@@ -175,11 +175,6 @@ export default function PromotionPage() {
                 <div className="inline-block p-[1px] rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600">
                     <div className={`${darkBg} rounded-2xl p-8 md:p-12`}>
                         <h2 className="text-3xl font-bold mb-6">Ready to simplify your workflow?</h2>
-                        <Link to={createPageUrl('Dashboard')}>
-                            <Button size="lg" className="bg-white text-slate-950 hover:bg-slate-200 font-bold px-8">
-                                Launch Dashboard
-                            </Button>
-                        </Link>
                     </div>
                 </div>
             </div>
