@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { DollarSign, Trophy, Target, TrendingUp } from "lucide-react";
+import { useSettings } from "@/components/context/SettingsContext";
 
 const COLORS = ['#ef4444', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 export default function SalesPerformance({ leads, opportunities, timeRange }) {
+  const { theme } = useSettings();
   
   const stats = useMemo(() => {
     const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("בהצלחה"));
@@ -49,56 +51,56 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
     <div className="space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">הכנסות שנסגרו</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>הכנסות שנסגרו</CardTitle>
+            <DollarSign className={`h-4 w-4 ${theme === 'dark' ? 'text-emerald-400' : 'text-green-600'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-xl md:text-2xl font-bold text-green-600 truncate" title={formatCurrency(stats.totalRevenue)}>{formatCurrency(stats.totalRevenue)}</div>
-            <p className="text-xs text-neutral-500">סה"כ עסקאות שנסגרו בהצלחה</p>
+            <div className={`text-xl md:text-2xl font-bold truncate ${theme === 'dark' ? 'text-emerald-400' : 'text-green-600'}`} title={formatCurrency(stats.totalRevenue)}>{formatCurrency(stats.totalRevenue)}</div>
+            <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>סה"כ עסקאות שנסגרו בהצלחה</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">עסקאות שנסגרו</CardTitle>
-            <Trophy className="h-4 w-4 text-yellow-500" />
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>עסקאות שנסגרו</CardTitle>
+            <Trophy className={`h-4 w-4 ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-500'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.closedCount}</div>
-            <p className="text-xs text-neutral-500">מספר עסקאות בסטטוס זכייה</p>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.closedCount}</div>
+            <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>מספר עסקאות בסטטוס זכייה</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">שווי עסקה ממוצע</CardTitle>
-            <Target className="h-4 w-4 text-red-500" />
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>שווי עסקה ממוצע</CardTitle>
+            <Target className={`h-4 w-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-xl md:text-2xl font-bold truncate">{formatCurrency(stats.avgDealSize)}</div>
-            <p className="text-xs text-neutral-500">ממוצע לעסקה שנסגרה</p>
+            <div className={`text-xl md:text-2xl font-bold truncate ${theme === 'dark' ? 'text-white' : ''}`}>{formatCurrency(stats.avgDealSize)}</div>
+            <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>ממוצע לעסקה שנסגרה</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">שווי צנרת פתוח</CardTitle>
-            <TrendingUp className="h-4 w-4 text-purple-500" />
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>שווי צנרת פתוח</CardTitle>
+            <TrendingUp className={`h-4 w-4 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-500'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-xl md:text-2xl font-bold truncate">{formatCurrency(stats.pipelineValue)}</div>
-            <p className="text-xs text-neutral-500">פוטנציאל עסקאות פתוחות</p>
+            <div className={`text-xl md:text-2xl font-bold truncate ${theme === 'dark' ? 'text-white' : ''}`}>{formatCurrency(stats.pipelineValue)}</div>
+            <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>פוטנציאל עסקאות פתוחות</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader>
-            <CardTitle>התפלגות מוצרים</CardTitle>
+            <CardTitle className={theme === 'dark' ? 'text-white' : ''}>התפלגות מוצרים</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
