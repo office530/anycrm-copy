@@ -74,18 +74,22 @@ export default function TasksWidget({ className }) {
               return (
                 <div
                   key={task.id}
-                  className={`p-3 rounded-xl border group hover:shadow-sm transition-all ${
+                  className={`p-3 rounded-xl border group hover:shadow-md transition-all duration-300 ${
                     theme === 'dark'
                       ? isDone 
-                        ? 'bg-emerald-900/20 border-emerald-800' 
+                        ? 'bg-emerald-950/30 border-emerald-800/50 opacity-60' 
                         : isOverdue 
-                        ? 'bg-red-900/20 border-red-800' 
-                        : 'bg-slate-700/50 border-slate-600 hover:border-red-500/50'
+                        ? 'bg-red-950/40 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]' 
+                        : isToday
+                        ? 'bg-amber-950/40 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
+                        : 'bg-slate-800/80 border-slate-700 hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]'
                       : isDone
-                        ? 'bg-emerald-50/50 border-emerald-200'
+                        ? 'bg-emerald-50 border-emerald-100 opacity-70'
                         : isOverdue
-                        ? 'bg-red-50/50 border-red-200'
-                        : 'bg-slate-50 border-slate-100 hover:border-red-200'
+                        ? 'bg-red-50 border-red-200 shadow-sm'
+                        : isToday
+                        ? 'bg-amber-50 border-amber-200 shadow-sm'
+                        : 'bg-white border-slate-100 hover:border-blue-200 hover:shadow-md'
                   }`}
                 >
                   <div className="flex items-start gap-2">
