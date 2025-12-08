@@ -68,7 +68,7 @@ export default function NotificationSettings() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['notification_settings']);
-            alert("ההגדרות נשמרו בהצלחה");
+            alert("Settings saved successfully");
         }
     });
 
@@ -76,7 +76,7 @@ export default function NotificationSettings() {
         saveMutation.mutate(data);
     };
 
-    if (!currentUser) return <div className="p-4">נא להתחבר כדי לנהל התראות</div>;
+    if (!currentUser) return <div className="p-4">Please log in to manage notifications</div>;
     if (isLoading) return <div className="p-4"><Loader2 className="animate-spin" /></div>;
 
     return (
@@ -85,20 +85,20 @@ export default function NotificationSettings() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="w-5 h-5 text-red-600" />
-                        העדפות התראות
+                        Notification Preferences
                     </CardTitle>
                     <CardDescription>
-                        בחר אילו התראות ברצונך לקבל במערכת
+                        Choose which notifications you want to receive
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     
-                    <div className="flex items-center justify-between space-x-4 space-x-reverse">
-                        <div className="flex items-center space-x-4 space-x-reverse">
+                    <div className="flex items-center justify-between space-x-4">
+                        <div className="flex items-center space-x-4">
                             <Users className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
-                                <Label className="text-base">לידים חדשים</Label>
-                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>קבל התראה כאשר נוצר ליד חדש במערכת</p>
+                                <Label className="text-base">New Leads</Label>
+                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Get notified when a new lead is created</p>
                             </div>
                         </div>
                         <Switch 
@@ -107,12 +107,12 @@ export default function NotificationSettings() {
                         />
                     </div>
 
-                    <div className="flex items-center justify-between space-x-4 space-x-reverse">
-                        <div className="flex items-center space-x-4 space-x-reverse">
+                    <div className="flex items-center justify-between space-x-4">
+                        <div className="flex items-center space-x-4">
                             <CheckSquare className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
-                                <Label className="text-base">משימות שלי</Label>
-                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>קבל התראה על משימות חדשות או שפג תוקפן</p>
+                                <Label className="text-base">My Tasks</Label>
+                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Get notified about new or overdue tasks</p>
                             </div>
                         </div>
                         <Switch 
@@ -121,12 +121,12 @@ export default function NotificationSettings() {
                         />
                     </div>
 
-                    <div className="flex items-center justify-between space-x-4 space-x-reverse">
-                        <div className="flex items-center space-x-4 space-x-reverse">
+                    <div className="flex items-center justify-between space-x-4">
+                        <div className="flex items-center space-x-4">
                             <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
-                                <Label className="text-base">הזדמנויות לקראת סגירה</Label>
-                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>קבל תזכורת על הזדמנויות שתאריך היעד שלהן מתקרב</p>
+                                <Label className="text-base">Opportunities Closing Soon</Label>
+                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Get a reminder when opportunities are nearing their close date</p>
                             </div>
                         </div>
                         <Switch 
@@ -136,24 +136,24 @@ export default function NotificationSettings() {
                     </div>
 
                     {watch('notify_opp_closing') && (
-                        <div className="mr-10 pl-4 border-r-2 border-slate-100 pr-4">
+                        <div className="ml-10 pr-4 border-l-2 border-slate-100 pl-4">
                             <div className="flex items-center gap-3">
-                                <Label className="whitespace-nowrap">התראה</Label>
+                                <Label className="whitespace-nowrap">Alert</Label>
                                 <Input 
                                     type="number" 
                                     className="w-20" 
                                     {...register('days_before_deadline', { min: 1 })}
                                 />
-                                <Label>ימים לפני תאריך היעד</Label>
+                                <Label>days before deadline</Label>
                             </div>
                         </div>
                     )}
 
                     <div className="pt-4 flex justify-end">
                         <Button type="submit" disabled={saveMutation.isPending} className="bg-red-600 hover:bg-red-700">
-                            {saveMutation.isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                            <Save className="ml-2 h-4 w-4" />
-                            שמור שינויים
+                            {saveMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            <Save className="mr-2 h-4 w-4" />
+                            Save Changes
                         </Button>
                     </div>
 

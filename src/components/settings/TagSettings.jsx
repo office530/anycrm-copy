@@ -18,7 +18,7 @@ export default function TagSettings() {
     };
 
     const removeTag = (tagToRemove) => {
-        if (confirm(`למחוק את התגית "${tagToRemove}"?`)) {
+        if (confirm(`Delete tag "${tagToRemove}"?`)) {
             updateSystemTags(systemTags.filter(t => t !== tagToRemove));
         }
     };
@@ -27,28 +27,28 @@ export default function TagSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
              <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>ניהול תגיות מערכת</CardTitle>
-                    <CardDescription>תגיות המשמשות לסיווג לידים ולקוחות</CardDescription>
+                    <CardTitle>System Tags Management</CardTitle>
+                    <CardDescription>Tags used for classifying leads and customers</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="flex gap-2">
                         <Input 
                             value={newTag} 
                             onChange={(e) => setNewTag(e.target.value)} 
-                            placeholder="שם תגית חדשה..." 
+                            placeholder="New tag name..." 
                             onKeyDown={(e) => e.key === 'Enter' && addTag()}
                             className="max-w-xs"
                         />
                         <Button onClick={addTag} variant="secondary">
                             <Plus className="w-4 h-4 mr-2" />
-                            הוסף
+                            Add
                         </Button>
                     </div>
 
                     <div className={`flex flex-wrap gap-2 p-4 rounded-xl border min-h-[100px] ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
-                        {systemTags.length === 0 && <p className="text-slate-500 text-sm italic w-full text-center pt-8">לא הוגדרו תגיות עדיין</p>}
+                        {systemTags.length === 0 && <p className="text-slate-500 text-sm italic w-full text-center pt-8">No tags defined yet</p>}
                         {systemTags.map(tag => (
-                            <Badge key={tag} className={`pl-1 pr-3 py-1.5 text-sm gap-2 shadow-sm ${theme === 'dark' ? 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
+                            <Badge key={tag} className={`pr-1 pl-3 py-1.5 text-sm gap-2 shadow-sm ${theme === 'dark' ? 'bg-slate-700 border-slate-600 text-slate-200 hover:bg-slate-600' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}>
                                 {tag}
                                 <button onClick={() => removeTag(tag)} className="bg-slate-100 rounded-full p-0.5 hover:bg-red-100 hover:text-red-600 transition-colors">
                                     <X className="w-3 h-3" />

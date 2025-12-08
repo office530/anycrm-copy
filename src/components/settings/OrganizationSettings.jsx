@@ -46,13 +46,13 @@ export default function OrganizationSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className={`transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
                 <CardHeader>
-                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>פרטי הארגון</CardTitle>
-                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>הגדרות בסיסיות של החברה המוצגות בכל המערכת</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Organization Details</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Basic company settings displayed throughout the system</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <Label className={theme === 'dark' ? 'text-slate-200' : ''}>שם החברה / ארגון</Label>
+                            <Label className={theme === 'dark' ? 'text-slate-200' : ''}>Company / Organization Name</Label>
                             <Input 
                                 value={localBranding.companyName || ''} 
                                 onChange={(e) => setLocalBranding({...localBranding, companyName: e.target.value})} 
@@ -60,7 +60,7 @@ export default function OrganizationSettings() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className={theme === 'dark' ? 'text-slate-200' : ''}>מטבע ראשי (סימול)</Label>
+                            <Label className={theme === 'dark' ? 'text-slate-200' : ''}>Primary Currency (Symbol)</Label>
                             <Input 
                                 value={localBranding.currency || ''} 
                                 onChange={(e) => setLocalBranding({...localBranding, currency: e.target.value})}
@@ -70,7 +70,7 @@ export default function OrganizationSettings() {
                     </div>
                     
                     <div className="space-y-2">
-                        <Label className={theme === 'dark' ? 'text-slate-200' : ''}>כתובת לוגו (URL)</Label>
+                        <Label className={theme === 'dark' ? 'text-slate-200' : ''}>Logo URL</Label>
                         <div className="flex gap-4">
                             <Input 
                                 value={localBranding.logoUrl || ''} 
@@ -93,12 +93,12 @@ export default function OrganizationSettings() {
 
             <Card className={`transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
                 <CardHeader>
-                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>נראות ומיתוג</CardTitle>
-                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>התאמת צבעי המערכת למותג שלך</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Appearance & Branding</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Customize system colors for your brand</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        <Label className={theme === 'dark' ? 'text-slate-200' : ''}>צבע ראשי</Label>
+                        <Label className={theme === 'dark' ? 'text-slate-200' : ''}>Primary Color</Label>
                         <div className="flex flex-wrap gap-3">
                             {colors.map((c) => (
                                 <button
@@ -115,18 +115,18 @@ export default function OrganizationSettings() {
                             theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'
                         }`}>
                             <div className={`px-4 py-2 rounded-md text-white font-medium bg-${localBranding.primaryColor}-600 shadow-sm`}>
-                                כפתור לדוגמה
+                                Sample Button
                             </div>
                             <div className={`text-${localBranding.primaryColor}-600 font-bold`}>
-                                טקסט מודגש לדוגמה
+                                Sample Bold Text
                             </div>
                         </div>
                     </div>
 
                     <div className="pt-6 mt-6 border-t flex justify-end">
                         <Button onClick={handleSave} disabled={isSaving} className="bg-slate-900 text-white min-w-[120px]">
-                            {isSaving ? "שומר..." : "שמור הגדרות"}
-                            <Save className="w-4 h-4 mr-2" />
+                            {isSaving ? "Saving..." : "Save Settings"}
+                            <Save className="w-4 h-4 ml-2" />
                         </Button>
                     </div>
                 </CardContent>

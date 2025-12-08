@@ -34,12 +34,12 @@ export default function MobileBottomNav() {
     }`}>
             <Link to={createPageUrl('Dashboard')} className={`flex flex-col items-center gap-1 transition-all ${isActive('Dashboard') ? activeClass : inactiveClass}`}>
                 <LayoutDashboard className="w-6 h-6" />
-                <span className="text-[10px] font-medium">ראשי</span>
+                <span className="text-[10px] font-medium">Dashboard</span>
             </Link>
 
             <Link to={createPageUrl('Leads')} className={`flex flex-col items-center gap-1 transition-all ${isActive('Leads') ? activeClass : inactiveClass}`}>
                 <Users className="w-6 h-6" />
-                <span className="text-[10px] font-medium">לידים</span>
+                <span className="text-[10px] font-medium">Leads</span>
             </Link>
 
             {/* Center FAB for Quick Actions */}
@@ -57,18 +57,18 @@ export default function MobileBottomNav() {
                     <DropdownMenuContent align="center" side="top" className={`mb-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : ''}`}>
                         <DropdownMenuItem asChild>
                              <Link to={`${createPageUrl('Leads')}?action=new`} className="cursor-pointer flex items-center gap-2">
-                                <Users className="w-4 h-4" /> ליד חדש
+                                <Users className="w-4 h-4" /> New Lead
                              </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                              <Link to={`${createPageUrl('Opportunities')}?action=new`} className="cursor-pointer flex items-center gap-2">
-                                <Briefcase className="w-4 h-4" /> הזדמנות חדשה
+                                <Briefcase className="w-4 h-4" /> New Opportunity
                              </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                              <Link to={`${createPageUrl('Leads')}?action=ai-import`} className="cursor-pointer flex items-center gap-2 text-purple-700 bg-gradient-to-r from-purple-50 to-blue-50">
-                                <Sparkles className="w-4 h-4" /> ייבוא ליד AI
+                                <Sparkles className="w-4 h-4" /> Import AI Lead
                              </Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -77,12 +77,12 @@ export default function MobileBottomNav() {
 
             <Link to={createPageUrl('Opportunities')} className={`flex flex-col items-center gap-1 transition-all ${isActive('Opportunities') ? activeClass : inactiveClass}`}>
                 <Briefcase className="w-6 h-6" />
-                <span className="text-[10px] font-medium">עסקאות</span>
+                <span className="text-[10px] font-medium">Deals</span>
             </Link>
 
             <Link to={createPageUrl('Settings')} className={`flex flex-col items-center gap-1 transition-all ${isActive('Settings') ? activeClass : inactiveClass}`}>
                 <Menu className="w-6 h-6" />
-                <span className="text-[10px] font-medium">הגדרות</span>
+                <span className="text-[10px] font-medium">Settings</span>
             </Link>
         </div>);
 

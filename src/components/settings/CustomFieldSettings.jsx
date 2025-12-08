@@ -45,12 +45,12 @@ export default function CustomFieldSettings() {
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>שדות מותאמים אישית</CardTitle>
-                        <CardDescription>הוספת שדות מידע נוספים ללידים והזדמנויות</CardDescription>
+                        <CardTitle>Custom Fields</CardTitle>
+                        <CardDescription>Add extra data fields to Leads and Opportunities</CardDescription>
                     </div>
                     <Button onClick={() => handleEdit(null)} className="bg-slate-900 text-white">
                         <Plus className="w-4 h-4 mr-2" />
-                        שדה חדש
+                        New Field
                     </Button>
                 </CardHeader>
                 <CardContent>
@@ -58,10 +58,10 @@ export default function CustomFieldSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תווית</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>מזהה מערכת</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>סוג שדה</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>שייך ל-</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Label</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>System ID</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Type</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Belongs To</TableHead>
                                     <TableHead className="text-right w-[100px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -75,7 +75,7 @@ export default function CustomFieldSettings() {
                                 ) : fields.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center py-8 text-slate-500">
-                                            לא הוגדרו שדות מותאמים אישית
+                                            No custom fields defined
                                         </TableCell>
                                     </TableRow>
                                 ) : fields.map((field) => (
@@ -85,7 +85,7 @@ export default function CustomFieldSettings() {
                                         <TableCell>
                                             <Badge variant="outline">{field.type}</Badge>
                                         </TableCell>
-                                        <TableCell>{field.entity_type === 'Lead' ? 'לידים' : 'הזדמנויות'}</TableCell>
+                                        <TableCell>{field.entity_type === 'Lead' ? 'Leads' : 'Opportunities'}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2 justify-end">
                                                 <Button variant="ghost" size="icon" onClick={() => handleEdit(field)}>
@@ -96,7 +96,7 @@ export default function CustomFieldSettings() {
                                                     size="icon" 
                                                     className="hover:bg-red-50 hover:text-red-600"
                                                     onClick={() => {
-                                                        if(confirm('למחוק שדה זה? המידע הקיים לא ימחק אך השדה לא יוצג.')) {
+                                                        if(confirm('Delete this field? Existing data will not be deleted but field will be hidden.')) {
                                                             deleteMutation.mutate(field.id);
                                                         }
                                                     }}
@@ -167,21 +167,21 @@ function CustomFieldDialog({ open, onOpenChange, field, onSuccess }) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{field?.id ? 'עריכת שדה' : 'יצירת שדה חדש'}</DialogTitle>
+                    <DialogTitle>{field?.id ? 'Edit Field' : 'Create New Field'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                     <div className="grid grid-cols-2 gap-4">
                          <div className="space-y-2">
-                            <Label>שם התווית (Label)</Label>
+                            <Label>Label Name</Label>
                             <Input 
                                 required 
                                 value={formData.label}
                                 onChange={(e) => setFormData({...formData, label: e.target.value})}
-                                placeholder="לדוגמה: צבע מועדף"
+                                placeholder="e.g. Favorite Color"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>שייך ל-</Label>
+                            <Label>Belongs To</Label>
                             <Select 
                                 value={formData.entity_type} 
                                 onValueChange={(val) => setFormData({...formData, entity_type: val})}
@@ -190,15 +190,15 @@ function CustomFieldDialog({ open, onOpenChange, field, onSuccess }) {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="Lead">לידים</SelectItem>
-                                    <SelectItem value="Opportunity">הזדמנויות</SelectItem>
+                                    <SelectItem value="Lead">Leads</SelectItem>
+                                    <SelectItem value="Opportunity">Opportunities</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>סוג שדה</Label>
+                        <Label>Field Type</Label>
                         <Select 
                             value={formData.type} 
                             onValueChange={(val) => setFormData({...formData, type: val})}
@@ -207,31 +207,31 @@ function CustomFieldDialog({ open, onOpenChange, field, onSuccess }) {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="text">טקסט (Text)</SelectItem>
-                                <SelectItem value="number">מספר (Number)</SelectItem>
-                                <SelectItem value="date">תאריך (Date)</SelectItem>
-                                <SelectItem value="boolean">כן/לא (Boolean)</SelectItem>
-                                <SelectItem value="select">בחירה מרשימה (Select)</SelectItem>
+                                <SelectItem value="text">Text</SelectItem>
+                                <SelectItem value="number">Number</SelectItem>
+                                <SelectItem value="date">Date</SelectItem>
+                                <SelectItem value="boolean">Boolean (Yes/No)</SelectItem>
+                                <SelectItem value="select">Select</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     {formData.type === 'select' && (
                         <div className="space-y-2">
-                            <Label>אפשרויות בחירה (כל אפשרות בשורה חדשה)</Label>
+                            <Label>Options (one per line)</Label>
                             <textarea 
                                 className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
                                 value={optionsText}
                                 onChange={(e) => setOptionsText(e.target.value)}
-                                placeholder="אפשרות 1&#10;אפשרות 2&#10;אפשרות 3"
+                                placeholder="Option 1&#10;Option 2&#10;Option 3"
                             />
                         </div>
                     )}
 
                     <div className="pt-4 flex justify-end gap-2">
-                        <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>ביטול</Button>
+                        <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
                         <Button type="submit" disabled={isLoading} className="bg-slate-900">
-                            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "שמור"}
+                            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
                         </Button>
                     </div>
                 </form>

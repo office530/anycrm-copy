@@ -12,7 +12,7 @@ import {
     Briefcase, UserPlus, Clock, Settings
 } from "lucide-react";
 import { formatDistanceToNow } from 'date-fns';
-import { he } from 'date-fns/locale';
+// import { he } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -72,12 +72,12 @@ export default function Notifications() {
             }).map(t => ({
                 id: `task-${t.id}`,
                 type: 'task',
-                title: 'משימה דורשת תשומת לב',
+                title: 'Task requires attention',
                 message: t.title,
                 date: t.due_date,
                 isOverdue: new Date(t.due_date) < new Date(),
                 link: createPageUrl('Dashboard'), // Or Tasks page
-                actionLabel: 'צפה במשימות'
+                actionLabel: 'View Tasks'
             }));
         },
         enabled: !!currentUser && !!settings,
@@ -102,11 +102,11 @@ export default function Notifications() {
             }).map(o => ({
                 id: `opp-${o.id}`,
                 type: 'opportunity',
-                title: 'הזדמנות מתקרבת ליעד',
+                title: 'Opportunity closing soon',
                 message: `${o.lead_name} - ${o.product_type}`,
                 date: o.expected_close_date,
                 link: createPageUrl('Opportunities'),
-                actionLabel: 'צפה בלוח'
+                actionLabel: 'View Board'
             }));
         },
         enabled: !!settings,
@@ -127,13 +127,13 @@ export default function Notifications() {
 
             if (n.related_entity_type === 'Lead' && n.related_entity_id) {
                 link = `${createPageUrl('LeadDetails')}?id=${n.related_entity_id}`;
-                actionLabel = 'תיק לקוח';
+                actionLabel = 'Lead File';
             } else if (n.related_entity_type === 'Opportunity') {
                 link = createPageUrl('Opportunities');
-                actionLabel = 'לוח הזדמנויות';
+                actionLabel = 'Opportunities Board';
             } else if (n.related_entity_type === 'Task') {
                 link = createPageUrl('Tasks');
-                actionLabel = 'משימות';
+                actionLabel = 'Tasks';
             }
 
             return {
@@ -181,16 +181,16 @@ export default function Notifications() {
             </PopoverTrigger>
             <PopoverContent className={`w-80 p-0 rounded-xl shadow-xl ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`} align="end">
                 <div className={`p-3 border-b flex justify-between items-center rounded-t-xl ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-100'}`}>
-                    <h4 className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-slate-700'}`}>מרכז התראות</h4>
-                    {unreadCount > 0 && <Badge variant="secondary" className={theme === 'dark' ? 'bg-cyan-900/30 text-cyan-400' : 'bg-red-100 text-red-700 hover:bg-red-200'}>{unreadCount} חדשות</Badge>}
+                    <h4 className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-slate-700'}`}>Notification Center</h4>
+                    {unreadCount > 0 && <Badge variant="secondary" className={theme === 'dark' ? 'bg-cyan-900/30 text-cyan-400' : 'bg-red-100 text-red-700 hover:bg-red-200'}>{unreadCount} New</Badge>}
                 </div>
 
                 <ScrollArea className="h-[320px]">
                     {allNotifications.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full p-6 text-center text-slate-400 space-y-2">
                             <Bell className="w-8 h-8 opacity-20" />
-                            <p className="text-sm">אין התראות חדשות</p>
-                            <p className="text-xs opacity-70">הכל מעודכן ומוכן לעבודה!</p>
+                            <p className="text-sm">No new notifications</p>
+                            <p className="text-xs opacity-70">All caught up!</p>
                         </div>
                     ) : (
                         <div className={`divide-y ${theme === 'dark' ? 'divide-slate-800' : 'divide-slate-50'}`}>
@@ -209,11 +209,11 @@ export default function Notifications() {
                                             </p>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-[10px] text-slate-400">
-                                                    {notif.date ? formatDistanceToNow(new Date(notif.date), { addSuffix: true, locale: he }) : 'היום'}
+                                                    {notif.date ? formatDistanceToNow(new Date(notif.date), { addSuffix: true }) : 'Today'}
                                                 </span>
                                                 {notif.link && (
                                                     <Link to={notif.link} onClick={() => setIsOpen(false)} className={`text-[10px] font-medium hover:underline ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`}>
-                                                        {notif.actionLabel || 'צפה'}
+                                                        {notif.actionLabel || 'View'}
                                                     </Link>
                                                 )}
                                             </div>
@@ -222,12 +222,12 @@ export default function Notifications() {
                                             <Button 
                                                 variant="ghost" 
                                                 size="icon" 
-                                                className={`h-6 w-6 opacity-0 group-hover:opacity-100 absolute top-2 left-2 ${theme === 'dark' ? 'text-slate-500 hover:text-cyan-400' : 'text-slate-300 hover:text-blue-600'}`}
+                                                className={`h-6 w-6 opacity-0 group-hover:opacity-100 absolute top-2 right-2 ${theme === 'dark' ? 'text-slate-500 hover:text-cyan-400' : 'text-slate-300 hover:text-blue-600'}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     markAsRead.mutate(notif.id);
                                                 }}
-                                                title="סמן כנקרא"
+                                                title="Mark as read"
                                             >
                                                 <Check className="w-3 h-3" />
                                             </Button>
@@ -242,8 +242,8 @@ export default function Notifications() {
                 <div className={`p-2 border-t rounded-b-xl flex justify-between ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
                     <Link to={createPageUrl('Settings')} onClick={() => setIsOpen(false)}>
                         <Button variant="ghost" size="sm" className={`h-7 text-xs ${theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-800'}`}>
-                            <Settings className="w-3 h-3 ml-1" />
-                            הגדרות
+                            <Settings className="w-3 h-3 mr-1" />
+                            Settings
                         </Button>
                     </Link>
                     {/* Potential "Clear All" logic here */}

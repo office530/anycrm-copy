@@ -45,7 +45,7 @@ export default function UserManagement() {
     };
 
     const handleDemote = (user) => {
-        if (window.confirm(`האם להפוך את ${user.full_name} לצופה בלבד?`)) {
+        if (window.confirm(`Make ${user.full_name} a viewer only?`)) {
             updateUserMutation.mutate({
                 id: user.id,
                 data: { access_level: 'viewer' }
@@ -53,14 +53,14 @@ export default function UserManagement() {
         }
     };
 
-    if (isLoading) return <div>טוען משתמשים...</div>;
+    if (isLoading) return <div>Loading users...</div>;
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>ניהול הרשאות משתמשים</h2>
+                <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>User Permissions</h2>
                 <div className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                    סה״כ משתמשים: {users.length}
+                    Total Users: {users.length}
                 </div>
             </div>
 
@@ -68,12 +68,12 @@ export default function UserManagement() {
                 <Table>
                     <TableHeader className={theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50'}>
                         <TableRow className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800' : 'border-slate-200 hover:bg-slate-50'}>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>משתמש</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>אימייל</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תפקיד מערכת</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>הרשאה באפליקציה</TableHead>
-                            <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>סטטוס בקשה</TableHead>
-                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>פעולות</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>User</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Email</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Role</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>App Permission</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Request Status</TableHead>
+                            <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -102,39 +102,39 @@ export default function UserManagement() {
                                     </TableCell>
                                     <TableCell>
                                         {isSystemAdmin ? 
-                                            <span className="text-xs text-purple-500 font-bold flex items-center gap-1"><Shield className="w-3 h-3" /> הכל</span> :
+                                            <span className="text-xs text-purple-500 font-bold flex items-center gap-1"><Shield className="w-3 h-3" /> All</span> :
                                             isEditor ? 
-                                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200">עורך (Editor)</Badge> :
-                                            <Badge variant="secondary" className={theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}>צופה (Viewer)</Badge>
+                                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-emerald-200">Editor</Badge> :
+                                            <Badge variant="secondary" className={theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}>Viewer</Badge>
                                         }
                                     </TableCell>
                                     <TableCell>
                                         {user.requested_access_upgrade && !isEditor && !isSystemAdmin && (
                                             <Badge className="bg-amber-100 text-amber-700 border-amber-200 animate-pulse">
-                                                מבקש עריכה
+                                                Requesting Edit
                                             </Badge>
                                         )}
                                     </TableCell>
                                     <TableCell className="text-left">
                                         {!isSystemAdmin && (
-                                            <div className="flex items-center justify-end gap-2">
+                                            <div className="flex items-center justify-start gap-2">
                                                 {user.requested_access_upgrade && !isEditor ? (
                                                     <>
                                                         <Button size="sm" onClick={() => handleApprove(user)} className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 text-xs">
-                                                            <Check className="w-3 h-3 ml-1" /> אשר
+                                                            <Check className="w-3 h-3 mr-1" /> Approve
                                                         </Button>
                                                         <Button size="sm" variant="outline" onClick={() => handleReject(user)} className="h-8 text-xs text-red-600 border-red-200 hover:bg-red-50">
-                                                            <X className="w-3 h-3 ml-1" /> דחה
+                                                            <X className="w-3 h-3 mr-1" /> Reject
                                                         </Button>
                                                     </>
                                                 ) : (
                                                     isEditor ? (
                                                         <Button size="sm" variant="ghost" onClick={() => handleDemote(user)} className="h-8 text-xs text-red-500 hover:text-red-700 hover:bg-red-50">
-                                                            הפוך לצופה
+                                                            Make Viewer
                                                         </Button>
                                                     ) : (
                                                         <Button size="sm" variant="ghost" onClick={() => handleApprove(user)} className="h-8 text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
-                                                            הפוך לעורך
+                                                            Make Editor
                                                         </Button>
                                                     )
                                                 )}

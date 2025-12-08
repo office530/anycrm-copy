@@ -12,28 +12,28 @@ export default function IntegrationSettings() {
         {
             id: 'google_calendar',
             name: 'Google Calendar',
-            description: 'סנכרון פגישות ואירועים עם היומן שלך',
+            description: 'Sync meetings and events with your calendar',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1024px-Google_Calendar_icon_%282020%29.svg.png',
             connected: false
         },
         {
             id: 'google_drive',
             name: 'Google Drive',
-            description: 'שמירת מסמכים וקבצים בתיקיית הלקוח',
+            description: 'Store documents and files in client folders',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/2295px-Google_Drive_icon_%282020%29.svg.png',
             connected: false
         },
         {
             id: 'slack',
             name: 'Slack',
-            description: 'קבלת התראות ועדכונים בערוצי Slack',
+            description: 'Get notifications and updates in Slack channels',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Slack_icon_2019.svg/2048px-Slack_icon_2019.svg.png',
             connected: false
         },
         {
             id: 'salesforce',
             name: 'Salesforce',
-            description: 'סנכרון דו-כיווני של לידים והזדמנויות',
+            description: 'Two-way sync of leads and opportunities',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Salesforce.com_logo.svg/2560px-Salesforce.com_logo.svg.png',
             connected: false
         }
@@ -42,15 +42,15 @@ export default function IntegrationSettings() {
     const handleConnect = (id) => {
         // Since we can't trigger OAuth from here easily without user interaction with the LLM tool call,
         // we'll guide the user.
-        alert("כדי לחבר אינטגרציה זו, אנא בקש מה-AI בצ'אט: 'חבר את " + id.replace('_', ' ') + "'");
+        alert("To connect this integration, please ask the AI chat: 'Connect " + id.replace('_', ' ') + "'");
     };
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>אינטגרציות וחיבורים</CardTitle>
-                    <CardDescription>הרחב את יכולות המערכת באמצעות חיבור לשירותים חיצוניים</CardDescription>
+                    <CardTitle>Integrations</CardTitle>
+                    <CardDescription>Extend system capabilities by connecting external services</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -62,19 +62,19 @@ export default function IntegrationSettings() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-1">
                                         <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{integration.name}</h4>
-                                        {integration.connected && <Badge className="bg-green-100 text-green-700">מחובר</Badge>}
+                                        {integration.connected && <Badge className="bg-green-100 text-green-700">Connected</Badge>}
                                     </div>
                                     <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">{integration.description}</p>
                                     
                                     {integration.connected ? (
                                         <Button variant="outline" size="sm" className="w-full">
                                             <Check className="w-3 h-3 mr-2" />
-                                            הגדרות חיבור
+                                            Connection Settings
                                         </Button>
                                     ) : (
                                         <Button onClick={() => handleConnect(integration.id)} size="sm" variant="secondary" className="w-full">
                                             <Zap className="w-3 h-3 mr-2" />
-                                            התחבר
+                                            Connect
                                         </Button>
                                     )}
                                 </div>
@@ -83,7 +83,7 @@ export default function IntegrationSettings() {
                     </div>
                     
                     <div className="mt-8 p-4 bg-blue-50 text-blue-800 rounded-lg text-sm border border-blue-100">
-                        <strong>טיפ:</strong> ניתן לחבר שירותים נוספים באמצעות Zapier או Make. פנה לתמיכה לקבלת Webhook ו-API Key.
+                        <strong>Tip:</strong> You can connect more services using Zapier or Make. Contact support for Webhook and API Key.
                     </div>
                 </CardContent>
             </Card>

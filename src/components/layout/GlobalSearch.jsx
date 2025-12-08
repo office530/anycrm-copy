@@ -102,7 +102,7 @@ export default function GlobalSearch() {
   return (
     <div className="relative w-full max-w-xl" ref={wrapperRef}>
       <div className="relative group">
-        <Search className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors pointer-events-none ${
+        <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors pointer-events-none ${
           theme === 'dark' 
             ? 'text-slate-500 group-focus-within:text-cyan-400' 
             : 'text-slate-400 group-focus-within:text-red-600'
@@ -112,16 +112,16 @@ export default function GlobalSearch() {
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
           onFocus={() => searchTerm.length >= 2 && setIsOpen(true)} 
-          className={`pr-12 pl-10 py-3 text-base rounded-full border w-72 focus:w-96 transition-all shadow-sm ${
+          className={`pl-12 pr-10 py-3 text-base rounded-full border w-72 focus:w-96 transition-all shadow-sm ${
             theme === 'dark'
               ? 'bg-slate-800 text-white border-slate-700 focus:ring-4 focus:ring-cyan-900/20 focus:border-cyan-500/50 placeholder:text-slate-500'
               : 'bg-white text-slate-800 border-slate-200 focus:ring-4 focus:ring-red-100 focus:border-red-300 placeholder:text-slate-400'
           }`}
-          placeholder="חיפוש לידים, הזדמנויות, משימות..." 
+          placeholder="Search leads, opportunities, tasks..." 
         />
 
         {searchTerm &&
-        <button onClick={clearSearch} className={`absolute left-4 top-1/2 -translate-y-1/2 ${
+        <button onClick={clearSearch} className={`absolute right-4 top-1/2 -translate-y-1/2 ${
           theme === 'dark' ? 'text-slate-500 hover:text-cyan-400' : 'text-slate-400 hover:text-red-600'
         }`}>
                 <X className="w-4 h-4" />
@@ -131,18 +131,18 @@ export default function GlobalSearch() {
 
       {/* Results Dropdown */}
       {isOpen && searchTerm.length >= 2 &&
-      <div className={`absolute top-full right-0 mt-2 w-96 rounded-xl shadow-xl border overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 ${
+      <div className={`absolute top-full left-0 mt-2 w-96 rounded-xl shadow-xl border overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 ${
         theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'
       }`}>
           {isLoading ?
         <div className="p-4 text-center text-slate-500 flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" /> מחפש...
+                <Loader2 className="w-4 h-4 animate-spin" /> Searching...
             </div> :
 
         <>
               {searchResults?.leads?.length === 0 && searchResults?.opportunities?.length === 0 && searchResults?.tasks?.length === 0 && searchResults?.activities?.length === 0 ?
           <div className="p-4 text-center text-slate-500 text-sm">
-                    לא נמצאו תוצאות עבור "{searchTerm}"
+                    No results found for "{searchTerm}"
                 </div> :
 
           <div className="max-h-[400px] overflow-y-auto py-2">
@@ -151,7 +151,7 @@ export default function GlobalSearch() {
                             <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
                               theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
                             }`}>
-                                לידים
+                                Leads
                             </div>
                             {searchResults.leads.map((lead) =>
               <Link
@@ -181,7 +181,7 @@ export default function GlobalSearch() {
                             <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
                               theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
                             }`}>
-                                הזדמנויות
+                                Opportunities
                             </div>
                             {searchResults.opportunities.map((opp) =>
               <Link
@@ -211,7 +211,7 @@ export default function GlobalSearch() {
                             <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
                               theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
                             }`}>
-                                משימות
+                                Tasks
                             </div>
                             {searchResults.tasks.map((task) =>
               <Link
@@ -234,7 +234,7 @@ export default function GlobalSearch() {
                                             {task.title}
                                         </div>
                                         <div className="text-xs text-slate-500 truncate">
-                                            {task.due_date ? new Date(task.due_date).toLocaleDateString('he-IL') : 'ללא תאריך'} • {task.status === 'done' ? 'הושלם' : task.status === 'in_progress' ? 'בתהליך' : 'חדש'}
+                                            {task.due_date ? new Date(task.due_date).toLocaleDateString('en-US') : 'No Date'} • {task.status === 'done' ? 'Completed' : task.status === 'in_progress' ? 'In Progress' : 'New'}
                                         </div>
                                     </div>
                                 </Link>
@@ -247,7 +247,7 @@ export default function GlobalSearch() {
                             <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
                               theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
                             }`}>
-                                פעילויות אחרונות
+                                Recent Activities
                             </div>
                             {searchResults.activities.map((activity) =>
               <Link
@@ -265,7 +265,7 @@ export default function GlobalSearch() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>{activity.type} • {activity.status}</div>
-                                        <div className="text-xs text-slate-500 truncate">{activity.summary || 'אין תיאור'}</div>
+                                        <div className="text-xs text-slate-500 truncate">{activity.summary || 'No description'}</div>
                                     </div>
                                 </Link>
               )}
@@ -283,7 +283,7 @@ export default function GlobalSearch() {
                       : 'text-red-600 bg-slate-50 hover:bg-red-50 border-slate-100'
                   }`}
               >
-                  הצג את כל התוצאות עבור "{searchTerm}"
+                  Show all results for "{searchTerm}"
               </Link>
             </>
         }

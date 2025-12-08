@@ -28,16 +28,16 @@ export default function AuditLogSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card>
                 <CardHeader>
-                    <CardTitle>יומן פעילות מערכת</CardTitle>
-                    <CardDescription>מעקב אחר שינויים ופעולות שבוצעו במערכת</CardDescription>
+                    <CardTitle>System Audit Log</CardTitle>
+                    <CardDescription>Track changes and actions performed in the system</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex gap-4 mb-4">
                         <div className="relative flex-1">
-                            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <Input 
-                                placeholder="חיפוש לפי משתמש, פעולה או ישות..." 
-                                className="pr-10"
+                                placeholder="Search by user, action or entity..." 
+                                className="pl-10"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -48,11 +48,11 @@ export default function AuditLogSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="text-right w-[180px] text-slate-700 dark:text-slate-300">תאריך ושעה</TableHead>
-                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">משתמש</TableHead>
-                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">פעולה</TableHead>
-                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">ישות</TableHead>
-                                    <TableHead className="text-right text-slate-700 dark:text-slate-300">פרטים</TableHead>
+                                    <TableHead className="text-left w-[180px] text-slate-700 dark:text-slate-300">Date & Time</TableHead>
+                                    <TableHead className="text-left text-slate-700 dark:text-slate-300">User</TableHead>
+                                    <TableHead className="text-left text-slate-700 dark:text-slate-300">Action</TableHead>
+                                    <TableHead className="text-left text-slate-700 dark:text-slate-300">Entity</TableHead>
+                                    <TableHead className="text-left text-slate-700 dark:text-slate-300">Details</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -65,7 +65,7 @@ export default function AuditLogSettings() {
                                 ) : filteredLogs.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center py-8 text-slate-500">
-                                            לא נמצאו רשומות
+                                            No records found
                                         </TableCell>
                                     </TableRow>
                                 ) : filteredLogs.map((log) => (

@@ -37,12 +37,12 @@ export default function TeamSettings() {
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>ניהול צוות ומשתמשים</CardTitle>
-                        <CardDescription>צפייה במשתמשי המערכת וניהול הרשאות</CardDescription>
+                        <CardTitle>Team & User Management</CardTitle>
+                        <CardDescription>View system users and manage permissions</CardDescription>
                     </div>
                     <Button onClick={() => setIsInviteOpen(true)} className="bg-slate-900 text-white">
                         <UserPlus className="w-4 h-4 mr-2" />
-                        הזמן משתמש
+                        Invite User
                     </Button>
                 </CardHeader>
                 <CardContent>
@@ -50,11 +50,11 @@ export default function TeamSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>שם מלא</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>אימייל</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תפקיד</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>סטטוס</TableHead>
-                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>תאריך הצטרפות</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Full Name</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Email</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Role</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Status</TableHead>
+                                    <TableHead className={`text-left ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Join Date</TableHead>
                                     <TableHead className="text-right w-[50px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -72,20 +72,20 @@ export default function TeamSettings() {
                                                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold">
                                                     {user.full_name?.charAt(0) || user.email?.charAt(0)}
                                                 </div>
-                                                {user.full_name || 'ללא שם'}
+                                                {user.full_name || 'No Name'}
                                             </div>
                                         </TableCell>
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>
                                             <Badge variant="outline" className="bg-slate-50">
-                                                {user.role === 'admin' ? 'מנהל מערכת' : 'משתמש'}
+                                                {user.role === 'admin' ? 'System Admin' : 'User'}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">פעיל</Badge>
+                                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Active</Badge>
                                         </TableCell>
                                         <TableCell className="text-slate-600 text-sm dark:text-slate-400">
-                                            {user.created_date ? format(new Date(user.created_date), 'dd/MM/yyyy') : '-'}
+                                            {user.created_date ? format(new Date(user.created_date), 'MM/dd/yyyy') : '-'}
                                         </TableCell>
                                         <TableCell>
                                             <Button
@@ -93,10 +93,10 @@ export default function TeamSettings() {
                                                 size="icon"
                                                 className="text-red-500 hover:text-red-700 hover:bg-red-50"
                                                 onClick={() => {
-                                                     if(confirm('האם אתה בטוח שברצונך להסיר משתמש זה?')) {
+                                                     if(confirm('Are you sure you want to remove this user?')) {
                                                          base44.entities.User.delete(user.id)
                                                             .then(() => queryClient.invalidateQueries(['users']))
-                                                            .catch(err => alert("שגיאה במחיקת המשתמש: " + err.message));
+                                                            .catch(err => alert("Error deleting user: " + err.message));
                                                      }
                                                 }}
                                             >
@@ -111,24 +111,24 @@ export default function TeamSettings() {
 
                     {invites.length > 0 && (
                         <div className="mt-8">
-                            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">הזמנות ממתינות</h3>
+                            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">Pending Invites</h3>
                             <div className={`rounded-md border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50/50'}`}>
                                 <Table>
                                     <TableBody>
                                         {invites.map((invite) => (
                                             <TableRow key={invite.id}>
                                                 <TableCell className="font-medium text-slate-600">{invite.email}</TableCell>
-                                                <TableCell>{invite.role === 'admin' ? 'מנהל' : 'משתמש'}</TableCell>
+                                                <TableCell>{invite.role === 'admin' ? 'Admin' : 'User'}</TableCell>
                                                 <TableCell>
-                                                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">ממתין</Badge>
+                                                    <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">Pending</Badge>
                                                 </TableCell>
-                                                <TableCell className="text-left">
+                                                <TableCell className="text-right">
                                                     <Button 
                                                         variant="ghost" 
                                                         size="sm"
                                                         className="text-red-500 hover:text-red-700 hover:bg-red-50"
                                                         onClick={() => {
-                                                            if(confirm('לבטל את ההזמנה?')) {
+                                                            if(confirm('Cancel invitation?')) {
                                                                 base44.entities.Invite.delete(invite.id).then(() => queryClient.invalidateQueries(['invites']));
                                                             }
                                                         }}
@@ -175,10 +175,10 @@ function InviteUserDialog({ open, onOpenChange }) {
             queryClient.invalidateQueries(['invites']);
             onOpenChange(false);
             setEmail("");
-            // alert("ההזמנה נשלחה בהצלחה");
+            // alert("Invitation sent successfully");
         } catch (error) {
             console.error(error);
-            // alert("שגיאה בשליחת ההזמנה");
+            // alert("Error sending invitation");
         } finally {
             setIsLoading(false);
         }
@@ -188,11 +188,11 @@ function InviteUserDialog({ open, onOpenChange }) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>הזמנת משתמש חדש</DialogTitle>
+                    <DialogTitle>Invite New User</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleInvite} className="space-y-4 pt-4">
                     <div className="space-y-2">
-                        <Label>כתובת אימייל</Label>
+                        <Label>Email Address</Label>
                         <Input 
                             type="email" 
                             required 
@@ -202,22 +202,22 @@ function InviteUserDialog({ open, onOpenChange }) {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label>תפקיד במערכת</Label>
+                        <Label>System Role</Label>
                         <Select value={role} onValueChange={setRole}>
                             <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="user">משתמש (User)</SelectItem>
-                                <SelectItem value="admin">מנהל (Admin)</SelectItem>
+                                <SelectItem value="user">User</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="pt-4 flex justify-end gap-2">
-                        <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>ביטול</Button>
+                        <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
                         <Button type="submit" disabled={isLoading} className="bg-slate-900">
                             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
-                            שלח הזמנה
+                            Send Invitation
                         </Button>
                     </div>
                 </form>
