@@ -65,8 +65,12 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
       const stageName = o.deal_stage?.split('(')[0]?.trim() || "Unknown";
       counts[stageName] = (counts[stageName] || 0) + 1;
     });
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
-  }, [opportunities]);
+    return Object.entries(counts).map(([name, value]) => ({ 
+      name, 
+      value,
+      fill: getStageColor(name)
+    }));
+  }, [opportunities, pipelineStages]);
 
   const formatCurrency = (val) => `$${(val || 0).toLocaleString()}`;
 
