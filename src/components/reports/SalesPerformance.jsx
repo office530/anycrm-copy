@@ -135,9 +135,9 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stageData} layout="vertical" margin={{ left: 50 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px' }} />
-                <Tooltip />
+                <XAxis type="number" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px' }} stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
                 <Bar dataKey="value" fill="#ef4444" radius={[0, 4, 4, 0]} name="Count" />
               </BarChart>
             </ResponsiveContainer>
