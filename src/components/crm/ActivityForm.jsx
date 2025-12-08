@@ -51,21 +51,21 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
         }
 
         if (response.data.updatedFieldsCount > 0) {
-          toast.success("סיכום הושלם בהצלחה!", {
-            description: `${response.data.updatedFieldsCount} שדות עודכנו בפרופיל הלקוח`,
+          toast.success("Summary completed successfully!", {
+            description: `${response.data.updatedFieldsCount} fields updated in lead profile`,
             duration: 5000
           });
         } else {
-          toast.success("סיכום הושלם!", {
-            description: "הטקסט סוכם באופן מקצועי",
+          toast.success("Summary completed!", {
+            description: "Text summarized professionally",
             duration: 3000
           });
         }
       }
     } catch (error) {
       console.error('Error summarizing:', error);
-      toast.error("שגיאה בסיכום הפעילות", {
-        description: "נסה שוב או פנה לתמיכה",
+      toast.error("Error summarizing activity", {
+        description: "Try again or contact support",
         duration: 4000
       });
     } finally {
@@ -80,37 +80,37 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
       await base44.entities.Lead.update(leadId, lastLeadSnapshot);
       setAiSummary(null);
       setLastLeadSnapshot(null);
-      toast.success("השינויים בוטלו", {
-        description: "הפרופיל חזר למצב הקודם",
+      toast.success("Changes undone", {
+        description: "Profile reverted to previous state",
         duration: 3000
       });
     } catch (error) {
       console.error('Error undoing changes:', error);
-      toast.error("שגיאה בביטול השינויים");
+      toast.error("Error undoing changes");
     }
   };
 
   const activityTypeOptions = [
-    { value: "Call", label: "📞 שיחה טלפונית" },
-    { value: "Email", label: "📧 אימייל" },
-    { value: "SMS", label: "💬 הודעת SMS" },
-    { value: "Meeting", label: "📅 פגישה" },
-    { value: "Document Collection", label: "📁 איסוף מסמכים" },
-    { value: "Note", label: "📝 הערה כללית" }
+    { value: "Call", label: "📞 Phone Call" },
+    { value: "Email", label: "📧 Email" },
+    { value: "SMS", label: "💬 SMS" },
+    { value: "Meeting", label: "📅 Meeting" },
+    { value: "Document Collection", label: "📁 Document Collection" },
+    { value: "Note", label: "📝 General Note" }
   ];
 
   const activityStatusOptions = [
-    { value: "Completed", label: "✅ הושלם בהצלחה" },
-    { value: "Scheduled", label: "🕒 מתוכנן לעתיד" },
-    { value: "No Answer", label: "❌ אין מענה" },
-    { value: "Left Message", label: "📢 הושארה הודעה" }
+    { value: "Completed", label: "✅ Completed" },
+    { value: "Scheduled", label: "🕒 Scheduled" },
+    { value: "No Answer", label: "❌ No Answer" },
+    { value: "Left Message", label: "📢 Left Message" }
   ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 space-y-4 animate-in slide-in-from-top-2">
       <div className="flex justify-between items-start">
         <h4 className="text-sm font-bold text-slate-800">
-          {initialData ? "עריכת פעילות" : "פעילות חדשה"}
+          {initialData ? "Edit Activity" : "New Activity"}
         </h4>
         <Button variant="ghost" size="icon" type="button" onClick={onCancel} className="h-6 w-6 text-slate-400 hover:text-slate-600">
           <X className="w-4 h-4" />
@@ -119,7 +119,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-slate-900 text-sm font-medium">סוג פעילות</Label>
+          <Label className="text-slate-900 text-sm font-medium">Activity Type</Label>
           <Select
             value={watch("type")}
             onValueChange={(val) => setValue("type", val)}>
@@ -134,7 +134,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
           </Select>
         </div>
         <div className="space-y-2">
-          <Label className="text-slate-800 text-sm font-medium">תוצאה / סטטוס</Label>
+          <Label className="text-slate-800 text-sm font-medium">Result / Status</Label>
           <Select
             value={watch("status")}
             onValueChange={(val) => setValue("status", val)}>
@@ -151,7 +151,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
       </div>
 
       <div className="space-y-2">
-        <Label className="text-slate-800 text-sm font-medium">תאריך ושעה</Label>
+        <Label className="text-slate-800 text-sm font-medium">Date & Time</Label>
         <Input
           type="datetime-local"
           {...register("date")}
@@ -160,7 +160,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
 
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label className="text-slate-800 text-sm font-medium">סיכום / תוכן</Label>
+          <Label className="text-slate-800 text-sm font-medium">Summary / Content</Label>
           {currentSummary?.trim() && (
             <Button
               type="button"
@@ -172,20 +172,20 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
             >
               {isSummarizing ? (
                 <>
-                  <Loader2 className="w-3 h-3 ml-2 animate-spin" />
-                  מעבד...
+                  <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                  Processing...
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-3 h-3 ml-2" />
-                  סכם עם AI
+                  <Sparkles className="w-3 h-3 mr-2" />
+                  Summarize with AI
                 </>
               )}
             </Button>
           )}
         </div>
         <Textarea
-          placeholder="כתוב כאן סיכום של השיחה או הפעילות בצורה חופשית..."
+          placeholder="Enter activity summary here..."
           {...register("summary")}
           onChange={(e) => { setValue("summary", e.target.value); setAiSummary(null); }}
           className="h-24" />
@@ -202,7 +202,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-purple-900 font-semibold text-sm">
                   <Sparkles className="w-4 h-4" />
-                  ניתוח AI
+                  AI Analysis
                 </div>
                 {lastLeadSnapshot && (
                   <Button
@@ -212,8 +212,8 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
                     onClick={handleUndoAiChanges}
                     className="text-xs text-slate-600 hover:text-red-600 hover:bg-red-50 h-6"
                   >
-                    <Undo2 className="w-3 h-3 ml-1" />
-                    בטל שינויים
+                    <Undo2 className="w-3 h-3 mr-1" />
+                    Undo Changes
                   </Button>
                 )}
               </div>
@@ -227,7 +227,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Flag className="w-3.5 h-3.5 text-purple-600" />
-                    <p className="text-xs font-bold text-purple-900">נקודות מפתח</p>
+                    <p className="text-xs font-bold text-purple-900">Key Points</p>
                   </div>
                   <ul className="space-y-1.5">
                     {aiSummary.key_points.map((point, i) => (
@@ -249,7 +249,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
                 >
                   <div className="flex items-center gap-2 mb-1.5">
                     <Zap className="w-3.5 h-3.5 text-orange-600" />
-                    <p className="text-xs font-bold text-orange-900">פעולה נדרשת</p>
+                    <p className="text-xs font-bold text-orange-900">Required Action</p>
                   </div>
                   <p className="text-xs text-orange-800 font-semibold">{aiSummary.call_to_action}</p>
                 </motion.div>
@@ -264,7 +264,7 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Target className="w-3.5 h-3.5 text-blue-600" />
-                    <p className="text-xs font-bold text-blue-900">צעדים הבאים</p>
+                    <p className="text-xs font-bold text-blue-900">Next Steps</p>
                   </div>
                   <ul className="space-y-1.5">
                     {aiSummary.next_steps.map((step, i) => (
@@ -282,10 +282,10 @@ export default function ActivityForm({ initialData, onSubmit, onCancel, isSubmit
       </div>
 
       <div className="text-slate-800 flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>ביטול</Button>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>Cancel</Button>
         <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700" disabled={isSubmitting}>
           {isSubmitting ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : null}
-          {initialData ? "שמור שינויים" : "שמור פעילות"}
+          {initialData ? "Save Changes" : "Save Activity"}
         </Button>
       </div>
     </form>
