@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, BrainCircuit, TrendingUp, AlertTriangle, Lightbulb } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function AiInsights() {
-  const { theme } = React.useContext(require("@/components/context/SettingsContext").SettingsContext) || { theme: 'light' };
+  const { theme } = useSettings();
   const [insights, setInsights] = React.useState(null);
   const [isLoadingAI, setIsLoadingAI] = React.useState(false);
 
@@ -20,7 +21,6 @@ export default function AiInsights() {
     setIsLoadingAI(true);
 
     try {
-      // Prepare aggregated data anonymously to save tokens and privacy
       const totalLeads = leads.length;
       const convertedLeads = leads.filter(l => l.lead_status === 'Converted' || l.lead_status === 'Converted to Opportunity').length;
       const leadsByCity = {};
