@@ -54,7 +54,9 @@ export default function TasksWidget({ className }) {
     } ${className || ''}`}>
       <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-lg flex items-center justify-between">
-          <span className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>Upcoming Tasks</span>
+          <Link to={createPageUrl('Tasks')} className={`flex items-center gap-2 hover:opacity-80 transition-opacity ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+            Upcoming Tasks
+          </Link>
           <Badge variant="outline" className={`text-xs ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{upcomingTasks.length}</Badge>
         </CardTitle>
       </CardHeader>
