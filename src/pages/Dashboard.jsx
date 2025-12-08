@@ -165,7 +165,7 @@ export default function Dashboard() {
       {/* Header & Filter */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-right">
         <div className="w-full md:w-auto">
-            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>סקירת ביצועים</h2>
+            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-800'}`}>סקירת ביצועים</h2>
             <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>נתונים עבור: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
@@ -255,20 +255,20 @@ export default function Dashboard() {
               <div className="relative z-10 space-y-6">
                   {/* Header */}
                   <div>
-                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>סטטוס Pipeline</div>
-                      <div className={`text-4xl md:text-5xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{stats.totalOpps - stats.wonOppsCount}</div>
-                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>הזדמנויות פעילות</div>
+                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>סטטוס Pipeline</div>
+                      <div className={`text-4xl md:text-5xl font-bold mb-1 ${theme === 'dark' ? 'text-cyan-300 drop-shadow-md' : 'text-slate-900'}`}>{stats.totalOpps - stats.wonOppsCount}</div>
+                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>הזדמנויות פעילות</div>
                   </div>
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-100'}`}>
-                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
-                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>סה״כ ערך Pipeline</div>
+                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-950/30 border-red-500/30' : 'bg-red-50 border-red-100'}`}>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400 drop-shadow-sm' : 'text-red-700'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-red-200/70' : 'text-slate-600'}`}>סה״כ ערך Pipeline</div>
                       </div>
-                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-900/20 border-emerald-800' : 'bg-emerald-50 border-emerald-100'}`}>
-                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'}`}>{stats.wonOppsCount}</div>
-                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>עסקאות נסגרו</div>
+                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-950/30 border-emerald-500/30' : 'bg-emerald-50 border-emerald-100'}`}>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400 drop-shadow-sm' : 'text-emerald-700'}`}>{stats.wonOppsCount}</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-emerald-200/70' : 'text-slate-600'}`}>עסקאות נסגרו</div>
                       </div>
                   </div>
 
@@ -276,10 +276,10 @@ export default function Dashboard() {
                   <div className="space-y-2">
                       <div className={`flex justify-between text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
                           <span>יחס הצלחה</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-cyan-300' : 'text-slate-900'}`}>{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
                       </div>
-                      <div className={`w-full rounded-full h-2.5 overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}>
-                          <div className={`bg-gradient-to-r h-full rounded-full transition-all duration-500 ${theme === 'dark' ? 'from-emerald-500 to-cyan-500' : 'from-red-500 to-red-600'}`} style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
+                      <div className={`w-full rounded-full h-2.5 overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                          <div className={`bg-gradient-to-r h-full rounded-full transition-all duration-500 ${theme === 'dark' ? 'from-cyan-500 to-purple-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'from-red-500 to-red-600'}`} style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
                       </div>
                   </div>
 

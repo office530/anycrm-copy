@@ -56,34 +56,34 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>יחס המרה (ליד להזדמנות)</CardTitle>
-            <ArrowLeftRight className={`h-4 w-4 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`} />
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-red-200' : ''}`}>יחס המרה (ליד להזדמנות)</CardTitle>
+            <ArrowLeftRight className={`h-4 w-4 ${theme === 'dark' ? 'text-red-400 drop-shadow-sm' : 'text-red-500'}`} />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.conversionRate.toFixed(1)}%</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : ''}`}>{stats.conversionRate.toFixed(1)}%</div>
             <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{stats.convertedLeads} מתוך {stats.totalLeads} לידים</p>
           </CardContent>
         </Card>
 
         <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>יחס סגירה (Win Rate)</CardTitle>
-            <Percent className={`h-4 w-4 ${theme === 'dark' ? 'text-emerald-400' : 'text-green-500'}`} />
+            <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-emerald-200' : ''}`}>יחס סגירה (Win Rate)</CardTitle>
+            <Percent className={`h-4 w-4 ${theme === 'dark' ? 'text-emerald-400 drop-shadow-sm' : 'text-green-500'}`} />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>{stats.winRate.toFixed(1)}%</div>
+            <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : ''}`}>{stats.winRate.toFixed(1)}%</div>
             <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{stats.closedWon} מתוך {stats.totalOpps} הזדמנויות</p>
           </CardContent>
         </Card>
         
         <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : ''}`}>איכות לידים</CardTitle>
-                <Users className={`h-4 w-4 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-500'}`} />
+                <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-purple-200' : ''}`}>איכות לידים</CardTitle>
+                <Users className={`h-4 w-4 ${theme === 'dark' ? 'text-purple-400 drop-shadow-sm' : 'text-purple-500'}`} />
             </CardHeader>
             <CardContent>
                 {/* Dummy logic for example */}
-                <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : ''}`}>גבוהה</div>
+                <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-purple-400' : ''}`}>גבוהה</div>
                 <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>מבוסס על אחוזי המרה</p>
             </CardContent>
         </Card>

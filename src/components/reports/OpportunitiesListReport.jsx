@@ -74,8 +74,8 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'}`}>
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>הזדמנויות פתוחות</p>
-              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.openCount}</h3>
+              <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-red-300' : 'text-red-600'}`}>הזדמנויות פתוחות</p>
+              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-red-400 drop-shadow-sm' : 'text-neutral-900'}`}>{stats.openCount}</h3>
             </div>
             <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-red-500/20' : 'bg-red-100'}`}>
               <Briefcase className={`w-6 h-6 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
@@ -86,8 +86,8 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-emerald-100'}`}>
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>עסקאות שנסגרו (Won)</p>
-              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-emerald-900'}`}>{stats.wonCount}</h3>
+              <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-emerald-300' : 'text-emerald-600'}`}>עסקאות שנסגרו (Won)</p>
+              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-emerald-400 drop-shadow-sm' : 'text-emerald-900'}`}>{stats.wonCount}</h3>
             </div>
             <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-emerald-500/20' : 'bg-emerald-100'}`}>
               <CheckCircle2 className={`w-6 h-6 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`} />
@@ -98,8 +98,8 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-purple-100'}`}>
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}>סך הכנסות מעסקאות סגורות</p>
-              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-purple-900'}`}>₪{stats.wonAmount.toLocaleString()}</h3>
+              <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-600'}`}>סך הכנסות מעסקאות סגורות</p>
+              <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-purple-400 drop-shadow-sm' : 'text-purple-900'}`}>₪{stats.wonAmount.toLocaleString()}</h3>
             </div>
             <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
               <DollarSign className={`w-6 h-6 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
