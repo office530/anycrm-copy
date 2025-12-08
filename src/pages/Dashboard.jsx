@@ -165,11 +165,13 @@ export default function Dashboard() {
       {/* Header & Filter */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-right">
         <div className="w-full md:w-auto">
-            <h2 className="text-2xl font-bold text-neutral-800">סקירת ביצועים</h2>
-            <p className="text-neutral-600">נתונים עבור: {dateRangeLabel}</p>
+            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>סקירת ביצועים</h2>
+            <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>נתונים עבור: {dateRangeLabel}</p>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[180px] bg-white border-red-100 focus:ring-red-200">
+            <SelectTrigger className={`w-[180px] ${
+                theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-red-100 focus:ring-red-200'
+            }`}>
                 <Calendar className="w-4 h-4 ml-2 text-neutral-600" />
                 <SelectValue placeholder="בחר טווח זמן" />
             </SelectTrigger>
@@ -196,7 +198,7 @@ export default function Dashboard() {
           <div className="space-y-6 lg:col-span-2">
               
               {/* Sales Trend Chart */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200">
+              <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
                       <CardTitle className="text-slate-800 text-lg font-semibold tracking-tight flex items-center gap-2">
                           <Activity className="w-5 h-5 text-neutral-500" /> מגמות לידים ומכירות
@@ -227,7 +229,7 @@ export default function Dashboard() {
               </Card>
 
               {/* Opportunity Stages */}
-              <Card className="border-none shadow-sm rounded-2xl bg-white dark:bg-neutral-200">
+              <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
                       <CardTitle className="text-slate-800 text-lg font-semibold tracking-tight">הזדמנויות לפי שלב</CardTitle>
                   </CardHeader>
@@ -247,7 +249,9 @@ export default function Dashboard() {
 
           {/* Right Column: Pipeline Summary & Tasks */}
           <div className="space-y-6">
-          <Card className="bg-white border-slate-200 shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden">
+          <Card className={`shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden transition-colors ${
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+          }`}>
               <div className="relative z-10 space-y-6">
                   {/* Header */}
                   <div>
