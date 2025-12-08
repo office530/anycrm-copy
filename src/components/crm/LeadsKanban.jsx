@@ -161,10 +161,10 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                                     </div>
                                     <div>
                                         <h4 className={`font-bold line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{lead.full_name}</h4>
-                                        <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'אין כתובת'}</p>
+                                        <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
                                         {getLastActivityDate(lead.id) && (
                                           <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
-                                            ✓ פעילות: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('he-IL')}
+                                            ✓ Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
                                           </div>
                                         )}
                                     </div>
@@ -189,7 +189,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                                      <Button size="sm" variant="ghost" className="h-7 text-xs text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 gap-1"
                                         onClick={(e) => { e.stopPropagation(); onConvert(lead); }}>
                                         <CheckCircle2 className="w-3 h-3" />
-                                        המר
+                                        Convert
                                      </Button>
                                  )}
                               </div>

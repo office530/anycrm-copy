@@ -46,7 +46,7 @@ export default function TagManager({ tags = [], onChange }) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="הקלד תגית ולחץ Enter..."
+          placeholder="Type tag and press Enter..."
           className="text-slate-900 font-medium placeholder:text-slate-400 border-slate-300 focus:border-red-500 pl-10"
         />
         <button 

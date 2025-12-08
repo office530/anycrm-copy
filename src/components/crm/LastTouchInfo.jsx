@@ -18,7 +18,7 @@ export default function LastTouchInfo({ entity, entityType = "Lead" }) {
 
     if (!entity?.updated_date) return null;
 
-    const displayName = updatedByUser?.full_name || entity?.updated_by || "לא ידוע";
+    const displayName = updatedByUser?.full_name || entity?.updated_by || "Unknown";
     const timeAgo = moment(entity.updated_date).fromNow();
     const fullDate = moment(entity.updated_date).format("DD/MM/YYYY HH:mm");
 
@@ -29,7 +29,7 @@ export default function LastTouchInfo({ entity, entityType = "Lead" }) {
                     <Clock className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>
-                    <div className="text-xs text-slate-500 font-medium">עדכון אחרון (Last Touch)</div>
+                    <div className="text-xs text-slate-500 font-medium">Last Touch</div>
                     <div className="text-sm font-bold text-slate-800">{timeAgo}</div>
                     <div className="text-[10px] text-slate-400">{fullDate}</div>
                 </div>
