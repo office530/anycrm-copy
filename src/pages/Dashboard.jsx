@@ -255,53 +255,53 @@ export default function Dashboard() {
               <div className="relative z-10 space-y-6">
                   {/* Header */}
                   <div>
-                      <div className="text-slate-500 mb-2 text-sm font-medium tracking-wide">סטטוס Pipeline</div>
-                      <div className="text-4xl md:text-5xl font-bold mb-1 text-slate-900">{stats.totalOpps - stats.wonOppsCount}</div>
-                      <div className="text-slate-600 text-sm">הזדמנויות פעילות</div>
+                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>סטטוס Pipeline</div>
+                      <div className={`text-4xl md:text-5xl font-bold mb-1 ${theme === 'dark' ? 'text-white drop-shadow-sm' : 'text-slate-900'}`}>{stats.totalOpps - stats.wonOppsCount}</div>
+                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>הזדמנויות פעילות</div>
                   </div>
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-red-50 rounded-xl p-4 border border-red-100">
-                          <div className="text-2xl font-bold text-red-700">₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
-                          <div className="text-xs text-slate-600 mt-1">סה״כ ערך Pipeline</div>
+                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-950/20 border-red-900/30' : 'bg-red-50 border-red-100'}`}>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>סה״כ ערך Pipeline</div>
                       </div>
-                      <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                          <div className="text-2xl font-bold text-emerald-700">{stats.wonOppsCount}</div>
-                          <div className="text-xs text-slate-600 mt-1">עסקאות נסגרו</div>
+                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-950/20 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100'}`}>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'}`}>{stats.wonOppsCount}</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>עסקאות נסגרו</div>
                       </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-slate-600">
+                      <div className={`flex justify-between text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
                           <span>יחס הצלחה</span>
-                          <span className="font-bold text-slate-900">{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                          <div className="bg-gradient-to-r from-red-500 to-red-600 h-full rounded-full transition-all duration-500" style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
+                      <div className={`w-full rounded-full h-2.5 overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}>
+                          <div className={`bg-gradient-to-r h-full rounded-full transition-all duration-500 ${theme === 'dark' ? 'from-cyan-500 to-purple-500' : 'from-red-500 to-red-600'}`} style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
                       </div>
                   </div>
 
                   {/* Quick Stats */}
-                  <div className="space-y-3 pt-4 border-t border-slate-100">
+                  <div className={`space-y-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
                       <div className="flex justify-between items-center text-sm">
-                          <span className="text-slate-600">ממוצע ערך עסקה</span>
-                          <span className="font-bold text-slate-900">₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>ממוצע ערך עסקה</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                          <span className="text-slate-600">בשלב מתקדם</span>
-                          <span className="font-bold text-slate-900">{filteredOpps.filter((o) => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>בשלב מתקדם</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter(o => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                          <span className="text-slate-600">זכייה צפויה החודש</span>
-                          <span className="font-bold text-slate-900">₪{filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.loan_amount_requested || 0) * (o.probability || 0) / 100, 0).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>זכייה צפויה החודש</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.filter(o => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + ((o.loan_amount_requested || 0) * (o.probability || 0) / 100), 0)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
                       </div>
                   </div>
               </div>
               {/* Decorations */}
-              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-red-50 blur-3xl rounded-full pointer-events-none"></div>
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-slate-50 blur-2xl rounded-full pointer-events-none"></div>
+              <div className={`absolute -bottom-20 -right-20 w-64 h-64 blur-3xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-red-900/5' : 'bg-red-50'}`}></div>
+              <div className={`absolute -top-10 -left-10 w-40 h-40 blur-2xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-slate-800/5' : 'bg-slate-50'}`}></div>
               </Card>
 
               {/* Tasks Widget */}
