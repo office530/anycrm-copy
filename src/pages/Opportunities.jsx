@@ -328,15 +328,15 @@ export default function OpportunitiesPage() {
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || 'bg-neutral-100 text-neutral-700 dark:bg-neutral-300 dark:text-neutral-700'} border border-transparent`}>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || (theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-neutral-100 text-neutral-700')} border border-transparent`}>
                         {stage.label}
                     </span>
-                    <span className="text-xs text-neutral-400 font-medium">{stageOpps.length}</span>
+                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-400'}`}>{stageOpps.length}</span>
                 </div>
-                <div className="h-1 w-full bg-neutral-200 dark:bg-neutral-300 rounded-full overflow-hidden">
+                <div className={`h-1 w-full rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-neutral-200'}`}>
                     <div className={`h-full ${stage.color || 'bg-neutral-400'}`} style={{ width: '100%' }}></div>
                 </div>
-                {total > 0 && <div className="text-xs font-medium text-neutral-500 dark:text-neutral-600 mt-1 text-right">{branding?.currency}{total.toLocaleString()}</div>}
+                {total > 0 && <div className={`text-xs font-medium mt-1 text-right ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>{branding?.currency}{total.toLocaleString()}</div>}
               </div>
 
               {/* Droppable Area */}

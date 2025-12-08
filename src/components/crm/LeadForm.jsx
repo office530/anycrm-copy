@@ -139,35 +139,29 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
       <div className="overflow-y-auto p-4 md:p-6 flex-1">
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:grid-cols-7 mb-6 bg-slate-100/80 p-1 h-auto gap-1">
-          <TabsTrigger value="details" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
-            <User className="w-4 h-4" />
-            <span className="text-xs md:text-sm">פרופיל 360</span>
-          </TabsTrigger>
-          <TabsTrigger value="opportunities" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
-            <Briefcase className="w-4 h-4" />
-            <span className="text-xs md:text-sm">הזדמנויות</span>
-          </TabsTrigger>
-          <TabsTrigger value="activity" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
-            <Activity className="w-4 h-4" />
-            <span className="text-xs md:text-sm">פעילות</span>
-          </TabsTrigger>
-          <TabsTrigger value="tasks" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
-            <CheckSquare className="w-4 h-4" />
-            <span className="text-xs md:text-sm">משימות</span>
-          </TabsTrigger>
-          <TabsTrigger value="documents" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm">
-            <FileText className="w-4 h-4" />
-            <span className="text-xs md:text-sm">מסמכים</span>
-          </TabsTrigger>
-          <TabsTrigger value="discovery" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-red-700 data-[state=active]:shadow-sm" disabled={!lead}>
-            <ClipboardList className="w-4 h-4" />
-            <span className="text-xs md:text-sm">תסריט</span>
-          </TabsTrigger>
-          <TabsTrigger value="ai" className="flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm" disabled={!lead}>
-            <Sparkles className="w-4 h-4" />
-            <span className="text-xs md:text-sm">ניתוח AI</span>
-          </TabsTrigger>
+        <TabsList className={`grid w-full grid-cols-3 md:grid-cols-7 mb-6 p-1 h-auto gap-1 ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-100/80'}`}>
+          {['details', 'opportunities', 'activity', 'tasks', 'documents', 'discovery', 'ai'].map(tab => {
+            const icons = { details: User, opportunities: Briefcase, activity: Activity, tasks: CheckSquare, documents: FileText, discovery: ClipboardList, ai: Sparkles };
+            const labels = { details: 'פרופיל 360', opportunities: 'הזדמנויות', activity: 'פעילות', tasks: 'משימות', documents: 'מסמכים', discovery: 'תסריט', ai: 'ניתוח AI' };
+            const Icon = icons[tab];
+            const isDisabled = !lead && tab !== 'details' && tab !== 'documents';
+            
+            return (
+              <TabsTrigger 
+                key={tab} 
+                value={tab} 
+                disabled={isDisabled}
+                className={`flex flex-col md:flex-row items-center gap-2 py-2 data-[state=active]:shadow-sm ${
+                  theme === 'dark' 
+                    ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400 text-slate-400' 
+                    : tab === 'ai' ? 'data-[state=active]:bg-white data-[state=active]:text-purple-700' : 'data-[state=active]:bg-white data-[state=active]:text-red-700'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="text-xs md:text-sm">{labels[tab]}</span>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
 
         <TabsContent value="details">
