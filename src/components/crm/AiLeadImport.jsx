@@ -244,7 +244,7 @@ ${textToAnalyze}`,
           <TabsContent value="image" className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* כפתור צילום ישיר */}
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+              <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${theme === 'dark' ? 'border-slate-700 hover:border-purple-500/50 hover:bg-slate-800' : 'border-slate-200 hover:border-purple-300 hover:bg-purple-50/10'}`}>
                 <input
                   type="file"
                   accept="image/*"
@@ -256,13 +256,13 @@ ${textToAnalyze}`,
                 />
                 <label htmlFor="camera-capture" className="cursor-pointer">
                   <Camera className="w-10 h-10 mx-auto mb-3 text-purple-500" />
-                  <p className="text-sm font-medium text-slate-700">צלם תמונה</p>
-                  <p className="text-xs text-slate-500 mt-1">פתח מצלמה</p>
+                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>צלם תמונה</p>
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>פתח מצלמה</p>
                 </label>
               </div>
 
               {/* כפתור העלאת קובץ */}
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+              <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${theme === 'dark' ? 'border-slate-700 hover:border-blue-500/50 hover:bg-slate-800' : 'border-slate-200 hover:border-purple-300 hover:bg-blue-50/10'}`}>
                 <input
                   type="file"
                   accept="image/*"
@@ -273,31 +273,31 @@ ${textToAnalyze}`,
                 />
                 <label htmlFor="image-upload" className="cursor-pointer">
                   <Upload className="w-10 h-10 mx-auto mb-3 text-blue-500" />
-                  <p className="text-sm font-medium text-slate-700">העלה תמונה</p>
-                  <p className="text-xs text-slate-500 mt-1">בחר מהגלריה</p>
+                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>העלה תמונה</p>
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>בחר מהגלריה</p>
                 </label>
               </div>
             </div>
 
             {selectedFile && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className={`border rounded-lg p-4 ${theme === 'dark' ? 'bg-emerald-950/20 border-emerald-800' : 'bg-green-50 border-green-200'}`}>
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
                     <img 
                       src={URL.createObjectURL(selectedFile)} 
                       alt="preview" 
-                      className="w-20 h-20 rounded-lg object-cover border-2 border-green-300"
+                      className={`w-20 h-20 rounded-lg object-cover border-2 ${theme === 'dark' ? 'border-emerald-700' : 'border-green-300'}`}
                     />
                   </div>
                   <div className="flex-1 text-right">
-                    <p className="text-sm font-medium text-green-800">✓ {selectedFile.name}</p>
-                    <p className="text-xs text-green-600 mt-1">התמונה מוכנה לסריקה עם AI Vision</p>
+                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-emerald-400' : 'text-green-800'}`}>✓ {selectedFile.name}</p>
+                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-emerald-500' : 'text-green-600'}`}>התמונה מוכנה לסריקה עם AI Vision</p>
                     <Button
                       type="button"
                       size="sm"
                       variant="ghost"
                       onClick={() => setSelectedFile(null)}
-                      className="text-xs text-red-600 hover:bg-red-50 mt-2 h-7"
+                      className={`text-xs mt-2 h-7 ${theme === 'dark' ? 'text-red-400 hover:bg-red-950/30' : 'text-red-600 hover:bg-red-50'}`}
                     >
                       הסר תמונה
                     </Button>
