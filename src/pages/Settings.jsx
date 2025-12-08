@@ -95,12 +95,12 @@ export default function SettingsPage() {
                     ))}
                 </nav>
                 
-                <div className="mt-8 mx-2 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
-                    <div className="flex items-center gap-2 text-blue-800 font-bold text-sm mb-2">
+                <div className={`mt-8 mx-2 p-4 rounded-xl border ${theme === 'dark' ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-50 border-purple-100'}`}>
+                    <div className={`flex items-center gap-2 font-bold text-sm mb-2 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-900'}`}>
                         <Shield className="w-4 h-4" />
                         אבטחת מידע
                     </div>
-                    <p className="text-xs text-blue-600/80 leading-relaxed">
+                    <p className={`text-xs leading-relaxed ${theme === 'dark' ? 'text-purple-200/70' : 'text-purple-700/80'}`}>
                         כל השינויים בהגדרות נרשמים ביומן הפעילות של המערכת ומגובים אוטומטית.
                     </p>
                 </div>
