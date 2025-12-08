@@ -137,10 +137,10 @@ export default function Dashboard() {
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Reports')}>
-                  <Button variant="outline" className={`rounded-full px-6 transition-all ${
+                  <Button variant="outline" className={`rounded-full px-6 transition-all border-2 ${
               theme === 'dark' ?
-              'border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10' :
-              'bg-zinc-200 text-red-700 border-red-200 hover:bg-red-50'}`
+              'border-purple-500/60 text-purple-400 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]' :
+              'bg-white border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300'}`
               }>
                       צפה בדוחות
                   </Button>
