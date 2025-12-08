@@ -27,7 +27,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
 
     if (dateRange !== 'all') {
       filtered = filtered.filter(o => {
-        const date = moment(o.created_date);
+        const date = moment(o.custom_data?.simulated_date || o.created_date);
         switch(dateRange) {
           case 'this_month': return date.isSame(now, 'month');
           case 'last_month': return date.isSame(now.clone().subtract(1, 'month'), 'month');
@@ -87,8 +87,9 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
   const salesCycleData = useMemo(() => {
     const productCycles = {};
     filteredData.forEach(o => {
-        if ((o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה')) && o.created_date) {
-            const start = moment(o.created_date);
+        const createdDate = o.custom_data?.simulated_date || o.created_date;
+        if ((o.deal_stage?.includes('Won') || o.deal_stage?.includes('בהצלחה')) && createdDate) {
+            const start = moment(createdDate);
             const end = o.updated_date ? moment(o.updated_date) : moment();
             const days = end.diff(start, 'days');
             const prod = o.product_type || 'Other';
