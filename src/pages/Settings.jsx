@@ -36,7 +36,7 @@ export default function SettingsPage() {
         items: [
             { id: "pipeline", label: "Pipeline Stages", icon: GitMerge },
             { id: "tags", label: "System Tags", icon: Tags },
-            ...(isAdmin ? [{ id: "custom_fields", label: "Custom Fields", icon: PenTool }] : []),
+            { id: "custom_fields", label: "Custom Fields", icon: PenTool },
             { id: "integrations", label: "Integrations", icon: Puzzle },
         ]
     },
