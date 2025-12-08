@@ -53,7 +53,7 @@ export default function ActivityLog({ leadId, opportunityId }) {
   });
 
   const getUserDisplayName = (email) => {
-    if (!email) return "לא ידוע";
+    if (!email) return "Unknown";
     const user = users?.find(u => u.email === email);
     return user?.full_name || email;
   };
@@ -69,7 +69,7 @@ export default function ActivityLog({ leadId, opportunityId }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['activities', leadId]);
       setIsAdding(false);
-      toast.success("הפעילות נוספה בהצלחה");
+      toast.success("Activity added successfully");
     }
   });
 
@@ -82,7 +82,7 @@ export default function ActivityLog({ leadId, opportunityId }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['activities', leadId]);
       setEditingActivity(null);
-      toast.success("הפעילות עודכנה בהצלחה");
+      toast.success("Activity updated successfully");
     }
   });
 
@@ -117,35 +117,35 @@ export default function ActivityLog({ leadId, opportunityId }) {
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'Completed':return 'הושלם';
-      case 'Scheduled':return 'מתוכנן';
-      case 'No Answer':return 'אין מענה';
-      case 'Left Message':return 'הושארה הודעה';
+      case 'Completed':return 'Completed';
+      case 'Scheduled':return 'Scheduled';
+      case 'No Answer':return 'No Answer';
+      case 'Left Message':return 'Left Message';
       default:return status;
     }
   };
 
   const getTypeLabel = (type) => {
     switch (type) {
-      case 'Call':return 'שיחה טלפונית';
-      case 'Email':return 'דואר אלקטרוני';
-      case 'SMS':return 'הודעת SMS';
-      case 'Meeting':return 'פגישה';
-      case 'Document Collection':return 'איסוף מסמכים';
-      default:return 'הערה כללית';
+      case 'Call':return 'Phone Call';
+      case 'Email':return 'Email';
+      case 'SMS':return 'SMS';
+      case 'Meeting':return 'Meeting';
+      case 'Document Collection':return 'Document Collection';
+      default:return 'General Note';
     }
   };
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-slate-800">תיעוד אינטראקציות</h3>
+        <h3 className="font-semibold text-slate-800">Interaction Log</h3>
         <Button
           size="sm"
           variant="default"
           onClick={() => { setIsAdding(true); setEditingActivity(null); }}
         >
-          <Plus className="w-4 h-4 mr-2" /> פעילות חדשה
+          <Plus className="w-4 h-4 mr-2" /> New Activity
         </Button>
       </div>
 
@@ -162,11 +162,11 @@ export default function ActivityLog({ leadId, opportunityId }) {
       <ScrollArea className="flex-1 pr-4 -mr-4">
         <div className="space-y-4 pb-4">
           {isLoading ?
-          <p className="text-center text-slate-500 py-4">טוען היסטוריה...</p> :
+          <p className="text-center text-slate-500 py-4">Loading history...</p> :
           activities?.length === 0 ?
           <div className="text-center py-8 text-slate-400 border-2 border-dashed rounded-lg">
               <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>אין פעילויות מתועדות עדיין</p>
+              <p>No activities logged yet</p>
             </div> :
 
           activities?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((activity) =>

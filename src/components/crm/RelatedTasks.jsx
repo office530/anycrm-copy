@@ -92,20 +92,20 @@ export default function RelatedTasks({ leadId, opportunityId }) {
   return (
     <div className="space-y-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="font-bold text-slate-800">משימות קשורות</h3>
+        <h3 className="font-bold text-slate-800">Related Tasks</h3>
         <Button size="sm" onClick={() => setShowForm(true)} className="bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200">
-          <Plus className="w-4 h-4 ml-1" />
-          משימה חדשה
+          <Plus className="w-4 h-4 mr-1" />
+          New Task
         </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-2 pr-1">
         {isLoading ? (
-          <div className="text-center py-4 text-slate-400">טוען...</div>
+          <div className="text-center py-4 text-slate-400">Loading...</div>
         ) : tasks.length === 0 ? (
           <div className="text-center py-8 text-slate-400 border border-dashed rounded-lg">
             <CheckCircle2 className="w-8 h-8 mx-auto mb-2 opacity-20" />
-            <p className="text-sm">אין משימות מקושרות</p>
+            <p className="text-sm">No related tasks</p>
           </div>
         ) : (
           tasks.map(task => (
@@ -133,7 +133,7 @@ export default function RelatedTasks({ leadId, opportunityId }) {
                 )}
                 {task._opportunityContext && (
                     <div className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded inline-block mb-1">
-                        הזדמנות: {task._opportunityContext.product_type}
+                        Opp: {task._opportunityContext.product_type}
                     </div>
                 )}
                 <div className="flex items-center gap-2 mt-1.5">
@@ -150,7 +150,7 @@ export default function RelatedTasks({ leadId, opportunityId }) {
                         task.status === 'in_progress' ? 'bg-blue-50 text-blue-600' :
                         'bg-slate-100 text-slate-500'
                     }`}>
-                        {task.status === 'done' ? 'הושלם' : task.status === 'in_progress' ? 'בתהליך' : 'לביצוע'}
+                        {task.status === 'done' ? 'Done' : task.status === 'in_progress' ? 'In Progress' : 'To Do'}
                     </span>
                 </div>
               </div>
@@ -171,10 +171,10 @@ export default function RelatedTasks({ leadId, opportunityId }) {
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent dir="rtl">
+        <DialogContent dir="ltr">
             <DialogHeader>
                 <div className="flex justify-between items-center">
-                    <DialogTitle>משימה חדשה ל{leadId ? 'ליד' : 'הזדמנות'}</DialogTitle>
+                    <DialogTitle>New Task for {leadId ? 'Lead' : 'Opportunity'}</DialogTitle>
                     <Button variant="ghost" size="icon" onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
                         <X className="w-4 h-4" />
                     </Button>
@@ -200,31 +200,31 @@ function SimpleTaskForm({ onSubmit, onCancel }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!formData.title) return alert("חובה למלא כותרת");
+        if (!formData.title) return alert("Title is required");
         onSubmit(formData);
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
-                <label className="text-sm font-medium">כותרת</label>
+                <label className="text-sm font-medium">Title</label>
                 <Input 
                     value={formData.title} 
                     onChange={e => setFormData({...formData, title: e.target.value})} 
-                    placeholder="מה צריך לבצע?"
+                    placeholder="What needs to be done?"
                 />
             </div>
             <div className="space-y-1">
-                <label className="text-sm font-medium">תיאור</label>
+                <label className="text-sm font-medium">Description</label>
                 <Textarea 
                     value={formData.description} 
                     onChange={e => setFormData({...formData, description: e.target.value})} 
-                    placeholder="פרטים נוספים..."
+                    placeholder="More details..."
                 />
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-sm font-medium">תאריך יעד</label>
+                    <label className="text-sm font-medium">Due Date</label>
                     <Input 
                         type="date" 
                         value={formData.due_date} 
@@ -232,22 +232,22 @@ function SimpleTaskForm({ onSubmit, onCancel }) {
                     />
                 </div>
                 <div className="space-y-1">
-                    <label className="text-sm font-medium">סטטוס</label>
+                    <label className="text-sm font-medium">Status</label>
                     <Select value={formData.status} onValueChange={v => setFormData({...formData, status: v})}>
                         <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="todo">לביצוע</SelectItem>
-                            <SelectItem value="in_progress">בתהליך</SelectItem>
-                            <SelectItem value="done">הושלם</SelectItem>
+                            <SelectItem value="todo">To Do</SelectItem>
+                            <SelectItem value="in_progress">In Progress</SelectItem>
+                            <SelectItem value="done">Done</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
-                <Button type="submit">צור משימה</Button>
+                <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+                <Button type="submit">Create Task</Button>
             </div>
         </form>
     );

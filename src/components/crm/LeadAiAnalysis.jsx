@@ -36,8 +36,8 @@ export default function LeadAiAnalysis({ lead }) {
           Your tasks:
           1. Classify the lead as "Hot", "Warm", or "Cold" based on conversion potential.
           2. Assign a quality score from 0 to 100.
-          3. Provide a brief analysis (in Hebrew) of why you gave this score based on the available data points.
-          4. Suggest 3 concrete next actions (in Hebrew) for the sales agent.
+          3. Provide a brief analysis (in English) of why you gave this score based on the available data points.
+          4. Suggest 3 concrete next actions (in English) for the sales agent.
           
           Consider: 
           - Completeness of data
@@ -48,8 +48,8 @@ export default function LeadAiAnalysis({ lead }) {
           {
             "classification": "Hot" | "Warm" | "Cold",
             "score": number,
-            "analysis": "string (Hebrew)",
-            "actions": ["string (Hebrew)", "string (Hebrew)", "string (Hebrew)"]
+            "analysis": "string (English)",
+            "actions": ["string (English)", "string (English)", "string (English)"]
           }
         `;
 
@@ -109,9 +109,9 @@ export default function LeadAiAnalysis({ lead }) {
             <Sparkles className="w-6 h-6 text-purple-600" />
           </div>
           <div>
-            <h3 className="font-bold text-lg text-purple-900">ניתוח AI חכם</h3>
+            <h3 className="font-bold text-lg text-purple-900">Smart AI Analysis</h3>
             <p className="text-sm text-purple-700/80 max-w-xs">
-              קבל תובנות אוטומטיות, דירוג איכות והמלצות לפעולה עבור הליד הזה באמצעות בינה מלאכותית.
+              Get automated insights, quality scoring, and action recommendations for this lead using AI.
             </p>
           </div>
           <Button 
@@ -120,7 +120,7 @@ export default function LeadAiAnalysis({ lead }) {
             className="bg-purple-600 hover:bg-purple-700 text-white"
           >
             {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            הפעל ניתוח ליד
+            Run Lead Analysis
           </Button>
         </CardContent>
       </Card>
@@ -133,7 +133,7 @@ export default function LeadAiAnalysis({ lead }) {
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-bold flex items-center gap-2 text-purple-900">
             <Sparkles className="w-4 h-4 text-purple-600" />
-            ניתוח ותובנות AI
+            AI Analysis & Insights
           </CardTitle>
           <Button 
             variant="ghost" 
@@ -152,27 +152,27 @@ export default function LeadAiAnalysis({ lead }) {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="w-full sm:flex-1 space-y-1">
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-slate-500">ציון איכות</span>
+              <span className="text-slate-500">Quality Score</span>
               <span className="font-bold text-slate-700">{lead.ai_quality_score || 0}/100</span>
             </div>
             <Progress value={lead.ai_quality_score || 0} className="h-2" indicatorClassName={getScoreColor(lead.ai_quality_score || 0)} />
           </div>
           <Badge variant="outline" className={`px-3 py-1 text-sm font-bold border w-full sm:w-auto justify-center ${getClassColor(lead.ai_classification)}`}>
-            {lead.ai_classification === 'Hot' ? '🔥 חם מאוד' : 
-             lead.ai_classification === 'Warm' ? '☀️ פושר' : 
-             lead.ai_classification === 'Cold' ? '❄️ קר' : 'לא דורג'}
+            {lead.ai_classification === 'Hot' ? '🔥 Hot' : 
+             lead.ai_classification === 'Warm' ? '☀️ Warm' : 
+             lead.ai_classification === 'Cold' ? '❄️ Cold' : 'Unrated'}
           </Badge>
         </div>
 
         {/* Analysis Text */}
         <div className="bg-slate-50 p-3 rounded-lg text-sm text-slate-700 leading-relaxed border border-slate-100">
-          <p>{lead.ai_analysis || "ניתוח ראשוני בוצע."}</p>
+          <p>{lead.ai_analysis || "Initial analysis complete."}</p>
         </div>
 
         {/* Action Items */}
         <div className="space-y-2">
           <h4 className="text-xs font-bold text-slate-500 flex items-center gap-1 uppercase tracking-wider">
-            <Target className="w-3 h-3" /> פעולות מומלצות
+            <Target className="w-3 h-3" /> Recommended Actions
           </h4>
           <div className="space-y-2">
             {lead.ai_suggested_actions?.map((action, idx) => (
@@ -182,14 +182,14 @@ export default function LeadAiAnalysis({ lead }) {
               </div>
             ))}
             {(!lead.ai_suggested_actions || lead.ai_suggested_actions.length === 0) && (
-              <p className="text-xs text-slate-400 italic">אין פעולות מומלצות כרגע.</p>
+              <p className="text-xs text-slate-400 italic">No recommendations at this time.</p>
             )}
           </div>
         </div>
 
         <div className="text-[10px] text-slate-400 text-left pt-2 border-t border-slate-50 flex justify-between">
-          <span>מופעל ע"י מודל שפה מתקדם</span>
-          <span>עודכן: {new Date(lead.ai_last_analysis_date).toLocaleDateString('he-IL')}</span>
+          <span>Powered by LLM</span>
+          <span>Updated: {new Date(lead.ai_last_analysis_date).toLocaleDateString('en-US')}</span>
         </div>
 
       </CardContent>
