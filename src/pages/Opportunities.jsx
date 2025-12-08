@@ -288,7 +288,11 @@ export default function OpportunitiesPage() {
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none bg-white shadow-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-90 hover:opacity-100 transition-all"
+                className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
+                  theme === 'dark' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
+                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                }`}
                 onClick={() => scroll('right')}
             >
                 <ChevronRight className="w-5 h-5" />
@@ -299,7 +303,11 @@ export default function OpportunitiesPage() {
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none bg-white shadow-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-90 hover:opacity-100 transition-all"
+                className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
+                  theme === 'dark' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
+                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                }`}
                 onClick={() => scroll('left')}
             >
                 <ChevronLeft className="w-5 h-5" />
@@ -338,7 +346,9 @@ export default function OpportunitiesPage() {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] transition-colors rounded-xl ${
-                      snapshot.isDraggingOver ? 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' : ''
+                      snapshot.isDraggingOver 
+                        ? theme === 'dark' ? 'bg-slate-800/50 ring-2 ring-dashed ring-slate-600' : 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' 
+                        : ''
                     }`}
                   >
                     {stageOpps.map((opp, index) => (
@@ -416,8 +426,12 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wide">
+        <div className={`rounded-xl border shadow-sm overflow-hidden transition-colors ${
+          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+        }`}>
+          <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide transition-colors ${
+            theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+          }`}>
             <div className="col-span-3 text-right">לקוח</div>
             <div className="col-span-2 text-right">טלפון</div>
             <div className="col-span-4 text-right">הערות</div>
@@ -425,22 +439,28 @@ export default function OpportunitiesPage() {
             <div className="col-span-1 text-left pl-4">פעולות</div>
           </div>
           
-          <div className="divide-y divide-slate-100">
+          <div className={`divide-y transition-colors ${theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'}`}>
             {filteredOpportunities.map((opp) => {
               const stage = activeStages.find(s => s.id === opp.deal_stage);
               return (
-                <div key={opp.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-start hover:bg-slate-50/80 transition-colors group">
+                <div key={opp.id} className={`grid grid-cols-12 gap-4 px-6 py-4 items-start transition-colors group ${
+                  theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/80'
+                }`}>
                   {(() => {
                     const lead = leads.find(l => l.id === opp.lead_id);
                     return (
                       <>
                         {/* שם */}
                         <div className="col-span-3 flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-base">
+                          <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base ${
+                            theme === 'dark' ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-50 text-purple-700'
+                          }`}>
                             {opp.lead_name?.charAt(0) || '?'}
                           </div>
                           <div 
-                            className="text-base font-bold text-slate-800 hover:text-purple-600 transition-colors cursor-pointer"
+                            className={`text-base font-bold transition-colors cursor-pointer ${
+                              theme === 'dark' ? 'text-white hover:text-purple-400' : 'text-slate-800 hover:text-purple-600'
+                            }`}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
                             {opp.lead_name || 'לקוח ללא שם'}
@@ -448,19 +468,19 @@ export default function OpportunitiesPage() {
                         </div>
                         
                         {/* טלפון */}
-                        <div className="col-span-2 text-base text-slate-700 font-medium flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-slate-400" />
+                        <div className={`col-span-2 text-base font-medium flex items-center gap-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                          <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
                           {lead?.phone_number || '-'}
                         </div>
                         
                         {/* הערות */}
-                        <div className="col-span-4 text-sm text-slate-600 line-clamp-2" title={lead?.notes}>
+                        <div className={`col-span-4 text-sm line-clamp-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} title={lead?.notes}>
                           {lead?.notes || '-'}
                         </div>
                         
                         {/* שיחה אחרונה */}
-                        <div className="col-span-2 text-sm text-slate-600 flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-slate-400" />
+                        <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                          <Calendar className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
                           {lead?.last_contact_date ? moment(lead.last_contact_date).format('DD/MM/YYYY') : '-'}
                         </div>
                         
@@ -470,7 +490,7 @@ export default function OpportunitiesPage() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
-                            className="h-8 px-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50"
+                            className={`h-8 px-2 ${theme === 'dark' ? 'text-slate-500 hover:text-purple-400 hover:bg-purple-900/20' : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'}`}
                             title="פתח הזדמנות"
                           >
                             <Briefcase className="w-4 h-4" />

@@ -103,14 +103,18 @@ export default function ReportsPage() {
               {/* Mobile Navigation (Dropdown) */}
               <div className="col-span-12 lg:hidden mb-4">
                   <Select value={activeReport} onValueChange={setActiveReport}>
-                      <SelectTrigger className="w-full bg-white border-neutral-200">
+                      <SelectTrigger className={`w-full ${
+                        theme === 'dark' 
+                          ? 'bg-slate-800 border-slate-700 text-white' 
+                          : 'bg-white border-neutral-200'
+                      }`}>
                           <SelectValue placeholder="בחר דוח להצגה" />
                       </SelectTrigger>
                       <SelectContent>
                           {reports.map((report) => (
                               <SelectItem key={report.id} value={report.id}>
                                   <div className="flex items-center gap-2">
-                                      <report.icon className="w-4 h-4 text-slate-500" />
+                                      <report.icon className="w-4 h-4" />
                                       {report.name}
                                   </div>
                               </SelectItem>

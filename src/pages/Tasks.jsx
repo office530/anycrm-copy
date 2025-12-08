@@ -164,20 +164,30 @@ export default function TasksPage() {
 
       {/* טאבים - פעילות / ארכיון */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md bg-slate-100">
-          <TabsTrigger value="active" className="data-[state=active]:bg-white">
+        <TabsList className={`grid w-full grid-cols-2 max-w-md transition-colors ${
+          theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'
+        }`}>
+          <TabsTrigger value="active" className={`data-[state=active]:shadow-sm transition-all ${
+            theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : 'data-[state=active]:bg-white'
+          }`}>
             משימות פעילות ({activeTasks.length})
           </TabsTrigger>
-          <TabsTrigger value="archived" className="data-[state=active]:bg-white">
+          <TabsTrigger value="archived" className={`data-[state=active]:shadow-sm transition-all ${
+            theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : 'data-[state=active]:bg-white'
+          }`}>
             ארכיון ({archivedTasks.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="active" className="mt-6">
           {isLoading ? (
-            <div className="text-center py-10 text-slate-500">טוען משימות...</div>
+            <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>טוען משימות...</div>
           ) : activeTasks.length === 0 ? (
-            <div className="text-center py-16 text-slate-400 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
+            <div className={`text-center py-16 rounded-xl border-2 border-dashed transition-colors ${
+              theme === 'dark' 
+                ? 'bg-slate-800/50 border-slate-700 text-slate-500' 
+                : 'bg-slate-50 border-slate-200 text-slate-400'
+            }`}>
               <CheckCircle2 className="w-16 h-16 mx-auto mb-4 opacity-20" />
               <p className="text-lg font-medium">אין משימות פעילות</p>
               <p className="text-sm mt-1">התחל ביצירת משימה חדשה</p>
@@ -204,7 +214,11 @@ export default function TasksPage() {
 
         <TabsContent value="archived" className="mt-6">
           {archivedTasks.length === 0 ? (
-            <div className="text-center py-16 text-slate-400 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
+            <div className={`text-center py-16 rounded-xl border-2 border-dashed transition-colors ${
+              theme === 'dark' 
+                ? 'bg-slate-800/50 border-slate-700 text-slate-500' 
+                : 'bg-slate-50 border-slate-200 text-slate-400'
+            }`}>
               <Archive className="w-16 h-16 mx-auto mb-4 opacity-20" />
               <p className="text-lg font-medium">אין משימות בארכיון</p>
             </div>
@@ -315,7 +329,11 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
         {/* תוכן */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className={`font-bold text-slate-900 ${isDone ? 'line-through text-slate-500' : ''}`}>
+            <h3 className={`font-bold ${
+              isDone 
+                ? 'line-through text-slate-500' 
+                : theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>
               {task.title}
             </h3>
             <div className="flex items-center gap-1 flex-shrink-0">
@@ -326,7 +344,7 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
                 <Badge className="bg-orange-500 text-xs">היום</Badge>
               )}
               {task.due_date && (
-                <span className="text-xs text-slate-500 flex items-center gap-1">
+                <span className={`text-xs flex items-center gap-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                   <Calendar className="w-3 h-3" />
                   {moment(task.due_date).format('DD/MM/YY')}
                 </span>
