@@ -17,12 +17,12 @@ function LayoutContent({ children, currentPageName }) {
   
   // Exact paths
   const navigation = [
-    { name: 'לוח בקרה', path: 'Dashboard', icon: LayoutDashboard },
-    { name: 'מאגר לידים', path: 'Leads', icon: Users },
-    { name: 'הזדמנויות', path: 'Opportunities', icon: Briefcase },
-    { name: 'משימות', path: 'Tasks', icon: CheckSquare },
-    { name: 'דוחות', path: 'Reports', icon: BarChart3 },
-    { name: 'אוטומציות', path: 'Automation', icon: Zap },
+    { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard },
+    { name: 'Leads', path: 'Leads', icon: Users },
+    { name: 'Opportunities', path: 'Opportunities', icon: Briefcase },
+    { name: 'Tasks', path: 'Tasks', icon: CheckSquare },
+    { name: 'Reports', path: 'Reports', icon: BarChart3 },
+    { name: 'Automation', path: 'Automation', icon: Zap },
   ];
 
   // Dynamic Colors based on branding
@@ -30,17 +30,17 @@ function LayoutContent({ children, currentPageName }) {
   const activeClass = `bg-red-50 text-red-700 font-bold`;
 
   return (
-    <div className={`min-h-screen font-heebo flex transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-neutral-50 text-neutral-900'}`} dir="rtl">
+    <div className={`min-h-screen font-heebo flex transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-neutral-50 text-neutral-900'}`} dir="ltr">
       
       {/* Sidebar / Drawer - Adaptive */}
       <aside className={`
-        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-l lg:shadow-sm
+        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-sm
         ${theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-neutral-800 border-neutral-100'}
-        ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative">
-            {/* Mobile Close Button - Absolute Top Left */}
-            <div className="absolute top-4 left-4 lg:hidden z-10">
+            {/* Mobile Close Button - Absolute Top Right */}
+            <div className="absolute top-4 right-4 lg:hidden z-10">
                 <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)} className="h-10 w-10 rounded-full bg-neutral-100 text-neutral-500">
                     <X className="w-6 h-6" />
                 </Button>
@@ -111,7 +111,7 @@ function LayoutContent({ children, currentPageName }) {
                     `}
                 >
                     <SettingsIcon className="w-6 h-6 lg:w-5 lg:h-5" />
-                    הגדרות מערכת
+                    System Settings
                 </Link>
                 <button
                     onClick={toggleTheme}
@@ -122,7 +122,7 @@ function LayoutContent({ children, currentPageName }) {
                     }`}
                 >
                     {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                    {theme === 'dark' ? 'מצב בהיר' : 'מצב כהה'}
+                    {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
                 </button>
             </div>
         </div>
@@ -137,7 +137,7 @@ function LayoutContent({ children, currentPageName }) {
                 : 'bg-white/95 border-neutral-100'
         }`}>
             <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className={theme === 'dark' ? 'hover:bg-slate-700' : 'hover:bg-neutral-100 -mr-2'}>
+                <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className={theme === 'dark' ? 'hover:bg-slate-700' : 'hover:bg-neutral-100 -ml-2'}>
                     <Menu className={`w-6 h-6 ${theme === 'dark' ? 'text-white' : 'text-neutral-700'}`} />
                 </Button>
                 <span className="font-bold text-lg">{branding.companyName}</span>
@@ -155,7 +155,7 @@ function LayoutContent({ children, currentPageName }) {
                 : 'bg-white/80 border-neutral-200/60'
         }`}>
             <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-800'}`}>
-                {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
+                {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'Settings' : 'Overview')}
             </h1>
             <div className="flex items-center gap-2 md:gap-4">
                 <div className="hidden md:block">

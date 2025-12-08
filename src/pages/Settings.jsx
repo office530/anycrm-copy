@@ -23,38 +23,38 @@ export default function SettingsPage() {
 
   const menuGroups = [
     {
-        title: "כללי",
+        title: "General",
         items: [
-            // { id: "organization", label: "הגדרות ארגון", icon: Building2 },
-            { id: "team", label: "צוות ומשתמשים", icon: Users },
-            { id: "audit", label: "יומן פעילות", icon: Activity },
-            ...(isAdmin ? [{ id: "user_management", label: "ניהול הרשאות", icon: Lock }] : []),
+            // { id: "organization", label: "Organization Settings", icon: Building2 },
+            { id: "team", label: "Team & Users", icon: Users },
+            { id: "audit", label: "Audit Log", icon: Activity },
+            ...(isAdmin ? [{ id: "user_management", label: "Permissions", icon: Lock }] : []),
         ]
     },
     {
-        title: "הגדרות מערכת",
+        title: "System Settings",
         items: [
-            { id: "pipeline", label: "תהליכי מכירה", icon: GitMerge },
-            { id: "tags", label: "תגיות מערכת", icon: Tags },
-            { id: "custom_fields", label: "שדות מותאמים", icon: PenTool },
-            { id: "integrations", label: "אינטגרציות", icon: Puzzle },
+            { id: "pipeline", label: "Pipeline Stages", icon: GitMerge },
+            { id: "tags", label: "System Tags", icon: Tags },
+            { id: "custom_fields", label: "Custom Fields", icon: PenTool },
+            { id: "integrations", label: "Integrations", icon: Puzzle },
         ]
     },
     {
-        title: "אישי",
+        title: "Personal",
         items: [
-            { id: "profile", label: "הפרופיל שלי", icon: User },
-            { id: "notifications", label: "התראות", icon: Bell },
+            { id: "profile", label: "My Profile", icon: User },
+            { id: "notifications", label: "Notifications", icon: Bell },
         ]
     }
   ];
 
   return (
-    <div className="max-w-7xl mx-auto pb-20" dir="rtl">
+    <div className="max-w-7xl mx-auto pb-20" dir="ltr">
         {/* Header */}
         <div className="mb-8">
-            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>הגדרות מערכת</h1>
-            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>ניהול הגדרות מתקדם עבור הארגון והמשתמשים</p>
+            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>System Settings</h1>
+            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>Advanced configuration for organization and users</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 min-h-[600px]">
@@ -75,7 +75,7 @@ export default function SettingsPage() {
                                         <button
                                             key={item.id}
                                             onClick={() => setActiveTab(item.id)}
-                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-right
+                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-left
                                                 ${isActive 
                                                     ? theme === 'dark'
                                                         ? "bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold"
@@ -98,10 +98,10 @@ export default function SettingsPage() {
                 <div className={`mt-8 mx-2 p-4 rounded-xl border ${theme === 'dark' ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-50 border-purple-100'}`}>
                     <div className={`flex items-center gap-2 font-bold text-sm mb-2 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-900'}`}>
                         <Shield className="w-4 h-4" />
-                        אבטחת מידע
+                        Security
                     </div>
                     <p className={`text-xs leading-relaxed ${theme === 'dark' ? 'text-purple-200/70' : 'text-purple-700/80'}`}>
-                        כל השינויים בהגדרות נרשמים ביומן הפעילות של המערכת ומגובים אוטומטית.
+                        All setting changes are logged in the audit log and backed up automatically.
                     </p>
                 </div>
             </aside>

@@ -33,18 +33,18 @@ export default function PipelineSettings() {
         setLocalStages(newStages);
     };
 
-    if (isLoading) return <div className="p-10 text-center text-slate-400">טוען שלבים...</div>;
+    if (isLoading) return <div className="p-10 text-center text-slate-400">Loading stages...</div>;
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex justify-between items-end">
                 <div>
-                     <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>שלבי המכירה (Pipeline)</h2>
-                     <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} text-sm`}>הגדר את השלבים שעובר ליד עד לסגירת העסקה</p>
+                     <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Pipeline Stages</h2>
+                     <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} text-sm`}>Define the stages a lead goes through until closing</p>
                 </div>
                 <Button onClick={handleSave} disabled={isSaving} className="bg-slate-900 text-white">
-                    {isSaving ? "שומר..." : "שמור שינויים"}
-                    <Save className="w-4 h-4 mr-2" />
+                    {isSaving ? "Saving..." : "Save Changes"}
+                    <Save className="w-4 h-4 ml-2" />
                 </Button>
             </div>
 
@@ -60,7 +60,7 @@ export default function PipelineSettings() {
                                 
                                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                                     <div className="space-y-1">
-                                        <Label className="text-xs text-slate-600 dark:text-slate-400">שם השלב</Label>
+                                        <Label className="text-xs text-slate-600 dark:text-slate-400">Stage Name</Label>
                                         <Input 
                                             value={stage.label} 
                                             onChange={(e) => updateLocalStage(index, 'label', e.target.value)}
@@ -68,7 +68,7 @@ export default function PipelineSettings() {
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <Label className="text-xs text-slate-600 dark:text-slate-400">משימות אוטומטיות (צ'ק-ליסט)</Label>
+                                        <Label className="text-xs text-slate-600 dark:text-slate-400">Automated Tasks (Checklist)</Label>
                                         <div className="flex flex-wrap gap-2">
                                             {stage.checklist?.map((item, i) => (
                                                 <Badge key={i} variant="secondary" className="bg-slate-100 font-normal text-slate-600 border-slate-200 flex gap-1 items-center">
@@ -88,7 +88,7 @@ export default function PipelineSettings() {
                                             <Button 
                                                 variant="ghost" size="sm" className="h-6 text-xs px-2 border border-dashed border-slate-300 text-slate-500 hover:text-blue-600"
                                                 onClick={() => {
-                                                    const text = prompt("הכנס שם משימה:");
+                                                    const text = prompt("Enter task name:");
                                                     if (text) {
                                                         const newStages = [...localStages];
                                                         if (!newStages[index].checklist) newStages[index].checklist = [];
@@ -97,7 +97,7 @@ export default function PipelineSettings() {
                                                     }
                                                 }}
                                             >
-                                                <Plus className="w-3 h-3 mr-1" /> הוסף
+                                                <Plus className="w-3 h-3 mr-1" /> Add
                                             </Button>
                                         </div>
                                     </div>

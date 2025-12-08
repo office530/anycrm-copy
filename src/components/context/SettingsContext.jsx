@@ -7,60 +7,60 @@ const SettingsContext = createContext();
 
 // Defaults
 export const defaultLeadStatuses = [
-  { value: "New", label: "חדש", color: "bg-red-100 text-red-800 border border-red-200 font-medium" },
-  { value: "Attempting Contact", label: "בטיפול", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
-  { value: "Contacted - Qualifying", label: "בירור צרכים", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
-  { value: "Sales Ready", label: "בשל למכירה", color: "bg-neutral-800 text-white border border-neutral-900 font-medium" },
-  { value: "Converted", label: "הומר להזדמנות", color: "bg-red-700 text-white border border-red-800 font-medium shadow-sm" },
-  { value: "Lost / Unqualified", label: "לא רלוונטי", color: "bg-neutral-100 text-neutral-500 border border-neutral-200" }
+  { value: "New", label: "New", color: "bg-red-100 text-red-800 border border-red-200 font-medium" },
+  { value: "Attempting Contact", label: "In Progress", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
+  { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
+  { value: "Sales Ready", label: "Sales Ready", color: "bg-neutral-800 text-white border border-neutral-900 font-medium" },
+  { value: "Converted", label: "Converted", color: "bg-red-700 text-white border border-red-800 font-medium shadow-sm" },
+  { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-neutral-100 text-neutral-500 border border-neutral-200" }
 ];
 
 export const defaultPipelineStages = [
   { 
     id: "New (חדש)", 
-    label: "חדש", 
+    label: "New", 
     color: "bg-red-400", 
     light: "bg-red-50 text-red-700",
-    checklist: [{ id: "c1", text: "אימות פרטי ליד" }]
+    checklist: [{ id: "c1", text: "Verify Lead Details" }]
   },
   { 
     id: "Discovery Call (שיחת בירור צרכים)", 
-    label: "בירור צרכים", 
+    label: "Discovery Call", 
     color: "bg-orange-400", 
     light: "bg-orange-50 text-orange-700",
-    checklist: [{ id: "c3", text: "מילוי תסריט שיחה" }]
+    checklist: [{ id: "c3", text: "Complete Discovery Script" }]
   },
   { 
     id: "Meeting Scheduled (נקבעת פגישה)", 
-    label: "נקבעת פגישה", 
+    label: "Meeting Scheduled", 
     color: "bg-amber-400", 
     light: "bg-amber-50 text-amber-700",
     checklist: []
   },
   { 
     id: "Documents Collection (איסוף מסמכים)", 
-    label: "איסוף מסמכים", 
+    label: "Documents Collection", 
     color: "bg-stone-400", 
     light: "bg-stone-50 text-stone-700",
     checklist: []
   },
   { 
     id: "Request Sent to Harel (בקשה נשלחה להראל)", 
-    label: "נשלח להראל", 
+    label: "Request Sent", 
     color: "bg-neutral-400", 
     light: "bg-neutral-50 text-neutral-700",
     checklist: []
   },
   { 
     id: "Closed Won (נחתם - בהצלחה)", 
-    label: "נסגר בהצלחה", 
+    label: "Closed Won", 
     color: "bg-emerald-500", 
     light: "bg-emerald-50 text-emerald-700",
     checklist: []
   },
   { 
     id: "Closed Lost (אבוד)", 
-    label: "אבוד", 
+    label: "Closed Lost", 
     color: "bg-neutral-300", 
     light: "bg-neutral-50 text-neutral-500",
     checklist: []

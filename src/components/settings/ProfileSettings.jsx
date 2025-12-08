@@ -26,10 +26,10 @@ export default function ProfileSettings() {
         try {
             await base44.entities.User.update(user.id, { requested_access_upgrade: true });
             setUser(prev => ({ ...prev, requested_access_upgrade: true }));
-            alert("בקשתך נשלחה לאדמין המערכת");
+            alert("Your request has been sent to the system admin");
         } catch (e) {
             console.error(e);
-            alert("שגיאה בשליחת הבקשה");
+            alert("Error sending request");
         } finally {
             setRequestLoading(false);
         }
@@ -42,52 +42,52 @@ export default function ProfileSettings() {
             await base44.auth.updateMe({
                 full_name: user.full_name,
             });
-            // alert("הפרופיל עודכן בהצלחה");
+            // alert("Profile updated successfully");
         } catch (err) {
             console.error(err);
-            // alert("שגיאה בעדכון הפרופיל");
+            // alert("Error updating profile");
         } finally {
             setLoading(false);
         }
     };
 
-    if (!user) return <div className="p-10 text-center text-slate-400">טוען נתוני משתמש...</div>;
+    if (!user) return <div className="p-10 text-center text-slate-400">Loading user data...</div>;
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>הפרופיל שלי</CardTitle>
-                    <CardDescription>פרטים אישיים ופרטי התחברות</CardDescription>
+                    <CardTitle>My Profile</CardTitle>
+                    <CardDescription>Personal details and login information</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSave} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label>שם תצוגה (מופיע ביומן פעילות)</Label>
+                                <Label>Display Name (appears in audit log)</Label>
                                 <Input 
                                     value={user.full_name || ''} 
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
-                                    placeholder="איך תרצה שיופיע השם שלך במערכת"
+                                    placeholder="How you want your name to appear"
                                 />
-                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>שם זה יוצג בכל הפעילויות והעדכונים שלך</p>
+                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>This name will be displayed in all your activities and updates</p>
                             </div>
                             <div className="space-y-2">
-                                <Label>כתובת אימייל</Label>
+                                <Label>Email Address</Label>
                                 <Input 
                                     value={user.email || ''} 
                                     disabled 
                                     className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-slate-400" : "bg-slate-50 text-slate-600"} 
                                 />
-                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>לא ניתן לשנות כתובת אימייל</p>
+                                <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Email address cannot be changed</p>
                             </div>
                         </div>
 
                         <div className="pt-4 border-t">
                             <Button type="submit" disabled={loading || isViewer} className="bg-slate-900 text-white">
-                                {loading ? "שומר..." : "שמור שינויים"}
+                                {loading ? "Saving..." : "Save Changes"}
                             </Button>
-                            {isViewer && <p className="text-xs text-red-500 mt-2">אין לך הרשאות לערוך פרופיל (צופה בלבד)</p>}
+                            {isViewer && <p className="text-xs text-red-500 mt-2">You don't have permission to edit profile (Viewer only)</p>}
                         </div>
                     </form>
                 </CardContent>
@@ -95,28 +95,28 @@ export default function ProfileSettings() {
 
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>הרשאות גישה</CardTitle>
-                    <CardDescription>רמת ההרשאה הנוכחית שלך במערכת</CardDescription>
+                    <CardTitle>Access Permissions</CardTitle>
+                    <CardDescription>Your current permission level in the system</CardDescription>
                 </CardHeader>
                 <CardContent className="flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium text-slate-900 dark:text-slate-200">תפקיד נוכחי:</span>
+                            <span className="text-sm font-medium text-slate-900 dark:text-slate-200">Current Role:</span>
                             {isAdmin ? <Badge className="bg-purple-100 text-purple-700">Admin</Badge> :
                              isEditor ? <Badge className="bg-emerald-100 text-emerald-700">Editor</Badge> :
                              <Badge variant="secondary">Viewer</Badge>}
                         </div>
                         <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                            {isAdmin ? "יש לך גישה מלאה לכל המערכת." :
-                             isEditor ? "יש לך הרשאות עריכה ויצירה של נתונים." :
-                             "אתה במצב צפייה בלבד. אינך יכול לבצע שינויים."}
+                            {isAdmin ? "You have full access to the entire system." :
+                             isEditor ? "You have edit and create permissions." :
+                             "You are in viewer mode only. You cannot make changes."}
                         </p>
                     </div>
                     {isViewer && !isAdmin && (
                         user?.requested_access_upgrade ? 
-                        <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">בקשה נשלחה</Badge> :
+                        <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">Request Sent</Badge> :
                         <Button variant="outline" size="sm" onClick={handleRequestUpgrade} disabled={requestLoading}>
-                            בקש הרשאת עריכה
+                            Request Edit Access
                         </Button>
                     )}
                 </CardContent>
@@ -124,20 +124,20 @@ export default function ProfileSettings() {
             
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>ניהול חשבון</CardTitle>
-                    <CardDescription>פעולות התנתקות ומחיקת חשבון</CardDescription>
+                    <CardTitle>Account Management</CardTitle>
+                    <CardDescription>Sign out and account deletion</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex flex-col sm:flex-row gap-4">
                         <Button variant="outline" className="text-slate-600 hover:bg-slate-50 w-full sm:w-auto" onClick={() => base44.auth.logout()}>
-                            התנתק מהמערכת
+                            Sign Out
                         </Button>
                         
                         <Button 
                             variant="ghost" 
                             className="text-red-600 hover:bg-red-50 hover:text-red-700 w-full sm:w-auto" 
                             onClick={async () => {
-                                if (window.confirm('האם אתה בטוח שברצונך למחוק את החשבון שלך לצמיתות? פעולה זו אינה הפיכה.')) {
+                                if (window.confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) {
                                     try {
                                         setLoading(true);
                                         // Call backend function to delete account
@@ -146,13 +146,13 @@ export default function ProfileSettings() {
                                         base44.auth.logout();
                                     } catch (e) {
                                         console.error("Failed to delete account", e);
-                                        alert("אירעה שגיאה במחיקת החשבון. אנא נסה שנית מאוחר יותר.");
+                                        alert("Error deleting account. Please try again later.");
                                         setLoading(false);
                                     }
                                 }
                             }}
                         >
-                            מחק חשבון
+                            Delete Account
                         </Button>
                     </div>
                 </CardContent>
