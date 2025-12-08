@@ -59,7 +59,7 @@ function LayoutContent({ children, currentPageName }) {
                     <span className="hidden lg:inline truncate">{branding.companyName}</span>
                 </Link>
                 <p className="lg:hidden text-xl font-bold mt-4">{branding.companyName}</p>
-                <p className="text-sm mt-2 font-medium tracking-wide text-cyan-400">ANYONE"S SALES DATABASE</p>
+                <p className="text-sm mt-2 font-medium tracking-wide text-cyan-400">ANYONE'S SALES DATABASE</p>
             </div>
 
             {/* Nav */}
