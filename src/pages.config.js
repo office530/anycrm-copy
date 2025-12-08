@@ -8,7 +8,6 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import SearchResults from './pages/SearchResults';
 import Tasks from './pages/Tasks';
-import Promotion from './pages/Promotion';
 import __Layout from './Layout.jsx';
 
 
@@ -23,7 +22,6 @@ export const PAGES = {
     "Settings": Settings,
     "SearchResults": SearchResults,
     "Tasks": Tasks,
-    "Promotion": Promotion,
 }
 
 export const pagesConfig = {
