@@ -10,7 +10,7 @@ export default function GlobalSearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
-  const { branding } = useSettings();
+  const { branding, theme } = useSettings();
 
   // Close when clicking outside
   useEffect(() => {
@@ -102,18 +102,28 @@ export default function GlobalSearch() {
   return (
     <div className="relative w-full max-w-xl" ref={wrapperRef}>
       <div className="relative group">
-        <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-red-600 transition-colors pointer-events-none" />
+        <Search className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors pointer-events-none ${
+          theme === 'dark' 
+            ? 'text-slate-500 group-focus-within:text-cyan-400' 
+            : 'text-slate-400 group-focus-within:text-red-600'
+        }`} />
         <input
           value={searchTerm}
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
           onFocus={() => searchTerm.length >= 2 && setIsOpen(true)} 
-          className="bg-white text-slate-800 pr-12 pl-10 py-3 text-base rounded-full border border-slate-200 w-72 focus:w-96 transition-all focus:ring-4 focus:ring-red-100 focus:border-red-300 placeholder:text-slate-400 shadow-sm"
+          className={`pr-12 pl-10 py-3 text-base rounded-full border w-72 focus:w-96 transition-all shadow-sm ${
+            theme === 'dark'
+              ? 'bg-slate-800 text-white border-slate-700 focus:ring-4 focus:ring-cyan-900/20 focus:border-cyan-500/50 placeholder:text-slate-500'
+              : 'bg-white text-slate-800 border-slate-200 focus:ring-4 focus:ring-red-100 focus:border-red-300 placeholder:text-slate-400'
+          }`}
           placeholder="חיפוש לידים, הזדמנויות, משימות..." 
         />
 
         {searchTerm &&
-        <button onClick={clearSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-600">
+        <button onClick={clearSearch} className={`absolute left-4 top-1/2 -translate-y-1/2 ${
+          theme === 'dark' ? 'text-slate-500 hover:text-cyan-400' : 'text-slate-400 hover:text-red-600'
+        }`}>
                 <X className="w-4 h-4" />
             </button>
         }
@@ -121,7 +131,9 @@ export default function GlobalSearch() {
 
       {/* Results Dropdown */}
       {isOpen && searchTerm.length >= 2 &&
-      <div className="absolute top-full right-0 mt-2 w-96 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+      <div className={`absolute top-full right-0 mt-2 w-96 rounded-xl shadow-xl border overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 ${
+        theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'
+      }`}>
           {isLoading ?
         <div className="p-4 text-center text-slate-500 flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" /> מחפש...
@@ -136,7 +148,9 @@ export default function GlobalSearch() {
           <div className="max-h-[400px] overflow-y-auto py-2">
                     {searchResults?.leads?.length > 0 &&
             <div className="mb-2">
-                            <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
+                            <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
+                              theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
+                            }`}>
                                 לידים
                             </div>
                             {searchResults.leads.map((lead) =>
@@ -144,13 +158,17 @@ export default function GlobalSearch() {
                 key={lead.id}
                 to={createPageUrl(`LeadDetails?leadId=${lead.id}`)}
                 onClick={clearSearch}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                className={`flex items-center gap-3 px-4 py-2 transition-colors ${
+                  theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-slate-50'
+                }`}>
 
-                                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                      theme === 'dark' ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-600'
+                                    }`}>
                                         <User className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{lead.full_name}</div>
+                                        <div className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>{lead.full_name}</div>
                                         <div className="text-xs text-slate-500 truncate">{lead.phone_number}</div>
                                     </div>
                                 </Link>
@@ -160,7 +178,9 @@ export default function GlobalSearch() {
                     
                     {searchResults?.opportunities?.length > 0 &&
             <div className="mb-2">
-                            <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
+                            <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
+                              theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
+                            }`}>
                                 הזדמנויות
                             </div>
                             {searchResults.opportunities.map((opp) =>
@@ -168,13 +188,17 @@ export default function GlobalSearch() {
                 key={opp.id}
                 to={createPageUrl('Opportunities')}
                 onClick={clearSearch}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                className={`flex items-center gap-3 px-4 py-2 transition-colors ${
+                  theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-slate-50'
+                }`}>
 
-                                    <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                      theme === 'dark' ? 'bg-purple-900/30 text-purple-400' : 'bg-purple-100 text-purple-600'
+                                    }`}>
                                         <Briefcase className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{opp.lead_name || 'עסקה ללא שם'}</div>
+                                        <div className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>{opp.lead_name || 'עסקה ללא שם'}</div>
                                         <div className="text-xs text-slate-500 truncate">{opp.product_type} • {opp.deal_stage?.split('(')[0]}</div>
                                     </div>
                                 </Link>
@@ -184,7 +208,9 @@ export default function GlobalSearch() {
 
                     {searchResults?.tasks?.length > 0 &&
             <div className="mb-2">
-                            <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
+                            <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
+                              theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
+                            }`}>
                                 משימות
                             </div>
                             {searchResults.tasks.map((task) =>
@@ -192,17 +218,19 @@ export default function GlobalSearch() {
                 key={task.id}
                 to={createPageUrl('Tasks')}
                 onClick={clearSearch}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                className={`flex items-center gap-3 px-4 py-2 transition-colors ${
+                  theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-slate-50'
+                }`}>
 
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                                        task.status === 'done' ? 'bg-emerald-100 text-emerald-600' : 
-                                        task.status === 'in_progress' ? 'bg-amber-100 text-amber-600' : 
-                                        'bg-slate-100 text-slate-600'
+                                        task.status === 'done' ? (theme === 'dark' ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-100 text-emerald-600') : 
+                                        task.status === 'in_progress' ? (theme === 'dark' ? 'bg-amber-900/30 text-amber-400' : 'bg-amber-100 text-amber-600') : 
+                                        (theme === 'dark' ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600')
                                     }`}>
                                         <CheckSquare className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`text-sm font-medium text-slate-800 dark:text-slate-200 truncate ${task.status === 'done' ? 'line-through opacity-60' : ''}`}>
+                                        <div className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'} ${task.status === 'done' ? 'line-through opacity-60' : ''}`}>
                                             {task.title}
                                         </div>
                                         <div className="text-xs text-slate-500 truncate">
@@ -216,7 +244,9 @@ export default function GlobalSearch() {
 
                     {searchResults?.activities?.length > 0 &&
             <div className="mb-2">
-                            <div className="px-4 py-1.5 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-slate-800/50 uppercase tracking-wider">
+                            <div className={`px-4 py-1.5 text-xs font-semibold uppercase tracking-wider ${
+                              theme === 'dark' ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'
+                            }`}>
                                 פעילויות אחרונות
                             </div>
                             {searchResults.activities.map((activity) =>
@@ -224,13 +254,17 @@ export default function GlobalSearch() {
                 key={activity.id}
                 to={createPageUrl(`LeadDetails?leadId=${activity.lead_id}`)}
                 onClick={clearSearch}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                className={`flex items-center gap-3 px-4 py-2 transition-colors ${
+                  theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-slate-50'
+                }`}>
 
-                                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                      theme === 'dark' ? 'bg-indigo-900/30 text-indigo-400' : 'bg-indigo-100 text-indigo-600'
+                                    }`}>
                                         <Activity className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{activity.type} • {activity.status}</div>
+                                        <div className={`text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>{activity.type} • {activity.status}</div>
                                         <div className="text-xs text-slate-500 truncate">{activity.summary || 'אין תיאור'}</div>
                                     </div>
                                 </Link>
@@ -243,7 +277,11 @@ export default function GlobalSearch() {
               <Link 
                   to={createPageUrl('SearchResults') + `?q=${encodeURIComponent(searchTerm)}`}
                   onClick={() => setIsOpen(false)}
-                  className="block p-3 text-center text-sm font-medium text-red-600 bg-slate-50 hover:bg-red-50 border-t border-slate-100 transition-colors mt-1"
+                  className={`block p-3 text-center text-sm font-medium border-t transition-colors mt-1 ${
+                    theme === 'dark' 
+                      ? 'text-cyan-400 bg-slate-800 hover:bg-slate-700 border-slate-700' 
+                      : 'text-red-600 bg-slate-50 hover:bg-red-50 border-slate-100'
+                  }`}
               >
                   הצג את כל התוצאות עבור "{searchTerm}"
               </Link>
