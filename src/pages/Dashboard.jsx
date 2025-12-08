@@ -63,11 +63,11 @@ export default function Dashboard() {
 
     const totalOpps = filteredOpps.length;
     const wonOpps = filteredOpps.filter((o) => o.deal_stage?.includes('Won'));
-    const totalWonValue = wonOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0);
+    const totalWonValue = wonOpps.reduce((sum, o) => sum + (o.amount || 0), 0);
 
     // Opportunity Stages
     const oppsByStage = filteredOpps.reduce((acc, o) => {
-      const stage = o.deal_stage?.split('(')[0]?.trim() || 'Other';
+      const stage = o.deal_stage || 'Other';
       acc[stage] = (acc[stage] || 0) + 1;
       return acc;
     }, {});
@@ -182,7 +182,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <KpiCard title="Total Leads" value={stats.totalLeads} icon={Users} color="bg-red-500" subtext={`${stats.newLeads} new this period`} />
         <KpiCard title="Converted Leads" value={stats.convertedLeads} icon={Activity} color="bg-purple-500" subtext={`${(stats.convertedLeads / (stats.totalLeads || 1) * 100).toFixed(1)}% conversion rate`} />
-        <KpiCard title="Won Revenue" value={`₪${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} deals won`} />
+        <KpiCard title="Won Revenue" value={`$${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} deals won`} />
       </div>
 
       {/* Main Content Grid */}
@@ -234,7 +234,7 @@ export default function Dashboard() {
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 gap-4">
                       <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-950/20 border-red-900/30' : 'bg-red-50 border-red-100'}`}>
-                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / 1000000).toFixed(1)}M</div>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>${(filteredOpps.reduce((sum, o) => sum + (o.amount || 0), 0) / 1000).toFixed(1)}k</div>
                           <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Total Pipeline Value</div>
                       </div>
                       <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-950/20 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100'}`}>
@@ -258,15 +258,15 @@ export default function Dashboard() {
                   <div className={`space-y-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
                       <div className="flex justify-between items-center text-sm">
                           <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Avg. Deal Value</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.reduce((sum, o) => sum + (o.loan_amount_requested || 0), 0) / (filteredOpps.length || 1)).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>${(filteredOpps.reduce((sum, o) => sum + (o.amount || 0), 0) / (filteredOpps.length || 1)).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                           <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Advanced Stage</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter((o) => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter((o) => o.deal_stage?.includes('Negotiation') || o.deal_stage?.includes('Proposal')).length}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                           <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Expected Win This Month</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.loan_amount_requested || 0) * (o.probability || 0) / 100, 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>${filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.amount || 0) * (o.probability || 0) / 100, 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
                       </div>
                   </div>
               </div>
