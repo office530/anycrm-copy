@@ -165,7 +165,11 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
                 <XAxis type="number" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
                 <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px' }} stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
                 <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
-                <Bar dataKey="value" fill="#ef4444" radius={[0, 4, 4, 0]} name="Count" />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]} name="Count">
+                  {stageData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
