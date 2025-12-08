@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Upload, X, FileText, Image as ImageIcon, File } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-export default function FileUpload({ files = [], onFilesChange, label = "קבצים ומסמכים" }) {
+export default function FileUpload({ files = [], onFilesChange, label = "Files & Documents" }) {
   const [uploading, setUploading] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -28,7 +28,7 @@ export default function FileUpload({ files = [], onFilesChange, label = "קבצ�
       onFilesChange([...files, ...newFiles]);
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("שגיאה בהעלאת קובץ");
+      alert("Error uploading file");
     } finally {
       setUploading(false);
       // Reset input
@@ -93,7 +93,7 @@ export default function FileUpload({ files = [], onFilesChange, label = "קבצ�
           >
             <span>
               {uploading ? <Loader2 className="w-6 h-6 animate-spin text-blue-500" /> : <Upload className="w-6 h-6 mb-1" />}
-              <span className="text-xs">{uploading ? "מעלה..." : "לחץ להעלאת קבצים"}</span>
+              <span className="text-xs">{uploading ? "Uploading..." : "Click to upload files"}</span>
             </span>
           </Button>
         </label>

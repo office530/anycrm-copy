@@ -16,7 +16,7 @@ export default function StepUpload({ onDataParsed }) {
       if (file.name.endsWith('.csv')) {
         const text = await file.text();
         const rows = text.split('\n').map(row => row.trim()).filter(row => row);
-        if (rows.length < 2) throw new Error("הקובץ ריק או לא תקין");
+        if (rows.length < 2) throw new Error("File is empty or invalid");
         
         // Simple CSV Parser (handles basic commas)
         // Note: For production with complex CSVs (quoted fields), a library is better, 
@@ -49,7 +49,7 @@ export default function StepUpload({ onDataParsed }) {
         });
 
         if (res.status === 'error' || !res.output || !Array.isArray(res.output)) {
-            throw new Error("שגיאה בפענוח הקובץ. אנא ודא שהקובץ תקין.");
+            throw new Error("Error parsing file. Please ensure file is valid.");
         }
 
         const data = res.output;
@@ -59,7 +59,7 @@ export default function StepUpload({ onDataParsed }) {
       }
     } catch (err) {
       console.error(err);
-      setError(err.message || "שגיאה בטעינת הקובץ");
+      setError(err.message || "Error loading file");
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +75,8 @@ export default function StepUpload({ onDataParsed }) {
   return (
     <div className="flex flex-col items-center justify-center h-full py-12">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">העלאת קובץ לידים</h2>
-        <p className="text-slate-500">גרור לכאן קובץ CSV או Excel, או לחץ לבחירה</p>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">Upload Lead File</h2>
+        <p className="text-slate-500">Drag CSV or Excel file here, or click to select</p>
       </div>
 
       <div
@@ -103,16 +103,16 @@ export default function StepUpload({ onDataParsed }) {
         {isLoading ? (
           <div className="flex flex-col items-center animate-pulse">
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <p className="text-lg font-medium text-blue-800">מעבד נתונים...</p>
-            <p className="text-sm text-blue-600">זה עשוי לקחת מספר שניות</p>
+            <p className="text-lg font-medium text-blue-800">Processing data...</p>
+            <p className="text-sm text-blue-600">This may take a few seconds</p>
           </div>
         ) : (
           <>
             <div className={`p-4 rounded-full mb-4 ${isDragging ? 'bg-blue-100' : 'bg-white shadow-sm'}`}>
               <Upload className={`w-8 h-8 ${isDragging ? 'text-blue-600' : 'text-slate-400'}`} />
             </div>
-            <p className="text-lg font-medium text-slate-700">גרור קובץ לכאן</p>
-            <p className="text-sm text-slate-400 mt-1">תומך ב-CSV, XLSX</p>
+            <p className="text-lg font-medium text-slate-700">Drag file here</p>
+            <p className="text-sm text-slate-400 mt-1">Supports CSV, XLSX</p>
           </>
         )}
       </div>
