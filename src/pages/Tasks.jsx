@@ -115,7 +115,7 @@ export default function TasksPage() {
       {/* כותרת וסטטיסטיקות */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>ניהול משימות</h1>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>ניהול משימות</h1>
           <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>תכנון, מעקב ומימוש משימות יומיות</p>
         </div>
         <Button onClick={() => setShowTaskForm(true)} className={`text-white shadow-md ${

@@ -53,7 +53,7 @@ export default function SettingsPage() {
     <div className="max-w-7xl mx-auto pb-20" dir="rtl">
         {/* Header */}
         <div className="mb-8">
-            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>הגדרות מערכת</h1>
+            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>הגדרות מערכת</h1>
             <p className={`mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול הגדרות מתקדם עבור הארגון והמשתמשים</p>
         </div>
 

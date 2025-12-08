@@ -77,7 +77,7 @@ export default function ReportsPage() {
               theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
           }`}>
             <div>
-              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>דוחות וניתוח נתונים</h1>
+              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>דוחות וניתוח נתונים</h1>
               <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>סקירה מקיפה של ביצועים, המרות ופעילות עסקית</p>
             </div>
             

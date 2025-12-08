@@ -154,7 +154,7 @@ function LayoutContent({ children, currentPageName }) {
                 ? 'bg-slate-800/80 border-slate-700' 
                 : 'bg-white/80 border-neutral-200/60'
         }`}>
-            <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>
+            <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-800'}`}>
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'הגדרות' : 'סקירה')}
             </h1>
             <div className="flex items-center gap-2 md:gap-4">
