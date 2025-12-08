@@ -93,10 +93,7 @@ export default function PromotionPage() {
             </div>
 
             {/* Visual Preview / Abstract Graphic */}
-            <motion.div 
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
+            <div 
                 className="max-w-5xl mx-auto mb-32 relative group"
             >
                 <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
@@ -137,13 +134,7 @@ export default function PromotionPage() {
             <div className="max-w-6xl mx-auto mb-32">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {features.map((feature, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1 }}
-                        >
+                        <div key={idx}>
                             <Card className={`h-full ${darkCard} border-slate-800 hover:border-slate-700 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-900/10`}>
                                 <CardContent className="p-6">
                                     <feature.icon className={`w-10 h-10 ${feature.color} mb-4`} />
@@ -153,7 +144,7 @@ export default function PromotionPage() {
                                     </p>
                                 </CardContent>
                             </Card>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>
@@ -168,17 +159,13 @@ export default function PromotionPage() {
                         "Dark mode optimized for reduced eye strain.",
                         "Mobile-ready design for on-the-go access."
                     ].map((item, i) => (
-                        <motion.div 
+                        <div 
                             key={i}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
                             className={`flex items-center gap-4 p-4 rounded-xl ${darkCard} border border-slate-800`}
                         >
                             <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
                             <span className="text-lg text-slate-300">{item}</span>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>
