@@ -506,7 +506,7 @@ export default function LeadsPage() {
       </div>
 
       {/* --- תצוגת מובייל (כרטיסים) --- */}
-      <div className="md:hidden space-y-4 pb-20">
+      <div className="md:hidden space-y-4">
          {filteredLeads.map((lead) =>
         <div key={lead.id} className={`p-4 rounded-xl shadow-sm border flex flex-col gap-3 transition-colors ${
           theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'

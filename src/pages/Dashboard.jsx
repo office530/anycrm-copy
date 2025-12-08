@@ -153,7 +153,7 @@ export default function Dashboard() {
   if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
 
   return (
-    <div className="space-y-6 md:space-y-8 pb-10 max-w-7xl mx-auto">
+    <div className="space-y-6 md:space-y-8 pb-24 md:pb-12 max-w-7xl mx-auto">
 
       {/* Branding Hero Section */}
       <div className={`rounded-3xl p-6 md:p-8 shadow-sm border flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0 transition-colors duration-300 ${
@@ -189,7 +189,7 @@ export default function Dashboard() {
               <img
                 src={branding.logoUrl}
                 alt="AnyCRM Logo"
-                className={`h-40 object-contain rounded-full transition-all duration-500 ${theme === 'dark' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'drop-shadow-xl'}`} 
+                className={`h-28 md:h-40 object-contain rounded-full transition-all duration-500 ${theme === 'dark' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'drop-shadow-xl'}`} 
               />
           </div>
           {/* Decorative Background */}

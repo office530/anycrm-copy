@@ -27,10 +27,10 @@ export default function MobileBottomNav() {
   const inactiveClass = theme === 'dark' ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400';
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 border-t h-16 px-6 flex items-center justify-between z-50 lg:hidden transition-colors duration-300 ${
+    <div className={`fixed bottom-0 left-0 right-0 border-t h-16 px-6 flex items-center justify-between z-50 lg:hidden transition-colors duration-300 pb-safe ${
         theme === 'dark' 
-        ? 'bg-slate-900 border-slate-800 shadow-[0_-4px_20px_-1px_rgba(0,0,0,0.5)]' 
-        : 'bg-white border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]'
+        ? 'bg-slate-900/90 backdrop-blur-md border-slate-800 shadow-[0_-4px_20px_-1px_rgba(0,0,0,0.5)]' 
+        : 'bg-white/90 backdrop-blur-md border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]'
     }`}>
             <Link to={createPageUrl('Dashboard')} className={`flex flex-col items-center gap-1 transition-all ${isActive('Dashboard') ? activeClass : inactiveClass}`}>
                 <LayoutDashboard className="w-6 h-6" />
