@@ -95,10 +95,10 @@ export default function NotificationSettings() {
                     
                     <div className="flex items-center justify-between space-x-4 space-x-reverse">
                         <div className="flex items-center space-x-4 space-x-reverse">
-                            <Users className="w-5 h-5 text-slate-500" />
+                            <Users className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
                                 <Label className="text-base">לידים חדשים</Label>
-                                <p className="text-sm text-slate-500">קבל התראה כאשר נוצר ליד חדש במערכת</p>
+                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>קבל התראה כאשר נוצר ליד חדש במערכת</p>
                             </div>
                         </div>
                         <Switch 
@@ -109,10 +109,10 @@ export default function NotificationSettings() {
 
                     <div className="flex items-center justify-between space-x-4 space-x-reverse">
                         <div className="flex items-center space-x-4 space-x-reverse">
-                            <CheckSquare className="w-5 h-5 text-slate-500" />
+                            <CheckSquare className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
                                 <Label className="text-base">משימות שלי</Label>
-                                <p className="text-sm text-slate-500">קבל התראה על משימות חדשות או שפג תוקפן</p>
+                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>קבל התראה על משימות חדשות או שפג תוקפן</p>
                             </div>
                         </div>
                         <Switch 
@@ -123,10 +123,10 @@ export default function NotificationSettings() {
 
                     <div className="flex items-center justify-between space-x-4 space-x-reverse">
                         <div className="flex items-center space-x-4 space-x-reverse">
-                            <Calendar className="w-5 h-5 text-slate-500" />
+                            <Calendar className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
                             <div className="space-y-0.5">
                                 <Label className="text-base">הזדמנויות לקראת סגירה</Label>
-                                <p className="text-sm text-slate-500">קבל תזכורת על הזדמנויות שתאריך היעד שלהן מתקרב</p>
+                                <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>קבל תזכורת על הזדמנויות שתאריך היעד שלהן מתקרב</p>
                             </div>
                         </div>
                         <Switch 
