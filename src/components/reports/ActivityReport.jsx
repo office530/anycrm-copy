@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { CheckSquare, Phone, CalendarDays, ListTodo, X } from "lucide-react";
+import { CheckSquare, Phone, CalendarDays, ListTodo, X, Filter } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,57 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       const l = leads?.find(lead => lead.id === leadId);
       return l ? l.full_name : 'Unknown';
   };
+
+  const getStatusBadge = (status) => {
+    const s = status || '';
+    let className = "";
+    
+    if (s === 'No Answer') {
+        className = theme === 'dark' 
+            ? "bg-red-950/40 text-red-300 border-red-800 ring-1 ring-red-500/50 shadow-[0_0_8px_rgba(248,113,113,0.2)]" 
+            : "bg-red-100 text-red-700 border-red-200";
+    } else if (s === 'Completed' || s === 'Answered') {
+        className = theme === 'dark' 
+            ? "bg-emerald-950/40 text-emerald-300 border-emerald-800 ring-1 ring-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.2)]"
+            : "bg-emerald-100 text-emerald-700 border-emerald-200";
+    } else if (s === 'Left Message') {
+        className = theme === 'dark'
+            ? "bg-amber-950/40 text-amber-300 border-amber-800 ring-1 ring-amber-500/50 shadow-[0_0_8px_rgba(251,191,36,0.2)]"
+            : "bg-amber-100 text-amber-700 border-amber-200";
+    } else if (s === 'Scheduled') {
+        className = theme === 'dark'
+            ? "bg-blue-950/40 text-blue-300 border-blue-800 ring-1 ring-blue-500/50 shadow-[0_0_8px_rgba(96,165,250,0.2)]"
+            : "bg-blue-100 text-blue-700 border-blue-200";
+    } else {
+        className = theme === 'dark' ? "bg-slate-800 text-slate-400" : "bg-slate-100 text-slate-500";
+    }
+
+    return (
+        <Badge variant="outline" className={`${className} border`}>
+            {s}
+        </Badge>
+    );
+  };
+
+  const groupedActivities = useMemo(() => {
+      const groups = {
+          'Call': [],
+          'Meeting': [],
+          'Email': [],
+          'SMS': [],
+          'Note': [],
+          'Other': []
+      };
+      
+      sortedActivities.forEach(act => {
+          if (groups[act.type]) {
+              groups[act.type].push(act);
+          } else {
+              groups['Other'].push(act);
+          }
+      });
+      return groups;
+  }, [sortedActivities]);
 
   return (
     <div className="space-y-6">
@@ -183,7 +235,7 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                                 <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>{getLeadName(act.lead_id)}</TableCell>
                                 <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{getUserName(act.created_by)}</TableCell>
                                 <TableCell className={`max-w-xs truncate ${theme === 'dark' ? 'text-slate-400' : ''}`} title={act.summary}>{act.summary}</TableCell>
-                                <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{act.status}</TableCell>
+                                <TableCell>{getStatusBadge(act.status)}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -195,6 +247,65 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
             </div>
         </DialogContent>
       </Dialog>
+
+      {/* Detailed Activity Log - Grouped by Type */}
+      <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
+          <CardHeader>
+              <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Detailed Activity Log</CardTitle>
+          </CardHeader>
+          <CardContent>
+              <div className="rounded-md border overflow-hidden">
+                  <Table>
+                      <TableHeader className={theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50'}>
+                          <TableRow className={theme === 'dark' ? 'border-slate-700' : ''}>
+                              <TableHead className={theme === 'dark' ? 'text-slate-400' : ''}>Date</TableHead>
+                              <TableHead className={theme === 'dark' ? 'text-slate-400' : ''}>Client</TableHead>
+                              <TableHead className={theme === 'dark' ? 'text-slate-400' : ''}>Details</TableHead>
+                              <TableHead className={theme === 'dark' ? 'text-slate-400' : ''}>Status</TableHead>
+                          </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                          {['Call', 'Meeting', 'Email', 'SMS', 'Note'].map(type => {
+                              const acts = groupedActivities[type];
+                              if (!acts || acts.length === 0) return null;
+                              
+                              return (
+                                  <React.Fragment key={type}>
+                                      <TableRow className={`hover:bg-transparent ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50/50'}`}>
+                                          <TableCell colSpan={4} className="font-bold py-2">
+                                              <div className="flex items-center gap-2">
+                                                  {type === 'Call' && <Phone className="w-4 h-4 text-blue-500" />}
+                                                  {type === 'Meeting' && <CalendarDays className="w-4 h-4 text-purple-500" />}
+                                                  <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}>{type}s</span>
+                                                  <Badge variant="secondary" className="ml-2">{acts.length}</Badge>
+                                              </div>
+                                          </TableCell>
+                                      </TableRow>
+                                      {acts.map(act => (
+                                          <TableRow key={act.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
+                                              <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>
+                                                  {new Date(act.date).toLocaleDateString('en-US')}
+                                                  <span className="block text-xs text-slate-500">{new Date(act.date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</span>
+                                              </TableCell>
+                                              <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>
+                                                  {getLeadName(act.lead_id)}
+                                              </TableCell>
+                                              <TableCell className={`max-w-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                                                  {act.summary}
+                                              </TableCell>
+                                              <TableCell>
+                                                  {getStatusBadge(act.status)}
+                                              </TableCell>
+                                          </TableRow>
+                                      ))}
+                                  </React.Fragment>
+                              );
+                          })}
+                      </TableBody>
+                  </Table>
+              </div>
+          </CardContent>
+      </Card>
     </div>
   );
 }
