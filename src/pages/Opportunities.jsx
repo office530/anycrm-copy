@@ -364,7 +364,7 @@ export default function OpportunitiesPage() {
                             {...provided.dragHandleProps}
                             className={`
                               cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border-none shadow-sm group relative overflow-hidden
-                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : 'bg-white dark:bg-neutral-200 dark:shadow-none dark:border dark:border-neutral-300'}
+                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : theme === 'dark' ? 'bg-slate-800 border border-slate-700 shadow-none' : 'bg-white shadow-sm'}
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
@@ -386,28 +386,28 @@ export default function OpportunitiesPage() {
                                 return (
                                   <>
                                     {/* שם */}
-                                    <div className="text-xl font-bold text-neutral-800 dark:text-neutral-900 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                    <div className={`text-xl font-bold transition-colors ${theme === 'dark' ? 'text-white group-hover:text-teal-400' : 'text-neutral-800 group-hover:text-teal-600'}`}>
                                       {opp.lead_name || "לקוח ללא שם"}
                                     </div>
 
                                     {/* טלפון */}
                                     {lead?.phone_number && (
-                                      <div className="flex items-center gap-2 text-base text-neutral-700 dark:text-neutral-800 font-medium">
-                                        <Phone className="w-4 h-4 text-neutral-400" />
+                                      <div className={`flex items-center gap-2 text-base font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-700'}`}>
+                                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`} />
                                         {lead.phone_number}
                                       </div>
                                     )}
 
                                     {/* הערות */}
                                     {lead?.notes && (
-                                      <div className="text-sm text-neutral-600 dark:text-neutral-700 bg-neutral-50 dark:bg-neutral-300/50 p-3 rounded-lg line-clamp-3 leading-relaxed">
+                                      <div className={`text-sm p-3 rounded-lg line-clamp-3 leading-relaxed ${theme === 'dark' ? 'text-slate-400 bg-slate-900/50' : 'text-neutral-600 bg-neutral-50'}`}>
                                         {lead.notes}
                                       </div>
                                     )}
 
                                     {/* שיחה אחרונה */}
                                     {lead?.last_contact_date && (
-                                      <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-600">
+                                      <div className={`flex items-center gap-2 text-sm ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>
                                         <Calendar className="w-4 h-4" />
                                         <span>שיחה אחרונה: {moment(lead.last_contact_date).format('DD/MM/YYYY')}</span>
                                       </div>
