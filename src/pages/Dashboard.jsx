@@ -318,7 +318,11 @@ export default function Dashboard() {
                         <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} interval={0} />
                         <YAxis hide />
                         <RechartsTooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '8px' }} />
-                        <Bar dataKey="value" fill="#b91c1c" radius={[4, 4, 0, 0]} barSize={40} />
+                        <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40} name="Count">
+                          {stats.stageData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
                     </BarChart>
                 </ResponsiveContainer>
               </CardContent>
