@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, Edit2, Loader2, GripVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function CustomFieldSettings() {
+    const { theme } = useSettings();
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [editingField, setEditingField] = useState(null);
     const queryClient = useQueryClient();
@@ -40,7 +42,7 @@ export default function CustomFieldSettings() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>שדות מותאמים אישית</CardTitle>
@@ -56,10 +58,10 @@ export default function CustomFieldSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="text-right">תווית</TableHead>
-                                    <TableHead className="text-right">מזהה מערכת</TableHead>
-                                    <TableHead className="text-right">סוג שדה</TableHead>
-                                    <TableHead className="text-right">שייך ל-</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תווית</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>מזהה מערכת</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סוג שדה</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>שייך ל-</TableHead>
                                     <TableHead className="text-right w-[100px]"></TableHead>
                                 </TableRow>
                             </TableHeader>

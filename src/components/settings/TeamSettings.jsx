@@ -11,8 +11,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Mail, UserPlus, Loader2, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function TeamSettings() {
+    const { theme } = useSettings();
     const [isInviteOpen, setIsInviteOpen] = useState(false);
     const queryClient = useQueryClient();
 
@@ -32,7 +34,7 @@ export default function TeamSettings() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>ניהול צוות ומשתמשים</CardTitle>
@@ -48,11 +50,11 @@ export default function TeamSettings() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="text-right">שם מלא</TableHead>
-                                    <TableHead className="text-right">אימייל</TableHead>
-                                    <TableHead className="text-right">תפקיד</TableHead>
-                                    <TableHead className="text-right">סטטוס</TableHead>
-                                    <TableHead className="text-right">תאריך הצטרפות</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>שם מלא</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>אימייל</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תפקיד</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סטטוס</TableHead>
+                                    <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>תאריך הצטרפות</TableHead>
                                     <TableHead className="text-right w-[50px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -110,7 +112,7 @@ export default function TeamSettings() {
                     {invites.length > 0 && (
                         <div className="mt-8">
                             <h3 className="text-sm font-semibold text-slate-500 mb-4">הזמנות ממתינות</h3>
-                            <div className="rounded-md border bg-slate-50/50">
+                            <div className={`rounded-md border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50/50'}`}>
                                 <Table>
                                     <TableBody>
                                         {invites.map((invite) => (

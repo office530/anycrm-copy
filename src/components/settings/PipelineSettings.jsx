@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Save, Plus, X } from "lucide-react";
 
 export default function PipelineSettings() {
-    const { pipelineStages, saveSettings, isLoading } = useSettings();
+    const { pipelineStages, saveSettings, isLoading, theme } = useSettings();
     const [localStages, setLocalStages] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -39,8 +39,8 @@ export default function PipelineSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex justify-between items-end">
                 <div>
-                     <h2 className="text-xl font-bold text-slate-900">שלבי המכירה (Pipeline)</h2>
-                     <p className="text-slate-500 text-sm">הגדר את השלבים שעובר ליד עד לסגירת העסקה</p>
+                     <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>שלבי המכירה (Pipeline)</h2>
+                     <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'} text-sm`}>הגדר את השלבים שעובר ליד עד לסגירת העסקה</p>
                 </div>
                 <Button onClick={handleSave} disabled={isSaving} className="bg-slate-900 text-white">
                     {isSaving ? "שומר..." : "שמור שינויים"}
@@ -50,7 +50,7 @@ export default function PipelineSettings() {
 
             <div className="space-y-4">
                 {localStages.map((stage, index) => (
-                    <Card key={index} className="overflow-hidden border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <Card key={index} className={`overflow-hidden shadow-sm hover:shadow-md transition-shadow ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                         <div className={`h-1 w-full ${stage.color}`}></div>
                         <CardContent className="p-4">
                             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">

@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { usePermissions } from '@/components/hooks/usePermissions';
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function ProfileSettings() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const { isViewer, isEditor, isAdmin } = usePermissions();
+    const { theme } = useSettings();
     const [requestLoading, setRequestLoading] = useState(false);
 
     // Load user data
@@ -53,7 +55,7 @@ export default function ProfileSettings() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
                     <CardTitle>הפרופיל שלי</CardTitle>
                     <CardDescription>פרטים אישיים ופרטי התחברות</CardDescription>
@@ -75,7 +77,7 @@ export default function ProfileSettings() {
                                 <Input 
                                     value={user.email || ''} 
                                     disabled 
-                                    className="bg-slate-50 text-slate-500" 
+                                    className={theme === 'dark' ? "bg-slate-900 border-slate-700 text-slate-500" : "bg-slate-50 text-slate-500"} 
                                 />
                                 <p className="text-[11px] text-slate-400">לא ניתן לשנות כתובת אימייל</p>
                             </div>
@@ -91,7 +93,7 @@ export default function ProfileSettings() {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
                     <CardTitle>הרשאות גישה</CardTitle>
                     <CardDescription>רמת ההרשאה הנוכחית שלך במערכת</CardDescription>
@@ -120,7 +122,7 @@ export default function ProfileSettings() {
                 </CardContent>
             </Card>
             
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
                     <CardTitle>ניהול חשבון</CardTitle>
                     <CardDescription>פעולות התנתקות ומחיקת חשבון</CardDescription>

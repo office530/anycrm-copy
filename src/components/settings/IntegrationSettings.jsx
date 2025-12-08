@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, ExternalLink, Zap } from "lucide-react";
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function IntegrationSettings() {
+    const { theme } = useSettings();
     
     const integrations = [
         {
@@ -45,7 +47,7 @@ export default function IntegrationSettings() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
                     <CardTitle>אינטגרציות וחיבורים</CardTitle>
                     <CardDescription>הרחב את יכולות המערכת באמצעות חיבור לשירותים חיצוניים</CardDescription>
@@ -53,13 +55,13 @@ export default function IntegrationSettings() {
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {integrations.map((integration) => (
-                            <div key={integration.id} className="flex items-start gap-4 p-4 border rounded-xl hover:bg-slate-50 transition-colors">
-                                <div className="w-12 h-12 shrink-0 bg-white rounded-lg border p-2 flex items-center justify-center">
+                            <div key={integration.id} className={`flex items-start gap-4 p-4 border rounded-xl transition-colors ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : 'hover:bg-slate-50'}`}>
+                                <div className={`w-12 h-12 shrink-0 rounded-lg border p-2 flex items-center justify-center ${theme === 'dark' ? 'bg-slate-700 border-slate-600' : 'bg-white'}`}>
                                     <img src={integration.icon} alt={integration.name} className="w-full h-full object-contain" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-1">
-                                        <h4 className="font-bold text-slate-900">{integration.name}</h4>
+                                        <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{integration.name}</h4>
                                         {integration.connected && <Badge className="bg-green-100 text-green-700">מחובר</Badge>}
                                     </div>
                                     <p className="text-sm text-slate-500 line-clamp-2 mb-3">{integration.description}</p>

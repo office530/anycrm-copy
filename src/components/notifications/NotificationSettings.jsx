@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Calendar, CheckSquare, Users, Save, Loader2 } from "lucide-react";
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function NotificationSettings() {
+    const { theme } = useSettings();
     const queryClient = useQueryClient();
     const [currentUser, setCurrentUser] = React.useState(null);
 
@@ -79,7 +81,7 @@ export default function NotificationSettings() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <Card>
+            <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Bell className="w-5 h-5 text-red-600" />
