@@ -414,13 +414,13 @@ export default function ImportLeadsPage() {
                 </div>
 
                 <div className="flex justify-between items-center pt-4">
-                    <Button variant="ghost" onClick={() => setStep(1)} className="text-slate-500">חזרה</Button>
+                    <Button variant="ghost" onClick={() => setStep(1)} className={theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-500'}>חזרה</Button>
                     
                     <div className="flex gap-4 items-center">
                         {isImporting && (
                             <div className="flex flex-col items-end gap-1 min-w-[200px]">
-                                <span className="text-xs font-bold text-red-600">{importProgress}% הושלם</span>
-                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <span className={`text-xs font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>{importProgress}% הושלם</span>
+                                <div className={`w-full h-2 rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}>
                                     <div className="h-full bg-red-600 transition-all duration-300" style={{ width: `${importProgress}%` }}></div>
                                 </div>
                             </div>
@@ -429,7 +429,11 @@ export default function ImportLeadsPage() {
                         <Button 
                             onClick={handleImport} 
                             disabled={isImporting || summary.valid === 0} 
-                            className="bg-red-700 hover:bg-red-800 text-white shadow-lg shadow-red-900/20 px-8 py-6 text-lg rounded-xl transition-all hover:scale-105"
+                            className={`px-8 py-6 text-lg rounded-xl transition-all hover:scale-105 text-white shadow-lg ${
+                                theme === 'dark' 
+                                    ? 'bg-red-600 hover:bg-red-700 shadow-red-900/40' 
+                                    : 'bg-red-700 hover:bg-red-800 shadow-red-900/20'
+                            }`}
                         >
                             {isImporting ? (
                                 <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מייבא נתונים...</>
