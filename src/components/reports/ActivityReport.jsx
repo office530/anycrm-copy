@@ -52,6 +52,15 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
       return l ? l.full_name : 'Unknown';
   };
 
+  const getStatusColor = (status) => {
+    const s = status || '';
+    if (s === 'No Answer') return theme === 'dark' ? "text-red-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.6)]" : "text-red-600";
+    if (s === 'Completed' || s === 'Answered') return theme === 'dark' ? "text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.6)]" : "text-emerald-600";
+    if (s === 'Left Message') return theme === 'dark' ? "text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.6)]" : "text-amber-600";
+    if (s === 'Scheduled') return theme === 'dark' ? "text-blue-400 drop-shadow-[0_0_5px_rgba(96,165,250,0.6)]" : "text-blue-600";
+    return theme === 'dark' ? "text-slate-200" : "text-slate-700";
+  };
+
   const getStatusBadge = (status) => {
     const s = status || '';
     let className = "";
@@ -177,17 +186,22 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                 <div className="space-y-4 max-h-[260px] overflow-y-auto pr-2">
                     {sortedActivities.slice(0, 5).map((act, i) => {
                         const leadName = getLeadName(act.lead_id);
+                        const statusColor = getStatusColor(act.status);
+                        
                         return (
                             <div key={i} className={`flex items-center justify-between border-b pb-3 last:border-0 p-1 rounded-lg transition-colors ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-700' : 'hover:bg-slate-50'}`}>
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <p className={`font-bold text-sm ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
-                                            {act.type === 'Call' ? '📞 Call' : act.type === 'Meeting' ? '📅 Meeting' : '📝 Activity'}
-                                        </p>
+                                        <div className={`font-bold text-sm flex items-center gap-1.5 ${statusColor}`}>
+                                            {act.type === 'Call' ? <Phone className="w-3.5 h-3.5" /> : 
+                                             act.type === 'Meeting' ? <CalendarDays className="w-3.5 h-3.5" /> : 
+                                             <ListTodo className="w-3.5 h-3.5" />}
+                                            {act.type}
+                                        </div>
                                         <span className="text-xs text-slate-400">•</span>
                                         <a 
                                             href={`/LeadDetails?id=${act.lead_id}`}
-                                            className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                                            className={`text-xs font-medium hover:underline cursor-pointer ${theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}
                                         >
                                             {leadName}
                                         </a>
