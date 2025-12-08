@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, AlertTriangle, CheckCircle2, ArrowRight, Loader2, RefreshCw, Tag, X } from "lucide-react";
+import { Upload, AlertTriangle, CheckCircle2, ArrowRight, Loader2, RefreshCw, Tag, X, ArrowLeft } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { useSettings } from "@/components/context/SettingsContext";
 
 const STEPS = [
     { id: 1, label: 'העלאת קובץ' },
@@ -16,6 +17,7 @@ const STEPS = [
 ];
 
 export default function ImportLeadsPage() {
+  const { theme } = useSettings();
   const [step, setStep] = useState(1);
   const [data, setData] = useState([]);
   const [summary, setSummary] = useState({ valid: 0, invalid: 0 });
@@ -166,44 +168,75 @@ export default function ImportLeadsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-20 pt-10 font-sans text-slate-900" dir="rtl">
+    <div className={`max-w-5xl mx-auto space-y-8 pb-20 pt-10 font-sans ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} dir="rtl">
         
-        <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900">ייבוא לידים</h1>
-            <p className="text-slate-500">העלה קובץ CSV כדי להזין נתונים בצורה מרוכזת</p>
+        <div className="relative text-center space-y-2">
+            <Button 
+                variant="ghost" 
+                onClick={() => navigate('/Leads')} 
+                className={`absolute top-0 right-0 ${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-800'}`}
+            >
+                <ArrowRight className="w-5 h-5 ml-2" />
+                חזרה
+            </Button>
+            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>ייבוא לידים</h1>
+            <p className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>העלה קובץ CSV כדי להזין נתונים בצורה מרוכזת</p>
         </div>
 
         <div className="flex justify-center items-center gap-4 mb-8">
-            {STEPS.map((s, i) => (
-                <div key={s.id} className="flex items-center">
-                    <div className={`
-                        flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-colors
-                        ${step === s.id ? 'bg-red-50 text-red-700 ring-1 ring-red-200' : step > s.id ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'}
-                    `}>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === s.id ? 'bg-red-700 text-white' : step > s.id ? 'bg-green-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                            {step > s.id ? <CheckCircle2 className="w-3 h-3" /> : s.id}
+            {STEPS.map((s, i) => {
+                const isActive = step === s.id;
+                const isCompleted = step > s.id;
+                
+                let containerClass = theme === 'dark' ? 'bg-slate-800 text-slate-500' : 'bg-slate-50 text-slate-400';
+                let circleClass = theme === 'dark' ? 'bg-slate-700 text-slate-400' : 'bg-slate-200 text-slate-500';
+                
+                if (isActive) {
+                    containerClass = theme === 'dark' ? 'bg-red-900/20 text-red-400 ring-1 ring-red-800' : 'bg-red-50 text-red-700 ring-1 ring-red-200';
+                    circleClass = 'bg-red-600 text-white';
+                } else if (isCompleted) {
+                    containerClass = theme === 'dark' ? 'bg-emerald-900/20 text-emerald-400' : 'bg-green-50 text-green-600';
+                    circleClass = 'bg-emerald-600 text-white';
+                }
+
+                return (
+                    <div key={s.id} className="flex items-center">
+                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-colors ${containerClass}`}>
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${circleClass}`}>
+                                {isCompleted ? <CheckCircle2 className="w-3 h-3" /> : s.id}
+                            </div>
+                            {s.label}
                         </div>
-                        {s.label}
+                        {i < STEPS.length - 1 && <div className={`w-8 h-[2px] mx-2 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`} />}
                     </div>
-                    {i < STEPS.length - 1 && <div className="w-8 h-[2px] bg-slate-200 mx-2" />}
-                </div>
-            ))}
+                );
+            })}
         </div>
 
         {step === 1 && (
-            <div className="border-2 border-dashed border-slate-300 hover:border-red-400 hover:bg-slate-50 rounded-3xl p-24 text-center transition-all relative bg-white shadow-sm">
+            <div className={`border-2 border-dashed rounded-3xl p-24 text-center transition-all relative shadow-sm ${
+                theme === 'dark' 
+                    ? 'bg-slate-800 border-slate-700 hover:border-red-500/50 hover:bg-slate-800/80' 
+                    : 'bg-white border-slate-300 hover:border-red-400 hover:bg-slate-50'
+            }`}>
                 <input 
                     type="file" 
                     accept=".csv"
                     onChange={handleFileUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="bg-red-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <Upload className="w-10 h-10 text-red-600" />
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ${
+                    theme === 'dark' ? 'bg-slate-700' : 'bg-red-50'
+                }`}>
+                    <Upload className={`w-10 h-10 ${theme === 'dark' ? 'text-red-500' : 'text-red-600'}`} />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-2">גרור קובץ לכאן</h3>
-                <p className="text-slate-500">תומך בקבצי CSV בלבד</p>
-                <Button variant="outline" className="mt-6 border-slate-200 text-slate-600 hover:bg-white hover:text-red-700 pointer-events-none">בחר קובץ מהמחשב</Button>
+                <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>גרור קובץ לכאן</h3>
+                <p className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>תומך בקבצי CSV בלבד</p>
+                <Button variant="outline" className={`mt-6 pointer-events-none ${
+                    theme === 'dark' 
+                        ? 'border-slate-600 text-slate-300 bg-slate-800' 
+                        : 'border-slate-200 text-slate-600 hover:bg-white hover:text-red-700'
+                }`}>בחר קובץ מהמחשב</Button>
             </div>
         )}
 
@@ -211,30 +244,34 @@ export default function ImportLeadsPage() {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 
                 <div className="grid grid-cols-2 gap-4">
-                    <Card className="bg-green-50 border-green-100 shadow-sm">
+                    <Card className={theme === 'dark' ? 'bg-emerald-900/20 border-emerald-800 shadow-sm' : 'bg-green-50 border-green-100 shadow-sm'}>
                         <CardContent className="p-4 flex items-center gap-3">
-                            <CheckCircle2 className="w-8 h-8 text-green-600" />
+                            <CheckCircle2 className={`w-8 h-8 ${theme === 'dark' ? 'text-emerald-500' : 'text-green-600'}`} />
                             <div>
-                                <p className="text-sm font-medium text-green-800">רשומות תקינות</p>
-                                <p className="text-2xl font-bold text-green-700">{summary.valid}</p>
+                                <p className={`text-sm font-medium ${theme === 'dark' ? 'text-emerald-300' : 'text-green-800'}`}>רשומות תקינות</p>
+                                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-green-700'}`}>{summary.valid}</p>
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className={`${summary.invalid > 0 ? 'bg-red-50 border-red-100' : 'bg-slate-50 border-slate-100'} shadow-sm`}>
+                    <Card className={`shadow-sm ${
+                        summary.invalid > 0 
+                            ? theme === 'dark' ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-100'
+                            : theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-100'
+                    }`}>
                         <CardContent className="p-4 flex items-center gap-3">
-                            <AlertTriangle className={`w-8 h-8 ${summary.invalid > 0 ? 'text-red-600' : 'text-slate-400'}`} />
+                            <AlertTriangle className={`w-8 h-8 ${summary.invalid > 0 ? (theme === 'dark' ? 'text-red-500' : 'text-red-600') : 'text-slate-400'}`} />
                             <div>
-                                <p className={`text-sm font-medium ${summary.invalid > 0 ? 'text-red-800' : 'text-slate-500'}`}>שגיאות / חסרים</p>
-                                <p className={`text-2xl font-bold ${summary.invalid > 0 ? 'text-red-700' : 'text-slate-400'}`}>{summary.invalid}</p>
+                                <p className={`text-sm font-medium ${summary.invalid > 0 ? (theme === 'dark' ? 'text-red-300' : 'text-red-800') : 'text-slate-500'}`}>שגיאות / חסרים</p>
+                                <p className={`text-2xl font-bold ${summary.invalid > 0 ? (theme === 'dark' ? 'text-red-400' : 'text-red-700') : 'text-slate-400'}`}>{summary.invalid}</p>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* --- אזור תיוג חכם --- */}
-                <Card className="bg-white border-slate-200 shadow-sm overflow-visible">
+                <Card className={`shadow-sm overflow-visible ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                     <CardContent className="p-6">
-                        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <h3 className={`font-bold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
                             <Tag className="w-5 h-5 text-red-600" />
                             הוסף תגיות לקבוצה זו
                         </h3>
@@ -250,18 +287,20 @@ export default function ImportLeadsPage() {
                                             addTag(tagInput);
                                         }
                                     }}
-                                    className="max-w-md border-slate-300 focus:border-red-500 focus:ring-red-500"
+                                    className={`max-w-md ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white placeholder:text-slate-500' : 'border-slate-300 focus:border-red-500 focus:ring-red-500'}`}
                                 />
-                                <Button onClick={() => addTag(tagInput)} variant="outline" className="border-slate-300 text-slate-700 hover:text-red-700">הוסף</Button>
+                                <Button onClick={() => addTag(tagInput)} variant="outline" className={theme === 'dark' ? 'border-slate-700 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-700 hover:text-red-700'}>הוסף</Button>
                             </div>
                             
                             {/* תצוגת התגיות שנבחרו */}
                             <div className="flex flex-wrap gap-2 min-h-[32px] items-center">
                                 {selectedTags.length === 0 && <span className="text-sm text-slate-400 italic">לא נבחרו תגיות</span>}
                                 {selectedTags.map(tag => (
-                                    <Badge key={tag} className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 pl-1 pr-3 py-1 flex items-center gap-1 text-sm font-medium">
+                                    <Badge key={tag} className={`pl-1 pr-3 py-1 flex items-center gap-1 text-sm font-medium ${
+                                        theme === 'dark' ? 'bg-red-900/30 text-red-300 border-red-800' : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                                    }`}>
                                         <X 
-                                            className="w-3 h-3 cursor-pointer hover:bg-red-200 rounded-full" 
+                                            className="w-3 h-3 cursor-pointer hover:opacity-70 rounded-full" 
                                             onClick={() => removeTag(tag)}
                                         />
                                         {tag}
@@ -271,14 +310,16 @@ export default function ImportLeadsPage() {
 
                             {/* הצעות לתגיות קיימות */}
                             {suggestedTags.length > 0 && (
-                                <div className="mt-2 pt-2 border-t border-slate-100">
+                                <div className={`mt-2 pt-2 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
                                     <p className="text-xs text-slate-500 mb-2">תגיות קיימות במערכת:</p>
                                     <div className="flex flex-wrap gap-2">
                                         {suggestedTags.map(tag => (
                                             <button 
                                                 key={tag} 
                                                 onClick={() => addTag(tag)}
-                                                className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200 transition-colors"
+                                                className={`text-xs px-2 py-1 rounded transition-colors ${
+                                                    theme === 'dark' ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                }`}
                                             >
                                                 + {tag}
                                             </button>
@@ -291,9 +332,9 @@ export default function ImportLeadsPage() {
                 </Card>
 
                 {/* Desktop View */}
-                <div className="hidden md:block bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                        <h3 className="font-bold text-slate-700">תצוגה מקדימה (50 רשומות ראשונות)</h3>
+                <div className={`hidden md:block rounded-xl border shadow-sm overflow-hidden ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+                    <div className={`p-4 border-b flex justify-between items-center ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50' : 'border-slate-100 bg-slate-50/50'}`}>
+                        <h3 className={`font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>תצוגה מקדימה (50 רשומות ראשונות)</h3>
                         <Button variant="ghost" size="sm" onClick={() => setStep(1)} className="text-slate-500 hover:text-red-600">
                             <RefreshCw className="w-4 h-4 ml-1" /> החלף קובץ
                         </Button>
@@ -301,30 +342,35 @@ export default function ImportLeadsPage() {
                     
                     <div className="max-h-[400px] overflow-y-auto">
                         <Table>
-                            <TableHeader className="bg-slate-50 sticky top-0 shadow-sm z-10">
-                                <TableRow>
-                                    <TableHead className="text-right font-bold text-slate-700">סטטוס</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-700">שם מלא</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-700">טלפון</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-700">עיר</TableHead>
-                                    <TableHead className="text-right font-bold text-slate-700">שנה</TableHead>
+                            <TableHeader className={`sticky top-0 shadow-sm z-10 ${theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50'}`}>
+                                <TableRow className={theme === 'dark' ? 'border-slate-700' : ''}>
+                                    <TableHead className={`text-right font-bold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>סטטוס</TableHead>
+                                    <TableHead className={`text-right font-bold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>שם מלא</TableHead>
+                                    <TableHead className={`text-right font-bold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>טלפון</TableHead>
+                                    <TableHead className={`text-right font-bold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>עיר</TableHead>
+                                    <TableHead className={`text-right font-bold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>שנה</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data.slice(0, 50).map((row, i) => (
-                                    <TableRow key={i} className={`hover:bg-slate-50 ${!row.isValid ? 'bg-red-50/30' : ''}`}>
+                                    <TableRow key={i} className={`
+                                        ${theme === 'dark' ? 'hover:bg-slate-700/50 border-slate-700' : 'hover:bg-slate-50'}
+                                        ${!row.isValid 
+                                            ? (theme === 'dark' ? 'bg-red-900/10' : 'bg-red-50/30') 
+                                            : ''}
+                                    `}>
                                         <TableCell>
                                             {row.isValid ? (
-                                                <Badge className="bg-green-100 text-green-700 border-0 hover:bg-green-100">תקין</Badge>
+                                                <Badge className={theme === 'dark' ? 'bg-emerald-900/30 text-emerald-400 border-0' : 'bg-green-100 text-green-700 border-0'}>תקין</Badge>
                                             ) : (
-                                                <Badge variant="destructive" className="bg-red-100 text-red-700 border-0 hover:bg-red-100">
+                                                <Badge variant="destructive" className={theme === 'dark' ? 'bg-red-900/30 text-red-400 border-0' : 'bg-red-100 text-red-700 border-0'}>
                                                     {row.errors}
                                                 </Badge>
                                             )}
                                         </TableCell>
-                                        <TableCell className="font-medium text-slate-800">{row.full_name}</TableCell>
-                                        <TableCell className="font-mono text-slate-600">{row.phone_number}</TableCell>
-                                        <TableCell className="text-slate-600">{row.city}</TableCell>
+                                        <TableCell className={`font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>{row.full_name}</TableCell>
+                                        <TableCell className={`font-mono ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>{row.phone_number}</TableCell>
+                                        <TableCell className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>{row.city}</TableCell>
                                         <TableCell className="text-slate-500">{row.source_year}</TableCell>
                                     </TableRow>
                                 ))}
@@ -336,29 +382,31 @@ export default function ImportLeadsPage() {
                 {/* Mobile View */}
                 <div className="md:hidden space-y-4">
                     {data.slice(0, 50).map((row, i) => (
-                        <div key={i} className={`bg-white p-4 rounded-xl shadow-sm border ${!row.isValid ? 'border-red-200 bg-red-50/30' : 'border-slate-200'} flex flex-col gap-3`}>
+                        <div key={i} className={`p-4 rounded-xl shadow-sm border flex flex-col gap-3 ${
+                            theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+                        } ${!row.isValid ? (theme === 'dark' ? 'border-red-900/50 bg-red-900/10' : 'border-red-200 bg-red-50/30') : ''}`}>
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <div className="font-bold text-slate-900 text-lg">{row.full_name}</div>
+                                    <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{row.full_name}</div>
                                     <div className="text-xs text-slate-500">{row.city}</div>
                                 </div>
                                 {row.isValid ? (
-                                    <Badge className="bg-green-100 text-green-700 border-0 hover:bg-green-100">תקין</Badge>
+                                    <Badge className={theme === 'dark' ? 'bg-emerald-900/30 text-emerald-400 border-0' : 'bg-green-100 text-green-700 border-0'}>תקין</Badge>
                                 ) : (
-                                    <Badge variant="destructive" className="bg-red-100 text-red-700 border-0 hover:bg-red-100">
+                                    <Badge variant="destructive" className={theme === 'dark' ? 'bg-red-900/30 text-red-400 border-0' : 'bg-red-100 text-red-700 border-0'}>
                                         {row.errors}
                                     </Badge>
                                 )}
                             </div>
                             
-                            <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-2">
+                            <div className={`p-3 rounded-lg border space-y-2 ${theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'}`}>
                                 <div className="flex justify-between">
                                     <span className="text-slate-500 text-sm">טלפון:</span>
-                                    <span className="font-mono text-slate-700 font-medium">{row.phone_number}</span>
+                                    <span className={`font-mono font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>{row.phone_number}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-slate-500 text-sm">שנה:</span>
-                                    <span className="text-slate-700">{row.source_year}</span>
+                                    <span className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>{row.source_year}</span>
                                 </div>
                             </div>
                         </div>
