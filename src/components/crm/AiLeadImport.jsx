@@ -222,7 +222,7 @@ ${textToAnalyze}`,
 
           <TabsContent value="text" className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
+              <label className={`text-sm font-medium mb-2 block ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                 הדבק כאן טקסט עם פרטי הליד
               </label>
               <Textarea
@@ -235,7 +235,7 @@ ${textToAnalyze}`,
 יש לו דירה ששווה בערך 3 מיליון
 יש משכנתא של 500,000 שקל
 מעוניין במשכנתא הפוכה כדי לעזור לילדים"
-                className="h-64 resize-none font-mono text-sm"
+                className={`h-64 resize-none font-mono text-sm ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-purple-500' : 'bg-white border-slate-200 placeholder:text-slate-400 focus:border-purple-500'}`}
                 disabled={isProcessing}
               />
             </div>
