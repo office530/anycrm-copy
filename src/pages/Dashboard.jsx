@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area } from
 'recharts';
-import { Users, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle } from 'lucide-react';
+import { Users, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
@@ -306,6 +306,24 @@ export default function Dashboard() {
 
               {/* Tasks Widget */}
               <TasksWidget />
+              
+              {/* Add Report Placeholder */}
+              <Link to={createPageUrl('Reports')}>
+                <Card className={`h-[180px] border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all group ${
+                  theme === 'dark' ? 
+                  'bg-slate-800/50 border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 
+                  'bg-neutral-50/50 border-neutral-200 hover:border-purple-200 hover:bg-white'
+                }`}>
+                  <div className={`p-3 rounded-full mb-3 transition-all duration-300 ${
+                    theme === 'dark' ? 'bg-slate-800 group-hover:bg-purple-500/20 text-slate-400 group-hover:text-purple-400 group-hover:scale-110' : 'bg-white group-hover:bg-purple-50 text-slate-400 group-hover:text-purple-600 shadow-sm group-hover:scale-110'
+                  }`}>
+                    <Plus className="w-8 h-8" />
+                  </div>
+                  <span className={`font-medium text-lg ${theme === 'dark' ? 'text-slate-400 group-hover:text-purple-300' : 'text-slate-600 group-hover:text-purple-700'}`}>
+                    הוסף דוח חדש
+                  </span>
+                </Card>
+              </Link>
               </div>
               </div>
     </div>);
