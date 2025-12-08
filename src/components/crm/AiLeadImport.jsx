@@ -34,20 +34,20 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
 
         // חילוץ מידע ישירות מהתמונה עם AI Vision
         const visionResult = await base44.integrations.Core.InvokeLLM({
-          prompt: `ניתוח צילום מסך של מערכת CRM/סיילספורס (צולם בטלפון):
-אנא סרוק את התמונה בקפידה וחלץ את פרטי הליד. התמונה עשויה להיות צילום מסך של מערכת ניהול לקוחות.
+          prompt: `CRM/Salesforce Screenshot Analysis (Phone photo):
+Please scan the image carefully and extract lead details. The image might be a screenshot of a CRM system.
 
-עליך לחלץ במדויק:
-1. שם מלא (Full Name) - חפש בראש הכרטיס או בשדה שם.
-2. טלפון (Phone) - בפורמט ישראלי (למשל 050-1234567).
-3. אימייל (Email).
-4. צורך/בקשת הלקוח (Customer Need) - חפש תיאור של מה הלקוח רוצה, מטרת ההלוואה, או סיבת הפנייה.
-5. כל מידע נוסף (Notes) - סכם את *כל* שאר הנתונים המופיעים במסך (כתובת, ת"ז, גיל, סטטוס משפחתי, מצב פיננסי, הערות מערכת קודמות וכו') לתוך טקסט אחד מפורט.
+Extract accurately:
+1. Full Name - Look at the top of the card or name field.
+2. Phone - In local format.
+3. Email.
+4. Customer Need - Look for description of what the client wants, loan purpose, or reason for contact.
+5. Notes - Summarize *all* other data visible on screen (address, ID, age, marital status, financial status, previous system notes, etc.) into one detailed text.
 
-דגשים:
-- אם התמונה מטושטשת, נסה לפענח לפי ההקשר.
-- אם יש מספר טלפונים, קח את הראשי.
-- אל תמציא מידע שלא קיים.`,
+Notes:
+- If blurry, try to decipher by context.
+- If multiple phones, take the main one.
+- Do not invent information.`,
           file_urls: [fileUrl],
           response_json_schema: {
             type: "object",
@@ -63,9 +63,9 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
 
         // הכנת נתונים לתצוגה מקדימה
         const combinedNotes = [
-          visionResult.customer_need ? `צורך/בקשה: ${visionResult.customer_need}` : null,
+          visionResult.customer_need ? `Customer Need: ${visionResult.customer_need}` : null,
           visionResult.additional_info
-        ].filter(Boolean).join("\n\n---\nמידע נוסף מהסריקה:\n");
+        ].filter(Boolean).join("\n\n---\nAdditional Scan Info:\n");
 
         const leadData = {
           full_name: visionResult.full_name,
@@ -97,23 +97,23 @@ export default function AiLeadImport({ open, onOpenChange, onLeadCreated }) {
       };
 
       const aiResult = await base44.integrations.Core.InvokeLLM({
-        prompt: `ניתוח טקסט של ליד (העתק-הדבק או טקסט חופשי):
-חלץ את הפרטים הבאים מהטקסט:
-1. שם מלא
-2. טלפון
-3. אימייל
-4. צורך/בקשת הלקוח (מה הלקוח רוצה?)
-5. כל שאר המידע - סכם אותו בצורה מסודרת לשדה additional_info.
+        prompt: `Lead Text Analysis (Copy-Paste or Free Text):
+Extract the following details from the text:
+1. Full Name
+2. Phone
+3. Email
+4. Customer Need (What does the client want?)
+5. All other info - summarize neatly into additional_info field.
 
-הנה הטקסט לניתוח:
+Here is the text to analyze:
 ${textToAnalyze}`,
         response_json_schema: leadSchema
       });
 
       const combinedNotes = [
-        aiResult.customer_need ? `צורך/בקשה: ${aiResult.customer_need}` : null,
+        aiResult.customer_need ? `Customer Need: ${aiResult.customer_need}` : null,
         aiResult.additional_info
-      ].filter(Boolean).join("\n\n---\nמידע נוסף:\n");
+      ].filter(Boolean).join("\n\n---\nAdditional Info:\n");
 
       // הכנת נתונים לתצוגה מקדימה
       const leadData = {
@@ -132,7 +132,7 @@ ${textToAnalyze}`,
 
     } catch (error) {
       console.error("Error processing lead:", error);
-      toast.error("שגיאה בעיבוד הנתונים", {
+      toast.error("Error processing data", {
         description: error.message,
         duration: 5000
       });
@@ -142,7 +142,7 @@ ${textToAnalyze}`,
 
   const handleSaveLead = () => {
     onLeadCreated(extractedData);
-    toast.success("הליד נקלט בהצלחה!", {
+    toast.success("Lead imported successfully!", {
       description: `${extractedData.full_name} • ${extractedData.phone_number}`,
       duration: 3000
     });
