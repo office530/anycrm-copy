@@ -322,14 +322,13 @@ export default function OpportunitiesPage() {
             ref={scrollContainerRef}
             onScroll={checkScroll}
             className="flex gap-4 overflow-x-auto pb-6 h-full items-start px-1 scroll-smooth"
-            dir="rtl"
           >
           {activeStages.map((stage) => {
             const stageOpps = getStageOpportunities(stage.id);
             const total = calculateTotal(stage.id);
             
             return (
-            <div key={stage.id} className="flex-shrink-0 w-80 flex flex-col max-h-full" dir="ltr">
+            <div key={stage.id} className="flex-shrink-0 w-80 flex flex-col max-h-full">
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
