@@ -37,8 +37,9 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     lead_status: "New",
     last_contact_date: new Date().toISOString().split('T')[0],
     notes: "",
-    lead_temperature: "",
-    tags: []
+    lead_temperature: "Cold (קר)",
+    tags: [],
+    custom_data: {}
     }
   });
 
@@ -56,25 +57,19 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     initialData: []
   });
 
+  // Fetch custom fields
+  const { data: customFields } = useQuery({
+    queryKey: ['custom_fields_lead'],
+    queryFn: async () => {
+        const fields = await base44.entities.CustomField.list();
+        return fields.filter(f => f.entity_type === 'Lead');
+    },
+    initialData: []
+  });
+
   const leadStatus = watch("lead_status");
   const lastContactDate = watch("last_contact_date");
   const originalStatusColor = watch("original_status_color");
-
-  // Calculate Lead Temperature
-  React.useEffect(() => {
-    let temp = "Cold (קר)";
-    const daysSinceContact = lastContactDate ?
-    Math.floor((new Date() - new Date(lastContactDate)) / (1000 * 60 * 60 * 24)) :
-    999;
-
-    if (daysSinceContact <= 30) {
-      temp = "Warm (חם)";
-    } else if (originalStatusColor === "Green") {
-      temp = "Hot History (היה חם בעבר)";
-    }
-
-    setValue("lead_temperature", temp);
-  }, [lastContactDate, originalStatusColor, setValue]);
 
   const handleSelectChange = (field, value) => {
     setValue(field, value);
@@ -250,6 +245,23 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </div>
 
               <div className="space-y-1">
+                <Label className={labelClass}>Lead Temperature</Label>
+                <Select
+                  defaultValue={lead?.lead_temperature || "Cold (קר)"}
+                  onValueChange={(val) => handleSelectChange("lead_temperature", val)}>
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue placeholder="Select Temperature" />
+                  </SelectTrigger>
+                  <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
+                    <SelectItem value="Hot (לוהט)">Hot (לוהט)</SelectItem>
+                    <SelectItem value="Warm (חם)">Warm (חם)</SelectItem>
+                    <SelectItem value="Cold (קר)">Cold (קר)</SelectItem>
+                    <SelectItem value="Hot History (היה חם בעבר)">Hot History (היה חם בעבר)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
                 <Label className={labelClass}>Lead Status</Label>
                 <Select
                   defaultValue={lead?.lead_status || "New"}
@@ -301,6 +313,55 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
               </div>
 
+              {/* Custom Fields Section */}
+              {customFields?.length > 0 && (
+                <div className="col-span-1 md:col-span-2 pt-4 border-t border-slate-100 dark:border-slate-700 mt-2">
+                    <h3 className={`text-sm font-bold uppercase tracking-wider mb-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Additional Info</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {customFields.map((field) => (
+                            <div key={field.id} className="space-y-1">
+                                <Label className={labelClass}>{field.label}</Label>
+                                {field.type === 'select' ? (
+                                    <Select 
+                                        defaultValue={lead?.custom_data?.[field.name] || ""} 
+                                        onValueChange={(val) => handleSelectChange(`custom_data.${field.name}`, val)}
+                                    >
+                                        <SelectTrigger className={inputClass}>
+                                            <SelectValue placeholder={`Select ${field.label}`} />
+                                        </SelectTrigger>
+                                        <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
+                                            {field.options?.map((opt, i) => (
+                                                <SelectItem key={i} value={opt}>{opt}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                ) : field.type === 'boolean' ? (
+                                     <Select 
+                                        defaultValue={String(lead?.custom_data?.[field.name] || "false")}
+                                        onValueChange={(val) => handleSelectChange(`custom_data.${field.name}`, val === 'true')}
+                                    >
+                                        <SelectTrigger className={inputClass}>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
+                                            <SelectItem value="true">Yes</SelectItem>
+                                            <SelectItem value="false">No</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                ) : (
+                                    <Input
+                                        type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+                                        {...register(`custom_data.${field.name}`, { 
+                                            valueAsNumber: field.type === 'number' 
+                                        })}
+                                        className={inputClass}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+              )}
 
               </div>
 
