@@ -7,7 +7,31 @@ import { useSettings } from "@/components/context/SettingsContext";
 const COLORS = ['#ef4444', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 export default function SalesPerformance({ leads, opportunities, timeRange }) {
-  const { theme } = useSettings();
+  const { theme, pipelineStages } = useSettings();
+
+  const getStageColor = (stageName) => {
+    const stage = pipelineStages?.find(s => s.label === stageName || s.id === stageName || s.label?.startsWith(stageName));
+    const colorClass = stage?.color || 'bg-slate-400';
+    
+    // Map Tailwind classes to Hex for Recharts
+    const colorMap = {
+      'bg-blue-400': '#60A5FA',
+      'bg-blue-500': '#3B82F6',
+      'bg-indigo-400': '#818CF8',
+      'bg-indigo-500': '#6366F1',
+      'bg-purple-400': '#C084FC',
+      'bg-purple-500': '#A855F7',
+      'bg-amber-400': '#FBBF24',
+      'bg-amber-500': '#F59E0B',
+      'bg-emerald-500': '#10B981',
+      'bg-emerald-400': '#34D399',
+      'bg-slate-300': '#CBD5E1',
+      'bg-slate-400': '#94A3B8',
+      'bg-slate-500': '#64748B',
+    };
+
+    return colorMap[colorClass] || '#8884d8';
+  };
   
   const stats = useMemo(() => {
     const closedWon = opportunities.filter(o => o.deal_stage?.includes("Won") || o.deal_stage?.includes("בהצלחה"));
