@@ -347,8 +347,8 @@ export default function LeadsPage() {
                  <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
                     <Button variant="outline" className={`transition-colors ${
                       theme === 'dark' 
-                        ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800' 
-                        : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                        ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white' 
+                        : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100 hover:text-slate-900'
                     }`}>
                         <Upload className="w-4 h-4 mr-2" />
                         Regular Import
