@@ -31,7 +31,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 md:pt-48 md:pb-32 px-6 relative overflow-hidden">
+      <section className="pt-32 pb-16 md:pt-48 md:pb-32 px-6 relative overflow-hidden">
         {/* Background Gradients */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-cyan-500/20 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none" />
@@ -150,7 +150,7 @@ export default function LandingPage() {
 
             {/* Feature 2: Mobile */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
-               <div className="rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden aspect-[9/19] max-w-[320px] mx-auto flex items-center justify-center relative">
+               <div className="w-full rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden aspect-[9/19] max-w-[320px] mx-auto flex items-center justify-center relative">
                   <div className="absolute inset-0 bg-slate-900" />
                    <div className="text-center p-8 relative z-10">
                      <Smartphone className="w-12 h-12 text-slate-700 mx-auto mb-4" />
@@ -231,6 +231,54 @@ export default function LandingPage() {
                      Your server. Your database. Your code. No platform lock-in. 
                      No surprise price hikes. You own the asset.
                   </p>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      {/* Who Is This For? */}
+      <section className="py-24 px-6 border-t border-slate-800 bg-slate-950">
+         <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-16">
+               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Who is Base44 for?</h2>
+               <p className="text-slate-400 text-lg">Built for the independent economy.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+               {/* Freelancers */}
+               <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 hover:bg-slate-900 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                     <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400"><Layout className="w-5 h-5" /></div>
+                     <h3 className="text-lg font-bold text-white">Freelancers</h3>
+                  </div>
+                  <ul className="space-y-2">
+                     <li className="text-slate-400 text-sm flex gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" /> Stop paying $50/mo for basic CRMs</li>
+                     <li className="text-slate-400 text-sm flex gap-2"><CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" /> Manage multiple gigs in one place</li>
+                  </ul>
+               </div>
+
+               {/* Agency Owners */}
+               <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 hover:bg-slate-900 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                     <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400"><Database className="w-5 h-5" /></div>
+                     <h3 className="text-lg font-bold text-white">Agency Owners</h3>
+                  </div>
+                  <ul className="space-y-2">
+                     <li className="text-slate-400 text-sm flex gap-2"><CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0" /> White-label the code for clients</li>
+                     <li className="text-slate-400 text-sm flex gap-2"><CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0" /> Customize pipelines for any niche</li>
+                  </ul>
+               </div>
+
+               {/* Consultants */}
+               <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 hover:bg-slate-900 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                     <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-400"><Zap className="w-5 h-5" /></div>
+                     <h3 className="text-lg font-bold text-white">Consultants</h3>
+                  </div>
+                  <ul className="space-y-2">
+                     <li className="text-slate-400 text-sm flex gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Track high-ticket deals securely</li>
+                     <li className="text-slate-400 text-sm flex gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Automate follow-ups with AI</li>
+                  </ul>
                </div>
             </div>
          </div>
