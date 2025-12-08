@@ -175,7 +175,7 @@ ${textToAnalyze}`,
         setExtractedData(null);
       }
     }}>
-      <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`} dir="rtl" onPointerDownOutside={(e) => {
+      <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`} dir="ltr" onPointerDownOutside={(e) => {
         if (isProcessing) {
           e.preventDefault();
         }
@@ -197,14 +197,14 @@ ${textToAnalyze}`,
                 <div className="flex justify-between items-start">
                     <DialogTitle className={`text-2xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                         <Sparkles className="w-6 h-6 text-purple-600" />
-                        ייבוא ליד חכם עם AI
+                        Smart AI Lead Import
                     </DialogTitle>
                     <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className={`-mt-2 -ml-2 ${theme === 'dark' ? 'text-slate-400 hover:text-slate-300 hover:bg-slate-800' : 'text-slate-400 hover:text-slate-600'}`}>
                         <X className="w-5 h-5" />
                     </Button>
                 </div>
                 <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                  הדבק טקסט חופשי או העלה תמונה, וה-AI יחלץ את הפרטים באופן אוטומטי
+                  Paste free text or upload an image, and AI will automatically extract the details
                 </p>
               </DialogHeader>
 
@@ -212,29 +212,29 @@ ${textToAnalyze}`,
           <TabsList className={`grid w-full grid-cols-2 mb-4 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
             <TabsTrigger value="text" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : ''}`}>
               <Type className="w-4 h-4" />
-              טקסט חופשי
+              Free Text
             </TabsTrigger>
             <TabsTrigger value="image" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : ''}`}>
               <FileImage className="w-4 h-4" />
-              סריקת תמונה
+              Image Scan
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="text" className="space-y-4">
             <div>
               <label className={`text-sm font-medium mb-2 block ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                הדבק כאן טקסט עם פרטי הליד
+                Paste lead details text here
               </label>
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="לדוגמה:
-דוד כהן, גיל 68, גר בתל אביב
-טלפון: 050-1234567
-נשוי, יש לו 3 ילדים
-יש לו דירה ששווה בערך 3 מיליון
-יש משכנתא של 500,000 שקל
-מעוניין במשכנתא הפוכה כדי לעזור לילדים"
+                placeholder="Example:
+David Cohen, Age 68, lives in Tel Aviv
+Phone: 050-1234567
+Married, has 3 children
+Has an apartment worth about 3 million
+Has a mortgage of 500,000 NIS
+Interested in a reverse mortgage to help the children"
                 className={`h-64 resize-none font-mono text-sm ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-purple-500' : 'bg-white border-slate-200 placeholder:text-slate-400 focus:border-purple-500'}`}
                 disabled={isProcessing}
               />
@@ -256,8 +256,8 @@ ${textToAnalyze}`,
                 />
                 <label htmlFor="camera-capture" className="cursor-pointer">
                   <Camera className="w-10 h-10 mx-auto mb-3 text-purple-500" />
-                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>צלם תמונה</p>
-                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>פתח מצלמה</p>
+                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>Take Photo</p>
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Open Camera</p>
                 </label>
               </div>
 
@@ -273,8 +273,8 @@ ${textToAnalyze}`,
                 />
                 <label htmlFor="image-upload" className="cursor-pointer">
                   <Upload className="w-10 h-10 mx-auto mb-3 text-blue-500" />
-                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>העלה תמונה</p>
-                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>בחר מהגלריה</p>
+                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>Upload Image</p>
+                  <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Choose from Gallery</p>
                 </label>
               </div>
             </div>
@@ -289,9 +289,9 @@ ${textToAnalyze}`,
                       className={`w-20 h-20 rounded-lg object-cover border-2 ${theme === 'dark' ? 'border-emerald-700' : 'border-green-300'}`}
                     />
                   </div>
-                  <div className="flex-1 text-right">
+                  <div className="flex-1 text-left">
                     <p className={`text-sm font-medium ${theme === 'dark' ? 'text-emerald-400' : 'text-green-800'}`}>✓ {selectedFile.name}</p>
-                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-emerald-500' : 'text-green-600'}`}>התמונה מוכנה לסריקה עם AI Vision</p>
+                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-emerald-500' : 'text-green-600'}`}>Image ready for AI Vision scan</p>
                     <Button
                       type="button"
                       size="sm"
@@ -299,7 +299,7 @@ ${textToAnalyze}`,
                       onClick={() => setSelectedFile(null)}
                       className={`text-xs mt-2 h-7 ${theme === 'dark' ? 'text-red-400 hover:bg-red-950/30' : 'text-red-600 hover:bg-red-50'}`}
                     >
-                      הסר תמונה
+                      Remove Image
                     </Button>
                   </div>
                 </div>
