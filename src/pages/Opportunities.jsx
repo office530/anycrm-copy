@@ -58,12 +58,12 @@ export default function OpportunitiesPage() {
       // Check if at End (Left side)
       const isAtEnd = scrollAbs >= maxScroll - 5;
 
-      // In RTL:
-      // Start (Right) -> Can scroll Left. Show Left Arrow.
-      // End (Left) -> Can scroll Right. Show Right Arrow.
+      // In LTR:
+      // Start (Left) -> Can scroll Right. Show Right Arrow.
+      // End (Right) -> Can scroll Left. Show Left Arrow.
       
-      setShowLeftArrow(!isAtEnd);
-      setShowRightArrow(!isAtStart);
+      setShowLeftArrow(!isAtStart);
+      setShowRightArrow(!isAtEnd);
     }
   };
 

@@ -31,10 +31,10 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
       const isAtStart = scrollAbs < 5;
       const isAtEnd = scrollAbs >= maxScroll - 5;
 
-      // RTL: Start (Right) -> Can scroll Left (Show Left Arrow)
-      // End (Left) -> Can scroll Right (Show Right Arrow)
-      setShowLeftArrow(!isAtEnd);
-      setShowRightArrow(!isAtStart);
+      // LTR: Start (Left) -> Can scroll Right (Show Right Arrow)
+      // End (Right) -> Can scroll Left (Show Left Arrow)
+      setShowLeftArrow(!isAtStart);
+      setShowRightArrow(!isAtEnd);
     }
   };
 
@@ -86,7 +86,11 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none bg-white shadow-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-90 hover:opacity-100 transition-all"
+                className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
+                  theme === 'dark' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
+                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                }`}
                 onClick={() => scroll('right')}
             >
                 <ChevronRight className="w-5 h-5" />
@@ -97,7 +101,11 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none bg-white shadow-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 opacity-90 hover:opacity-100 transition-all"
+                className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
+                  theme === 'dark' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
+                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                }`}
                 onClick={() => scroll('left')}
             >
                 <ChevronLeft className="w-5 h-5" />
