@@ -115,7 +115,10 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
           return (
             <div key={status.value} className="flex-shrink-0 w-[85vw] md:w-80 flex flex-col h-full max-h-[calc(100vh-200px)]">
               {/* Stage Header */}
-              <div className={`mb-3 p-3 rounded-xl border-b-4 flex justify-between items-center shadow-sm transition-colors border-${status.color.split(' ')[0].replace('bg-', '')} ${
+              <div className={`mb-3 p-3 rounded-xl border-b-4 flex justify-between items-center shadow-sm transition-colors ${
+                  // Use the text color (neon) for the border to match
+                  status.color.split(' ').find(c => c.startsWith('text-'))?.replace('text-', 'border-') || 'border-slate-200'
+              } ${
                 theme === 'dark' ? 'bg-slate-800' : 'bg-white'
               }`}>
                 <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{status.label}</span>
