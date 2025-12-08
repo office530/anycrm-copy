@@ -220,8 +220,6 @@ export default function ActNowPage() {
                                                     ? `${createPageUrl('LeadDetails')}?leadId=${item.id}` 
                                                     : `${createPageUrl('Opportunities')}?opportunityId=${item.id}`
                                                 }
-                                                target="_blank"
-                                                rel="noopener noreferrer"
                                             >
                                                 {item.target}
                                             </Link>
