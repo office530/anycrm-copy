@@ -98,7 +98,11 @@ export default function Dashboard() {
       acc[stage] = (acc[stage] || 0) + 1;
       return acc;
     }, {});
-    const stageData = Object.entries(oppsByStage).map(([name, value]) => ({ name, value }));
+    const stageData = Object.entries(oppsByStage).map(([name, value]) => ({ 
+      name, 
+      value,
+      fill: getStageColor(name)
+    }));
 
     // Sales Trends Data (Leads vs Won Deals)
     const trendMap = {};
