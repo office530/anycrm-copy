@@ -430,12 +430,14 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className={`rounded-xl border shadow-sm overflow-hidden transition-colors ${
+        <div className={`flex-1 rounded-xl border shadow-sm overflow-hidden flex flex-col transition-colors ${
           theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
         }`}>
-          <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide transition-colors ${
-            theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
-          }`}>
+          <div className="flex-1 overflow-auto">
+            <div className="min-w-[800px]">
+              <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide sticky top-0 z-10 transition-colors ${
+                theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+              }`}>
             <div className="col-span-3 text-left">Client</div>
             <div className="col-span-2 text-left">Phone</div>
             <div className="col-span-4 text-left">Notes</div>
@@ -519,6 +521,8 @@ export default function OpportunitiesPage() {
                 </div>
               );
             })}
+          </div>
+            </div>
           </div>
         </div>
       )}
