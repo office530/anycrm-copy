@@ -30,7 +30,7 @@ export default function ActNowPage() {
     });
 
     const handleCreateTask = async (item) => {
-        if (!confirm(`Create a task to "${item.how}"?`)) return;
+        if (!window.confirm(`Create a task to "${item.how}"?`)) return;
         
         try {
             await base44.entities.Task.create({
@@ -45,7 +45,7 @@ export default function ActNowPage() {
             alert("Task created successfully!");
         } catch (error) {
             console.error("Failed to create task", error);
-            alert("Failed to create task");
+            alert("Failed to create task: " + (error.message || "Unknown error"));
         }
     };
 
