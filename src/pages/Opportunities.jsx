@@ -15,9 +15,11 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 import { InlineEdit } from "@/components/ui/InlineEdit";
+import { usePermissions } from '@/components/hooks/usePermissions';
 import moment from "moment";
 
 export default function OpportunitiesPage() {
+  const { canCreate, canEdit, canDelete } = usePermissions();
   const { pipelineStages, branding, theme } = useSettings();
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -218,19 +220,21 @@ export default function OpportunitiesPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button 
-            onClick={() => { setEditingOpp(null); setShowForm(true); }} 
-            className={`text-white shadow-md ${
-                theme === 'dark' 
-                    ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
-                    : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
-            }`}
-        >
-            <div className="flex items-center gap-2">
-                <LayoutGrid className="w-4 h-4" /> 
-                <span>הזדמנות חדשה</span>
-            </div>
-        </Button>
+        {canCreate && (
+          <Button 
+              onClick={() => { setEditingOpp(null); setShowForm(true); }} 
+              className={`text-white shadow-md ${
+                  theme === 'dark' 
+                      ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
+                      : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
+              }`}
+          >
+              <div className="flex items-center gap-2">
+                  <LayoutGrid className="w-4 h-4" /> 
+                  <span>הזדמנות חדשה</span>
+              </div>
+          </Button>
+        )}
       </div>
 
       {/* Stats Header (New!) */}
@@ -491,21 +495,23 @@ export default function OpportunitiesPage() {
                             size="sm" 
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                             className={`h-8 px-2 ${theme === 'dark' ? 'text-slate-500 hover:text-purple-400 hover:bg-purple-900/20' : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'}`}
-                            title="פתח הזדמנות"
+                            title={canEdit ? "פתח הזדמנות" : "צפה בהזדמנות"}
                           >
                             <Briefcase className="w-4 h-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => {
-                              if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
-                            }} 
-                            className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50"
-                            title="מחק הזדמנות"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          {canDelete && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => {
+                                if(window.confirm('האם אתה בטוח שברצונך למחוק הזדמנות זו?')) deleteOppMutation.mutate(opp.id);
+                              }} 
+                              className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                              title="מחק הזדמנות"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
                         </div>
                       </>
                     );

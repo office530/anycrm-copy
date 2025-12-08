@@ -4,15 +4,34 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { usePermissions } from '@/components/hooks/usePermissions';
 
 export default function ProfileSettings() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
+    const { isViewer, isEditor, isAdmin } = usePermissions();
+    const [requestLoading, setRequestLoading] = useState(false);
 
     // Load user data
     React.useEffect(() => {
         base44.auth.me().then(setUser).catch(() => {});
     }, []);
+
+    const handleRequestUpgrade = async () => {
+        if (!user) return;
+        setRequestLoading(true);
+        try {
+            await base44.entities.User.update(user.id, { requested_access_upgrade: true });
+            setUser(prev => ({ ...prev, requested_access_upgrade: true }));
+            alert("בקשתך נשלחה לאדמין המערכת");
+        } catch (e) {
+            console.error(e);
+            alert("שגיאה בשליחת הבקשה");
+        } finally {
+            setRequestLoading(false);
+        }
+    };
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -63,11 +82,41 @@ export default function ProfileSettings() {
                         </div>
 
                         <div className="pt-4 border-t">
-                            <Button type="submit" disabled={loading} className="bg-slate-900 text-white">
+                            <Button type="submit" disabled={loading || isViewer} className="bg-slate-900 text-white">
                                 {loading ? "שומר..." : "שמור שינויים"}
                             </Button>
+                            {isViewer && <p className="text-xs text-red-500 mt-2">אין לך הרשאות לערוך פרופיל (צופה בלבד)</p>}
                         </div>
                     </form>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>הרשאות גישה</CardTitle>
+                    <CardDescription>רמת ההרשאה הנוכחית שלך במערכת</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center justify-between">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-medium text-slate-700">תפקיד נוכחי:</span>
+                            {isAdmin ? <Badge className="bg-purple-100 text-purple-700">Admin</Badge> :
+                             isEditor ? <Badge className="bg-emerald-100 text-emerald-700">Editor</Badge> :
+                             <Badge variant="secondary">Viewer</Badge>}
+                        </div>
+                        <p className="text-xs text-slate-500">
+                            {isAdmin ? "יש לך גישה מלאה לכל המערכת." :
+                             isEditor ? "יש לך הרשאות עריכה ויצירה של נתונים." :
+                             "אתה במצב צפייה בלבד. אינך יכול לבצע שינויים."}
+                        </p>
+                    </div>
+                    {isViewer && !isAdmin && (
+                        user?.requested_access_upgrade ? 
+                        <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">בקשה נשלחה</Badge> :
+                        <Button variant="outline" size="sm" onClick={handleRequestUpgrade} disabled={requestLoading}>
+                            בקש הרשאת עריכה
+                        </Button>
+                    )}
                 </CardContent>
             </Card>
             

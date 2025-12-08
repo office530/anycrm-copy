@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2, LayoutGrid, List as ListIcon, Sparkles 
+  Plus, Search, Phone, MoreHorizontal, ArrowLeft, Upload, Filter, User, MessageCircle, Users, Activity, CheckCircle2, Pencil, Briefcase, Tag, ArrowUp, ArrowDown, ArrowUpDown, Trash2, LayoutGrid, List as ListIcon, Sparkles, Eye 
 } from "lucide-react";
 
 import {
@@ -23,10 +23,12 @@ import { InlineEdit } from "@/components/ui/InlineEdit";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSettings } from "@/components/context/SettingsContext";
 import AiLeadImport from "@/components/crm/AiLeadImport";
+import { usePermissions } from '@/components/hooks/usePermissions';
 
 import { useLocation } from "react-router-dom";
 
 export default function LeadsPage() {
+  const { canCreate, canEdit, canDelete } = usePermissions();
   const { leadStatuses, theme } = useSettings();
   const location = useLocation();
   // Custom statuses to match LeadForm exactly
@@ -318,28 +320,32 @@ export default function LeadsPage() {
                 </Button>
              </div>
 
-             <Button 
-                variant="outline" 
-                onClick={() => setShowAiImport(true)}
-                className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
-             >
-                <Sparkles className="w-4 h-4 ml-2" />
-                ייבוא AI
-             </Button>
-             <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
-                <Button variant="outline" className={`transition-colors ${
-                  theme === 'dark' 
-                    ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800' 
-                    : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
-                }`}>
-                    <Upload className="w-4 h-4 ml-2" />
-                    ייבוא רגיל
+             {canCreate && (
+               <>
+                 <Button 
+                    variant="outline" 
+                    onClick={() => setShowAiImport(true)}
+                    className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
+                 >
+                    <Sparkles className="w-4 h-4 ml-2" />
+                    ייבוא AI
+                 </Button>
+                 <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
+                    <Button variant="outline" className={`transition-colors ${
+                      theme === 'dark' 
+                        ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800' 
+                        : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                    }`}>
+                        <Upload className="w-4 h-4 ml-2" />
+                        ייבוא רגיל
+                    </Button>
+                 </Link>
+                <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 order-first md:order-last">
+                    <Plus className="w-4 h-4 ml-2" />
+                    ליד חדש
                 </Button>
-             </Link>
-            <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 order-first md:order-last">
-                <Plus className="w-4 h-4 ml-2" />
-                ליד חדש
-            </Button>
+               </>
+             )}
         </div>
       </div>
 
@@ -454,23 +460,25 @@ export default function LeadsPage() {
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
                         <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="sm" onClick={() => {
-                  if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה? פעולה זו לא ניתנת לביטול.')) deleteLead.mutate(lead.id);
-                }} className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50" title="מחק ליד">
-                                <Trash2 className="w-4 h-4" />
+                            {canDelete && (
+                                <Button variant="ghost" size="sm" onClick={() => {
+                        if (window.confirm('האם אתה בטוח שברצונך למחוק ליד זה? פעולה זו לא ניתנת לביטול.')) deleteLead.mutate(lead.id);
+                        }} className="h-8 px-2 text-slate-400 hover:text-red-600 hover:bg-red-50" title="מחק ליד">
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            )}
+                            <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title={canEdit ? "ערוך ליד" : "צפה בליד"}>
+                                {canEdit ? <Pencil className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => {setEditingLead(lead);setShowLeadForm(true);}} className="h-8 px-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50" title="פתח ליד">
-                                <Pencil className="w-4 h-4" />
-                            </Button>
-                            {lead.lead_status === 'Converted' ?
-                <div className="h-8 px-2 flex items-center justify-center text-emerald-600" title="הומר להזדמנות">
+                            {canEdit && (lead.lead_status === 'Converted' ?
+                        <div className="h-8 px-2 flex items-center justify-center text-emerald-600" title="הומר להזדמנות">
                                     <CheckCircle2 className="w-5 h-5 fill-emerald-100" />
                                 </div> :
 
-                <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="המר להזדמנות מיידי">
+                        <Button variant="ghost" size="sm" onClick={() => convertToOpportunity.mutate(lead)} className="h-8 px-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50" title="המר להזדמנות מיידי">
                                     <CheckCircle2 className="w-4 h-4" />
                                 </Button>
-                }
+                            )}
                         </div>
                     </div>
                 </div>

@@ -8,15 +8,18 @@ import TeamSettings from '@/components/settings/TeamSettings';
 import CustomFieldSettings from '@/components/settings/CustomFieldSettings';
 import IntegrationSettings from '@/components/settings/IntegrationSettings';
 import AuditLogSettings from '@/components/settings/AuditLogSettings';
+import UserManagement from '@/components/settings/UserManagement';
 import { useSettings } from '@/components/context/SettingsContext';
+import { usePermissions } from '@/components/hooks/usePermissions';
 import { 
     Building2, GitMerge, Tags, Bell, User, Shield, 
-    Database, Users, Puzzle, Activity, PenTool
+    Database, Users, Puzzle, Activity, PenTool, Lock
 } from "lucide-react";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("organization");
   const { theme } = useSettings();
+  const { isAdmin } = usePermissions();
 
   const menuGroups = [
     {
@@ -25,6 +28,7 @@ export default function SettingsPage() {
             { id: "organization", label: "הגדרות ארגון", icon: Building2 },
             { id: "team", label: "צוות ומשתמשים", icon: Users },
             { id: "audit", label: "יומן פעילות", icon: Activity },
+            ...(isAdmin ? [{ id: "user_management", label: "ניהול הרשאות", icon: Lock }] : []),
         ]
     },
     {
@@ -115,6 +119,7 @@ export default function SettingsPage() {
                 {activeTab === "team" && <TeamSettings />}
                 {activeTab === "audit" && <AuditLogSettings />}
                 {activeTab === "notifications" && <NotificationSettings />}
+                {activeTab === "user_management" && isAdmin && <UserManagement />}
             </main>
         </div>
     </div>
