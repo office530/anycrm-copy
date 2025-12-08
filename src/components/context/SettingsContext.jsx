@@ -164,7 +164,7 @@ export function SettingsProvider({ children }) {
   };
 
   // Theme is still local for now as it's per user/device preference often, but could be moved to user settings
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('dark');
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   return (
