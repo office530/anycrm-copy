@@ -151,7 +151,7 @@ export default function Dashboard() {
               <img
                 src={branding.logoUrl}
                 alt="AnyCRM Logo"
-                className={`h-40 object-contain transition-all duration-500 ${theme === 'dark' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'drop-shadow-xl'}`} 
+                className={`h-40 object-contain rounded-full transition-all duration-500 ${theme === 'dark' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'drop-shadow-xl'}`} 
               />
           </div>
           {/* Decorative Background */}
