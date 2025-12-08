@@ -300,8 +300,8 @@ export default function Dashboard() {
                   </div>
               </div>
               {/* Decorations */}
-              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-red-50 blur-3xl rounded-full pointer-events-none"></div>
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-slate-50 blur-2xl rounded-full pointer-events-none"></div>
+              <div className={`absolute -bottom-20 -right-20 w-64 h-64 blur-3xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-red-900/10' : 'bg-red-50'}`}></div>
+              <div className={`absolute -top-10 -left-10 w-40 h-40 blur-2xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-slate-700/10' : 'bg-slate-50'}`}></div>
               </Card>
 
               {/* Tasks Widget */}
