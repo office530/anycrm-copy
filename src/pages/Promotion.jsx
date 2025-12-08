@@ -49,20 +49,14 @@ export default function PromotionPage() {
         <div className={`min-h-full rounded-3xl ${darkBg} ${darkText} p-6 md:p-12 font-sans selection:bg-cyan-500/30`}>
             {/* Hero Section */}
             <div className="max-w-6xl mx-auto pt-10 pb-20 text-center">
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.7 }}
+                <div 
                     className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-sm font-medium mb-8"
                 >
                     <Sparkles className="w-4 h-4" />
                     <span>The Future of Simple CRM</span>
-                </motion.div>
+                </div>
 
-                <motion.h1 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                <h1 
                     className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8"
                 >
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-500">
@@ -72,17 +66,14 @@ export default function PromotionPage() {
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
                         Intelligent.
                     </span>
-                </motion.h1>
+                </h1>
 
-                <motion.p 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
+                <p 
                     className={`text-xl md:text-2xl ${darkMuted} max-w-3xl mx-auto mb-12 leading-relaxed`}
                 >
                     Stop fighting with complex, overpriced software. 
                     Embrace a CRM template that prioritizes <span className="text-white font-semibold">clarity</span>, <span className="text-white font-semibold">speed</span>, and <span className="text-white font-semibold">smart automation</span>.
-                </motion.p>
+                </p>
 
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
