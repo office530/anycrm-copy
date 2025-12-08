@@ -122,13 +122,13 @@ export default function PromotionPage() {
                             </div>
                         </div>
                         <div className="md:col-span-2 h-full min-h-[200px] rounded-lg bg-slate-800/50 border border-slate-700/50 p-6 flex flex-col justify-center items-center text-center">
-                            <Brain className="w-16 h-16 text-cyan-500/50 mb-4 animate-pulse" />
+                            <Brain className="w-16 h-16 text-cyan-500/50 mb-4" />
                             <h3 className="text-xl font-bold text-slate-200 mb-2">AI-Driven Insights</h3>
                             <p className="text-slate-500 max-w-sm">Automatically analyzing your data to provide actionable intelligence in real-time.</p>
                         </div>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             {/* Features Grid */}
             <div className="max-w-6xl mx-auto mb-32">
