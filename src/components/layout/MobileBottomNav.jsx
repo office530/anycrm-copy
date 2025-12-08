@@ -28,14 +28,14 @@ export default function MobileBottomNav() {
         ? 'bg-slate-900/90 backdrop-blur-md border-slate-800 shadow-[0_-4px_20px_-1px_rgba(0,0,0,0.5)]' 
         : 'bg-white/90 backdrop-blur-md border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]'
     }`}>
-            <Link to={createPageUrl('Dashboard')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Dashboard') ? (theme === 'dark' ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-red-50') : ''}`}>
-                <LayoutDashboard className={`w-6 h-6 ${isActive('Dashboard') ? (theme === 'dark' ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
-                <span className={`text-[10px] font-bold ${isActive('Dashboard') ? (theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Dashboard</span>
+            <Link to={createPageUrl('Dashboard')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Dashboard') ? (theme === 'dark' ? 'bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-red-50') : ''}`}>
+                <LayoutDashboard className={`w-6 h-6 ${isActive('Dashboard') ? (theme === 'dark' ? 'text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
+                <span className={`text-[10px] font-bold ${isActive('Dashboard') ? (theme === 'dark' ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Dashboard</span>
             </Link>
 
-            <Link to={createPageUrl('Leads')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Leads') ? (theme === 'dark' ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 shadow-[0_0_15px_rgba(139,92,246,0.3)]' : 'bg-red-50') : ''}`}>
-                <Users className={`w-6 h-6 ${isActive('Leads') ? (theme === 'dark' ? 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
-                <span className={`text-[10px] font-bold ${isActive('Leads') ? (theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Leads</span>
+            <Link to={createPageUrl('Leads')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Leads') ? (theme === 'dark' ? 'bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.4)]' : 'bg-red-50') : ''}`}>
+                <Users className={`w-6 h-6 ${isActive('Leads') ? (theme === 'dark' ? 'text-indigo-400 drop-shadow-[0_0_12px_rgba(129,140,248,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
+                <span className={`text-[10px] font-bold ${isActive('Leads') ? (theme === 'dark' ? 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Leads</span>
             </Link>
 
             {/* Center FAB for Quick Actions */}
@@ -71,14 +71,14 @@ export default function MobileBottomNav() {
                 </DropdownMenu>
             </div>
 
-            <Link to={createPageUrl('Opportunities')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Opportunities') ? (theme === 'dark' ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-red-50') : ''}`}>
-                <Briefcase className={`w-6 h-6 ${isActive('Opportunities') ? (theme === 'dark' ? 'text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
-                <span className={`text-[10px] font-bold ${isActive('Opportunities') ? (theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Deals</span>
+            <Link to={createPageUrl('Opportunities')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Opportunities') ? (theme === 'dark' ? 'bg-purple-500/10 shadow-[0_0_20px_rgba(168,85,247,0.4)]' : 'bg-red-50') : ''}`}>
+                <Briefcase className={`w-6 h-6 ${isActive('Opportunities') ? (theme === 'dark' ? 'text-purple-400 drop-shadow-[0_0_12px_rgba(192,132,252,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
+                <span className={`text-[10px] font-bold ${isActive('Opportunities') ? (theme === 'dark' ? 'text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Deals</span>
             </Link>
 
-            <Link to={createPageUrl('Settings')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Settings') ? (theme === 'dark' ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 shadow-[0_0_15px_rgba(216,180,254,0.3)]' : 'bg-red-50') : ''}`}>
-                <Menu className={`w-6 h-6 ${isActive('Settings') ? (theme === 'dark' ? 'text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
-                <span className={`text-[10px] font-bold ${isActive('Settings') ? (theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Settings</span>
+            <Link to={createPageUrl('Settings')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Settings') ? (theme === 'dark' ? 'bg-fuchsia-500/10 shadow-[0_0_20px_rgba(232,121,249,0.4)]' : 'bg-red-50') : ''}`}>
+                <Menu className={`w-6 h-6 ${isActive('Settings') ? (theme === 'dark' ? 'text-fuchsia-400 drop-shadow-[0_0_12px_rgba(240,171,252,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
+                <span className={`text-[10px] font-bold ${isActive('Settings') ? (theme === 'dark' ? 'text-fuchsia-400 drop-shadow-[0_0_8px_rgba(240,171,252,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Settings</span>
             </Link>
         </div>);
 
