@@ -7,12 +7,12 @@ const SettingsContext = createContext();
 
 // Defaults
 export const defaultLeadStatuses = [
-  { value: "New", label: "New", color: "bg-red-100 text-red-800 border border-red-200 font-medium" },
-  { value: "Attempting Contact", label: "In Progress", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
-  { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-neutral-200 text-neutral-800 border border-neutral-300 font-medium" },
-  { value: "Sales Ready", label: "Sales Ready", color: "bg-neutral-800 text-white border border-neutral-900 font-medium" },
-  { value: "Converted", label: "Converted", color: "bg-red-700 text-white border border-red-800 font-medium shadow-sm" },
-  { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-neutral-100 text-neutral-500 border border-neutral-200" }
+  { value: "New", label: "New", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
+  { value: "Attempting Contact", label: "In Progress", color: "bg-violet-50 text-violet-700 border-violet-200" },
+  { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200" },
+  { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+  { value: "Converted", label: "Converted", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-100 text-slate-500 border-slate-200" }
 ];
 
 export const defaultPipelineStages = [

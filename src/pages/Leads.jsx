@@ -31,14 +31,28 @@ export default function LeadsPage() {
   const { canCreate, canEdit, canDelete } = usePermissions();
   const { leadStatuses, theme } = useSettings();
   const location = useLocation();
-  // Custom statuses to match LeadForm exactly
-  const displayStatuses = [
-  { value: "New", label: "New", color: "bg-red-100 text-red-800 border-red-200" },
-  { value: "Attempting Contact", label: "Attempting Contact", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
-  { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-neutral-200 text-neutral-800 border-neutral-300" },
-  { value: "Sales Ready", label: "Sales Ready", color: "bg-neutral-800 text-white border-neutral-900" },
-  { value: "Converted", label: "Converted", color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-  { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-100 text-slate-500 border-slate-200" }];
+
+  // Custom statuses to match LeadForm exactly - with Neon support for Dark Mode
+  const displayStatuses = useMemo(() => {
+    if (theme === 'dark') {
+      return [
+        { value: "New", label: "New", color: "bg-cyan-950/40 text-cyan-300 border-cyan-800 ring-1 ring-cyan-500/50 shadow-[0_0_8px_rgba(34,211,238,0.2)]" },
+        { value: "Attempting Contact", label: "Attempting Contact", color: "bg-violet-950/40 text-violet-300 border-violet-800 ring-1 ring-violet-500/50 shadow-[0_0_8px_rgba(167,139,250,0.2)]" },
+        { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-950/40 text-fuchsia-300 border-fuchsia-800 ring-1 ring-fuchsia-500/50 shadow-[0_0_8px_rgba(232,121,249,0.2)]" },
+        { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-950/40 text-yellow-300 border-yellow-800 ring-1 ring-yellow-500/50 shadow-[0_0_8px_rgba(250,204,21,0.2)]" },
+        { value: "Converted", label: "Converted", color: "bg-emerald-950/40 text-emerald-300 border-emerald-800 ring-1 ring-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.2)]" },
+        { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-900/50 text-slate-500 border-slate-800" }
+      ];
+    }
+    return [
+      { value: "New", label: "New", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
+      { value: "Attempting Contact", label: "Attempting Contact", color: "bg-violet-50 text-violet-700 border-violet-200" },
+      { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200" },
+      { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
+      { value: "Converted", label: "Converted", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+      { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-100 text-slate-500 border-slate-200" }
+    ];
+  }, [theme]);
 
 
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -445,9 +459,14 @@ export default function LeadsPage() {
                     <div className="col-span-2">
                         <StatusBadge lead={lead} statuses={displayStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     </div>
-                    <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
-                        <InlineEdit value={lead.phone_number} type="tel" className="font-mono" onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
+                    <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-200' : 'text-slate-600'}`}>
+                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-400'}`} />
+                        <InlineEdit 
+                          value={lead.phone_number} 
+                          type="tel" 
+                          className={`font-mono ${theme === 'dark' ? 'text-slate-100 font-medium' : 'text-slate-800'}`} 
+                          onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} 
+                        />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
                     <div className={`col-span-2 text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -544,7 +563,12 @@ export default function LeadsPage() {
                     <div className={`p-3 rounded-lg flex items-center justify-between border transition-colors ${
                       theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100'
                     }`}>
-                     <InlineEdit value={lead.phone_number} type="tel" className={`font-mono font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`} onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} />
+                     <InlineEdit 
+                        value={lead.phone_number} 
+                        type="tel" 
+                        className={`font-mono font-medium ${theme === 'dark' ? 'text-slate-100' : 'text-slate-700'}`} 
+                        onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} 
+                     />
                      {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
 
