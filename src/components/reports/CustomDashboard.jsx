@@ -35,12 +35,12 @@ export default function CustomDashboard() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-2xl font-bold">דשבורד ויזואלי</h2>
-                    <p className="text-slate-500">מדדי ביצוע וגרפים מותאמים אישית</p>
+                    <h2 className="text-2xl font-bold">Visual Dashboard</h2>
+                    <p className="text-slate-500">Custom KPIs and Charts</p>
                 </div>
                 <Button onClick={() => setIsAddingWidget(true)} className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="w-4 h-4 ml-2" />
-                    הוסף וידג'ט
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Widget
                 </Button>
             </div>
 
@@ -48,9 +48,9 @@ export default function CustomDashboard() {
              widgets.length === 0 ? (
                 <div className="text-center py-20 border-2 border-dashed rounded-xl bg-slate-50/50">
                     <BarChart3 className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                    <h3 className="text-xl font-bold text-slate-600">הדשבורד ריק</h3>
-                    <p className="text-slate-500 mb-6">הוסף גרפים ומדדים כדי לעקוב אחרי הביצועים החשובים לך</p>
-                    <Button onClick={() => setIsAddingWidget(true)}>הוסף וידג'ט ראשון</Button>
+                    <h3 className="text-xl font-bold text-slate-600">Dashboard Empty</h3>
+                    <p className="text-slate-500 mb-6">Add charts and metrics to track important performance indicators</p>
+                    <Button onClick={() => setIsAddingWidget(true)}>Add First Widget</Button>
                 </div>
              ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,7 +59,7 @@ export default function CustomDashboard() {
                             key={widget.id} 
                             config={widget} 
                             onDelete={() => {
-                                if(confirm('למחוק וידג\'ט זה?')) deleteMutation.mutate(widget.id);
+                                if(confirm('Delete this widget?')) deleteMutation.mutate(widget.id);
                             }} 
                         />
                     ))}
@@ -123,41 +123,41 @@ function WidgetBuilder({ onSave, onCancel }) {
     return (
         <div className="space-y-4">
             <DialogHeader>
-                <DialogTitle>הוספת וידג'ט חדש</DialogTitle>
+                <DialogTitle>Add New Widget</DialogTitle>
             </DialogHeader>
             
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label>כותרת</Label>
-                    <Input value={config.name} onChange={e => setConfig({...config, name: e.target.value})} placeholder="למשל: מכירות לפי שלב" />
+                    <Label>Title</Label>
+                    <Input value={config.name} onChange={e => setConfig({...config, name: e.target.value})} placeholder="E.g. Sales by Stage" />
                 </div>
                 <div className="space-y-2">
-                    <Label>סוג תצוגה</Label>
+                    <Label>Chart Type</Label>
                     <Select value={config.type} onValueChange={v => setConfig({...config, type: v})}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="bar_chart">גרף עמודות (Bar)</SelectItem>
-                            <SelectItem value="pie_chart">גרף עוגה (Pie)</SelectItem>
-                            <SelectItem value="line_chart">גרף קו (Line)</SelectItem>
-                            <SelectItem value="kpi_card">כרטיס מדד (KPI)</SelectItem>
+                            <SelectItem value="bar_chart">Bar Chart</SelectItem>
+                            <SelectItem value="pie_chart">Pie Chart</SelectItem>
+                            <SelectItem value="line_chart">Line Chart</SelectItem>
+                            <SelectItem value="kpi_card">KPI Card</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label>מקור נתונים</Label>
+                    <Label>Data Source</Label>
                     <Select value={config.entity_type} onValueChange={v => setConfig({...config, entity_type: v})}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="Lead">לידים</SelectItem>
-                            <SelectItem value="Opportunity">הזדמנויות</SelectItem>
-                            <SelectItem value="Task">משימות</SelectItem>
+                            <SelectItem value="Lead">Leads</SelectItem>
+                            <SelectItem value="Opportunity">Opportunities</SelectItem>
+                            <SelectItem value="Task">Tasks</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label>קבץ לפי (X Axis)</Label>
+                    <Label>Group By (X Axis)</Label>
                     <Select value={config.config.groupBy} onValueChange={v => setConfig({...config, config: {...config.config, groupBy: v}})}>
-                        <SelectTrigger><SelectValue placeholder="בחר שדה..." /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder="Select Field..." /></SelectTrigger>
                         <SelectContent>
                             {fields.map(f => <SelectItem key={f} value={f}>{schema?.properties[f]?.description || f}</SelectItem>)}
                         </SelectContent>
@@ -166,10 +166,10 @@ function WidgetBuilder({ onSave, onCancel }) {
             </div>
 
             <div className="flex justify-end gap-2 mt-4">
-                <Button variant="outline" onClick={onCancel}>ביטול</Button>
+                <Button variant="outline" onClick={onCancel}>Cancel</Button>
                 <Button onClick={() => saveMutation.mutate(config)} disabled={!config.name || !config.config.groupBy}>
                     {saveMutation.isPending && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
-                    שמור וידג'ט
+                    Save Widget
                 </Button>
             </div>
         </div>
@@ -212,7 +212,7 @@ function DashboardWidget({ config, onDelete }) {
             </CardHeader>
             <CardContent className="flex-1 min-h-0">
                 {isLoading ? <div className="flex h-full items-center justify-center"><Loader2 className="animate-spin" /></div> :
-                 data.length === 0 ? <div className="flex h-full items-center justify-center text-slate-400 text-sm">אין נתונים</div> :
+                 data.length === 0 ? <div className="flex h-full items-center justify-center text-slate-400 text-sm">No Data</div> :
                  (
                     <ResponsiveContainer width="100%" height="100%">
                         {config.type === 'bar_chart' ? (

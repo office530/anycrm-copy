@@ -144,45 +144,45 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
       <div className="bg-white p-4 rounded-xl shadow-sm border border-neutral-100 flex flex-col md:flex-row gap-4 items-end md:items-center justify-between">
         <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
             <div className="space-y-1">
-                <label className="text-xs font-medium text-neutral-500 ml-1">טווח תאריכים</label>
+                <label className="text-xs font-medium text-neutral-500 ml-1">Date Range</label>
                 <Select value={dateRange} onValueChange={setDateRange}>
                     <SelectTrigger className="w-[180px] bg-neutral-50">
                         <Calendar className="w-4 h-4 ml-2 text-neutral-400" />
-                        <SelectValue placeholder="בחר טווח" />
+                        <SelectValue placeholder="Select Range" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">כל הזמנים</SelectItem>
-                        <SelectItem value="this_month">החודש הנוכחי</SelectItem>
-                        <SelectItem value="last_month">חודש שעבר</SelectItem>
-                        <SelectItem value="this_quarter">הרבעון הנוכחי</SelectItem>
-                        <SelectItem value="this_year">השנה הנוכחית</SelectItem>
+                        <SelectItem value="all">All Time</SelectItem>
+                        <SelectItem value="this_month">This Month</SelectItem>
+                        <SelectItem value="last_month">Last Month</SelectItem>
+                        <SelectItem value="this_quarter">This Quarter</SelectItem>
+                        <SelectItem value="this_year">This Year</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-medium text-neutral-500 ml-1">נציג מטפל</label>
+                <label className="text-xs font-medium text-neutral-500 ml-1">Sales Rep</label>
                 <Select value={filterRep} onValueChange={setFilterRep}>
                     <SelectTrigger className="w-[180px] bg-neutral-50">
                         <User className="w-4 h-4 ml-2 text-neutral-400" />
-                        <SelectValue placeholder="כל הנציגים" />
+                        <SelectValue placeholder="All Reps" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">כל הנציגים</SelectItem>
+                        <SelectItem value="all">All Reps</SelectItem>
                         {salesReps.map(rep => <SelectItem key={rep} value={rep}>{rep}</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
 
             <div className="space-y-1">
-                <label className="text-xs font-medium text-neutral-500 ml-1">שלב בעסקה</label>
+                <label className="text-xs font-medium text-neutral-500 ml-1">Deal Stage</label>
                 <Select value={filterStage} onValueChange={setFilterStage}>
                     <SelectTrigger className="w-[180px] bg-neutral-50">
                         <FilterIcon className="w-4 h-4 ml-2 text-neutral-400" />
-                        <SelectValue placeholder="כל השלבים" />
+                        <SelectValue placeholder="All Stages" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">כל השלבים</SelectItem>
+                        <SelectItem value="all">All Stages</SelectItem>
                         {stages.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -191,15 +191,15 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         
         <div className="flex items-center gap-2 bg-neutral-50 px-4 py-2 rounded-lg border border-neutral-200">
             <div className="text-center px-4 border-l border-neutral-200">
-                <p className="text-xs text-neutral-500">שווי צנרת</p>
+                <p className="text-xs text-neutral-500">Pipeline Value</p>
                 <p className="text-lg font-bold text-neutral-800">₪{totalPipeline.toLocaleString()}</p>
             </div>
             <div className="text-center px-4 border-l border-neutral-200">
-                <p className="text-xs text-neutral-500">צפי משוקלל</p>
+                <p className="text-xs text-neutral-500">Weighted Forecast</p>
                 <p className="text-lg font-bold text-red-600">₪{weightedPipeline.toLocaleString()}</p>
             </div>
             <div className="text-center px-4">
-                <p className="text-xs text-neutral-500">אחוז סגירה</p>
+                <p className="text-xs text-neutral-500">Win Rate</p>
                 <p className="text-lg font-bold text-green-600">{winRate.toFixed(1)}%</p>
             </div>
         </div>
@@ -210,7 +210,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-red-500" /> התקדמות עסקאות (כמות ושווי)
+                    <BarChart3 className="w-5 h-5 text-red-500" /> Deal Progression (Count & Value)
                 </CardTitle>
             </CardHeader>
             <CardContent className="h-[350px]">
@@ -223,7 +223,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                             contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
                             formatter={(value, name) => name === 'value' ? `₪${value.toLocaleString()}` : value}
                         />
-                        <Bar dataKey="count" name="כמות" fill="#ef4444" barSize={20} radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="count" name="Count" fill="#ef4444" barSize={20} radius={[0, 4, 4, 0]} />
                     </ComposedChart>
                 </ResponsiveContainer>
             </CardContent>
@@ -232,7 +232,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                    <PieChart className="w-5 h-5 text-purple-500" /> המרות לפי מקור (עסקאות זכייה)
+                    <PieChart className="w-5 h-5 text-purple-500" /> Conversions by Source (Won Deals)
                 </CardTitle>
             </CardHeader>
             <CardContent className="h-[350px]">
@@ -264,7 +264,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-green-500" /> צפי הכנסות (משוקלל vs בפועל)
+                    <TrendingUp className="w-5 h-5 text-green-500" /> Revenue Forecast (Weighted vs Actual)
                 </CardTitle>
             </CardHeader>
             <CardContent className="h-[350px]">
@@ -284,8 +284,8 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                         <YAxis tickFormatter={(val) => `${val/1000}k`} />
                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
                         <Tooltip formatter={(val) => `₪${val.toLocaleString()}`} />
-                        <Area type="monotone" dataKey="expected" name="צפי משוקלל" stroke="#8884d8" fillOpacity={1} fill="url(#colorExpected)" />
-                        <Area type="monotone" dataKey="actual" name="בפועל (זכייה)" stroke="#82ca9d" fillOpacity={1} fill="url(#colorActual)" />
+                        <Area type="monotone" dataKey="expected" name="Weighted Forecast" stroke="#8884d8" fillOpacity={1} fill="url(#colorExpected)" />
+                        <Area type="monotone" dataKey="actual" name="Actual (Won)" stroke="#82ca9d" fillOpacity={1} fill="url(#colorActual)" />
                     </AreaChart>
                 </ResponsiveContainer>
             </CardContent>
@@ -294,7 +294,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
         <Card className="shadow-sm border-neutral-100">
             <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-orange-500" /> אורך מחזור מכירה ממוצע (ימים)
+                    <Calendar className="w-5 h-5 text-orange-500" /> Average Sales Cycle Length (Days)
                 </CardTitle>
             </CardHeader>
             <CardContent className="h-[350px]">
@@ -304,7 +304,7 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                         <XAxis dataKey="name" />
                         <YAxis />
                         <Tooltip cursor={{fill: 'transparent'}} />
-                        <Bar dataKey="avgDays" name="ימים בממוצע" fill="#f97316" radius={[4, 4, 0, 0]} barSize={50} />
+                        <Bar dataKey="avgDays" name="Avg Days" fill="#f97316" radius={[4, 4, 0, 0]} barSize={50} />
                     </BarChart>
                 </ResponsiveContainer>
             </CardContent>
@@ -315,20 +315,20 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
       <Card className="shadow-sm border-neutral-100 overflow-hidden">
           <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                  <TableIcon className="w-5 h-5 text-neutral-500" /> פירוט הזדמנויות מסונן
+                  <TableIcon className="w-5 h-5 text-neutral-500" /> Filtered Opportunities Details
               </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
               <Table>
                   <TableHeader>
                       <TableRow>
-                          <TableHead className="text-right">שם לקוח</TableHead>
-                          <TableHead className="text-right">מוצר</TableHead>
-                          <TableHead className="text-right">שלב</TableHead>
-                          <TableHead className="text-right">שווי</TableHead>
-                          <TableHead className="text-right">הסתברות</TableHead>
-                          <TableHead className="text-right">תאריך יעד</TableHead>
-                          <TableHead className="text-right">נציג</TableHead>
+                          <TableHead className="text-left">Client Name</TableHead>
+                          <TableHead className="text-left">Product</TableHead>
+                          <TableHead className="text-left">Stage</TableHead>
+                          <TableHead className="text-left">Value</TableHead>
+                          <TableHead className="text-left">Probability</TableHead>
+                          <TableHead className="text-left">Close Date</TableHead>
+                          <TableHead className="text-left">Rep</TableHead>
                       </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -341,20 +341,20 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                               </TableCell>
                               <TableCell>₪{o.loan_amount_requested?.toLocaleString()}</TableCell>
                               <TableCell>{o.probability}%</TableCell>
-                              <TableCell>{o.expected_close_date ? moment(o.expected_close_date).format('DD/MM/YYYY') : '-'}</TableCell>
+                              <TableCell>{o.expected_close_date ? moment(o.expected_close_date).format('MMM D, YYYY') : '-'}</TableCell>
                               <TableCell className="text-xs text-neutral-500">{o.created_by}</TableCell>
                           </TableRow>
                       ))}
                       {filteredData.length === 0 && (
                           <TableRow>
-                              <TableCell colSpan={7} className="text-center py-8 text-neutral-500">לא נמצאו נתונים לתצוגה</TableCell>
+                              <TableCell colSpan={7} className="text-center py-8 text-neutral-500">No data to display</TableCell>
                           </TableRow>
                       )}
                   </TableBody>
               </Table>
               {filteredData.length > 10 && (
                   <div className="p-4 text-center text-xs text-neutral-500 bg-neutral-50 border-t border-neutral-100">
-                      מציג 10 מתוך {filteredData.length} הזדמנויות. הורד דוח מלא לצפייה בכולם.
+                      Showing 10 out of {filteredData.length} opportunities. Download full report to see all.
                   </div>
               )}
           </CardContent>
