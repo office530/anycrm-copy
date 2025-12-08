@@ -135,7 +135,7 @@ export default function Dashboard() {
       totalOpps, wonOppsCount: wonOpps.length, totalWonValue,
       stageData, trendData, upcomingTasks
     };
-  }, [filteredLeads, filteredOpps, tasks, timeRange]);
+  }, [filteredLeads, filteredOpps, tasks, timeRange, pipelineStages]);
 
   if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
 
