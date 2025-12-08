@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { CheckSquare, Phone, CalendarDays, ListTodo, X, Filter } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -28,11 +28,27 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
   const activityTypeData = useMemo(() => {
     const counts = {};
     const typeMapping = { 'Call': 'Calls', 'Meeting': 'Meetings', 'Email': 'Emails', 'Note': 'Notes', 'SMS': 'SMS', 'Document Collection': 'Documents' };
+    
+    // Color mapping for distinct activity types
+    const colorMapping = {
+      'Calls': '#3B82F6',      // Blue
+      'Meetings': '#8B5CF6',   // Violet
+      'Emails': '#F59E0B',     // Amber
+      'Notes': '#64748B',      // Slate
+      'SMS': '#EC4899',        // Pink
+      'Documents': '#10B981',  // Emerald
+      'Other': '#94A3B8'       // Gray
+    };
+
     activities.forEach(a => {
         const type = typeMapping[a.type] || 'Other';
         counts[type] = (counts[type] || 0) + 1;
     });
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    return Object.entries(counts).map(([name, value]) => ({ 
+      name, 
+      value,
+      fill: colorMapping[name] || colorMapping['Other']
+    }));
   }, [activities]);
 
   const getActivitiesByType = (typeName) => {
@@ -172,7 +188,11 @@ export default function ActivityReport({ tasks, activities, leads, users, timeRa
                 <XAxis dataKey="name" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
                 <YAxis stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
                 <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
-                <Bar dataKey="value" fill="#ef4444" name="Count" cursor="pointer" />
+                <Bar dataKey="value" name="Count" cursor="pointer">
+                  {activityTypeData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
