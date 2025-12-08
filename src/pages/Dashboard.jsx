@@ -124,7 +124,7 @@ export default function Dashboard() {
       'bg-gradient-to-br from-white to-neutral-50/50 md:bg-white border-neutral-100'}`
       }>
           <div className="relative z-10 max-w-lg text-center md:text-right w-full md:w-auto">
-              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>ברוכים הבאים </h1>
+              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>ברוכים הבאים </h1>
               <p className={`text-base md:text-lg mb-6 ${theme === 'dark' ? 'text-cyan-400' : 'text-neutral-600'}`}>Old Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <Link to={createPageUrl('Leads')}>
@@ -200,7 +200,7 @@ export default function Dashboard() {
               {/* Sales Trend Chart */}
               <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
-                      <CardTitle className="text-[#28f0d9] text-lg font-semibold tracking-tight flex items-center gap-2">
+                      <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight flex items-center gap-2">
                           <Activity className="w-5 h-5 text-neutral-500" /> מגמות לידים ומכירות
                       </CardTitle>
                   </CardHeader>
@@ -231,7 +231,7 @@ export default function Dashboard() {
               {/* Opportunity Stages */}
               <Card className={`border-none shadow-sm rounded-2xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                   <CardHeader>
-                      <CardTitle className="text-[#28f0d9] text-lg font-semibold tracking-tight">הזדמנויות לפי שלב</CardTitle>
+                      <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight">הזדמנויות לפי שלב</CardTitle>
                   </CardHeader>
                   <CardContent className="h-[250px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -291,11 +291,11 @@ export default function Dashboard() {
                       </div>
                       <div className="flex justify-between items-center text-sm">
                           <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>בשלב מתקדם</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter(o => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter((o) => o.deal_stage?.includes('Documents') || o.deal_stage?.includes('Harel')).length}</span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
                           <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>זכייה צפויה החודש</span>
-                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{(filteredOpps.filter(o => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + ((o.loan_amount_requested || 0) * (o.probability || 0) / 100), 0)).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>₪{filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.loan_amount_requested || 0) * (o.probability || 0) / 100, 0).toLocaleString('he-IL', { maximumFractionDigits: 0 })}</span>
                       </div>
                   </div>
               </div>
