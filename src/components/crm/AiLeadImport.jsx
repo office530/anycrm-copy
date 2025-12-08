@@ -376,7 +376,7 @@ Interested in a reverse mortgage to help the children"
             <div className="space-y-4 mt-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>שם מלא *</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Full Name *</label>
                   <Input
                     value={extractedData?.full_name || ""}
                     onChange={(e) => setExtractedData({...extractedData, full_name: e.target.value})}
@@ -384,7 +384,7 @@ Interested in a reverse mortgage to help the children"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>טלפון *</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Phone *</label>
                   <Input
                     value={extractedData?.phone_number || ""}
                     onChange={(e) => setExtractedData({...extractedData, phone_number: e.target.value})}
@@ -395,7 +395,7 @@ Interested in a reverse mortgage to help the children"
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>אימייל</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Email</label>
                   <Input
                     value={extractedData?.email || ""}
                     onChange={(e) => setExtractedData({...extractedData, email: e.target.value})}
@@ -403,7 +403,7 @@ Interested in a reverse mortgage to help the children"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>עיר</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>City</label>
                   <Input
                     value={extractedData?.city || ""}
                     onChange={(e) => setExtractedData({...extractedData, city: e.target.value})}
@@ -414,7 +414,7 @@ Interested in a reverse mortgage to help the children"
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>גיל</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Age</label>
                   <Input
                     type="number"
                     value={extractedData?.age || ""}
@@ -423,7 +423,7 @@ Interested in a reverse mortgage to help the children"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>מצב משפחתי</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Marital Status</label>
                   <Input
                     value={extractedData?.marital_status || ""}
                     onChange={(e) => setExtractedData({...extractedData, marital_status: e.target.value})}
@@ -434,7 +434,7 @@ Interested in a reverse mortgage to help the children"
 
               {extractedData?.notes && (
                 <div className="space-y-2">
-                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>הערות</label>
+                  <label className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Notes</label>
                   <Textarea
                     value={extractedData.notes}
                     onChange={(e) => setExtractedData({...extractedData, notes: e.target.value})}
@@ -451,14 +451,14 @@ Interested in a reverse mortgage to help the children"
                   className={`flex-1 ${theme === 'dark' ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' : ''}`}
                 >
                   <Edit3 className="w-4 h-4 ml-2" />
-                  חזור לעריכה
+                  Back to Edit
                 </Button>
                 <Button
                   onClick={handleSaveLead}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
                   <CheckCircle2 className="w-4 h-4 ml-2" />
-                  שמור ליד
+                  Save Lead
                 </Button>
               </div>
             </div>
