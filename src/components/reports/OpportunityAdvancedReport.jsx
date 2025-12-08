@@ -216,11 +216,11 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             <CardContent className="h-[350px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={progressionData} layout="vertical" margin={{ left: 40, right: 20, top: 20, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={theme === 'dark' ? '#374151' : '#e5e7eb'} />
                         <XAxis type="number" hide />
-                        <YAxis dataKey="name" type="category" width={120} tick={{fontSize: 11}} />
+                        <YAxis dataKey="name" type="category" width={120} tick={{fontSize: 11, fill: theme === 'dark' ? '#9ca3af' : '#666'}} stroke={theme === 'dark' ? '#4b5563' : '#ccc'} />
                         <Tooltip 
-                            contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
+                            contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000'}}
                             formatter={(value, name) => name === 'value' ? `₪${value.toLocaleString()}` : value}
                         />
                         <Bar dataKey="count" name="Count" fill="#ef4444" barSize={20} radius={[0, 4, 4, 0]} />
@@ -280,10 +280,13 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                                 <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
-                        <XAxis dataKey="month" />
-                        <YAxis tickFormatter={(val) => `${val/1000}k`} />
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <Tooltip formatter={(val) => `₪${val.toLocaleString()}`} />
+                        <XAxis dataKey="month" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                        <YAxis tickFormatter={(val) => `${val/1000}k`} stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#374151' : '#e5e7eb'} />
+                        <Tooltip 
+                            contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }}
+                            formatter={(val) => `₪${val.toLocaleString()}`} 
+                        />
                         <Area type="monotone" dataKey="expected" name="Weighted Forecast" stroke="#8884d8" fillOpacity={1} fill="url(#colorExpected)" />
                         <Area type="monotone" dataKey="actual" name="Actual (Won)" stroke="#82ca9d" fillOpacity={1} fill="url(#colorActual)" />
                     </AreaChart>
@@ -300,10 +303,10 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             <CardContent className="h-[350px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={salesCycleData}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip cursor={{fill: 'transparent'}} />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#374151' : '#e5e7eb'} />
+                        <XAxis dataKey="name" stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                        <YAxis stroke={theme === 'dark' ? '#9ca3af' : '#666'} />
+                        <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
                         <Bar dataKey="avgDays" name="Avg Days" fill="#f97316" radius={[4, 4, 0, 0]} barSize={50} />
                     </BarChart>
                 </ResponsiveContainer>

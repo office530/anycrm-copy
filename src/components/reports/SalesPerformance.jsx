@@ -120,7 +120,8 @@ export default function SalesPerformance({ leads, opportunities, timeRange }) {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
+                <Legend wrapperStyle={{ color: theme === 'dark' ? '#9ca3af' : '#666' }} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>

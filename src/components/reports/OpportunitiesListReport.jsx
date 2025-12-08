@@ -127,7 +127,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <div className="w-full md:w-48 space-y-1">
           <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Filter by Stage</label>
           <Select value={filterStage} onValueChange={setFilterStage}>
-            <SelectTrigger className={theme === 'dark' ? 'bg-slate-900 border-slate-600 text-white' : ''}>
+            <SelectTrigger className={theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white'}>
               <SelectValue placeholder="All Stages" />
             </SelectTrigger>
             <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
@@ -140,7 +140,7 @@ export default function OpportunitiesListReport({ opportunities = [] }) {
         <div className="w-full md:w-48 space-y-1">
           <label className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Creation Date</label>
           <Select value={filterDate} onValueChange={setFilterDate}>
-            <SelectTrigger className={theme === 'dark' ? 'bg-slate-900 border-slate-600 text-white' : ''}>
+            <SelectTrigger className={theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white'}>
               <SelectValue placeholder="All Time" />
             </SelectTrigger>
             <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>

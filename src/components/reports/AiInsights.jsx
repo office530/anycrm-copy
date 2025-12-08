@@ -7,6 +7,7 @@ import { Loader2, BrainCircuit, TrendingUp, AlertTriangle, Lightbulb } from "luc
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AiInsights() {
+  const { theme } = React.useContext(require("@/components/context/SettingsContext").SettingsContext) || { theme: 'light' };
   const [insights, setInsights] = React.useState(null);
   const [isLoadingAI, setIsLoadingAI] = React.useState(false);
 
@@ -86,20 +87,20 @@ export default function AiInsights() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-white p-6 rounded-2xl border border-indigo-100">
+      <div className={`flex justify-between items-center p-6 rounded-2xl border ${theme === 'dark' ? 'bg-gradient-to-r from-indigo-900 to-slate-900 border-indigo-800' : 'bg-gradient-to-r from-indigo-50 to-white border-indigo-100'}`}>
         <div>
-          <h2 className="text-2xl font-bold text-indigo-900 flex items-center gap-2">
-            <BrainCircuit className="w-8 h-8 text-indigo-600" />
+          <h2 className={`text-2xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-900'}`}>
+            <BrainCircuit className={`w-8 h-8 ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`} />
             Conversion Analysis (AI)
           </h2>
-          <p className="text-indigo-700/80 mt-1">
+          <p className={`mt-1 ${theme === 'dark' ? 'text-indigo-300/80' : 'text-indigo-700/80'}`}>
             The system will scan all leads and opportunities to identify hidden patterns and recommend improvements.
           </p>
         </div>
         <Button 
           onClick={generateInsights} 
           disabled={isLoadingAI || !leads}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200/50"
           size="lg"
         >
           {isLoadingAI ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Lightbulb className="w-5 h-5 mr-2" />}
@@ -109,9 +110,9 @@ export default function AiInsights() {
 
       {isLoadingAI && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Skeleton className="h-48 w-full rounded-xl" />
-          <Skeleton className="h-48 w-full rounded-xl" />
-          <Skeleton className="h-48 w-full rounded-xl" />
+          <Skeleton className={`h-48 w-full rounded-xl ${theme === 'dark' ? 'bg-slate-800' : ''}`} />
+          <Skeleton className={`h-48 w-full rounded-xl ${theme === 'dark' ? 'bg-slate-800' : ''}`} />
+          <Skeleton className={`h-48 w-full rounded-xl ${theme === 'dark' ? 'bg-slate-800' : ''}`} />
         </div>
       )}
 
@@ -119,24 +120,24 @@ export default function AiInsights() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           
           {/* Trend Analysis */}
-          <Card className="md:col-span-3 border-indigo-100 bg-white shadow-sm">
+          <Card className={`md:col-span-3 shadow-sm ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'border-indigo-100 bg-white'}`}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-indigo-900">
+              <CardTitle className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-indigo-900'}`}>
                 <TrendingUp className="w-5 h-5 text-indigo-500" />
                 General Trend Analysis
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg text-slate-700 leading-relaxed">
+              <p className={`text-lg leading-relaxed ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                 {insights.trend_analysis}
               </p>
             </CardContent>
           </Card>
 
           {/* Key Factors */}
-          <Card className="border-l-4 border-l-blue-500 shadow-sm">
+          <Card className={`shadow-sm border-l-4 border-l-blue-500 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 border-l-blue-500' : ''}`}>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                 <AlertTriangle className="w-5 h-5 text-blue-500" />
                 Key Influencing Factors
               </CardTitle>
@@ -144,7 +145,7 @@ export default function AiInsights() {
             <CardContent>
               <ul className="space-y-3">
                 {insights.key_factors?.map((factor, i) => (
-                  <li key={i} className="flex items-start gap-2 text-slate-700">
+                  <li key={i} className={`flex items-start gap-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                     <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full mt-0.5">{i+1}</span>
                     {factor}
                   </li>
@@ -154,9 +155,9 @@ export default function AiInsights() {
           </Card>
 
           {/* Recommendations */}
-          <Card className="border-l-4 border-l-emerald-500 shadow-sm md:col-span-2">
+          <Card className={`shadow-sm md:col-span-2 border-l-4 border-l-emerald-500 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 border-l-emerald-500' : ''}`}>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className={`text-lg flex items-center gap-2 ${theme === 'dark' ? 'text-white' : ''}`}>
                 <Lightbulb className="w-5 h-5 text-emerald-500" />
                 Strategic Recommendations
               </CardTitle>
@@ -164,13 +165,13 @@ export default function AiInsights() {
             <CardContent>
               <div className="grid grid-cols-1 gap-4">
                 {insights.recommendations?.map((rec, i) => (
-                  <div key={i} className="flex gap-3 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                  <div key={i} className={`flex gap-3 p-3 rounded-lg border ${theme === 'dark' ? 'bg-emerald-900/20 border-emerald-800' : 'bg-emerald-50/50 border-emerald-100'}`}>
                      <div className="mt-1">
                        <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm">
                          {i+1}
                        </div>
                      </div>
-                     <p className="text-slate-800 font-medium">{rec}</p>
+                     <p className={`font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-800'}`}>{rec}</p>
                   </div>
                 ))}
               </div>
@@ -180,7 +181,7 @@ export default function AiInsights() {
       )}
       
       {!isLoadingAI && !insights && (
-        <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+        <div className={`text-center py-12 rounded-2xl border border-dashed ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
           <BrainCircuit className="w-12 h-12 text-slate-300 mx-auto mb-3" />
           <p className="text-slate-500 font-medium">Click the button above to start the AI engine</p>
         </div>

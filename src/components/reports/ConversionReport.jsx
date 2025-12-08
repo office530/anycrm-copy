@@ -96,13 +96,12 @@ export default function ConversionReport({ leads, opportunities, timeRange }) {
         <CardContent className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <FunnelChart>
-              <Tooltip />
+              <Tooltip contentStyle={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', border: 'none' }} />
               <Funnel
                 data={funnelData}
                 dataKey="value"
               >
-                {/* <LabelList position="right" fill="#000" stroke="none" dataKey="name" /> */}
-                <LabelList position="right" fill="#666" stroke="none" dataKey="value" />
+                <LabelList position="right" fill={theme === 'dark' ? '#fff' : '#666'} stroke="none" dataKey="value" />
                 {funnelData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
