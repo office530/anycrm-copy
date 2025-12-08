@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useSettings } from "@/components/context/SettingsContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -27,6 +28,7 @@ const templates = [
 
 
 export default function AutomationPage() {
+  const { theme } = useSettings();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('rules');
   const [searchTerm, setSearchTerm] = useState('');
@@ -95,13 +97,13 @@ export default function AutomationPage() {
   };
 
   return (
-    <div className="space-y-8 pb-20 font-sans text-slate-900" dir="rtl">
+    <div className={`space-y-8 pb-20 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`} dir="rtl">
       
       {/* כותרת + Stats */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">אוטומציות</h1>
-          <p className="text-slate-500 font-medium">ניהול חוקים ותהליכים אוטומטיים</p>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>אוטומציות</h1>
+          <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול חוקים ותהליכים אוטומטיים</p>
         </div>
         <Button onClick={() => { setEditingRule(null); setIsDialogOpen(true); }} className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-lg shadow-red-900/10">
             <Plus className="w-4 h-4 ml-2" />
@@ -111,47 +113,47 @@ export default function AutomationPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card>
+        <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-500">סה"כ חוקים</p>
-                <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>סה"כ חוקים</p>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{stats.total}</p>
               </div>
-              <Zap className="w-8 h-8 text-slate-300" />
+              <Zap className={`w-8 h-8 ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`} />
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-500">פעילים</p>
-                <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>פעילים</p>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-green-600'}`}>{stats.active}</p>
               </div>
-              <CheckCircle2 className="w-8 h-8 text-green-200" />
+              <CheckCircle2 className={`w-8 h-8 ${theme === 'dark' ? 'text-emerald-900/50' : 'text-green-200'}`} />
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-500">מושבתים</p>
-                <p className="text-2xl font-bold text-slate-400">{stats.inactive}</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>מושבתים</p>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{stats.inactive}</p>
               </div>
-              <PowerOff className="w-8 h-8 text-slate-200" />
+              <PowerOff className={`w-8 h-8 ${theme === 'dark' ? 'text-slate-700' : 'text-slate-200'}`} />
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={`border transition-colors ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-500">אחוז הצלחה</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.successRate}%</p>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>אחוז הצלחה</p>
+                <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`}>{stats.successRate}%</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-blue-200" />
+              <TrendingUp className={`w-8 h-8 ${theme === 'dark' ? 'text-cyan-900/50' : 'text-blue-200'}`} />
             </div>
           </CardContent>
         </Card>
@@ -159,12 +161,12 @@ export default function AutomationPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
-          <TabsTrigger value="rules" className="gap-2">
+        <TabsList className={`grid w-full max-w-md grid-cols-2 mb-6 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+          <TabsTrigger value="rules" className={`gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400 text-slate-400' : ''}`}>
             <Zap className="w-4 h-4" />
             חוקים פעילים
           </TabsTrigger>
-          <TabsTrigger value="logs" className="gap-2">
+          <TabsTrigger value="logs" className={`gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400 text-slate-400' : ''}`}>
             <History className="w-4 h-4" />
             יומן הפעלות
           </TabsTrigger>
@@ -173,19 +175,19 @@ export default function AutomationPage() {
         <TabsContent value="rules" className="space-y-6">{/* תבניות */}
 
       <div>
-          <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <Wand2 className="w-5 h-5 text-red-600" />
+          <h3 className={`text-lg font-bold mb-4 flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+              <Wand2 className={`w-5 h-5 ${theme === 'dark' ? 'text-purple-400' : 'text-red-600'}`} />
               תבניות מהירות
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {templates.map((tpl) =>
-          <Card key={tpl.id} className="group hover:shadow-md transition-all border border-slate-200 cursor-pointer bg-white" onClick={() => createRule.mutate(tpl.rule)}>
+          <Card key={tpl.id} className={`group hover:shadow-md transition-all cursor-pointer border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 hover:bg-slate-700' : 'bg-white border-slate-200'}`} onClick={() => createRule.mutate(tpl.rule)}>
                       <CardContent className="p-6">
                           <div className={`w-12 h-12 rounded-xl ${tpl.color} flex items-center justify-center text-white mb-4 shadow-md`}>
                               <tpl.icon className="w-6 h-6" />
                           </div>
-                          <h4 className="font-bold text-lg mb-2 text-slate-900">{tpl.title}</h4>
-                          <p className="text-sm text-slate-600">{tpl.description}</p>
+                          <h4 className={`font-bold text-lg mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{tpl.title}</h4>
+                          <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>{tpl.description}</p>
                       </CardContent>
                   </Card>
           )}
@@ -195,20 +197,20 @@ export default function AutomationPage() {
       {/* חיפוש וסינון */}
       <div className="flex flex-col md:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Search className={`absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
           <Input
             placeholder="חפש חוקים..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pr-10"
+            className={`pr-10 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500' : ''}`}
           />
         </div>
         <Select value={filterEntity} onValueChange={setFilterEntity}>
-          <SelectTrigger className="w-full md:w-48">
-            <Filter className="w-4 h-4 ml-2" />
+          <SelectTrigger className={`w-full md:w-48 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}`}>
+            <Filter className={`w-4 h-4 ml-2 ${theme === 'dark' ? 'text-slate-400' : ''}`} />
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
             <SelectItem value="all">כל הישויות</SelectItem>
             <SelectItem value="Lead">לידים בלבד</SelectItem>
             <SelectItem value="Opportunity">הזדמנויות בלבד</SelectItem>
@@ -218,27 +220,35 @@ export default function AutomationPage() {
 
       {/* רשימת חוקים פעילים */}
       <div className="space-y-4 mt-8">
-        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-red-600" />
+        <h3 className={`text-lg font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+              <Zap className={`w-5 h-5 ${theme === 'dark' ? 'text-cyan-400' : 'text-red-600'}`} />
               חוקים פעילים ({filteredRules.length})
         </h3>
         
-        {isLoading ? <div className="text-center py-10 text-slate-500">טוען נתונים...</div> : filteredRules.map((rule) =>
-        <Card key={rule.id} className={`flex flex-row items-center justify-between p-6 bg-white border shadow-sm transition-colors ${rule.is_active ? 'border-slate-200 hover:border-red-200' : 'border-slate-200 bg-slate-50/50 opacity-60'}`}>
+        {isLoading ? <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>טוען נתונים...</div> : filteredRules.map((rule) =>
+        <Card key={rule.id} className={`flex flex-row items-center justify-between p-6 border shadow-sm transition-colors ${
+            theme === 'dark'
+                ? rule.is_active ? 'bg-slate-800 border-slate-700 hover:border-cyan-500/50' : 'bg-slate-800/50 border-slate-700 opacity-60'
+                : rule.is_active ? 'bg-white border-slate-200 hover:border-red-200' : 'bg-slate-50/50 border-slate-200 opacity-60'
+        }`}>
                 <div className="flex items-center gap-5 flex-1">
-                    <div className={`p-3 rounded-full border ${rule.is_active ? 'bg-slate-50 text-slate-600 border-slate-100' : 'bg-slate-100 text-slate-400 border-slate-200'}`}>
+                    <div className={`p-3 rounded-full border ${
+                        theme === 'dark'
+                            ? rule.is_active ? 'bg-slate-700 text-cyan-400 border-slate-600' : 'bg-slate-800 text-slate-600 border-slate-700'
+                            : rule.is_active ? 'bg-slate-50 text-slate-600 border-slate-100' : 'bg-slate-100 text-slate-400 border-slate-200'
+                    }`}>
                         <Zap className="w-6 h-6" />
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
-                          <h3 className="font-bold text-lg text-slate-900">{rule.name}</h3>
-                          {!rule.is_active && <span className="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-full">מושבת</span>}
+                          <h3 className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{rule.name}</h3>
+                          {!rule.is_active && <span className={`text-xs px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-slate-700 text-slate-400' : 'bg-slate-200 text-slate-600'}`}>מושבת</span>}
                         </div>
-                        <p className="text-sm text-slate-600 mt-1">
-                            <span className="font-semibold text-slate-800">טריגר:</span> {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'} {rule.trigger_event === 'create' ? 'נוצר' : 'עודכן'}
+                        <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                            <span className={`font-semibold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>טריגר:</span> {rule.trigger_entity === 'Lead' ? 'ליד' : 'הזדמנות'} {rule.trigger_event === 'create' ? 'נוצר' : 'עודכן'}
                             {rule.condition_field && ` | ${rule.condition_field} ${rule.condition_operator || 'equals'} ${rule.condition_value}`}
                         </p>
-                        <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                        <p className={`text-xs mt-1 flex items-center gap-1 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
                             {rule.action_type === 'send_email' ? <Mail className="w-3 h-3" /> : rule.action_type === 'create_task' ? <Bell className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
                             פעולה: {rule.action_type === 'send_email' ? 'שליחת אימייל' : rule.action_type === 'create_task' ? 'יצירת משימה' : 'עדכון ישות'}
                         </p>
@@ -254,13 +264,13 @@ export default function AutomationPage() {
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="text-slate-400 hover:text-blue-600 hover:bg-blue-50" 
+                      className={`${theme === 'dark' ? 'text-slate-400 hover:text-cyan-400 hover:bg-slate-700' : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'}`}
                       onClick={() => duplicateRule(rule)}
                       title="שכפל חוק"
                     >
                         <Copy className="w-5 h-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-600 hover:bg-red-50" onClick={() => {
+                    <Button variant="ghost" size="icon" className={`${theme === 'dark' ? 'text-slate-400 hover:text-red-400 hover:bg-slate-700' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'}`} onClick={() => {
                       if(confirm('למחוק חוק זה?')) deleteRule.mutate(rule.id);
                     }}>
                         <Trash2 className="w-5 h-5" />
@@ -270,69 +280,69 @@ export default function AutomationPage() {
         )}
         
         {filteredRules.length === 0 && !isLoading && rules.length > 0 &&
-        <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
-                <p className="text-slate-500 font-medium">לא נמצאו חוקים תואמים</p>
+        <div className={`text-center py-16 rounded-2xl border border-dashed ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
+                <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>לא נמצאו חוקים תואמים</p>
             </div>
         }
         
         {rules.length === 0 && !isLoading &&
-        <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
-                <p className="text-slate-500 font-medium">אין אוטומציות מוגדרות</p>
+        <div className={`text-center py-16 rounded-2xl border border-dashed ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-300'}`}>
+                <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>אין אוטומציות מוגדרות</p>
             </div>
         }
       </div>
       </TabsContent>
 
       <TabsContent value="logs">
-        <Card>
+        <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
           <CardContent className="p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Activity className="w-5 h-5 text-slate-600" />
-              <h3 className="text-lg font-bold">יומן הפעלות אחרונות</h3>
+              <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} />
+              <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : ''}`}>יומן הפעלות אחרונות</h3>
             </div>
             
             {logsLoading ? (
               <div className="text-center py-10"><Loader2 className="animate-spin mx-auto" /></div>
             ) : logs.length === 0 ? (
-              <div className="text-center py-10 text-slate-400">אין הפעלות להצגה</div>
+              <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>אין הפעלות להצגה</div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right">זמן</TableHead>
-                      <TableHead className="text-right">חוק</TableHead>
-                      <TableHead className="text-right">ישות</TableHead>
-                      <TableHead className="text-right">סטטוס</TableHead>
-                      <TableHead className="text-right">פעולה</TableHead>
+                  <TableHeader className={theme === 'dark' ? 'bg-slate-900/50' : ''}>
+                    <TableRow className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
+                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>זמן</TableHead>
+                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>חוק</TableHead>
+                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>ישות</TableHead>
+                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>סטטוס</TableHead>
+                      <TableHead className={`text-right ${theme === 'dark' ? 'text-slate-400' : ''}`}>פעולה</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {logs.map((log) => (
-                      <TableRow key={log.id}>
-                        <TableCell className="text-sm">
+                      <TableRow key={log.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
+                        <TableCell className={`text-sm ${theme === 'dark' ? 'text-slate-300' : ''}`}>
                           {new Date(log.execution_time).toLocaleString('he-IL')}
                         </TableCell>
-                        <TableCell className="font-medium">{log.rule_name}</TableCell>
+                        <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>{log.rule_name}</TableCell>
                         <TableCell>
-                          <span className="text-xs bg-slate-100 px-2 py-1 rounded">
+                          <span className={`text-xs px-2 py-1 rounded ${theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100'}`}>
                             {log.entity_type}
                           </span>
                         </TableCell>
                         <TableCell>
                           {log.status === 'success' ? (
-                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                            <Badge className={`${theme === 'dark' ? 'bg-emerald-900/50 text-emerald-400 hover:bg-emerald-900/50' : 'bg-green-100 text-green-700 hover:bg-green-100'}`}>
                               <CheckCircle2 className="w-3 h-3 ml-1" />
                               הצליח
                             </Badge>
                           ) : (
-                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                            <Badge className={`${theme === 'dark' ? 'bg-red-900/50 text-red-400 hover:bg-red-900/50' : 'bg-red-100 text-red-700 hover:bg-red-100'}`}>
                               <XCircle className="w-3 h-3 ml-1" />
                               נכשל
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell className="text-xs text-slate-600 max-w-xs truncate">
+                        <TableCell className={`text-xs max-w-xs truncate ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
                           {log.action_taken}
                           {log.error_message && (
                             <div className="text-red-600 mt-1">{log.error_message}</div>
