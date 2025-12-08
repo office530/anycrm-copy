@@ -175,7 +175,7 @@ ${textToAnalyze}`,
         setExtractedData(null);
       }
     }}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl" onPointerDownOutside={(e) => {
+      <DialogContent className={`max-w-2xl max-h-[90vh] overflow-y-auto ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`} dir="rtl" onPointerDownOutside={(e) => {
         if (isProcessing) {
           e.preventDefault();
         }
@@ -195,26 +195,26 @@ ${textToAnalyze}`,
             >
               <DialogHeader>
                 <div className="flex justify-between items-start">
-                    <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                    <DialogTitle className={`text-2xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                         <Sparkles className="w-6 h-6 text-purple-600" />
                         ייבוא ליד חכם עם AI
                     </DialogTitle>
-                    <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="text-slate-400 hover:text-slate-600 -mt-2 -ml-2">
+                    <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className={`-mt-2 -ml-2 ${theme === 'dark' ? 'text-slate-400 hover:text-slate-300 hover:bg-slate-800' : 'text-slate-400 hover:text-slate-600'}`}>
                         <X className="w-5 h-5" />
                     </Button>
                 </div>
-                <p className="text-sm text-slate-500 mt-2">
+                <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                   הדבק טקסט חופשי או העלה תמונה, וה-AI יחלץ את הפרטים באופן אוטומטי
                 </p>
               </DialogHeader>
 
         <Tabs value={mode} onValueChange={setMode} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="text" className="flex items-center gap-2">
+          <TabsList className={`grid w-full grid-cols-2 mb-4 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+            <TabsTrigger value="text" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : ''}`}>
               <Type className="w-4 h-4" />
               טקסט חופשי
             </TabsTrigger>
-            <TabsTrigger value="image" className="flex items-center gap-2">
+            <TabsTrigger value="image" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400' : ''}`}>
               <FileImage className="w-4 h-4" />
               סריקת תמונה
             </TabsTrigger>
