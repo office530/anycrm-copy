@@ -413,14 +413,18 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
           opportunities?.length > 0 ?
           <div className="space-y-3">
                {opportunities.map((opp) =>
-            <div key={opp.id} className="p-4 bg-white border rounded-xl shadow-sm flex justify-between items-center hover:border-red-200 transition-colors">
+            <div key={opp.id} className={`p-4 border rounded-xl shadow-sm flex justify-between items-center transition-colors ${
+              theme === 'dark' 
+                ? 'bg-slate-800 border-slate-700 hover:border-cyan-500' 
+                : 'bg-white border-slate-200 hover:border-red-200'
+            }`}>
                     <div>
-                       <h4 className="font-bold text-slate-800">{opp.product_type}</h4>
-                       <p className="text-sm text-slate-500">שלב: {opp.deal_stage}</p>
+                       <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{opp.product_type}</h4>
+                       <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>שלב: {opp.deal_stage}</p>
                     </div>
                     <div className="text-left">
-                       <div className="font-mono font-bold text-red-700">₪{opp.loan_amount_requested?.toLocaleString()}</div>
-                       <Badge variant="outline" className="mt-1">{opp.probability}% היתכנות</Badge>
+                       <div className={`font-mono font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-red-700'}`}>₪{opp.loan_amount_requested?.toLocaleString()}</div>
+                       <Badge variant="outline" className={`mt-1 ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{opp.probability}% היתכנות</Badge>
                     </div>
                  </div>
             )}
