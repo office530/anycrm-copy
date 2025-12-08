@@ -165,13 +165,13 @@ export default function Dashboard() {
               <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>Welcome</h1>
               <p className="text-base md:text-lg mb-6 text-cyan-400">Leads Database</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                <Link to={createPageUrl('Leads')}>
+                <Link to={createPageUrl('ActNow')}>
                   <Button className={`rounded-full px-6 text-white transition-all ${
-              theme === 'dark' ?
-              'bg-cyan-500 hover:bg-cyan-600 shadow-lg shadow-cyan-500/50' :
-              'bg-red-700 hover:bg-red-800'}`
-              }>
-                      Add New Data
+                theme === 'dark' ?
+                'bg-cyan-500 hover:bg-cyan-600 shadow-lg shadow-cyan-500/50' :
+                'bg-red-700 hover:bg-red-800'}`
+                }>
+                      Act Now
                   </Button>
                 </Link>
                 <Link to={createPageUrl('Reports')}>
