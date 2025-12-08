@@ -14,8 +14,10 @@ import CustomReports from '@/components/reports/CustomReports';
 import CustomDashboard from '@/components/reports/CustomDashboard';
 import AiInsights from '@/components/reports/AiInsights';
 import { BrainCircuit } from "lucide-react";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function ReportsPage() {
+  const { theme } = useSettings();
   const [timeRange, setTimeRange] = useState('all');
   const [activeReport, setActiveReport] = useState('list');
 
@@ -68,19 +70,23 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6" dir="rtl">
+    <div className={`min-h-screen p-6 transition-colors ${theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50/50'}`} dir="rtl">
       <div className="max-w-[1600px] mx-auto space-y-6">
           {/* Header */}
-          <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className={`rounded-xl shadow-sm border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors ${
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          }`}>
             <div>
-              <h1 className="text-3xl font-bold text-neutral-900">דוחות וניתוח נתונים</h1>
-              <p className="text-neutral-500 mt-1">סקירה מקיפה של ביצועים, המרות ופעילות עסקית</p>
+              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>דוחות וניתוח נתונים</h1>
+              <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>סקירה מקיפה של ביצועים, המרות ופעילות עסקית</p>
             </div>
             
             <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-neutral-600 hidden md:inline-block">טווח תצוגה:</span>
+                <span className={`text-sm font-medium hidden md:inline-block ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>טווח תצוגה:</span>
                 <Select value={timeRange} onValueChange={setTimeRange}>
-                <SelectTrigger className="w-[180px] bg-white border-neutral-200">
+                <SelectTrigger className={`w-[180px] ${
+                    theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-neutral-200'
+                }`}>
                     <SelectValue placeholder="טווח זמן" />
                 </SelectTrigger>
                 <SelectContent>
@@ -124,12 +130,16 @@ export default function ReportsPage() {
                               onClick={() => setActiveReport(report.id)}
                               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium text-right
                                   ${isActive 
-                                      ? 'bg-white text-red-700 shadow-sm border border-red-100 font-bold' 
-                                      : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
+                                      ? theme === 'dark'
+                                          ? 'bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold'
+                                          : 'bg-white text-red-700 shadow-sm border border-red-100 font-bold'
+                                      : theme === 'dark'
+                                          ? 'text-slate-400 hover:bg-slate-800 hover:text-cyan-400'
+                                          : 'text-slate-600 hover:bg-white/60 hover:text-slate-900'
                                   }
                               `}
                           >
-                              <Icon className={`w-4 h-4 ${isActive ? 'text-red-600' : report.color || 'text-slate-400'}`} />
+                              <Icon className={`w-4 h-4 ${isActive ? (theme === 'dark' ? 'text-cyan-400' : 'text-red-600') : report.color || 'text-slate-400'}`} />
                               {report.name}
                           </button>
                       );

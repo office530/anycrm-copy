@@ -47,8 +47,8 @@ export default function SettingsPage() {
     <div className="max-w-7xl mx-auto pb-20" dir="rtl">
         {/* Header */}
         <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900">הגדרות מערכת</h1>
-            <p className="text-slate-500 mt-2">ניהול הגדרות מתקדם עבור הארגון והמשתמשים</p>
+            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>הגדרות מערכת</h1>
+            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>ניהול הגדרות מתקדם עבור הארגון והמשתמשים</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 min-h-[600px]">
@@ -57,7 +57,9 @@ export default function SettingsPage() {
                 <nav className="flex flex-col gap-6">
                     {menuGroups.map((group, idx) => (
                         <div key={idx} className="space-y-1">
-                            <h3 className="px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                            <h3 className={`px-2 text-xs font-semibold uppercase tracking-wider mb-2 ${
+                                theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
+                            }`}>
                                 {group.title}
                             </h3>
                             <div className="flex flex-col gap-1">
@@ -69,11 +71,15 @@ export default function SettingsPage() {
                                             onClick={() => setActiveTab(item.id)}
                                             className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-right
                                                 ${isActive 
-                                                    ? "bg-white text-slate-900 shadow-sm border border-slate-200 font-bold" 
-                                                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                                    ? theme === 'dark'
+                                                        ? "bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold"
+                                                        : "bg-white text-slate-900 shadow-sm border border-slate-200 font-bold"
+                                                    : theme === 'dark'
+                                                        ? "text-slate-400 hover:bg-slate-800 hover:text-cyan-400"
+                                                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                                                 }`}
                                         >
-                                            <item.icon className={`w-4 h-4 ${isActive ? "text-slate-900" : "text-slate-400"}`} />
+                                            <item.icon className={`w-4 h-4 ${isActive ? (theme === 'dark' ? 'text-cyan-400' : 'text-slate-900') : 'text-slate-400'}`} />
                                             <span>{item.label}</span>
                                         </button>
                                     );
@@ -95,7 +101,9 @@ export default function SettingsPage() {
             </aside>
 
             {/* Content Area */}
-            <main className="flex-1 bg-white rounded-xl shadow-sm border border-slate-100 p-1 md:p-6 min-h-[500px]">
+            <main className={`flex-1 rounded-xl shadow-sm border p-1 md:p-6 min-h-[500px] transition-colors ${
+                theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
+            }`}>
                 {activeTab === "organization" && <OrganizationSettings />}
                 {activeTab === "profile" && <ProfileSettings />}
                 {activeTab === "pipeline" && <PipelineSettings />}

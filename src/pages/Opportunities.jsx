@@ -18,7 +18,7 @@ import { InlineEdit } from "@/components/ui/InlineEdit";
 import moment from "moment";
 
 export default function OpportunitiesPage() {
-  const { pipelineStages, branding } = useSettings();
+  const { pipelineStages, branding, theme } = useSettings();
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
@@ -201,22 +201,30 @@ export default function OpportunitiesPage() {
   if (isLoading) return <div className="flex justify-center h-96 items-center"><Loader2 className="animate-spin w-8 h-8 text-teal-600" /></div>;
 
   return (
-    <div className="h-[calc(100vh-140px)] flex flex-col">
+    <div className={`h-[calc(100vh-140px)] flex flex-col transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Search Bar & Actions */}
       <div className="mb-4 flex justify-between items-center gap-4">
         <div className="relative max-w-md w-full">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
           <Input
             placeholder="חיפוש לקוח, טלפון, אימייל או מוצר..."
-            className="pr-10 border-slate-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+            className={`pr-10 rounded-lg ${
+                theme === 'dark' 
+                    ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500' 
+                    : 'border-slate-300 focus:border-purple-500 focus:ring-purple-500'
+            }`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <Button 
             onClick={() => { setEditingOpp(null); setShowForm(true); }} 
-            className="bg-purple-600 hover:bg-purple-700 text-white shadow-md shadow-purple-900/10"
+            className={`text-white shadow-md ${
+                theme === 'dark' 
+                    ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
+                    : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
+            }`}
         >
             <div className="flex items-center gap-2">
                 <LayoutGrid className="w-4 h-4" /> 
@@ -227,33 +235,45 @@ export default function OpportunitiesPage() {
 
       {/* Stats Header (New!) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
-             <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg"><DollarSign className="w-5 h-5"/></div>
+          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          }`}>
+             <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}><DollarSign className="w-5 h-5"/></div>
              <div>
-                 <div className="text-xs text-neutral-500">שווי צנרת כולל</div>
-                 <div className="font-bold text-lg dark:text-neutral-900">{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>שווי צנרת כולל</div>
+                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
              </div>
           </div>
-          <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
-             <div className="p-2 bg-red-100 text-red-600 rounded-lg"><Briefcase className="w-5 h-5"/></div>
+          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          }`}>
+             <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}><Briefcase className="w-5 h-5"/></div>
              <div>
-                 <div className="text-xs text-neutral-500">עסקאות פעילות</div>
-                 <div className="font-bold text-lg dark:text-neutral-900">{stats.activeDeals}</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>עסקאות פעילות</div>
+                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.activeDeals}</div>
              </div>
           </div>
-          <div className="bg-white dark:bg-neutral-200 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-300 flex items-center gap-3 shadow-sm">
-             <div className="p-2 bg-purple-100 text-purple-600 rounded-lg"><Trophy className="w-5 h-5"/></div>
+          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          }`}>
+             <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}><Trophy className="w-5 h-5"/></div>
              <div>
-                 <div className="text-xs text-neutral-500">נסגרו בהצלחה</div>
-                 <div className="font-bold text-lg dark:text-neutral-900">{stats.wonDeals}</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>נסגרו בהצלחה</div>
+                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.wonDeals}</div>
              </div>
           </div>
           <div className="flex items-center justify-end gap-2">
-            <div className="bg-white dark:bg-neutral-200 p-1 rounded-xl border border-neutral-200 dark:border-neutral-300 shadow-sm flex gap-1 h-fit">
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-neutral-100 dark:bg-neutral-300 text-neutral-900 dark:text-neutral-900 shadow-sm' : 'text-neutral-500 dark:text-neutral-600'}>
+            <div className={`p-1 rounded-xl border shadow-sm flex gap-1 h-fit transition-colors ${
+                theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-200'
+            }`}>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' 
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
                     <LayoutGrid className="w-4 h-4 ml-2" /> לוח
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-neutral-100 dark:bg-neutral-300 text-neutral-900 dark:text-neutral-900 shadow-sm' : 'text-neutral-500 dark:text-neutral-600'}>
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' 
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
                     <ListIcon className="w-4 h-4 ml-2" /> רשימה
                 </Button>
             </div>

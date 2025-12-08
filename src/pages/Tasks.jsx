@@ -16,8 +16,10 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function TasksPage() {
+  const { theme } = useSettings();
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [activeTab, setActiveTab] = useState("active");
@@ -113,10 +115,14 @@ export default function TasksPage() {
       {/* כותרת וסטטיסטיקות */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">ניהול משימות</h1>
-          <p className="text-slate-500 mt-1">תכנון, מעקב ומימוש משימות יומיות</p>
+          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>ניהול משימות</h1>
+          <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>תכנון, מעקב ומימוש משימות יומיות</p>
         </div>
-        <Button onClick={() => setShowTaskForm(true)} className="bg-red-700 hover:bg-red-800 text-white shadow-md">
+        <Button onClick={() => setShowTaskForm(true)} className={`text-white shadow-md ${
+            theme === 'dark' 
+                ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
+                : 'bg-red-700 hover:bg-red-800'
+        }`}>
           <Plus className="w-4 h-4 ml-2" />
           משימה חדשה
         </Button>
@@ -131,7 +137,9 @@ export default function TasksPage() {
       </div>
 
       {/* סינון וחיפוש */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-3">
+      <div className={`p-4 rounded-xl shadow-sm border flex flex-col md:flex-row gap-3 transition-colors ${
+          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+      }`}>
         <div className="relative flex-1">
           <Input
             placeholder="חיפוש משימה..."
@@ -250,15 +258,18 @@ export default function TasksPage() {
 }
 
 function StatCard({ icon: Icon, label, value, color }) {
+  const { theme } = useSettings();
   return (
-    <Card className="border-none shadow-sm">
+    <Card className={`border-none shadow-sm transition-colors ${
+        theme === 'dark' ? 'bg-slate-800' : 'bg-white'
+    }`}>
       <CardContent className="p-4 flex items-center gap-4">
-        <div className={`p-3 rounded-xl ${color} bg-opacity-10`}>
+        <div className={`p-3 rounded-xl ${color} ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-10'}`}>
           <Icon className={`w-5 h-5 ${color.replace('bg-', 'text-')}`} />
         </div>
         <div>
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="text-2xl font-bold text-slate-800">{value}</p>
+          <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
+          <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
         </div>
       </CardContent>
     </Card>
@@ -266,6 +277,7 @@ function StatCard({ icon: Icon, label, value, color }) {
 }
 
 function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
+  const { theme } = useSettings();
   const isOverdue = task.due_date && moment(task.due_date).isBefore(moment(), 'day') && task.status !== 'done';
   const isToday = task.due_date && moment(task.due_date).isSame(moment(), 'day');
   const isDone = task.status === 'done';
@@ -275,10 +287,14 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-white rounded-xl border p-4 hover:shadow-md transition-all ${
-        isDone ? 'border-emerald-200 bg-emerald-50/30' : 
-        isOverdue ? 'border-red-200 bg-red-50/30' : 
-        'border-slate-200'
+      className={`rounded-xl border p-4 hover:shadow-md transition-all ${
+        theme === 'dark' 
+          ? isDone ? 'bg-emerald-500/10 border-emerald-500/30' : 
+            isOverdue ? 'bg-red-500/10 border-red-500/30' : 
+            'bg-slate-800 border-slate-700'
+          : isDone ? 'bg-emerald-50/30 border-emerald-200' : 
+            isOverdue ? 'bg-red-50/30 border-red-200' : 
+            'bg-white border-slate-200'
       }`}
     >
       <div className="flex items-start gap-3">
