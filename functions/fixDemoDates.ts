@@ -10,51 +10,47 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
-        // 1. Fetch all leads and filter for Demo Data
         const leads = await base44.entities.Lead.list();
         const demoLeads = leads.filter(l => l.tags && l.tags.includes("Demo Data"));
         
-        // 2. Fetch all opportunities
         const opps = await base44.entities.Opportunity.list();
         const demoLeadIds = new Set(demoLeads.map(l => l.id));
         const demoOpps = opps.filter(o => demoLeadIds.has(o.lead_id));
 
-        console.log(`Found ${demoLeads.length} demo leads and ${demoOpps.length} demo opps`);
+        console.log(`Updating ${demoLeads.length} leads and ${demoOpps.length} opps`);
 
-        // 3. Prepare updates
-        const promises = [];
+        let updatedLeads = 0;
+        let updatedOpps = 0;
 
-        // Update Leads with random dates
+        // Serial execution to be safe
         for (const lead of demoLeads) {
-            const simDate = getRandomDate(90);
-            promises.push(
-                base44.entities.Lead.update(lead.id, {
-                    custom_data: { ...(lead.custom_data || {}), simulated_date: simDate }
-                })
-            );
+            try {
+                const simDate = getRandomDate(90);
+                // Ensure custom_data is an object
+                const currentCustom = lead.custom_data && typeof lead.custom_data === 'object' ? lead.custom_data : {};
+                await base44.entities.Lead.update(lead.id, {
+                    custom_data: { ...currentCustom, simulated_date: simDate }
+                });
+                updatedLeads++;
+            } catch (e) {
+                console.error(`Failed lead ${lead.id}: ${e.message}`);
+            }
         }
 
-        // Update Opps with random dates
         for (const opp of demoOpps) {
-            const simDate = getRandomDate(90);
-            promises.push(
-                base44.entities.Opportunity.update(opp.id, {
-                    custom_data: { ...(opp.custom_data || {}), simulated_date: simDate }
-                })
-            );
+            try {
+                const simDate = getRandomDate(90);
+                const currentCustom = opp.custom_data && typeof opp.custom_data === 'object' ? opp.custom_data : {};
+                await base44.entities.Opportunity.update(opp.id, {
+                    custom_data: { ...currentCustom, simulated_date: simDate }
+                });
+                updatedOpps++;
+            } catch (e) {
+                console.error(`Failed opp ${opp.id}: ${e.message}`);
+            }
         }
 
-        // Execute in batches to avoid rate limits
-        const BATCH_SIZE = 2;
-        for (let i = 0; i < promises.length; i += BATCH_SIZE) {
-            await Promise.all(promises.slice(i, i + BATCH_SIZE));
-        }
-
-        return Response.json({ 
-            success: true, 
-            updated_leads: demoLeads.length, 
-            updated_opps: demoOpps.length 
-        });
+        return Response.json({ success: true, updated_leads: updatedLeads, updated_opps: updatedOpps });
 
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });
