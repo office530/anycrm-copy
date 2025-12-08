@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { useSettings } from "@/components/context/SettingsContext";
@@ -105,10 +107,18 @@ export default function AutomationPage() {
           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>Automations</h1>
           <p className={`font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage rules and automated workflows</p>
         </div>
-        <Button onClick={() => { setEditingRule(null); setIsDialogOpen(true); }} className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-lg shadow-red-900/10">
-            <Plus className="w-4 h-4 mr-2" />
-            New Rule
-        </Button>
+        <div className="flex gap-2">
+            <Link to={createPageUrl('Promotion')}>
+                <Button variant="outline" className={`${theme === 'dark' ? 'border-purple-500/50 text-purple-400 hover:bg-purple-900/20' : 'border-purple-200 text-purple-700 hover:bg-purple-50'}`}>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Promote Template
+                </Button>
+            </Link>
+            <Button onClick={() => { setEditingRule(null); setIsDialogOpen(true); }} className="bg-red-700 hover:bg-red-800 text-white font-bold shadow-lg shadow-red-900/10">
+                <Plus className="w-4 h-4 mr-2" />
+                New Rule
+            </Button>
+        </div>
       </div>
 
       {/* Quick Stats */}

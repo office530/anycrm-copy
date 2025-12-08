@@ -12,6 +12,11 @@ import Notifications from '@/components/layout/Notifications';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 
 function LayoutContent({ children, currentPageName }) {
+  // Special case for Promotion page to be standalone (invisible layout)
+  if (currentPageName === 'Promotion') {
+    return children;
+  }
+
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { branding, theme, toggleTheme } = useSettings();
   
