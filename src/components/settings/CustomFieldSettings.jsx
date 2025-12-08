@@ -45,8 +45,8 @@ export default function CustomFieldSettings() {
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>Custom Fields</CardTitle>
-                        <CardDescription>Add extra data fields to Leads and Opportunities</CardDescription>
+                        <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Custom Fields</CardTitle>
+                        <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Add extra data fields to Leads and Opportunities</CardDescription>
                     </div>
                     <Button onClick={() => handleEdit(null)} className="bg-slate-900 text-white">
                         <Plus className="w-4 h-4 mr-2" />

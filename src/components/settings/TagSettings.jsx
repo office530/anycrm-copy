@@ -27,8 +27,8 @@ export default function TagSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
              <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>System Tags Management</CardTitle>
-                    <CardDescription>Tags used for classifying leads and customers</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>System Tags Management</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Tags used for classifying leads and customers</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="flex gap-2">

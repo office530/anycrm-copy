@@ -49,8 +49,8 @@ export default function IntegrationSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>Integrations</CardTitle>
-                    <CardDescription>Extend system capabilities by connecting external services</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Integrations</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Extend system capabilities by connecting external services</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
