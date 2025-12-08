@@ -33,20 +33,20 @@ export default function Dashboard() {
     
     // Map Tailwind classes to Hex for Recharts
     const colorMap = {
-      'bg-blue-400': '#60A5FA',
-      'bg-blue-500': '#3B82F6',
-      'bg-indigo-400': '#818CF8',
-      'bg-indigo-500': '#6366F1',
-      'bg-purple-400': '#C084FC',
-      'bg-purple-500': '#A855F7',
-      'bg-amber-400': '#FBBF24',
-      'bg-amber-500': '#F59E0B',
-      'bg-emerald-500': '#10B981',
-      'bg-emerald-400': '#34D399',
-      'bg-slate-300': '#CBD5E1',
-      'bg-slate-400': '#94A3B8',
-      'bg-slate-500': '#64748B',
-      'bg-red-500': '#EF4444',
+      'bg-blue-400': '#22d3ee', // Neon Cyan
+      'bg-blue-500': '#06b6d4',
+      'bg-indigo-400': '#a78bfa', // Neon Violet
+      'bg-indigo-500': '#8b5cf6',
+      'bg-purple-400': '#e879f9', // Neon Fuchsia
+      'bg-purple-500': '#d946ef',
+      'bg-amber-400': '#facc15', // Neon Yellow
+      'bg-amber-500': '#eab308',
+      'bg-emerald-500': '#34d399', // Neon Emerald
+      'bg-emerald-400': '#4ade80', // Neon Green
+      'bg-slate-300': '#e2e8f0', // Lighter Slate
+      'bg-slate-400': '#cbd5e1',
+      'bg-slate-500': '#94a3b8',
+      'bg-red-500': '#f43f5e', // Neon Rose
     };
 
     return colorMap[colorClass] || '#8884d8';
