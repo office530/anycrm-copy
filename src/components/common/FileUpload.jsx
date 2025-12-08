@@ -50,47 +50,47 @@ export default function FileUpload({ files = [], onFilesChange, label = "Files &
 
   return (
     <div className="space-y-3">
-      <Label>{label}</Label>
+      <Label className="text-[#e39502] text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{label}</Label>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {files.map((file, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg group">
+        {files.map((file, index) =>
+        <div key={index} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg group">
             <div className="flex items-center gap-3 overflow-hidden">
               {getFileIcon(file.type)}
               <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-sm text-slate-700 dark:text-slate-300 truncate hover:underline hover:text-blue-600">
                 {file.name}
               </a>
             </div>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="icon" 
-              className="h-6 w-6 text-slate-400 hover:text-red-500"
-              onClick={() => removeFile(index)}
-            >
+            <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-slate-400 hover:text-red-500"
+            onClick={() => removeFile(index)}>
+
               <X className="w-3 h-3" />
             </Button>
           </div>
-        ))}
+        )}
       </div>
 
       <div className="relative">
-        <input 
-          type="file" 
-          multiple 
-          onChange={handleFileChange} 
-          className="hidden" 
+        <input
+          type="file"
+          multiple
+          onChange={handleFileChange}
+          className="hidden"
           id="file-upload"
-          disabled={uploading}
-        />
+          disabled={uploading} />
+
         <label htmlFor="file-upload">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             className="w-full border-dashed border-2 h-20 flex flex-col gap-1 text-slate-500 hover:bg-slate-50 hover:border-blue-400 hover:text-blue-600 transition-all"
             disabled={uploading}
-            asChild
-          >
+            asChild>
+
             <span>
               {uploading ? <Loader2 className="w-6 h-6 animate-spin text-blue-500" /> : <Upload className="w-6 h-6 mb-1" />}
               <span className="text-xs">{uploading ? "Uploading..." : "Click to upload files"}</span>
@@ -98,6 +98,6 @@ export default function FileUpload({ files = [], onFilesChange, label = "Files &
           </Button>
         </label>
       </div>
-    </div>
-  );
+    </div>);
+
 }
