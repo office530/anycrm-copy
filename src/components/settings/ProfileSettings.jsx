@@ -57,14 +57,14 @@ export default function ProfileSettings() {
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>My Profile</CardTitle>
-                    <CardDescription>Personal details and login information</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>My Profile</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>Personal details and login information</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSave} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label>Display Name (appears in audit log)</Label>
+                                <Label className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>Display Name (appears in audit log)</Label>
                                 <Input 
                                     value={user.full_name || ''} 
                                     onChange={(e) => setUser({...user, full_name: e.target.value})} 
@@ -74,7 +74,7 @@ export default function ProfileSettings() {
                                 <p className={`text-[11px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>This name will be displayed in all your activities and updates</p>
                             </div>
                             <div className="space-y-2">
-                                <Label>Email Address</Label>
+                                <Label className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>Email Address</Label>
                                 <Input 
                                     value={user.email || ''} 
                                     disabled 
@@ -96,13 +96,13 @@ export default function ProfileSettings() {
 
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>Access Permissions</CardTitle>
-                    <CardDescription>Your current permission level in the system</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>Access Permissions</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>Your current permission level in the system</CardDescription>
                 </CardHeader>
                 <CardContent className="flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium text-slate-900 dark:text-slate-200">Current Role:</span>
+                            <span className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}`}>Current Role:</span>
                             {isAdmin ? <Badge className="bg-purple-100 text-purple-700">Admin</Badge> :
                              isEditor ? <Badge className="bg-emerald-100 text-emerald-700">Editor</Badge> :
                              <Badge variant="secondary">Viewer</Badge>}
@@ -125,8 +125,8 @@ export default function ProfileSettings() {
             
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader>
-                    <CardTitle>Account Management</CardTitle>
-                    <CardDescription>Sign out and account deletion</CardDescription>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>Account Management</CardTitle>
+                    <CardDescription className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>Sign out and account deletion</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex flex-col sm:flex-row gap-4">

@@ -37,8 +37,8 @@ export default function TeamSettings() {
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>Team & User Management</CardTitle>
-                        <CardDescription>View system users and manage permissions</CardDescription>
+                        <CardTitle className={theme === 'dark' ? 'text-white' : 'text-slate-900'}>Team & User Management</CardTitle>
+                        <CardDescription className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>View system users and manage permissions</CardDescription>
                     </div>
                     <Button onClick={() => setIsInviteOpen(true)} className="bg-slate-900 text-white">
                         <UserPlus className="w-4 h-4 mr-2" />
@@ -111,7 +111,7 @@ export default function TeamSettings() {
 
                     {invites.length > 0 && (
                         <div className="mt-8">
-                            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-4">Pending Invites</h3>
+                            <h3 className={`text-sm font-semibold mb-4 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Pending Invites</h3>
                             <div className={`rounded-md border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50/50'}`}>
                                 <Table>
                                     <TableBody>
