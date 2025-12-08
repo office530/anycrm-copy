@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Sparkles, Brain, Target, ArrowRight, Zap, MessageSquare, Phone, CheckSquare } from 'lucide-react';
+import { Sparkles, Brain, Target, ArrowRight, Zap, MessageSquare, Phone, CheckSquare, X } from 'lucide-react';
+import TaskForm from "@/components/tasks/TaskForm";
 import { useSettings } from '@/components/context/SettingsContext';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -15,6 +16,8 @@ export default function ActNowPage() {
     const { theme } = useSettings();
     const [analyzing, setAnalyzing] = useState(false);
     const [insights, setInsights] = useState(null);
+    const [showTaskForm, setShowTaskForm] = useState(false);
+    const [taskDefaults, setTaskDefaults] = useState(null);
 
     // Fetch data for analysis
     const { data: leads } = useQuery({ 
@@ -29,20 +32,24 @@ export default function ActNowPage() {
         staleTime: 1000 * 60 * 5
     });
 
-    const handleCreateTask = async (item) => {
-        if (!window.confirm(`Create a task to "${item.how}"?`)) return;
-        
+    const handleCreateTask = (item) => {
+        setTaskDefaults({
+            title: `Act Now: ${item.target}`,
+            description: item.how,
+            priority: item.priority === 'Critical' ? 'high' : 'medium',
+            due_date: new Date().toISOString().split('T')[0],
+            related_lead_id: item.type === 'Lead' ? item.id : undefined,
+            related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
+        });
+        setShowTaskForm(true);
+    };
+
+    const handleTaskSubmit = async (data) => {
         try {
-            await base44.entities.Task.create({
-                title: `Act Now: ${item.target}`,
-                description: item.how,
-                status: 'todo',
-                priority: item.priority === 'Critical' ? 'high' : 'medium',
-                due_date: new Date().toISOString().split('T')[0],
-                related_lead_id: item.type === 'Lead' ? item.id : undefined,
-                related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
-            });
+            await base44.entities.Task.create(data);
             alert("Task created successfully!");
+            setShowTaskForm(false);
+            setTaskDefaults(null);
         } catch (error) {
             console.error("Failed to create task", error);
             alert("Failed to create task: " + (error.message || "Unknown error"));
@@ -278,6 +285,26 @@ export default function ActNowPage() {
                      ))}
                 </div>
             )}
+
+            <Dialog open={showTaskForm} onOpenChange={setShowTaskForm}>
+                <DialogContent className={`max-w-lg ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : ''}`} dir="ltr">
+                    <DialogHeader>
+                        <div className="flex justify-between items-center">
+                            <DialogTitle>Create Task</DialogTitle>
+                            <Button variant="ghost" size="icon" onClick={() => setShowTaskForm(false)} className={`text-slate-400 ${theme === 'dark' ? 'hover:text-white hover:bg-slate-800' : 'hover:text-slate-600'}`}>
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </DialogHeader>
+                    {showTaskForm && (
+                        <TaskForm
+                            task={taskDefaults}
+                            onSubmit={handleTaskSubmit}
+                            onCancel={() => setShowTaskForm(false)}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
