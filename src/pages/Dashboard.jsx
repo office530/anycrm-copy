@@ -222,8 +222,8 @@ export default function Dashboard() {
           {/* Sales Trend Chart (Span 2) */}
           <Card className={`lg:col-span-2 border-none shadow-sm rounded-2xl flex flex-col h-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
               <CardHeader>
-                  <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight flex items-center gap-2">
-                      <Activity className="w-5 h-5 text-neutral-500" /> Sales & Leads Trend
+                  <CardTitle className={`text-lg font-semibold tracking-tight flex items-center gap-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-blue-700'}`}>
+                      <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-700'}`} /> Sales & Leads Trend
                   </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 min-h-[300px]">
@@ -309,7 +309,7 @@ export default function Dashboard() {
           {/* Opportunity Stages (Span 1) */}
           <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
               <CardHeader>
-                  <CardTitle className="text-[#f5b638] text-lg font-semibold tracking-tight">Opportunities by Stage</CardTitle>
+                  <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-blue-700'}`}>Opportunities by Stage</CardTitle>
               </CardHeader>
               <CardContent className="flex-1 min-h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
