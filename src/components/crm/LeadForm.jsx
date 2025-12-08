@@ -246,7 +246,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                   <SelectTrigger className={inputClass}>
                     <SelectValue placeholder="בחר שנה" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
                     <SelectItem value="2023">2023</SelectItem>
                     <SelectItem value="2024">2024</SelectItem>
                     <SelectItem value="2025">2025</SelectItem>
@@ -260,10 +260,10 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                   defaultValue={lead?.lead_status || "New"}
                   onValueChange={(val) => handleSelectChange("lead_status", val)}>
 
-                  <SelectTrigger className={`${inputClass} ${leadStatus === 'Converted' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : ''}`}>
+                  <SelectTrigger className={`${inputClass} ${leadStatus === 'Converted' ? (theme === 'dark' ? 'bg-emerald-900/30 border-emerald-500 text-emerald-400' : 'bg-emerald-50 border-emerald-500 text-emerald-700') : ''}`}>
                     <SelectValue placeholder="סטטוס" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
                     <SelectItem value="New">חדש (New)</SelectItem>
                     <SelectItem value="Attempting Contact">בטיפול - מנסה ליצור קשר</SelectItem>
                     <SelectItem value="Contacted - Qualifying">נוצר קשר - בירור צרכים</SelectItem>
@@ -288,7 +288,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                   <SelectTrigger className={inputClass}>
                     <SelectValue placeholder="בחר משתמש אחראי" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
                     <SelectItem value="unassigned">ללא שיוך</SelectItem>
                     {users?.map(u => (
                       <SelectItem key={u.id} value={u.email}>{u.full_name || u.email}</SelectItem>
@@ -317,7 +317,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                     <SelectTrigger className={`${inputClass} text-right`}>
                       <SelectValue placeholder="בחר סטטוס" />
                     </SelectTrigger>
-                    <SelectContent className="text-right">
+                    <SelectContent className={`text-right ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}`}>
                       <SelectItem value="Married">נשוי/אה (Married)</SelectItem>
                       <SelectItem value="Widowed">אלמן/ה (Widowed)</SelectItem>
                       <SelectItem value="Divorced">גרוש/ה (Divorced)</SelectItem>
@@ -426,7 +426,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
             )}
               </div> :
 
-          <div className="text-center py-10 text-slate-400 border-2 border-dashed rounded-xl">
+          <div className={`text-center py-10 text-slate-400 border-2 border-dashed rounded-xl ${theme === 'dark' ? 'border-slate-700' : ''}`}>
               <Briefcase className="w-10 h-10 mx-auto mb-2 opacity-50" />
               <p>אין הזדמנויות פתוחות ללקוח זה</p>
               </div>
@@ -442,15 +442,15 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </TabsContent>
 
               <TabsContent value="documents" className="space-y-6">
-          <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+          <div className={`p-6 rounded-xl border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
             <FileUpload
               files={watch("documents") || []}
               onFilesChange={(newFiles) => setValue("documents", newFiles)} />
 
           </div>
           
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-             <Button type="button" variant="outline" onClick={onCancel}>ביטול</Button>
+          <div className={`flex justify-end gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
+             <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}>ביטול</Button>
              <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
                {lead ? "שמור שינויים" : "צור ליד"}
              </Button>
@@ -463,7 +463,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               <DiscoveryScript leadId={lead.id} />
             </div> :
 
-          <div className="flex flex-col items-center justify-center py-16 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+          <div className={`flex flex-col items-center justify-center py-16 text-slate-400 rounded-xl border border-dashed ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
               <Activity className="w-10 h-10 mb-3 opacity-50" />
               <p className="font-medium">יש לשמור את הליד לפני שניתן למלא תסריט שיחה</p>
             </div>
