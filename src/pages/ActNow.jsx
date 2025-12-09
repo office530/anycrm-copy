@@ -21,7 +21,6 @@ export default function ActNowPage() {
     const { suggestions: insights, setSuggestions: setInsights } = useActNow();
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [taskDefaults, setTaskDefaults] = useState(null);
-    const [isCreatingAll, setIsCreatingAll] = useState(false);
     const queryClient = useQueryClient();
 
     // Fetch data for analysis
@@ -62,44 +61,7 @@ export default function ActNowPage() {
         }
     };
 
-    const handleCreateAllTasks = async () => {
-        if (!insights || insights.length === 0) return;
-        if (!confirm(`Create tasks for all ${insights.length} targets?`)) return;
 
-        setIsCreatingAll(true);
-        try {
-            const createPromises = insights.map(item => {
-                const taskData = {
-                    title: `Act now task: ${item.target}`,
-                    description: `${item.how}\n\nReason: ${item.why}`,
-                    priority: (item.priority === 'Critical' || item.priority === 'High') ? 'high' : 'medium',
-                    due_date: new Date().toISOString().split('T')[0],
-                    status: 'todo'
-                };
-
-                // Only add related IDs if they exist and match the type
-                if (item.type === 'Lead' && item.id) {
-                    taskData.related_lead_id = item.id;
-                }
-                if (item.type === 'Opportunity' && item.id) {
-                    taskData.related_opportunity_id = item.id;
-                }
-
-                return base44.entities.Task.create(taskData);
-            });
-
-            await Promise.all(createPromises);
-            
-            alert(`Successfully created ${insights.length} tasks!`);
-            queryClient.invalidateQueries(['tasks']);
-            setInsights(null);
-        } catch (error) {
-            console.error("Failed to create tasks", error);
-            alert("Failed to create tasks. Please try again.");
-        } finally {
-            setIsCreatingAll(false);
-        }
-    };
 
     const handleMagicButton = async () => {
         if (!leads || !opportunities) return;
@@ -239,14 +201,6 @@ export default function ActNowPage() {
                         <h2 className={`text-2xl font-bold ml-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
                             Top Priority Targets
                         </h2>
-                        <Button 
-                            onClick={handleCreateAllTasks} 
-                            disabled={isCreatingAll}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md w-full md:w-auto"
-                        >
-                            {isCreatingAll ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckSquare className="w-4 h-4 mr-2" />}
-                            Create Tasks for All ({insights.length})
-                        </Button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {insights.map((item, idx) => (
