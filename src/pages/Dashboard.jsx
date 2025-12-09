@@ -208,9 +208,9 @@ export default function Dashboard() {
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className={`w-[180px] ${
-          theme === 'dark' ? 'bg-slate-800 border-slate-700 text-purple-400' : 'bg-white border-red-100 focus:ring-red-200'}`
+          theme === 'dark' ? 'bg-slate-800 border-purple-500/50 text-fuchsia-300 shadow-[0_0_10px_rgba(216,180,254,0.1)]' : 'bg-white border-red-100 focus:ring-red-200'}`
           }>
-                <Calendar className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-purple-400' : 'text-neutral-600'}`} />
+                <Calendar className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-fuchsia-300' : 'text-neutral-600'}`} />
                 <SelectValue placeholder="Select Range" />
             </SelectTrigger>
             <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
