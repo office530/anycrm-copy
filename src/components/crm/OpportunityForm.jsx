@@ -235,7 +235,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       }
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className={`grid w-full grid-cols-2 md:grid-cols-5 mb-6 ${theme === 'dark' ? 'bg-slate-900/50' : ''}`}>
+        <TabsList className={`grid w-full grid-cols-2 md:grid-cols-5 mb-6 h-auto ${theme === 'dark' ? 'bg-slate-900/50' : ''}`}>
           <TabsTrigger value="details" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
             <FileText className="w-4 h-4" />
             Details
