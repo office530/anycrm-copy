@@ -39,9 +39,9 @@ export default function ActNowPage() {
 
     const handleCreateTask = (item) => {
         setTaskDefaults({
-            title: `Act Now: ${item.target}`,
+            title: `Act now task: ${item.target}`,
             description: item.how,
-            priority: item.priority === 'Critical' ? 'high' : 'medium',
+            priority: (item.priority === 'Critical' || item.priority === 'High') ? 'high' : 'medium',
             due_date: new Date().toISOString().split('T')[0],
             related_lead_id: item.type === 'Lead' ? item.id : undefined,
             related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
@@ -68,17 +68,27 @@ export default function ActNowPage() {
 
         setIsCreatingAll(true);
         try {
-            const tasksPayload = insights.map(item => ({
-                title: `Act now task: ${item.target}`,
-                description: `${item.how}\n\nReason: ${item.why}`,
-                priority: item.priority === 'Critical' ? 'high' : 'medium',
-                due_date: new Date().toISOString().split('T')[0],
-                status: 'todo',
-                related_lead_id: item.type === 'Lead' ? item.id : undefined,
-                related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
-            }));
+            const createPromises = insights.map(item => {
+                const taskData = {
+                    title: `Act now task: ${item.target}`,
+                    description: `${item.how}\n\nReason: ${item.why}`,
+                    priority: (item.priority === 'Critical' || item.priority === 'High') ? 'high' : 'medium',
+                    due_date: new Date().toISOString().split('T')[0],
+                    status: 'todo'
+                };
 
-            await base44.entities.Task.bulkCreate(tasksPayload);
+                // Only add related IDs if they exist and match the type
+                if (item.type === 'Lead' && item.id) {
+                    taskData.related_lead_id = item.id;
+                }
+                if (item.type === 'Opportunity' && item.id) {
+                    taskData.related_opportunity_id = item.id;
+                }
+
+                return base44.entities.Task.create(taskData);
+            });
+
+            await Promise.all(createPromises);
             
             alert(`Successfully created ${insights.length} tasks!`);
             queryClient.invalidateQueries(['tasks']);
