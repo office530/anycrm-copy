@@ -100,8 +100,8 @@ export default function IntegrationSettings() {
                                     <div className={`w-12 h-12 shrink-0 rounded-xl p-2 flex items-center justify-center ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-50'}`}>
                                         <img src={integration.icon} alt={integration.name} className="w-full h-full object-contain" />
                                     </div>
-                                    <Badge variant={integration.connected ? "default" : "outline"} className={integration.connected ? "bg-green-500 hover:bg-green-600" : ""}>
-                                        {integration.connected ? "Active" : "Not Connected"}
+                                    <Badge variant={integration.connected ? "default" : "outline"} className={integration.connected ? "bg-green-500 hover:bg-green-600" : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"}>
+                                        {integration.connected ? "Connected" : "Not Connected"}
                                     </Badge>
                                 </div>
                                 
