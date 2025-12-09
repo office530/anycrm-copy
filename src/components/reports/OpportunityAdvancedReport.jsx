@@ -285,15 +285,15 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
                   <TableBody>
                       {filteredData.slice(0, 10).map((o) => (
                           <TableRow key={o.id} className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : ''}>
-                              <TableCell className={`font-medium ${theme === 'dark' ? 'text-white' : ''}`}>{o.lead_name}</TableCell>
-                              <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{o.product_type}</TableCell>
+                              <TableCell className={`font-medium max-w-[150px] truncate ${theme === 'dark' ? 'text-white' : ''}`} title={o.lead_name}>{o.lead_name}</TableCell>
+                              <TableCell className={`max-w-[120px] truncate ${theme === 'dark' ? 'text-slate-300' : ''}`} title={o.product_type}>{o.product_type}</TableCell>
                               <TableCell>
-                                  <Badge variant="outline" className={`font-normal ${theme === 'dark' ? 'bg-slate-900 border-slate-600 text-slate-300' : 'bg-neutral-50'}`}>{o.deal_stage?.split('(')[0]}</Badge>
+                                  <Badge variant="outline" className={`font-normal whitespace-nowrap ${theme === 'dark' ? 'bg-slate-900 border-slate-600 text-slate-300' : 'bg-neutral-50'}`}>{o.deal_stage?.split('(')[0]}</Badge>
                               </TableCell>
                               <TableCell className={theme === 'dark' ? 'text-cyan-400 font-mono' : ''}>${o.amount?.toLocaleString()}</TableCell>
                               <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{o.probability}%</TableCell>
-                              <TableCell className={theme === 'dark' ? 'text-slate-400' : ''}>{o.expected_close_date ? moment(o.expected_close_date).format('MMM D, YYYY') : '-'}</TableCell>
-                              <TableCell className={`text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>{o.created_by}</TableCell>
+                              <TableCell className={`whitespace-nowrap ${theme === 'dark' ? 'text-slate-400' : ''}`}>{o.expected_close_date ? moment(o.expected_close_date).format('MMM D, YYYY') : '-'}</TableCell>
+                              <TableCell className={`text-xs max-w-[150px] truncate ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`} title={o.created_by}>{o.created_by}</TableCell>
                           </TableRow>
                       ))}
                       {filteredData.length === 0 && (
