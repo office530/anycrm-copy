@@ -75,7 +75,7 @@ export default function OpportunitiesPage() {
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 250; // Adjusted for smaller columns
+      const scrollAmount = 230; // Adjusted for smaller columns
       // In RTL, scrollLeft is usually negative for "Left" direction
       // But scrollBy({ left: -320 }) moves left.
       scrollContainerRef.current.scrollBy({ 
@@ -335,7 +335,7 @@ export default function OpportunitiesPage() {
             const total = calculateTotal(stage.id);
             
             return (
-            <div key={stage.id} className="flex-shrink-0 w-[85vw] xs:w-[45vw] sm:w-[45vw] md:w-64 lg:w-72 flex flex-col max-h-full">
+            <div key={stage.id} className="flex-shrink-0 w-[44vw] sm:w-[44vw] md:w-56 lg:w-60 flex flex-col max-h-full">
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
