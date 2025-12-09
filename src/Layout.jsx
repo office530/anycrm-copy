@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
+import { ActNowProvider } from '@/components/context/ActNowContext';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
@@ -204,7 +205,9 @@ function LayoutContent({ children, currentPageName }) {
 export default function Layout(props) {
   return (
     <SettingsProvider>
-      <LayoutContent {...props} />
+      <ActNowProvider>
+        <LayoutContent {...props} />
+      </ActNowProvider>
     </SettingsProvider>
   );
 }
