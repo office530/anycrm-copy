@@ -26,6 +26,10 @@ const templates = [
 {
   id: 'task_big_deal', title: 'Big Deal Alert', description: 'Create task for manager on deals > 1M', icon: Bell, color: 'bg-red-700',
   rule: { name: 'Big Deal VIP', trigger_entity: 'Opportunity', trigger_event: 'create', condition_field: 'property_value', condition_value: '1000000', action_type: 'create_task' }
+},
+{
+  id: 'deal_won', title: 'Deal Won', description: 'Send celebration email when deal is won', icon: Sparkles, color: 'bg-emerald-600',
+  rule: { name: 'Deal Won Celebration', trigger_entity: 'Opportunity', trigger_event: 'update', condition_field: 'deal_stage', condition_value: 'Closed Won', action_type: 'send_email', action_config: { email_subject: 'Deal Won! 🏆', email_body: 'Great job! The deal with {{lead_name}} was won.' } }
 }];
 
 
