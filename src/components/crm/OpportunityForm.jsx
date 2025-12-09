@@ -235,24 +235,24 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       }
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className={`grid w-full grid-cols-2 md:grid-cols-5 mb-6 h-auto ${theme === 'dark' ? 'bg-slate-900/50' : ''}`}>
-          <TabsTrigger value="details" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
+        <TabsList className={`flex w-full overflow-x-auto md:grid md:grid-cols-5 mb-6 h-auto gap-2 md:gap-0 pb-1 ${theme === 'dark' ? 'bg-slate-900/50' : ''}`}>
+          <TabsTrigger value="details" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
             <FileText className="w-4 h-4" />
             Details
           </TabsTrigger>
-          <TabsTrigger value="documents" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
+          <TabsTrigger value="documents" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
             <Briefcase className="w-4 h-4" />
             Documents
           </TabsTrigger>
-          <TabsTrigger value="originalLead" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.lead_id && !initialLead?.id}>
+          <TabsTrigger value="originalLead" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.lead_id && !initialLead?.id}>
             <User className="w-4 h-4" />
             Original Lead
           </TabsTrigger>
-          <TabsTrigger value="activity" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.lead_id && !initialLead?.id}>
+          <TabsTrigger value="activity" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.lead_id && !initialLead?.id}>
             <Activity className="w-4 h-4" />
             Activity Log
           </TabsTrigger>
-          <TabsTrigger value="tasks" className={`flex items-center gap-2 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.id}>
+          <TabsTrigger value="tasks" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.id}>
             <CheckSquare className="w-4 h-4" />
             Tasks
           </TabsTrigger>
