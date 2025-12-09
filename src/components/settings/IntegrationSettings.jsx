@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, ExternalLink, Zap, MessageSquare } from "lucide-react";
+import { Check, ExternalLink, Zap, ArrowRight, Bot } from "lucide-react";
 import { useSettings } from '@/components/context/SettingsContext';
-import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 export default function IntegrationSettings() {
     const { theme } = useSettings();
+    const [selectedIntegration, setSelectedIntegration] = useState(null);
     
     const integrations = [
         {
