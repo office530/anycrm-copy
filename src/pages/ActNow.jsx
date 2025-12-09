@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useActNow } from "@/components/context/ActNowContext";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,9 +18,11 @@ import ReactMarkdown from 'react-markdown';
 export default function ActNowPage() {
     const { theme } = useSettings();
     const [analyzing, setAnalyzing] = useState(false);
-    const [insights, setInsights] = useState(null);
+    const { suggestions: insights, setSuggestions: setInsights } = useActNow();
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [taskDefaults, setTaskDefaults] = useState(null);
+    const [isCreatingAll, setIsCreatingAll] = useState(false);
+    const queryClient = useQueryClient();
 
     // Fetch data for analysis
     const { data: leads } = useQuery({ 
@@ -48,12 +52,42 @@ export default function ActNowPage() {
     const handleTaskSubmit = async (data) => {
         try {
             await base44.entities.Task.create(data);
+            queryClient.invalidateQueries(['tasks']);
             alert("Task created successfully!");
             setShowTaskForm(false);
             setTaskDefaults(null);
         } catch (error) {
             console.error("Failed to create task", error);
             alert("Failed to create task: " + (error.message || "Unknown error"));
+        }
+    };
+
+    const handleCreateAllTasks = async () => {
+        if (!insights || insights.length === 0) return;
+        if (!confirm(`Create tasks for all ${insights.length} targets?`)) return;
+
+        setIsCreatingAll(true);
+        try {
+            await Promise.all(insights.map(item => {
+                return base44.entities.Task.create({
+                    title: `Act Now: ${item.target}`,
+                    description: `${item.how}\n\nReason: ${item.why}`,
+                    priority: item.priority === 'Critical' ? 'high' : 'medium',
+                    due_date: new Date().toISOString().split('T')[0],
+                    status: 'todo',
+                    related_lead_id: item.type === 'Lead' ? item.id : undefined,
+                    related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
+                });
+            }));
+            
+            alert(`Successfully created ${insights.length} tasks!`);
+            queryClient.invalidateQueries(['tasks']);
+            setInsights([]);
+        } catch (error) {
+            console.error("Failed to create tasks", error);
+            alert("Some tasks failed to create.");
+        } finally {
+            setIsCreatingAll(false);
         }
     };
 
@@ -191,9 +225,19 @@ export default function ActNowPage() {
             {/* Results Section */}
             {insights && (
                 <div className="grid gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <h2 className={`text-2xl font-bold ml-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                        Top Priority Targets
-                    </h2>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <h2 className={`text-2xl font-bold ml-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                            Top Priority Targets
+                        </h2>
+                        <Button 
+                            onClick={handleCreateAllTasks} 
+                            disabled={isCreatingAll}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md w-full md:w-auto"
+                        >
+                            {isCreatingAll ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckSquare className="w-4 h-4 mr-2" />}
+                            Create Tasks for All ({insights.length})
+                        </Button>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {insights.map((item, idx) => (
                             <Card key={idx} className={`border-l-4 transition-all hover:-translate-y-1 hover:shadow-lg ${
