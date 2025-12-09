@@ -121,7 +121,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
           const statusLeads = getLeadsByStatus(status.value);
           
           return (
-            <div key={status.value} className="flex-shrink-0 w-[85vw] md:w-80 flex flex-col h-full max-h-[calc(100vh-200px)]">
+            <div key={status.value} className="flex-shrink-0 w-[40vw] sm:w-[40vw] md:w-48 lg:w-52 flex flex-col h-full max-h-[calc(100vh-200px)]">
               {/* Stage Header */}
               <div className={`mb-3 p-3 rounded-xl border-b-4 flex justify-between items-center shadow-sm transition-colors ${
                   // Use the text color (neon) for the border to match
@@ -160,10 +160,10 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                             `}
                             onClick={() => onEdit(lead)}
                           >
-                            <CardContent className="p-4 space-y-3">
+                            <CardContent className="p-3 space-y-2">
                               <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] ${
                                       theme === 'dark' 
                                         ? status.color.includes('red') ? 'bg-red-900/50 text-red-200' : 'bg-slate-700 text-slate-300'
                                         : status.color.includes('red') ? 'bg-red-50 text-red-700' : 'bg-slate-100 text-slate-600'
@@ -171,8 +171,8 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                                         {lead.full_name?.charAt(0)}
                                     </div>
                                     <div>
-                                        <h4 className={`font-bold line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{lead.full_name}</h4>
-                                        <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
+                                        <h4 className={`font-bold text-sm line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{lead.full_name}</h4>
+                                        <p className={`text-[10px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
                                         {getLastActivityDate(lead.id) && (
                                           <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
                                             ✓ Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
