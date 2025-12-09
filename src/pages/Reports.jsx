@@ -4,7 +4,9 @@ import { base44 } from '@/api/base44Client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, TrendingUp, Users, CheckCircle2, Calendar } from "lucide-react";
+import { Loader2, TrendingUp, Users, CheckCircle2, Calendar, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import SalesPerformance from '@/components/reports/SalesPerformance';
 import OpportunityAdvancedReport from '@/components/reports/OpportunityAdvancedReport';
 import OpportunitiesListReport from '@/components/reports/OpportunitiesListReport'; // Fixed import
@@ -52,6 +54,36 @@ export default function ReportsPage() {
     initialData: []
   });
 
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+      try {
+          setIsExporting(true);
+          const response = await base44.functions.invoke('exportReport', { reportId: activeReport, timeRange });
+          
+          if (response.status === 200) {
+              // Create blob and download
+              const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${activeReport}_report_${timeRange}.xlsx`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              a.remove();
+              toast.success("Report exported successfully");
+          } else {
+              throw new Error("Export failed");
+          }
+      } catch (error) {
+          console.error("Export error:", error);
+          toast.error("Failed to export report");
+      } finally {
+          setIsExporting(false);
+      }
+  };
+
   const isLoading = leadsLoading || oppsLoading || tasksLoading || activitiesLoading;
 
   if (isLoading) {
@@ -82,6 +114,18 @@ export default function ReportsPage() {
             </div>
             
             <div className="flex items-center gap-3">
+                <Button 
+                    onClick={handleExport} 
+                    disabled={isExporting}
+                    variant="outline"
+                    className={`gap-2 ${theme === 'dark' ? 'bg-slate-700 text-white border-slate-600 hover:bg-slate-600' : 'bg-white text-neutral-700 border-neutral-200'}`}
+                >
+                    {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                    <span className="hidden sm:inline">Export Excel</span>
+                </Button>
+
+                <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden md:block" />
+
                 <span className={`text-sm font-medium hidden md:inline-block ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>Time Range:</span>
                 <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className={`w-[180px] ${
