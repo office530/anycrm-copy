@@ -179,18 +179,18 @@ export default function OpportunityAdvancedReport({ leads, opportunities }) {
             </CardHeader>
             <CardContent className="h-[350px]">
                 <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={progressionData} layout="vertical" margin={{ left: 0, right: 10, top: 20, bottom: 20 }}>
+                    <ComposedChart data={progressionData} layout="vertical" margin={{ left: 0, right: 30, top: 10, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={theme === 'dark' ? '#374151' : '#e5e7eb'} />
                         <XAxis type="number" hide />
                         <YAxis 
                             dataKey="name" 
                             type="category" 
-                            width={85} 
-                            tick={{fontSize: 10, fill: theme === 'dark' ? '#94a3b8' : '#666'}} 
-                            tickFormatter={(val) => val.length > 10 ? `${val.substring(0, 10)}...` : val}
+                            width={70} 
+                            tick={{fontSize: 9, fill: theme === 'dark' ? '#94a3b8' : '#666'}} 
+                            tickFormatter={(val) => val.length > 8 ? `${val.substring(0, 8)}..` : val}
                         />
                         <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', color: theme === 'dark' ? '#fff' : '#000', fontSize: '12px'}} formatter={(value, name) => name === 'value' ? `$${value.toLocaleString()}` : value} />
-                        <Bar dataKey="count" name="Count" fill="#ef4444" barSize={20} radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="count" name="Count" fill="#ef4444" barSize={16} radius={[0, 4, 4, 0]} />
                     </ComposedChart>
                 </ResponsiveContainer>
             </CardContent>
