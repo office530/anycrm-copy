@@ -2,47 +2,97 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, ExternalLink, Zap } from "lucide-react";
+import { Check, ExternalLink, Zap, MessageSquare } from "lucide-react";
 import { useSettings } from '@/components/context/SettingsContext';
+import { toast } from "sonner";
 
 export default function IntegrationSettings() {
     const { theme } = useSettings();
     
     const integrations = [
         {
-            id: 'google_calendar',
+            id: 'googlecalendar',
             name: 'Google Calendar',
             description: 'Sync meetings and events with your calendar',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Google_Calendar_icon_%282020%29.svg/1024px-Google_Calendar_icon_%282020%29.svg.png',
-            connected: false
+            connected: false,
+            category: 'Google Workspace'
         },
         {
-            id: 'google_drive',
+            id: 'googledrive',
             name: 'Google Drive',
-            description: 'Store documents and files in client folders',
+            description: 'Store and manage documents in client folders',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/2295px-Google_Drive_icon_%282020%29.svg.png',
-            connected: false
+            connected: false,
+            category: 'Google Workspace'
+        },
+        {
+            id: 'googlesheets',
+            name: 'Google Sheets',
+            description: 'Read and write data to spreadsheets',
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Google_Sheets_logo_%282014-2020%29.svg/1200px-Google_Sheets_logo_%282014-2020%29.svg.png',
+            connected: false,
+            category: 'Google Workspace'
+        },
+        {
+            id: 'googledocs',
+            name: 'Google Docs',
+            description: 'Create and edit documents automatically',
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Google_Docs_logo_%282014-2020%29.svg/1481px-Google_Docs_logo_%282014-2020%29.svg.png',
+            connected: false,
+            category: 'Google Workspace'
+        },
+        {
+            id: 'googleslides',
+            name: 'Google Slides',
+            description: 'Generate presentations from your data',
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Google_Slides_logo_%282014-2020%29.svg/1024px-Google_Slides_logo_%282014-2020%29.svg.png',
+            connected: false,
+            category: 'Google Workspace'
         },
         {
             id: 'slack',
             name: 'Slack',
-            description: 'Get notifications and updates in Slack channels',
+            description: 'Send notifications to channels and users',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Slack_icon_2019.svg/2048px-Slack_icon_2019.svg.png',
-            connected: false
+            connected: false,
+            category: 'Communication'
+        },
+        {
+            id: 'notion',
+            name: 'Notion',
+            description: 'Sync pages and databases with your workspace',
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png',
+            connected: false,
+            category: 'Productivity'
         },
         {
             id: 'salesforce',
             name: 'Salesforce',
-            description: 'Two-way sync of leads and opportunities',
+            description: 'Two-way sync of CRM data',
             icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Salesforce.com_logo.svg/2560px-Salesforce.com_logo.svg.png',
-            connected: false
+            connected: false,
+            category: 'CRM'
+        },
+        {
+            id: 'hubspot',
+            name: 'HubSpot',
+            description: 'Manage contacts and deals in HubSpot',
+            icon: 'https://companieslogo.com/img/orig/HUBS-15637207.png',
+            connected: false,
+            category: 'CRM'
         }
     ];
 
-    const handleConnect = (id) => {
-        // Since we can't trigger OAuth from here easily without user interaction with the LLM tool call,
-        // we'll guide the user.
-        alert("To connect this integration, please ask the AI chat: 'Connect " + id.replace('_', ' ') + "'");
+    const handleConnect = (name) => {
+        toast.info("Ask AI to Connect", {
+            description: `Please type "Connect ${name}" in the chat to start the secure authorization process.`,
+            action: {
+                label: "Got it",
+                onClick: () => {}
+            },
+            duration: 8000,
+        });
     };
 
     return (
@@ -53,31 +103,39 @@ export default function IntegrationSettings() {
                     <CardDescription className={theme === 'dark' ? 'text-slate-400' : ''}>Extend system capabilities by connecting external services</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {integrations.map((integration) => (
-                            <div key={integration.id} className={`flex items-start gap-4 p-4 border rounded-xl transition-colors ${theme === 'dark' ? 'border-slate-700 hover:bg-slate-700/50' : 'hover:bg-slate-50'}`}>
-                                <div className={`w-12 h-12 shrink-0 rounded-lg border p-2 flex items-center justify-center ${theme === 'dark' ? 'bg-slate-700 border-slate-600' : 'bg-white'}`}>
-                                    <img src={integration.icon} alt={integration.name} className="w-full h-full object-contain" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{integration.name}</h4>
-                                        {integration.connected && <Badge className="bg-green-100 text-green-700">Connected</Badge>}
+                            <div key={integration.id} className={`flex flex-col h-full p-4 border rounded-xl transition-all duration-200 ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700 hover:border-cyan-500/50 hover:shadow-cyan-500/10 hover:shadow-lg' : 'bg-white border-slate-200 hover:border-blue-200 hover:shadow-md'}`}>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className={`w-12 h-12 shrink-0 rounded-xl p-2 flex items-center justify-center ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-50'}`}>
+                                        <img src={integration.icon} alt={integration.name} className="w-full h-full object-contain" />
                                     </div>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">{integration.description}</p>
-                                    
-                                    {integration.connected ? (
-                                        <Button variant="outline" size="sm" className="w-full">
-                                            <Check className="w-3 h-3 mr-2" />
-                                            Connection Settings
-                                        </Button>
-                                    ) : (
-                                        <Button onClick={() => handleConnect(integration.id)} size="sm" variant="secondary" className="w-full">
-                                            <Zap className="w-3 h-3 mr-2" />
-                                            Connect
-                                        </Button>
-                                    )}
+                                    <Badge variant={integration.connected ? "default" : "outline"} className={integration.connected ? "bg-green-500 hover:bg-green-600" : ""}>
+                                        {integration.connected ? "Active" : "Not Connected"}
+                                    </Badge>
                                 </div>
+                                
+                                <div className="flex-1">
+                                    <h4 className={`font-bold text-lg mb-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{integration.name}</h4>
+                                    <p className={`text-xs uppercase tracking-wider font-semibold mb-2 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{integration.category}</p>
+                                    <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>{integration.description}</p>
+                                </div>
+                                
+                                {integration.connected ? (
+                                    <Button variant="outline" size="sm" className="w-full mt-auto">
+                                        <Check className="w-4 h-4 mr-2" />
+                                        Manage
+                                    </Button>
+                                ) : (
+                                    <Button 
+                                        onClick={() => handleConnect(integration.name)} 
+                                        size="sm" 
+                                        className={`w-full mt-auto ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'}`}
+                                    >
+                                        <MessageSquare className="w-4 h-4 mr-2" />
+                                        Connect via AI
+                                    </Button>
+                                )}
                             </div>
                         ))}
                     </div>
