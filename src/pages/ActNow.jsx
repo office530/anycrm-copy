@@ -70,7 +70,7 @@ export default function ActNowPage() {
         try {
             await Promise.all(insights.map(item => {
                 return base44.entities.Task.create({
-                    title: `Act Now: ${item.target}`,
+                    title: `Act now task: ${item.target}`,
                     description: `${item.how}\n\nReason: ${item.why}`,
                     priority: item.priority === 'Critical' ? 'high' : 'medium',
                     due_date: new Date().toISOString().split('T')[0],

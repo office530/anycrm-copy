@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useRef } from 'react';
 const ActNowContext = createContext();
 
 export function ActNowProvider({ children }) {
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState(null);
   const timeoutRef = useRef(null);
 
   const updateSuggestions = (newSuggestions) => {
@@ -14,10 +14,10 @@ export function ActNowProvider({ children }) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Set new timeout to clear suggestions after 30 seconds
+    // Set new timeout to clear suggestions after 1 minute
     timeoutRef.current = setTimeout(() => {
-      setSuggestions([]);
-    }, 30000); // 30 seconds
+      setSuggestions(null);
+    }, 60000); // 1 minute
   };
 
   return (
