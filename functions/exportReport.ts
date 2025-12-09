@@ -136,15 +136,12 @@ Deno.serve(async (req) => {
         const ws = XLSX.utils.json_to_sheet(data);
         XLSX.utils.book_append_sheet(wb, ws, sheetName);
         
-        // Write to buffer
-        const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+        // Write to base64 string to avoid binary corruption in JSON-oriented SDKs
+        const base64 = XLSX.write(wb, { type: "base64", bookType: "xlsx" });
 
-        return new Response(buf, {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition': `attachment; filename="${sheetName}_${timeRange}.xlsx"`
-            }
+        return Response.json({
+            file: base64,
+            filename: `${sheetName}_${timeRange}.xlsx`
         });
 
     } catch (error) {
