@@ -335,7 +335,7 @@ export default function Dashboard() {
                             axisLine={false} 
                             tickLine={false} 
                             tick={{ 
-                                fontSize: 12, 
+                                fontSize: 10, 
                                 fill: theme === 'dark' ? '#94a3b8' : '#475569',
                                 width: 50
                             }} 
