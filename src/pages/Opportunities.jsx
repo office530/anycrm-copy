@@ -376,15 +376,15 @@ export default function OpportunitiesPage() {
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
                             <div className={`absolute top-0 right-0 w-1 h-full ${stage.color || 'bg-neutral-300'}`} />
-                            <CardContent className="p-5 space-y-4">
-                              <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                            <CardContent className="p-3 space-y-2">
+                              <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-400 hover:text-red-600 hover:bg-red-50"
                                       onClick={(e) => {
                                           e.stopPropagation();
                                           if(window.confirm('Are you sure you want to delete this opportunity?')) deleteOppMutation.mutate(opp.id);
                                       }}
                                   >
-                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <Trash2 className="w-3 h-3" />
                                   </Button>
                               </div>
 
@@ -393,29 +393,29 @@ export default function OpportunitiesPage() {
                                 return (
                                   <>
                                     {/* שם */}
-                                    <div className={`text-xl font-bold transition-colors ${theme === 'dark' ? 'text-white group-hover:text-teal-400' : 'text-neutral-800 group-hover:text-teal-600'}`}>
+                                    <div className={`text-sm font-bold transition-colors truncate ${theme === 'dark' ? 'text-white group-hover:text-teal-400' : 'text-neutral-800 group-hover:text-teal-600'}`}>
                                       {opp.lead_name || "Unnamed Client"}
                                     </div>
 
                                     {/* טלפון */}
                                     {lead?.phone_number && (
-                                      <div className={`flex items-center gap-2 text-base font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-700'}`}>
-                                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`} />
+                                      <div className={`flex items-center gap-1.5 text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-700'}`}>
+                                        <Phone className={`w-3 h-3 ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`} />
                                         {lead.phone_number}
                                       </div>
                                     )}
 
                                     {/* הערות */}
                                     {lead?.notes && (
-                                      <div className={`text-sm p-3 rounded-lg line-clamp-3 leading-relaxed ${theme === 'dark' ? 'text-slate-400 bg-slate-900/50' : 'text-neutral-600 bg-neutral-50'}`}>
+                                      <div className={`text-[10px] p-1.5 rounded-md line-clamp-2 leading-tight ${theme === 'dark' ? 'text-slate-400 bg-slate-900/50' : 'text-neutral-600 bg-neutral-50'}`}>
                                         {lead.notes}
                                       </div>
                                     )}
 
                                     {/* שיחה אחרונה */}
                                     {lead?.last_contact_date && (
-                                      <div className={`flex items-center gap-2 text-sm ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>
-                                        <Calendar className="w-4 h-4" />
+                                      <div className={`flex items-center gap-1.5 text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>
+                                        <Calendar className="w-3 h-3" />
                                         <span>Last Contact: {moment(lead.last_contact_date).format('DD/MM/YYYY')}</span>
                                       </div>
                                     )}
