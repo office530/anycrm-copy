@@ -85,17 +85,6 @@ export default function IntegrationSettings() {
         }
     ];
 
-    const handleConnect = (name) => {
-        toast.info("Ask AI to Connect", {
-            description: `Please type "Connect ${name}" in the chat to start the secure authorization process.`,
-            action: {
-                label: "Got it",
-                onClick: () => {}
-            },
-            duration: 8000,
-        });
-    };
-
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
@@ -118,8 +107,8 @@ export default function IntegrationSettings() {
                                 
                                 <div className="flex-1">
                                     <h4 className={`font-bold text-lg mb-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{integration.name}</h4>
-                                    <p className={`text-xs uppercase tracking-wider font-semibold mb-2 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{integration.category}</p>
-                                    <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>{integration.description}</p>
+                                    <p className={`text-xs uppercase tracking-wider font-semibold mb-2 ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>{integration.category}</p>
+                                    <p className={`text-sm mb-4 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>{integration.description}</p>
                                 </div>
                                 
                                 {integration.connected ? (
@@ -129,12 +118,12 @@ export default function IntegrationSettings() {
                                     </Button>
                                 ) : (
                                     <Button 
-                                        onClick={() => handleConnect(integration.name)} 
+                                        onClick={() => setSelectedIntegration(integration)} 
                                         size="sm" 
                                         className={`w-full mt-auto ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'}`}
                                     >
-                                        <MessageSquare className="w-4 h-4 mr-2" />
-                                        Connect via AI
+                                        <Zap className="w-4 h-4 mr-2" />
+                                        Connect
                                     </Button>
                                 )}
                             </div>
@@ -146,6 +135,48 @@ export default function IntegrationSettings() {
                     </div>
                 </CardContent>
             </Card>
+
+            <Dialog open={!!selectedIntegration} onOpenChange={() => setSelectedIntegration(null)}>
+                <DialogContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-xl">
+                            <Bot className="w-6 h-6 text-cyan-500" />
+                            Connect {selectedIntegration?.name}
+                        </DialogTitle>
+                        <DialogDescription className={theme === 'dark' ? 'text-slate-300' : ''}>
+                            Secure Authorization Guide
+                        </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="py-4 space-y-4">
+                        <div className={`p-4 rounded-lg border flex gap-4 ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                            <div className="shrink-0 pt-1">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                                    AI
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-sm font-medium">To keep your data secure, I handle all integrations directly.</p>
+                                <p className="text-sm opacity-90">Please copy the command below and paste it in our chat window to start:</p>
+                                
+                                <div className={`mt-3 p-3 rounded font-mono text-sm font-bold flex items-center justify-between group cursor-pointer ${theme === 'dark' ? 'bg-black/40 text-cyan-400 border border-cyan-500/20' : 'bg-white border text-cyan-700'}`}
+                                     onClick={() => {
+                                         navigator.clipboard.writeText(`Connect ${selectedIntegration?.name}`);
+                                     }}>
+                                    <span>Connect {selectedIntegration?.name}</span>
+                                    <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">Click to copy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button onClick={() => setSelectedIntegration(null)} variant={theme === 'dark' ? 'secondary' : 'default'} className="w-full sm:w-auto">
+                            Got it, I'll ask you now
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
