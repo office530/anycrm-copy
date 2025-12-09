@@ -330,7 +330,17 @@ export default function Dashboard() {
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={stats.stageData}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} interval={0} />
+                        <XAxis 
+                            dataKey="name" 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ 
+                                fontSize: 12, 
+                                fill: theme === 'dark' ? '#94a3b8' : '#475569',
+                                width: 50
+                            }} 
+                            interval={0} 
+                        />
                         <YAxis hide />
                         <RechartsTooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '8px' }} />
                         <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40} name="Count">
