@@ -29,52 +29,65 @@ export default function GlobalSearch() {
     queryFn: async () => {
       if (!searchTerm || searchTerm.length < 2) return { leads: [], opportunities: [], tasks: [], activities: [] };
 
+      // Fetch more recent items for better coverage
       const [leads, opportunities, tasks, activities] = await Promise.all([
-        base44.entities.Lead.list(),
-        base44.entities.Opportunity.list(),
-        base44.entities.Task.list(),
-        base44.entities.Activity.list()
+        base44.entities.Lead.list('-updated_date', 100),
+        base44.entities.Opportunity.list('-updated_date', 100),
+        base44.entities.Task.list('-updated_date', 100),
+        base44.entities.Activity.list('-date', 50)
       ]);
 
-      const lowerTerm = searchTerm.toLowerCase();
+      const lowerTerm = searchTerm.toLowerCase().trim();
       const phoneSearch = searchTerm.replace(/\D/g, '');
+      const isPhoneSearch = phoneSearch.length > 2; // Only search phone if at least 3 digits
 
-      const filteredLeads = leads.filter((l) =>
-        l.full_name?.toLowerCase().includes(lowerTerm) ||
-        l.phone_number?.replace(/\D/g, '').includes(phoneSearch) ||
-        l.email?.toLowerCase().includes(lowerTerm) ||
-        l.city?.toLowerCase().includes(lowerTerm) ||
-        l.notes?.toLowerCase().includes(lowerTerm)
-      ).slice(0, 5);
+      // Helper to score matches for smarter ranking
+      const calculateScore = (item, fields) => {
+        let score = 0;
+        let matched = false;
 
-      const filteredOpps = opportunities.filter((o) =>
-        o.lead_name?.toLowerCase().includes(lowerTerm) ||
-        o.product_type?.toLowerCase().includes(lowerTerm) ||
-        o.deal_stage?.toLowerCase().includes(lowerTerm) ||
-        o.main_pain_point?.toLowerCase().includes(lowerTerm)
-      ).slice(0, 5);
+        // Text Search
+        if (lowerTerm) {
+            fields.text.forEach(field => {
+                const value = item[field]?.toString().toLowerCase();
+                if (!value) return;
+                
+                if (value === lowerTerm) { score += 100; matched = true; } // Exact match
+                else if (value.startsWith(lowerTerm)) { score += 80; matched = true; } // Starts with
+                else if (value.includes(' ' + lowerTerm)) { score += 60; matched = true; } // Word start
+                else if (value.includes(lowerTerm)) { score += 40; matched = true; } // Contains
+            });
+        }
 
-      const filteredTasks = tasks.filter((t) =>
-        t.title?.toLowerCase().includes(lowerTerm) ||
-        t.description?.toLowerCase().includes(lowerTerm) ||
-        t.status?.toLowerCase().includes(lowerTerm)
-      ).slice(0, 5);
+        // Phone Search
+        if (isPhoneSearch && fields.phone) {
+             const phone = item[fields.phone]?.replace(/\D/g, '');
+             if (phone && phone.includes(phoneSearch)) {
+                 score += 90;
+                 matched = true;
+             }
+        }
 
-      const filteredActivities = activities.filter((a) =>
-        a.type?.toLowerCase().includes(lowerTerm) ||
-        a.summary?.toLowerCase().includes(lowerTerm) ||
-        a.status?.toLowerCase().includes(lowerTerm)
-      ).slice(0, 3);
+        return matched ? score : 0;
+      };
+
+      const processResults = (items, fields) => {
+          return items
+            .map(item => ({ ...item, score: calculateScore(item, fields) }))
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score) // Sort by score (relevance)
+            .slice(0, 5);
+      };
 
       return { 
-        leads: filteredLeads, 
-        opportunities: filteredOpps,
-        tasks: filteredTasks,
-        activities: filteredActivities
+        leads: processResults(leads, { text: ['full_name', 'email', 'city', 'notes'], phone: 'phone_number' }),
+        opportunities: processResults(opportunities, { text: ['lead_name', 'product_type', 'deal_stage', 'main_pain_point'], phone: 'phone_number' }),
+        tasks: processResults(tasks, { text: ['title', 'description', 'status'] }),
+        activities: processResults(activities, { text: ['type', 'summary', 'status'] })
       };
     },
     enabled: searchTerm.length >= 2,
-    staleTime: 30000 // 30 sec cache
+    staleTime: 5000 // Reduced cache time for fresher results
   });
 
   const handleSearch = (e) => {
