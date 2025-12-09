@@ -68,24 +68,24 @@ export default function ActNowPage() {
 
         setIsCreatingAll(true);
         try {
-            await Promise.all(insights.map(item => {
-                return base44.entities.Task.create({
-                    title: `Act now task: ${item.target}`,
-                    description: `${item.how}\n\nReason: ${item.why}`,
-                    priority: item.priority === 'Critical' ? 'high' : 'medium',
-                    due_date: new Date().toISOString().split('T')[0],
-                    status: 'todo',
-                    related_lead_id: item.type === 'Lead' ? item.id : undefined,
-                    related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
-                });
+            const tasksPayload = insights.map(item => ({
+                title: `Act now task: ${item.target}`,
+                description: `${item.how}\n\nReason: ${item.why}`,
+                priority: item.priority === 'Critical' ? 'high' : 'medium',
+                due_date: new Date().toISOString().split('T')[0],
+                status: 'todo',
+                related_lead_id: item.type === 'Lead' ? item.id : undefined,
+                related_opportunity_id: item.type === 'Opportunity' ? item.id : undefined
             }));
+
+            await base44.entities.Task.bulkCreate(tasksPayload);
             
             alert(`Successfully created ${insights.length} tasks!`);
             queryClient.invalidateQueries(['tasks']);
-            setInsights([]);
+            setInsights(null);
         } catch (error) {
             console.error("Failed to create tasks", error);
-            alert("Some tasks failed to create.");
+            alert("Failed to create tasks. Please try again.");
         } finally {
             setIsCreatingAll(false);
         }
@@ -223,7 +223,7 @@ export default function ActNowPage() {
             </div>
 
             {/* Results Section */}
-            {insights && (
+            {insights && insights.length > 0 && (
                 <div className="grid gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <h2 className={`text-2xl font-bold ml-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
