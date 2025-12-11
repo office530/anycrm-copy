@@ -45,7 +45,7 @@ export default function UserManagement() {
     };
 
     const handleDemote = (user) => {
-        if (window.confirm(`Make ${user.full_name} a viewer only?`)) {
+        if (window.confirm(`Make Demo User a viewer only?`)) {
             updateUserMutation.mutate({
                 id: user.id,
                 data: { access_level: 'viewer' }
@@ -88,9 +88,9 @@ export default function UserManagement() {
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                                                 theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'
                                             }`}>
-                                                {user.full_name?.charAt(0)}
+                                                {'D'}
                                             </div>
-                                            <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>{user.full_name}</span>
+                                            <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>Demo User</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>{user.email}</TableCell>

@@ -70,9 +70,9 @@ export default function TeamSettings() {
                                         <TableCell className="font-medium">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold">
-                                                    {user.full_name?.charAt(0) || user.email?.charAt(0)}
+                                                    {'D'}
                                                 </div>
-                                                <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>{user.full_name || 'No Name'}</span>
+                                                <span className={theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}>Demo User</span>
                                             </div>
                                         </TableCell>
                                         <TableCell className={theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}>{user.email}</TableCell>
