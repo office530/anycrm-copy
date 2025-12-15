@@ -88,20 +88,22 @@ export default function TeamSettings() {
                                             {user.created_date ? format(new Date(user.created_date), 'MM/dd/yyyy') : '-'}
                                         </TableCell>
                                         <TableCell>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                onClick={() => {
-                                                     if(confirm('Are you sure you want to remove this user?')) {
-                                                         base44.entities.User.delete(user.id)
-                                                            .then(() => queryClient.invalidateQueries(['users']))
-                                                            .catch(err => alert("Error deleting user: " + err.message));
-                                                     }
-                                                }}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                            {user.role !== 'admin' && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                    onClick={() => {
+                                                         if(confirm('Are you sure you want to remove this user?')) {
+                                                             base44.entities.User.delete(user.id)
+                                                                .then(() => queryClient.invalidateQueries(['users']))
+                                                                .catch(err => alert("Error deleting user: " + err.message));
+                                                         }
+                                                    }}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}
