@@ -114,7 +114,7 @@ export default function ActNowPage() {
                 Data: ${JSON.stringify(contextData)}
             `;
 
-            const result = await base44.integrations.Core.InvokeLLM({
+            const res = await base44.integrations.Core.InvokeLLM({
                 prompt: prompt,
                 response_json_schema: {
                     type: "object",
@@ -137,11 +137,8 @@ export default function ActNowPage() {
                 }
             });
 
-            if (result && result.recommendations) {
-                setInsights(result.recommendations);
-            } else {
-                console.error("No recommendations returned from AI");
-                alert("AI analysis completed but returned no recommendations. Please try again.");
+            if (res && res.recommendations) {
+                setInsights(res.recommendations);
             }
 
         } catch (error) {
