@@ -52,9 +52,21 @@ export default function Dashboard() {
     return colorMap[colorClass] || '#8884d8';
   };
 
-  const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
-  const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
-  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ['tasks'], queryFn: () => base44.entities.Task.list() });
+  const { data: leads = [], isLoading: isLoadingLeads, error: errorLeads } = useQuery({ 
+    queryKey: ['leads'], 
+    queryFn: () => base44.entities.Lead.list(),
+    retry: 2
+  });
+  const { data: opportunities = [], isLoading: isLoadingOpps, error: errorOpps } = useQuery({ 
+    queryKey: ['opportunities'], 
+    queryFn: () => base44.entities.Opportunity.list(),
+    retry: 2
+  });
+  const { data: tasks = [], isLoading: isLoadingTasks, error: errorTasks } = useQuery({ 
+    queryKey: ['tasks'], 
+    queryFn: () => base44.entities.Task.list(),
+    retry: 2
+  });
   const [tempWidgets, setTempWidgets] = useState([]);
 
   // Filter data by time range
@@ -151,6 +163,21 @@ export default function Dashboard() {
   }, [filteredLeads, filteredOpps, tasks, timeRange, pipelineStages]);
 
   if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
+
+  if (errorLeads || errorOpps || errorTasks) {
+    return (
+      <div className={`p-8 text-center ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+        <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
+        <h2 className="text-2xl font-bold mb-2">Unable to Load Dashboard</h2>
+        <p className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>
+          There was an error loading your data. Please refresh the page or contact support.
+        </p>
+        <Button onClick={() => window.location.reload()} className="mt-4">
+          Refresh Page
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 md:space-y-8 pb-24 md:pb-12 max-w-7xl mx-auto">
