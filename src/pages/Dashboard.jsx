@@ -20,7 +20,7 @@ import { useSettings } from '@/components/context/SettingsContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function Dashboard() {
-  const [timeRange, setTimeRange] = useState('week'); // 'today', 'week', 'month', 'quarter', 'year', 'all'
+  const [timeRange, setTimeRange] = useState('all'); // 'today', 'week', 'month', 'quarter', 'year', 'all'
   const [showAddWidget, setShowAddWidget] = useState(false);
   const { theme, branding, pipelineStages } = useSettings();
   const queryClient = useQueryClient();
