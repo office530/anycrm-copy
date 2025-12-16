@@ -19,43 +19,43 @@ export const defaultPipelineStages = [
   { 
     id: "New", 
     label: "New", 
-    color: "bg-blue-400", 
-    light: "bg-blue-50 text-blue-700",
+    color: "bg-cyan-500", 
+    light: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
     checklist: [{ id: "c1", text: "Verify Lead Details" }]
   },
   { 
     id: "Discovery", 
     label: "Discovery", 
-    color: "bg-indigo-400", 
-    light: "bg-indigo-50 text-indigo-700",
+    color: "bg-purple-500", 
+    light: "bg-purple-500/20 text-purple-400 border-purple-500/30",
     checklist: [{ id: "c2", text: "Identify Needs" }]
   },
   { 
     id: "Proposal", 
     label: "Proposal", 
-    color: "bg-purple-400", 
-    light: "bg-purple-50 text-purple-700",
+    color: "bg-pink-500", 
+    light: "bg-pink-500/20 text-pink-400 border-pink-500/30",
     checklist: [{ id: "c3", text: "Send Proposal" }]
   },
   { 
     id: "Negotiation", 
     label: "Negotiation", 
-    color: "bg-amber-400", 
-    light: "bg-amber-50 text-amber-700",
+    color: "bg-amber-500", 
+    light: "bg-amber-500/20 text-amber-400 border-amber-500/30",
     checklist: []
   },
   { 
     id: "Closed Won", 
     label: "Closed Won", 
     color: "bg-emerald-500", 
-    light: "bg-emerald-50 text-emerald-700",
+    light: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
     checklist: []
   },
   { 
     id: "Closed Lost", 
     label: "Closed Lost", 
-    color: "bg-slate-300", 
-    light: "bg-slate-50 text-slate-500",
+    color: "bg-red-500", 
+    light: "bg-red-500/20 text-red-400 border-red-500/30",
     checklist: []
   }
 ];
