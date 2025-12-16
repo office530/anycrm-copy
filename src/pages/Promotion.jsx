@@ -170,6 +170,29 @@ export default function PromotionPage() {
                 </div>
             </div>
 
+            {/* Data Privacy Notice */}
+            <div className="max-w-4xl mx-auto mb-32">
+                <div className={`${darkCard} border ${border} rounded-2xl p-8 md:p-10`}>
+                    <div className="flex items-start gap-4 mb-6">
+                        <Shield className="w-8 h-8 text-cyan-400 shrink-0 mt-1" />
+                        <div>
+                            <h3 className="text-2xl font-bold mb-3 text-slate-200">About Data Privacy & Demos</h3>
+                            <div className={`${darkMuted} space-y-3 leading-relaxed`}>
+                                <p>
+                                    This CRM template implements <span className="text-cyan-400 font-semibold">Row-Level Security (RLS)</span> policies to ensure that sensitive business data is properly protected. Each user can only access and modify data they own or are authorized to view.
+                                </p>
+                                <p>
+                                    While this approach provides enterprise-grade security, it means that <span className="text-white font-semibold">demo environments cannot display all data to random visitors</span>. Users will only see records they've created or been assigned to.
+                                </p>
+                                <p>
+                                    This is a <span className="text-emerald-400 font-semibold">feature, not a limitation</span> — it ensures your real production data stays secure and private when you deploy this template for your team.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* CTA Footer */}
             <div className="text-center pb-20">
                 <div className="inline-block p-[1px] rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600">
