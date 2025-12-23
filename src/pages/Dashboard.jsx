@@ -15,6 +15,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import moment from 'moment';
 import TasksWidget from '@/components/dashboard/TasksWidget';
+import ForecastWidget from '@/components/dashboard/ForecastWidget';
+import LeaderboardWidget from '@/components/dashboard/LeaderboardWidget';
+import StagnantDealsWidget from '@/components/dashboard/StagnantDealsWidget';
 import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
 import { useSettings } from '@/components/context/SettingsContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -268,9 +271,31 @@ export default function Dashboard() {
           </div>
       </div>
 
+      {/* Sales Performance Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* 1. Forecast */}
+          <div className={`rounded-[2rem] p-6 border ${glassCardClasses}`}>
+              <ForecastWidget 
+                  opportunities={filteredOpps} 
+                  timeRange={timeRange}
+                  periodTarget={250000} // Hardcoded for MVP visualization
+              />
+          </div>
+
+          {/* 2. Leaderboard */}
+          <div className={`rounded-[2rem] p-6 border ${glassCardClasses}`}>
+              <LeaderboardWidget opportunities={filteredOpps} />
+          </div>
+
+          {/* 3. Stagnant Deals */}
+          <div className={`rounded-[2rem] p-6 border ${glassCardClasses}`}>
+              <StagnantDealsWidget opportunities={opportunities} />
+          </div>
+      </div>
+
       {/* Main Content Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-          
+
           {/* Large Chart (Span 8) */}
           <div className={`md:col-span-8 rounded-[2rem] p-6 md:p-8 border ${glassCardClasses}`}>
               <div className="flex items-center justify-between mb-8">
