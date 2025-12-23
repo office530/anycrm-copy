@@ -11,7 +11,9 @@ import { Loader2, LayoutGrid, List as ListIcon, Phone, Calendar, DollarSign, Bri
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { processAutomation } from "@/components/automation/rulesEngine";
 import OpportunityForm from "@/components/crm/OpportunityForm";
 import { InlineEdit } from "@/components/ui/InlineEdit";
@@ -26,6 +28,11 @@ export default function OpportunitiesPage() {
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
+  
+  // Transition Modal State
+  const [transitionData, setTransitionData] = useState(null); // { opp, newStage }
+  const [transitionType, setTransitionType] = useState(null); // 'lost', 'meeting'
+  const [transitionInput, setTransitionInput] = useState(''); // reason or date
   
   // Smart Filters with URL Sync
   const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, setViewState, search, setSearch } = useUrlFilters('all');
@@ -209,23 +216,30 @@ export default function OpportunitiesPage() {
     }
   });
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const { draggableId, destination } = result;
-    const newStage = destination.droppableId;
-    const opp = opportunities.find(o => o.id === draggableId);
-    
-    if (opp && opp.deal_stage !== newStage) {
+  const executeStageChange = (opp, newStage, additionalData = {}) => {
+      // Merge custom_data if it exists in additionalData to avoid overwriting
+      const updatedCustomData = { 
+          ...(opp.custom_data || {}), 
+          ...(additionalData.custom_data || {}) 
+      };
+      
+      const finalData = { 
+          ...opp, 
+          deal_stage: newStage, 
+          ...additionalData,
+          custom_data: updatedCustomData
+      };
+
       updateOppMutation.mutate({
-        id: draggableId,
-        data: { ...opp, deal_stage: newStage }
+        id: opp.id,
+        data: finalData
       });
 
       if (newStage.includes('Closed Won')) {
           triggerConfetti();
           // Custom Toast Logic
           const toastEl = document.createElement('div');
-          toastEl.className = "fixed top-1/2 left-1/2 transform -tranneutral-x-1/2 -tranneutral-y-1/2 bg-neutral-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
+          toastEl.className = "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-neutral-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 animate-in fade-in zoom-in duration-300 flex items-center gap-3";
           toastEl.innerHTML = `<span class="text-2xl">🎉</span> <div><div class="font-bold">Congratulations!</div><div class="text-sm opacity-90">Another deal closed successfully!</div></div>`;
           document.body.appendChild(toastEl);
           setTimeout(() => {
@@ -233,7 +247,71 @@ export default function OpportunitiesPage() {
               setTimeout(() => document.body.removeChild(toastEl), 500);
           }, 3000);
       }
+  };
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const { draggableId, destination } = result;
+    const newStage = destination.droppableId;
+    const opp = opportunities.find(o => o.id === draggableId);
+    
+    if (opp && opp.deal_stage !== newStage) {
+        // 1. Check for Closed Lost -> Reason Modal
+        if (newStage === 'Closed Lost') {
+            setTransitionData({ opp, newStage });
+            setTransitionType('lost');
+            setTransitionInput('');
+            return;
+        }
+
+        // 2. Check for Meeting Scheduled -> Date Modal
+        // Note: 'Meeting Scheduled' isn't in default stages, but user requested this specific flow.
+        // We'll also apply it to 'Discovery' as that's often when meetings happen, for better UX.
+        if (newStage === 'Meeting Scheduled' || newStage === 'Discovery') {
+            setTransitionData({ opp, newStage });
+            setTransitionType('meeting');
+            // Default to tomorrow 10am
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(10, 0, 0, 0);
+            setTransitionInput(moment(tomorrow).format('YYYY-MM-DDTHH:mm'));
+            return;
+        }
+
+        // 3. Default Transition
+        executeStageChange(opp, newStage);
     }
+  };
+
+  const handleTransitionSubmit = () => {
+      if (!transitionData) return;
+      
+      const { opp, newStage } = transitionData;
+      let additionalData = {};
+
+      if (transitionType === 'lost') {
+          if (!transitionInput.trim()) {
+              alert("Please provide a reason for losing this deal.");
+              return;
+          }
+          additionalData = {
+              custom_data: { loss_reason: transitionInput }
+          };
+      } else if (transitionType === 'meeting') {
+           if (!transitionInput) {
+              alert("Please select a date and time.");
+              return;
+          }
+          additionalData = {
+              next_task: `Meeting on ${moment(transitionInput).format('MMM Do h:mm A')}`,
+              custom_data: { next_meeting_date: transitionInput }
+          };
+      }
+
+      executeStageChange(opp, newStage, additionalData);
+      setTransitionData(null);
+      setTransitionType(null);
+      setTransitionInput('');
   };
 
   // Filter Logic
@@ -607,6 +685,58 @@ export default function OpportunitiesPage() {
           </div>
         </div>
       )}
+
+      {/* Transition Trigger Modal (Micro-Modal) */}
+      <Dialog open={!!transitionData} onOpenChange={(open) => !open && setTransitionData(null)}>
+        <DialogContent className={`sm:max-w-[425px] ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`}>
+          <DialogHeader>
+            <DialogTitle>
+                {transitionType === 'lost' ? '📉 Deal Lost' : '📅 Schedule Meeting'}
+            </DialogTitle>
+            <DialogDescription className={theme === 'dark' ? 'text-slate-400' : ''}>
+                {transitionType === 'lost' 
+                    ? "What was the main reason we lost this deal? This data is crucial for our strategy."
+                    : "When is the meeting scheduled for?"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+              {transitionType === 'lost' ? (
+                  <div className="space-y-2">
+                      <Label htmlFor="loss-reason">Loss Reason</Label>
+                      <Textarea 
+                          id="loss-reason"
+                          placeholder="e.g. Price too high, Competitor X feature..."
+                          value={transitionInput}
+                          onChange={(e) => setTransitionInput(e.target.value)}
+                          className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}
+                      />
+                  </div>
+              ) : (
+                  <div className="space-y-2">
+                      <Label htmlFor="meeting-date">Date & Time</Label>
+                      <Input 
+                          id="meeting-date"
+                          type="datetime-local"
+                          value={transitionInput}
+                          onChange={(e) => setTransitionInput(e.target.value)}
+                          className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}
+                      />
+                  </div>
+              )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTransitionData(null)}>Cancel</Button>
+            <Button 
+                onClick={handleTransitionSubmit}
+                className={transitionType === 'lost' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'}
+            >
+                {transitionType === 'lost' ? 'Mark as Lost' : 'Confirm Meeting'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* טופס עריכה */}
       <Dialog open={showForm} onOpenChange={(open) => { setShowForm(open); if(!open) setEditingOpp(null); }}>
