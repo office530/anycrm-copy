@@ -18,16 +18,27 @@ function LayoutContent({ children, currentPageName }) {
   
   // Exact paths
   const navigation = [
-  { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard },
-  { name: 'Leads', path: 'Leads', icon: Users },
-  { name: 'Opportunities', path: 'Opportunities', icon: Briefcase },
-  { name: 'Act Now', path: 'ActNow', icon: Brain },
-  { name: 'Tasks', path: 'Tasks', icon: CheckSquare },
-  { name: 'Reports', path: 'Reports', icon: BarChart3 },
-  { name: 'Automation', path: 'Automation', icon: Zap },
-
-  { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe },
+  { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard, color: 'cyan' },
+  { name: 'Leads', path: 'Leads', icon: Users, color: 'purple' },
+  { name: 'Opportunities', path: 'Opportunities', icon: Briefcase, color: 'pink' },
+  { name: 'Act Now', path: 'ActNow', icon: Brain, color: 'orange' },
+  { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },
+  { name: 'Reports', path: 'Reports', icon: BarChart3, color: 'emerald' },
+  { name: 'Automation', path: 'Automation', icon: Zap, color: 'indigo' },
+  { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe, color: 'amber' },
   ];
+
+  // Dark Mode Color Configurations
+  const darkColors = {
+      cyan: { active: 'bg-cyan-500/15 text-cyan-400 shadow-cyan-500/10', icon: 'text-cyan-400', indicator: 'bg-cyan-400 shadow-cyan-400/50', hover: 'hover:text-cyan-400' },
+      purple: { active: 'bg-purple-500/15 text-purple-400 shadow-purple-500/10', icon: 'text-purple-400', indicator: 'bg-purple-400 shadow-purple-400/50', hover: 'hover:text-purple-400' },
+      pink: { active: 'bg-pink-500/15 text-pink-400 shadow-pink-500/10', icon: 'text-pink-400', indicator: 'bg-pink-400 shadow-pink-400/50', hover: 'hover:text-pink-400' },
+      orange: { active: 'bg-orange-500/15 text-orange-400 shadow-orange-500/10', icon: 'text-orange-400', indicator: 'bg-orange-400 shadow-orange-400/50', hover: 'hover:text-orange-400' },
+      red: { active: 'bg-red-500/15 text-red-400 shadow-red-500/10', icon: 'text-red-400', indicator: 'bg-red-400 shadow-red-400/50', hover: 'hover:text-red-400' },
+      emerald: { active: 'bg-emerald-500/15 text-emerald-400 shadow-emerald-500/10', icon: 'text-emerald-400', indicator: 'bg-emerald-400 shadow-emerald-400/50', hover: 'hover:text-emerald-400' },
+      indigo: { active: 'bg-indigo-500/15 text-indigo-400 shadow-indigo-500/10', icon: 'text-indigo-400', indicator: 'bg-indigo-400 shadow-indigo-400/50', hover: 'hover:text-indigo-400' },
+      amber: { active: 'bg-amber-500/15 text-amber-400 shadow-amber-500/10', icon: 'text-amber-400', indicator: 'bg-amber-400 shadow-amber-400/50', hover: 'hover:text-amber-400' },
+  };
 
   // Dynamic Colors based on branding
   // New "Clean Luxury Red" styling
@@ -93,6 +104,8 @@ function LayoutContent({ children, currentPageName }) {
             <nav className="flex-1 px-6 lg:px-4 py-8 space-y-3 lg:space-y-2 overflow-y-auto">
                 {navigation.map((item) => {
                 const isActive = currentPageName === item.path;
+                const themeColor = darkColors[item.color] || darkColors.emerald;
+
                 return (
                     <Link
                     key={item.path}
@@ -102,20 +115,20 @@ function LayoutContent({ children, currentPageName }) {
                         group flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-5 lg:py-3.5 text-lg lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
                         ? theme === 'dark' 
-                          ? 'bg-emerald-500/15 text-emerald-400 font-bold shadow-sm shadow-emerald-500/10' 
+                          ? `${themeColor.active} font-bold shadow-sm` 
                           : 'bg-red-50 text-red-700 font-bold shadow-sm'
                         : theme === 'dark'
-                          ? 'text-slate-400 hover:bg-[#1E293B] hover:text-emerald-400'
+                          ? `text-slate-400 hover:bg-[#1E293B] ${themeColor.hover}`
                           : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/50 lg:bg-transparent'}
                     `}
                     >
                     <item.icon className={`w-6 h-6 lg:w-5 lg:h-5 transition-colors ${
                       isActive 
-                        ? theme === 'dark' ? 'text-emerald-400' : 'text-red-700'
-                        : theme === 'dark' ? 'text-slate-500 group-hover:text-emerald-400' : 'text-neutral-400 group-hover:text-red-600'
+                        ? theme === 'dark' ? themeColor.icon : 'text-red-700'
+                        : theme === 'dark' ? `text-slate-500 group-${themeColor.hover}` : 'text-neutral-400 group-hover:text-red-600'
                     }`} />
                     <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 lg:h-6 rounded-r-full ${theme === 'dark' ? 'bg-emerald-400 shadow-lg shadow-emerald-400/50' : 'bg-red-600'}`} />}
+                    {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 lg:h-6 rounded-r-full ${theme === 'dark' ? `${themeColor.indicator} shadow-lg` : 'bg-red-600'}`} />}
                     </Link>
                 );
                 })}
@@ -127,18 +140,23 @@ function LayoutContent({ children, currentPageName }) {
                     to={createPageUrl('Settings')}
                     onClick={() => setIsSidebarOpen(false)}
                     className={`
-                        flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-4 lg:py-3 text-base lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200
+                        flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-4 lg:py-3 text-base lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200 group
                         ${currentPageName === 'Settings' 
                           ? theme === 'dark' 
-                            ? 'bg-emerald-500/15 text-emerald-400 font-bold' 
+                            ? 'bg-white/10 text-white font-bold shadow-sm shadow-white/5' 
                             : 'bg-red-50 text-red-700 font-bold'
                           : theme === 'dark'
-                            ? 'text-slate-400 hover:bg-[#1E293B] hover:text-emerald-400'
+                            ? 'text-slate-400 hover:bg-[#1E293B] hover:text-white'
                             : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/30 lg:bg-transparent'}
                     `}
                 >
-                    <SettingsIcon className="w-6 h-6 lg:w-5 lg:h-5" />
+                    <SettingsIcon className={`w-6 h-6 lg:w-5 lg:h-5 transition-colors ${
+                        currentPageName === 'Settings' 
+                        ? theme === 'dark' ? 'text-white' : 'text-red-700'
+                        : theme === 'dark' ? 'text-slate-500 group-hover:text-white' : 'text-neutral-400'
+                    }`} />
                     System Settings
+                    {currentPageName === 'Settings' && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-r-full ${theme === 'dark' ? 'bg-white shadow-lg shadow-white/30' : 'hidden'}`} />}
                 </Link>
                 <button
                     onClick={toggleTheme}
