@@ -324,7 +324,7 @@ export default function LeadsPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto mt-8 md:mt-0">
+          <div className="flex items-center gap-2 w-full md:w-auto md:mt-0">
                {/* View Toggle */}
                <div className={`h-10 p-1 rounded-xl flex border shadow-sm ${
                    theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'

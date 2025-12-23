@@ -28,7 +28,7 @@ export default function OpportunitiesPage() {
   const [viewMode, setViewMode] = useState('kanban');
   
   // Smart Filters with URL Sync
-  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, search, setSearch } = useUrlFilters('pipeline');
+  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, search, setSearch } = useUrlFilters('all');
 
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -152,8 +152,8 @@ export default function OpportunitiesPage() {
   ], [pipelineStages]);
 
   const views = [
-      { id: 'pipeline', label: 'Active Pipeline' },
       { id: 'all', label: 'All Deals' },
+      { id: 'pipeline', label: 'Active Pipeline' },
       { id: 'won', label: 'Closed Won' },
       { id: 'lost', label: 'Closed Lost' }
   ];
