@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, LayoutGrid, List as ListIcon, Phone, Calendar, DollarSign, Briefcase, Trophy, Trash2, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, LayoutGrid, List as ListIcon, Phone, Calendar, DollarSign, Briefcase, Trophy, Trash2, Search, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { triggerConfetti } from "@/components/utils/confetti";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -17,6 +17,7 @@ import OpportunityForm from "@/components/crm/OpportunityForm";
 import { InlineEdit } from "@/components/ui/InlineEdit";
 import { usePermissions } from '@/components/hooks/usePermissions';
 import moment from "moment";
+import SmartFilterBar from "@/components/common/SmartFilterBar";
 
 export default function OpportunitiesPage() {
   const { canCreate, canEdit, canDelete } = usePermissions();
@@ -24,7 +25,11 @@ export default function OpportunitiesPage() {
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
-  const [searchTerm, setSearchTerm] = useState('');
+  // Smart Filter State
+  const [activeView, setActiveView] = useState('pipeline');
+  const [search, setSearch] = useState('');
+  const [activeFilters, setActiveFilters] = useState({});
+
   const queryClient = useQueryClient();
   const location = useLocation();
   
@@ -129,6 +134,35 @@ export default function OpportunitiesPage() {
     return { totalPipeline, totalDeals, wonDeals, activeDeals };
   }, [opportunities]);
 
+  // Filter Schema
+  const filterSchema = useMemo(() => [
+    { 
+        key: 'deal_stage', 
+        label: 'Stage', 
+        type: 'select', 
+        options: (pipelineStages || []).map(s => ({ label: s.label, value: s.id })) 
+    },
+    { 
+        key: 'product_type', 
+        label: 'Product', 
+        type: 'select', 
+        options: ['Consulting', 'Service', 'Product', 'Software', 'Other'].map(p => ({ label: p, value: p })) 
+    },
+    { key: 'amount', label: 'Value >', type: 'number' } // Simple text input for now
+  ], [pipelineStages]);
+
+  const views = [
+      { id: 'pipeline', label: 'Active Pipeline' },
+      { id: 'all', label: 'All Deals' },
+      { id: 'won', label: 'Closed Won' },
+      { id: 'lost', label: 'Closed Lost' }
+  ];
+
+  const handleViewChange = (viewId) => {
+      setActiveView(viewId);
+      setActiveFilters({}); // Reset filters on view change
+  };
+
   const createOppMutation = useMutation({
     mutationFn: (data) => base44.entities.Opportunity.create(data),
     onSuccess: (data) => {
@@ -185,24 +219,40 @@ export default function OpportunitiesPage() {
     }
   };
 
-  // Filter opportunities by search term
+  // Filter Logic
   const filteredOpportunities = useMemo(() => {
-    if (!searchTerm.trim()) return opportunities;
-    
-    const term = searchTerm.toLowerCase().trim();
     return opportunities.filter(opp => {
-      const leadName = (opp.lead_name || '').toLowerCase();
-      const phone = (opp.phone_number || '').replace(/\D/g, '');
-      const searchPhone = term.replace(/\D/g, '');
-      const email = (opp.email || '').toLowerCase();
-      const product = (opp.product_type || '').toLowerCase();
-      
-      return leadName.includes(term) || 
-             phone.includes(searchPhone) || 
-             email.includes(term) ||
-             product.includes(term);
+        // 1. View Logic
+        if (activeView === 'pipeline') {
+            if (opp.deal_stage?.includes('Won') || opp.deal_stage?.includes('Lost')) return false;
+        }
+        if (activeView === 'won' && !opp.deal_stage?.includes('Won')) return false;
+        if (activeView === 'lost' && !opp.deal_stage?.includes('Lost')) return false;
+
+        // 2. Smart Filters
+        if (activeFilters.deal_stage && opp.deal_stage !== activeFilters.deal_stage) return false;
+        if (activeFilters.product_type && opp.product_type !== activeFilters.product_type) return false;
+        if (activeFilters.amount && Number(opp.amount) < Number(activeFilters.amount)) return false;
+
+        // 3. Search
+        const term = search.toLowerCase().trim();
+        if (term) {
+            const leadName = (opp.lead_name || '').toLowerCase();
+            const phone = (opp.phone_number || '').replace(/\D/g, '');
+            const searchPhone = term.replace(/\D/g, '');
+            const email = (opp.email || '').toLowerCase();
+            const product = (opp.product_type || '').toLowerCase();
+            
+            const matches = leadName.includes(term) || 
+                   phone.includes(searchPhone) || 
+                   email.includes(term) ||
+                   product.includes(term);
+            if (!matches) return false;
+        }
+
+        return true;
     });
-  }, [opportunities, searchTerm]);
+  }, [opportunities, search, activeView, activeFilters]);
 
   const getStageOpportunities = (stageId) => filteredOpportunities.filter(o => o.deal_stage === stageId);
   const calculateTotal = (stageId) => getStageOpportunities(stageId).reduce((acc, curr) => acc + (curr.loan_amount_requested || 0), 0);
@@ -212,32 +262,31 @@ export default function OpportunitiesPage() {
   return (
     <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
-      {/* Search Bar & Actions */}
-      <div className="mb-4 flex justify-between items-center gap-4">
-        <div className="relative max-w-md w-full">
-          <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
-          <Input
-            placeholder="Search client, phone, email or product..."
-            className={`pl-10 rounded-lg ${
-                theme === 'dark' 
-                    ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-cyan-500' 
-                    : 'border-slate-300 focus:border-purple-500 focus:ring-purple-500'
-            }`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      {/* Smart Filter Bar & Actions */}
+      <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <div className="flex-1 w-full">
+            <SmartFilterBar 
+                views={views}
+                activeView={activeView}
+                onViewChange={handleViewChange}
+                schema={filterSchema}
+                filters={activeFilters}
+                onFilterChange={setActiveFilters}
+                search={search}
+                onSearchChange={setSearch}
+            />
         </div>
         {canCreate && (
           <Button 
               onClick={() => { setEditingOpp(null); setShowForm(true); }} 
-              className={`text-white shadow-md ${
+              className={`h-10 text-white shadow-lg mt-8 md:mt-0 ${
                   theme === 'dark' 
                       ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
                       : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
               }`}
           >
               <div className="flex items-center gap-2">
-                  <LayoutGrid className="w-4 h-4" /> 
+                  <Plus className="w-5 h-5" /> 
                   <span>New Opportunity</span>
               </div>
           </Button>
