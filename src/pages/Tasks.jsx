@@ -43,7 +43,24 @@ export default function TasksPage() {
 
   const updateTask = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries(['tasks'])
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries(['tasks']);
+      const previousTasks = queryClient.getQueryData(['tasks']);
+
+      queryClient.setQueryData(['tasks'], (old) => {
+        return old.map((t) => 
+          t.id === id ? { ...t, ...data, updated_date: new Date().toISOString() } : t
+        );
+      });
+
+      return { previousTasks };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(['tasks'], context.previousTasks);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['tasks']);
+    }
   });
 
   const deleteTask = useMutation({
@@ -266,6 +283,9 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
   const isOverdue = task.due_date && moment(task.due_date).isBefore(moment(), 'day') && task.status !== 'done';
   const isToday = task.due_date && moment(task.due_date).isSame(moment(), 'day');
   const isDone = task.status === 'done';
+  
+  // Stale check: Not updated in > 14 days and not done/archived
+  const isStale = !isDone && !isArchived && moment(task.updated_date).isBefore(moment().subtract(14, 'days'));
 
   return (
     <motion.div
@@ -304,6 +324,7 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
             <div className="flex items-center gap-1 flex-shrink-0">
               {isOverdue && !isDone && <Badge variant="destructive" className="text-xs">Overdue</Badge>}
               {isToday && !isDone && <Badge className="bg-orange-500 text-xs">Today</Badge>}
+              {isStale && <Badge variant="outline" className="text-xs border-amber-500 text-amber-600 bg-amber-50">Stagnant</Badge>}
               {task.due_date && (
                 <span className={`text-xs flex items-center gap-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                   <Calendar className="w-3 h-3" />

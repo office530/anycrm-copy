@@ -122,6 +122,23 @@ export default function ReportsPage() {
             </div>
             
             <div className="flex items-center gap-3">
+                {/* Refresh Data Button */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                        queryClient.invalidateQueries(['leads']);
+                        queryClient.invalidateQueries(['opportunities']);
+                        queryClient.invalidateQueries(['tasks']);
+                        queryClient.invalidateQueries(['activities']);
+                        toast.success("Refreshing data...");
+                    }}
+                    className={theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}
+                    title="Refresh Data"
+                >
+                    <Loader2 className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                </Button>
+
                 <Button 
                     onClick={handleExport} 
                     disabled={isExporting}

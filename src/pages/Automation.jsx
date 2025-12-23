@@ -70,7 +70,24 @@ export default function AutomationPage() {
 
   const toggleRule = useMutation({
     mutationFn: ({ id, isActive }) => base44.entities.AutomationRule.update(id, { is_active: isActive }),
-    onSuccess: () => queryClient.invalidateQueries(['automationRules'])
+    onMutate: async ({ id, isActive }) => {
+      await queryClient.cancelQueries(['automationRules']);
+      const previousRules = queryClient.getQueryData(['automationRules']);
+
+      queryClient.setQueryData(['automationRules'], (old) => {
+        return old.map((r) => 
+          r.id === id ? { ...r, is_active: isActive } : r
+        );
+      });
+
+      return { previousRules };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['automationRules'], context.previousRules);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['automationRules']);
+    }
   });
 
   const duplicateRule = (rule) => {
