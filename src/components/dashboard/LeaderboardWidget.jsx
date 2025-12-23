@@ -50,10 +50,11 @@ export default function LeaderboardWidget({ opportunities }) {
                     <div className="text-center text-slate-500 py-8">No closed deals yet</div>
                 ) : (
                     leaderboard.map((agent, index) => (
-                        <div 
+                        <Link 
+                            to={`${createPageUrl('Opportunities')}?view=won`}
                             key={agent.name}
-                            className={`flex items-center gap-3 p-3 rounded-xl transition-colors ${
-                                isDark ? 'bg-slate-800/40 hover:bg-slate-800/60' : 'bg-slate-50 hover:bg-slate-100'
+                            className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                                isDark ? 'bg-slate-800/40 hover:bg-slate-800/80 hover:scale-[1.02]' : 'bg-slate-50 hover:bg-slate-100 hover:scale-[1.02]'
                             }`}
                         >
                             <div className="w-8 flex justify-center">{getRankIcon(index)}</div>
@@ -75,7 +76,7 @@ export default function LeaderboardWidget({ opportunities }) {
                                     Pipe: ${(agent.pipeline / 1000).toFixed(0)}k
                                 </p>
                             </div>
-                        </div>
+                        </Link>
                     ))
                 )}
             </CardContent>

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area } from
@@ -27,6 +28,7 @@ export default function Dashboard() {
   const [showAddWidget, setShowAddWidget] = useState(false);
   const { theme, branding, pipelineStages } = useSettings();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const getStageColor = (stageName) => {
     // Normalize stage name (remove translations in parens)
@@ -200,7 +202,7 @@ export default function Dashboard() {
                             Start "Act Now" Engine
                         </Button>
                     </Link>
-                    <Link to={createPageUrl('Leads')} className={`flex items-center gap-4 px-6 py-3 rounded-2xl border backdrop-blur-md hover:scale-105 transition-transform cursor-pointer ${
+                    <Link to={`${createPageUrl('Leads')}?view=new`} className={`flex items-center gap-4 px-6 py-3 rounded-2xl border backdrop-blur-md hover:scale-105 transition-transform cursor-pointer ${
                         theme === 'dark' ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800' : 'bg-white/50 border-white/50 text-slate-600 hover:bg-white/80'
                     }`}>
                          <div className="flex -space-x-2">
@@ -239,7 +241,7 @@ export default function Dashboard() {
           {/* 2. Quick Stats Grid (Span 4) */}
           <div className="md:col-span-4 grid grid-cols-2 gap-4">
                {/* Stat 1 */}
-               <div className={`col-span-2 rounded-3xl p-6 border flex items-center justify-between ${glassCardClasses}`}>
+               <Link to={`${createPageUrl('Opportunities')}?view=won`} className={`col-span-2 rounded-3xl p-6 border flex items-center justify-between transition-transform hover:scale-[1.02] cursor-pointer ${glassCardClasses}`}>
                    <div>
                        <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Total Revenue</p>
                        <p className={`text-3xl font-bold tracking-tight ${theme === 'dark' ? 'text-emerald-400' : 'text-slate-800'}`}>
@@ -249,25 +251,25 @@ export default function Dashboard() {
                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
                        <DollarSign className="w-6 h-6" />
                    </div>
-               </div>
+               </Link>
 
                {/* Stat 2 */}
-               <div className={`rounded-3xl p-6 border flex flex-col justify-center ${glassCardClasses}`}>
+               <Link to={`${createPageUrl('Leads')}?view=all`} className={`rounded-3xl p-6 border flex flex-col justify-center transition-transform hover:scale-[1.02] cursor-pointer ${glassCardClasses}`}>
                    <div className={`w-10 h-10 mb-3 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                        <Users className="w-5 h-5" />
                    </div>
                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{stats.totalLeads}</p>
                    <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Active Leads</p>
-               </div>
+               </Link>
 
                {/* Stat 3 */}
-               <div className={`rounded-3xl p-6 border flex flex-col justify-center ${glassCardClasses}`}>
+               <Link to={`${createPageUrl('Opportunities')}?view=won`} className={`rounded-3xl p-6 border flex flex-col justify-center transition-transform hover:scale-[1.02] cursor-pointer ${glassCardClasses}`}>
                    <div className={`w-10 h-10 mb-3 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                        <Activity className="w-5 h-5" />
                    </div>
                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{stats.wonOppsCount}</p>
                    <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Deals Won</p>
-               </div>
+               </Link>
           </div>
       </div>
 
@@ -299,10 +301,10 @@ export default function Dashboard() {
           {/* Large Chart (Span 8) */}
           <div className={`md:col-span-8 rounded-[2rem] p-6 md:p-8 border ${glassCardClasses}`}>
               <div className="flex items-center justify-between mb-8">
-                  <h3 className={`text-xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+                  <Link to={createPageUrl('Reports')} className={`text-xl font-bold flex items-center gap-2 hover:opacity-80 transition-opacity ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
                       <span className="w-2 h-8 rounded-full bg-blue-500 inline-block mr-2"></span>
                       Growth Overview
-                  </h3>
+                  </Link>
                    <Select value={timeRange} onValueChange={setTimeRange}>
                       <SelectTrigger className={`w-[140px] h-10 rounded-full border-none ${
                     theme === 'dark' ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`
@@ -396,6 +398,15 @@ export default function Dashboard() {
                                   outerRadius={80}
                                   paddingAngle={5}
                                   dataKey="value"
+                                  className="cursor-pointer focus:outline-none"
+                                  onClick={(data) => {
+                                      if (data && data.name) {
+                                          // Try to filter by stage ID if possible, otherwise navigate
+                                          // Assuming Opportunity page handles ?action=filter&stage=... or similar manually implemented
+                                          // For now, simple navigation
+                                          navigate(`${createPageUrl('Opportunities')}?view=pipeline`); 
+                                      }
+                                  }}
                               >
                                   {stats.stageData.map((entry, index) => (
                                       <Cell key={`cell-${index}`} fill={entry.fill} stroke="none" />

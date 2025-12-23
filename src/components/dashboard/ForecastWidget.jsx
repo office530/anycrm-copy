@@ -29,10 +29,10 @@ export default function ForecastWidget({ opportunities, timeRange, periodTarget 
         <Card className={`h-full border-none shadow-none bg-transparent`}>
             <CardHeader className="px-0 pt-0">
                 <CardTitle className={`text-lg font-bold flex items-center justify-between ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                    <div className="flex items-center gap-2">
+                    <Link to={createPageUrl('Opportunities')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                         <Target className="w-5 h-5 text-indigo-500" />
                         Forecast vs Quota
-                    </div>
+                    </Link>
                     <span className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                         Target: {branding.currency}{periodTarget.toLocaleString()}
                     </span>

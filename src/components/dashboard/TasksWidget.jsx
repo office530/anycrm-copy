@@ -74,7 +74,7 @@ export default function TasksWidget({ className }) {
               return (
                 <div
                   key={task.id}
-                  className={`p-4 rounded-2xl border transition-all duration-300 ${
+                  className={`p-4 rounded-2xl border transition-all duration-300 group ${
                     theme === 'dark'
                       ? isDone 
                         ? 'bg-slate-800/30 border-slate-700 opacity-50' 
@@ -91,8 +91,12 @@ export default function TasksWidget({ className }) {
                   <div className="flex items-start gap-2">
                     {/* Checkbox */}
                     <button
-                      onClick={() => toggleTaskStatus(task)}
-                      className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                      onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleTaskStatus(task);
+                      }}
+                      className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors z-10 ${
                         isDone
                           ? 'bg-emerald-500 border-emerald-500'
                           : 'border-slate-300 hover:border-emerald-500'
@@ -102,7 +106,7 @@ export default function TasksWidget({ className }) {
                     </button>
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0">
+                    <Link to={createPageUrl('Tasks')} className="flex-1 min-w-0 cursor-pointer block">
                       <div className="flex justify-between items-start mb-1">
                         <h4
                           className={`font-medium text-sm line-clamp-1 ${
@@ -134,7 +138,7 @@ export default function TasksWidget({ className }) {
                           {task.description}
                         </p>
                       )}
-                    </div>
+                    </Link>
                   </div>
                 </div>
               );
