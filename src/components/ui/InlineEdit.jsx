@@ -93,14 +93,14 @@ export function InlineEdit({
            >
             <SelectTrigger className={`h-8 text-sm transition-all ${
               theme === 'dark' 
-                ? 'bg-slate-800 border-slate-600 text-white ring-1 ring-slate-600' 
+                ? 'bg-[#151E32] border-[#1E293B] text-white ring-1 ring-[#1E293B]' 
                 : 'bg-white border-slate-200 text-slate-900 ring-1 ring-slate-200'
             }`}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className={`backdrop-blur-xl border shadow-xl ${
               theme === 'dark' 
-                ? 'bg-slate-900/95 border-slate-700 text-slate-200' 
+                ? 'bg-[#0B1121]/95 border-[#1E293B] text-slate-200' 
                 : 'bg-white/95 border-slate-200 text-slate-700'
             }`}>
               {options.map((opt) => (
@@ -109,7 +109,7 @@ export function InlineEdit({
                   value={opt.value}
                   className={`transition-colors cursor-pointer ${
                     theme === 'dark' 
-                      ? 'focus:bg-slate-800 focus:text-cyan-400 hover:bg-slate-800 hover:text-cyan-400' 
+                      ? 'focus:bg-[#151E32] focus:text-emerald-400 hover:bg-[#151E32] hover:text-emerald-400' 
                       : 'focus:bg-slate-50 focus:text-indigo-600 hover:bg-slate-50 hover:text-indigo-600'
                   }`}
                 >
@@ -133,7 +133,7 @@ export function InlineEdit({
           onKeyDown={handleKeyDown}
           className={`h-8 text-sm w-full transition-all ${
             theme === 'dark' 
-              ? 'bg-slate-800 border-slate-600 text-white focus-visible:ring-cyan-500/50' 
+              ? 'bg-[#151E32] border-[#1E293B] text-white focus-visible:ring-emerald-500/50' 
               : 'bg-white border-slate-200 text-slate-900 focus-visible:ring-indigo-200'
           }`}
           placeholder={placeholder}
@@ -141,7 +141,7 @@ export function InlineEdit({
         <div className="absolute left-2 top-1/2 -translate-y-1/2 flex gap-1">
             <button onMouseDown={() => handleSave()} className={`rounded-full p-0.5 transition-colors ${
               theme === 'dark' 
-                ? 'bg-cyan-600 text-white hover:bg-cyan-500' 
+                ? 'bg-emerald-600 text-white hover:bg-emerald-500' 
                 : 'bg-indigo-600 text-white hover:bg-indigo-700'
             }`}>
                 <Check className="w-3 h-3" />
@@ -161,7 +161,7 @@ export function InlineEdit({
       className={cn(
         "group relative flex items-center gap-2 cursor-pointer rounded px-2 py-1.5 -ml-2 transition-all border border-transparent min-h-[32px] font-medium", 
         theme === 'dark' 
-          ? "text-slate-200 hover:bg-slate-800 hover:border-slate-700" 
+          ? "text-slate-200 hover:bg-[#151E32] hover:border-[#1E293B]" 
           : "text-neutral-900 hover:bg-white hover:shadow-sm hover:border-neutral-200", 
         className
       )}
