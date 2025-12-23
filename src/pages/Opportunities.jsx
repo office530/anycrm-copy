@@ -264,8 +264,7 @@ export default function OpportunitiesPage() {
     <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Smart Filter Bar & Actions */}
-      <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-        <div className="flex-1 w-full">
+      <div className="mb-6">
             <SmartFilterBar 
                 views={views}
                 activeView={activeView}
@@ -275,23 +274,24 @@ export default function OpportunitiesPage() {
                 onFilterChange={setActiveFilters}
                 search={search}
                 onSearchChange={setSearch}
-            />
-        </div>
-        {canCreate && (
-          <Button 
-              onClick={() => { setEditingOpp(null); setShowForm(true); }} 
-              className={`h-10 text-white shadow-lg mt-8 md:mt-0 ${
-                  theme === 'dark' 
-                      ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
-                      : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
-              }`}
-          >
-              <div className="flex items-center gap-2">
-                  <Plus className="w-5 h-5" /> 
-                  <span>New Opportunity</span>
-              </div>
-          </Button>
-        )}
+            >
+                {canCreate && (
+                  <Button 
+                      onClick={() => { setEditingOpp(null); setShowForm(true); }} 
+                      size="sm"
+                      className={`h-8 text-white shadow-lg rounded-lg ${
+                          theme === 'dark' 
+                              ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
+                              : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
+                      }`}
+                  >
+                      <div className="flex items-center gap-2">
+                          <Plus className="w-4 h-4" /> 
+                          <span className="text-xs font-medium">New Opportunity</span>
+                      </div>
+                  </Button>
+                )}
+            </SmartFilterBar>
       </div>
 
       {/* Stats Header (New!) */}

@@ -310,8 +310,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Smart Filter Bar */}
-      <div className="sticky top-4 z-40 mx-2 md:mx-0 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between mb-4">
-          <div className="flex-1 w-full">
+      <div className="sticky top-4 z-40 mx-2 md:mx-0 mb-4">
             <SmartFilterBar 
                 views={views}
                 activeView={activeView}
@@ -321,53 +320,51 @@ export default function LeadsPage() {
                 onFilterChange={setActiveFilters}
                 search={search}
                 onSearchChange={setSearch}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 w-full md:w-auto md:mt-0">
+            >
                {/* View Toggle */}
-               <div className={`h-10 p-1 rounded-xl flex border shadow-sm ${
+               <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm ${
                    theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'
                 }`}>
-                   <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-lg px-3 ${
+                   <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-md px-2 ${
                      viewMode === 'kanban' 
                        ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
                        : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
                    }`}>
-                       <LayoutGrid className="w-4 h-4" />
+                       <LayoutGrid className="w-3.5 h-3.5" />
                    </Button>
-                   <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-lg px-3 ${
+                   <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-md px-2 ${
                      viewMode === 'list' 
                        ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
                        : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
                    }`}>
-                       <ListIcon className="w-4 h-4" />
+                       <ListIcon className="w-3.5 h-3.5" />
                    </Button>
                 </div>
-            
+
              {/* Actions */}
              {canCreate && (
-               <div className="flex gap-2 flex-1 md:flex-none">
+               <div className="flex gap-2">
                  <Button 
                     onClick={() => setShowAiImport(true)}
-                    className={`h-10 flex-1 md:flex-none rounded-xl border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
+                    size="sm"
+                    className={`h-8 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
                         theme === 'dark' ? 'text-purple-300' : ''
                     }`}
                  >
-                    <Sparkles className="w-4 h-4 md:mr-2" />
-                    <span className="hidden md:inline">AI Import</span>
+                    <Sparkles className="w-3.5 h-3.5 md:mr-2" />
+                    <span className="hidden md:inline text-xs font-medium">AI Import</span>
                  </Button>
-                 <Button onClick={() => setShowLeadForm(true)} className={`h-10 flex-1 md:flex-none rounded-xl shadow-lg shadow-indigo-500/20 ${
+                 <Button size="sm" onClick={() => setShowLeadForm(true)} className={`h-8 rounded-lg shadow-lg shadow-indigo-500/20 ${
                      theme === 'dark' 
                      ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
                      : 'bg-indigo-600 hover:bg-indigo-700 text-white'
                  }`}>
-                    <Plus className="w-5 h-5 md:mr-1" />
-                    <span className="hidden md:inline">New</span>
+                    <Plus className="w-4 h-4 md:mr-1" />
+                    <span className="hidden md:inline text-xs font-medium">New</span>
                  </Button>
                </div>
              )}
-          </div>
+            </SmartFilterBar>
       </div>
 
       {/* --- תצוגת קאנבן --- */}

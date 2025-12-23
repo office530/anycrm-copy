@@ -57,7 +57,8 @@ export default function SmartFilterBar({
     onFilterChange,
     search,
     onSearchChange,
-    className
+    className,
+    children
 }) {
     const { theme } = useSettings();
     const [openPopover, setOpenPopover] = useState(null); // 'add' or filter key
@@ -232,6 +233,16 @@ export default function SmartFilterBar({
                         </Button>
                     )}
                 </div>
+
+                {/* 4. Action Buttons (Passed as Children) */}
+                {children && (
+                    <>
+                        <div className={cn("hidden md:block w-px h-6 mx-2", theme === 'dark' ? "bg-slate-700" : "bg-slate-200")} />
+                        <div className="flex items-center gap-2">
+                            {children}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
