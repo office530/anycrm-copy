@@ -245,7 +245,7 @@ export default function Dashboard() {
                    <div>
                        <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Total Revenue</p>
                        <p className={`text-3xl font-bold tracking-tight ${theme === 'dark' ? 'text-emerald-400' : 'text-slate-800'}`}>
-                           ${(stats.totalWonValue / 1000).toFixed(1)}k
+                           ${(stats.totalWonValue / 1000000).toFixed(2)}m
                        </p>
                    </div>
                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}>
