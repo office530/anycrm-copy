@@ -18,6 +18,7 @@ import { InlineEdit } from "@/components/ui/InlineEdit";
 import { usePermissions } from '@/components/hooks/usePermissions';
 import moment from "moment";
 import SmartFilterBar from "@/components/common/SmartFilterBar";
+import { useUrlFilters } from '@/components/hooks/useUrlFilters';
 
 export default function OpportunitiesPage() {
   const { canCreate, canEdit, canDelete } = usePermissions();
@@ -25,10 +26,9 @@ export default function OpportunitiesPage() {
   const [editingOpp, setEditingOpp] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState('kanban');
-  // Smart Filter State
-  const [activeView, setActiveView] = useState('pipeline');
-  const [search, setSearch] = useState('');
-  const [activeFilters, setActiveFilters] = useState({});
+  
+  // Smart Filters with URL Sync
+  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, search, setSearch } = useUrlFilters('pipeline');
 
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -160,7 +160,8 @@ export default function OpportunitiesPage() {
 
   const handleViewChange = (viewId) => {
       setActiveView(viewId);
-      setActiveFilters({}); // Reset filters on view change
+      // Reset filters when switching views for clarity
+      setActiveFilters({});
   };
 
   const createOppMutation = useMutation({

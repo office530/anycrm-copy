@@ -25,6 +25,7 @@ import { useSettings } from "@/components/context/SettingsContext";
 import AiLeadImport from "@/components/crm/AiLeadImport";
 import { usePermissions } from '@/components/hooks/usePermissions';
 import SmartFilterBar from "@/components/common/SmartFilterBar";
+import { useUrlFilters } from '@/components/hooks/useUrlFilters';
 
 import { useLocation } from "react-router-dom";
 
@@ -59,10 +60,10 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('kanban'); // Default to kanban view
-  // New Smart Filter State
-  const [activeView, setActiveView] = useState('all');
-  const [search, setSearch] = useState("");
-  const [activeFilters, setActiveFilters] = useState({}); // { status: 'New', year: '2024' }
+  
+  // Smart Filters with URL Sync
+  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, search, setSearch } = useUrlFilters('all');
+  
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
@@ -162,10 +163,10 @@ export default function LeadsPage() {
   const handleViewChange = (viewId) => {
       setActiveView(viewId);
       // Reset filters or set presets based on view
-      if (viewId === 'all') setActiveFilters({});
-      if (viewId === 'new') setActiveFilters({ status: 'New' }); // Simplified logic, could be date based
-      if (viewId === 'my_leads') setActiveFilters({}); // Logic handled in filtering
-      if (viewId === 'requires_action') setActiveFilters({ status: 'Attempting Contact' });
+      const newFilters = {};
+      if (viewId === 'new') newFilters.status = 'New';
+      if (viewId === 'requires_action') newFilters.status = 'Attempting Contact';
+      setActiveFilters(newFilters);
   };
 
   // חישוב סטטיסטיקות
