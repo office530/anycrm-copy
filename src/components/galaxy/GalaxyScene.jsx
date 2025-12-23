@@ -100,11 +100,11 @@ export default function GalaxyScene({ opportunities }) {
     };
 
     const getOrbitalSpeed = (updatedDate) => {
-        if (!updatedDate) return 0.002;
+        if (!updatedDate) return 0.0005;
         const days = differenceInDays(new Date(), new Date(updatedDate));
-        if (days < 7) return 0.005; // Fast (Fresh)
-        if (days < 30) return 0.002; // Medium
-        return 0.0005; // Slow (Stagnant)
+        if (days < 7) return 0.0015; // Fast (Fresh)
+        if (days < 30) return 0.0008; // Medium
+        return 0.0002; // Slow (Stagnant)
     };
 
     // --- Scene Setup ---
