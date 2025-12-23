@@ -33,12 +33,12 @@ function LayoutContent({ children, currentPageName }) {
   const activeClass = `bg-red-50 text-red-700 font-bold`;
 
   return (
-    <div className={`min-h-screen font-heebo flex transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-neutral-50 text-neutral-900'}`} dir="ltr">
+    <div className={`min-h-screen font-heebo flex transition-colors duration-300 ${theme === 'dark' ? 'bg-background text-foreground' : 'bg-neutral-50 text-neutral-900'}`} dir="ltr">
       
       {/* Sidebar / Drawer - Adaptive */}
       <aside className={`
         fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-sm
-        ${theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-neutral-800 border-neutral-100'}
+        ${theme === 'dark' ? 'bg-card text-foreground border-border' : 'bg-white text-neutral-800 border-neutral-100'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative">
@@ -50,19 +50,19 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* Logo Area */}
-            <div className={`p-6 lg:p-6 border-b flex flex-col items-center lg:items-start mt-10 lg:mt-0 ${theme === 'dark' ? 'border-slate-700' : 'border-neutral-50'}`}>
+            <div className={`p-6 lg:p-6 border-b flex flex-col items-center lg:items-start mt-10 lg:mt-0 ${theme === 'dark' ? 'border-border' : 'border-neutral-50'}`}>
                 <Link to={createPageUrl('Dashboard')} onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 text-2xl lg:text-2xl font-bold tracking-tight hover:opacity-80 transition-opacity">
                     {branding.logoUrl ? (
-                        <img src={branding.logoUrl} alt="Logo" className={`w-16 h-16 lg:w-10 lg:h-10 object-contain rounded-full p-1 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`} />
+                        <img src={branding.logoUrl} alt="Logo" className={`w-16 h-16 lg:w-10 lg:h-10 object-contain rounded-full p-1 ${theme === 'dark' ? 'bg-background' : 'bg-white'}`} />
                     ) : (
-                        <div className={`rounded-full lg:rounded-lg p-4 lg:p-2 shadow-lg ${theme === 'dark' ? 'bg-cyan-500 shadow-cyan-500/50' : 'bg-red-700 shadow-red-900/20'}`}>
-                            <Database className="w-8 h-8 lg:w-6 lg:h-6 text-white" />
+                        <div className={`rounded-full lg:rounded-lg p-4 lg:p-2 shadow-lg ${theme === 'dark' ? 'bg-primary shadow-primary/50' : 'bg-red-700 shadow-red-900/20'}`}>
+                            <Database className="w-8 h-8 lg:w-6 lg:h-6 text-primary-foreground" />
                         </div>
                     )}
                     <span className="hidden lg:inline truncate">{branding.companyName}</span>
                 </Link>
                 <p className="lg:hidden text-xl font-bold mt-4">{branding.companyName}</p>
-                <p className={`text-sm mt-2 font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-neutral-500 opacity-80'}`}>Anyone's CRM</p>
+                <p className={`text-sm mt-2 font-medium tracking-wide ${theme === 'dark' ? 'text-primary' : 'text-neutral-500 opacity-80'}`}>Anyone's CRM</p>
             </div>
 
             {/* Nav */}
@@ -78,27 +78,27 @@ function LayoutContent({ children, currentPageName }) {
                         group flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-5 lg:py-3.5 text-lg lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200 relative overflow-hidden
                         ${isActive 
                         ? theme === 'dark' 
-                          ? 'bg-cyan-500/20 text-cyan-400 font-bold shadow-sm shadow-cyan-500/20' 
+                          ? 'bg-primary/20 text-primary font-bold shadow-sm shadow-primary/20' 
                           : 'bg-red-50 text-red-700 font-bold shadow-sm'
                         : theme === 'dark'
-                          ? 'text-slate-300 hover:bg-slate-700 hover:text-cyan-400'
+                          ? 'text-muted-foreground hover:bg-muted hover:text-primary'
                           : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/50 lg:bg-transparent'}
                     `}
                     >
                     <item.icon className={`w-6 h-6 lg:w-5 lg:h-5 transition-colors ${
                       isActive 
-                        ? theme === 'dark' ? 'text-cyan-400' : 'text-red-700'
-                        : theme === 'dark' ? 'text-slate-400 group-hover:text-cyan-400' : 'text-neutral-400 group-hover:text-red-600'
+                        ? theme === 'dark' ? 'text-primary' : 'text-red-700'
+                        : theme === 'dark' ? 'text-muted-foreground group-hover:text-primary' : 'text-neutral-400 group-hover:text-red-600'
                     }`} />
                     <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 lg:h-6 rounded-r-full ${theme === 'dark' ? 'bg-cyan-400 shadow-lg shadow-cyan-400/50' : 'bg-red-600'}`} />}
+                    {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 lg:h-6 rounded-r-full ${theme === 'dark' ? 'bg-primary shadow-lg shadow-primary/50' : 'bg-red-600'}`} />}
                     </Link>
                 );
                 })}
             </nav>
 
             {/* Footer / Settings */}
-            <div className={`p-6 lg:p-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-neutral-50'}`}>
+            <div className={`p-6 lg:p-4 border-t ${theme === 'dark' ? 'border-border' : 'border-neutral-50'}`}>
                 <Link
                     to={createPageUrl('Settings')}
                     onClick={() => setIsSidebarOpen(false)}
@@ -106,10 +106,10 @@ function LayoutContent({ children, currentPageName }) {
                         flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-4 lg:py-3 text-base lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200
                         ${currentPageName === 'Settings' 
                           ? theme === 'dark' 
-                            ? 'bg-cyan-500/20 text-cyan-400 font-bold' 
+                            ? 'bg-primary/20 text-primary font-bold' 
                             : 'bg-red-50 text-red-700 font-bold'
                           : theme === 'dark'
-                            ? 'text-slate-300 hover:bg-slate-700 hover:text-cyan-400'
+                            ? 'text-muted-foreground hover:bg-muted hover:text-primary'
                             : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/30 lg:bg-transparent'}
                     `}
                 >
@@ -120,7 +120,7 @@ function LayoutContent({ children, currentPageName }) {
                     onClick={toggleTheme}
                     className={`mt-3 flex items-center gap-3 px-6 lg:px-4 py-3 text-sm font-medium rounded-xl transition-all w-full ${
                         theme === 'dark' 
-                            ? 'text-cyan-400 hover:bg-slate-700' 
+                            ? 'text-primary hover:bg-muted' 
                             : 'text-neutral-600 hover:bg-neutral-100'
                     }`}
                 >
@@ -136,12 +136,12 @@ function LayoutContent({ children, currentPageName }) {
         {/* Mobile Header */}
         <header className={`lg:hidden backdrop-blur-sm border-b px-4 h-16 flex items-center justify-between sticky top-0 z-40 transition-all duration-200 ${
             theme === 'dark' 
-                ? 'bg-slate-800/95 border-slate-700' 
+                ? 'bg-card/95 border-border' 
                 : 'bg-white/95 border-neutral-100'
         }`}>
             <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className={theme === 'dark' ? 'hover:bg-slate-700' : 'hover:bg-neutral-100 -ml-2'}>
-                    <Menu className={`w-6 h-6 ${theme === 'dark' ? 'text-white' : 'text-neutral-700'}`} />
+                <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className={theme === 'dark' ? 'hover:bg-muted' : 'hover:bg-neutral-100 -ml-2'}>
+                    <Menu className={`w-6 h-6 ${theme === 'dark' ? 'text-foreground' : 'text-neutral-700'}`} />
                 </Button>
                 <span className="font-bold text-lg">{branding.companyName}</span>
             </div>
@@ -158,10 +158,10 @@ function LayoutContent({ children, currentPageName }) {
         {/* Topbar Desktop */}
         <header className={`hidden lg:flex backdrop-blur-md border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-colors duration-300 ${
             theme === 'dark' 
-                ? 'bg-slate-800/80 border-slate-700' 
+                ? 'bg-background/80 border-border' 
                 : 'bg-white/80 border-neutral-200/60'
         }`}>
-            <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-800'}`}>
+            <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400' : 'text-neutral-800'}`}>
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'Settings' : 'Overview')}
             </h1>
             <div className="flex items-center gap-2 md:gap-4">
@@ -172,7 +172,7 @@ function LayoutContent({ children, currentPageName }) {
                     onClick={toggleTheme}
                     className={`p-2 rounded-lg transition-colors ${
                         theme === 'dark' 
-                            ? 'hover:bg-slate-700 text-cyan-400' 
+                            ? 'hover:bg-muted text-primary' 
                             : 'hover:bg-neutral-100 text-neutral-600'
                     }`}
                 >
@@ -184,7 +184,7 @@ function LayoutContent({ children, currentPageName }) {
 
         {/* Page Content Scrollable Area */}
         <main className={`flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth transition-colors duration-300 ${
-            theme === 'dark' ? 'bg-slate-900' : 'bg-neutral-50'
+            theme === 'dark' ? 'bg-background' : 'bg-neutral-50'
         }`}>
             <div className="max-w-7xl mx-auto">
                 {children}

@@ -38,12 +38,12 @@ export default function LeadsPage() {
   const displayStatuses = useMemo(() => {
     if (theme === 'dark') {
       return [
-        { value: "New", label: "New", color: "bg-cyan-950/40 text-cyan-300 border-cyan-800 ring-1 ring-cyan-500/50 shadow-[0_0_8px_rgba(34,211,238,0.2)]" },
-        { value: "Attempting Contact", label: "Attempting Contact", color: "bg-violet-950/40 text-violet-300 border-violet-800 ring-1 ring-violet-500/50 shadow-[0_0_8px_rgba(167,139,250,0.2)]" },
-        { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-950/40 text-fuchsia-300 border-fuchsia-800 ring-1 ring-fuchsia-500/50 shadow-[0_0_8px_rgba(232,121,249,0.2)]" },
-        { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-950/40 text-yellow-300 border-yellow-800 ring-1 ring-yellow-500/50 shadow-[0_0_8px_rgba(250,204,21,0.2)]" },
-        { value: "Converted", label: "Converted", color: "bg-emerald-950/40 text-emerald-300 border-emerald-800 ring-1 ring-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.2)]" },
-        { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-900/50 text-slate-500 border-slate-800" }
+        { value: "New", label: "New", color: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20 ring-1 ring-cyan-500/30 shadow-[0_0_8px_rgba(34,211,238,0.1)]" },
+        { value: "Attempting Contact", label: "Attempting Contact", color: "bg-violet-500/10 text-violet-400 border-violet-500/20 ring-1 ring-violet-500/30 shadow-[0_0_8px_rgba(167,139,250,0.1)]" },
+        { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20 ring-1 ring-fuchsia-500/30 shadow-[0_0_8px_rgba(232,121,249,0.1)]" },
+        { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20 ring-1 ring-yellow-500/30 shadow-[0_0_8px_rgba(250,204,21,0.1)]" },
+        { value: "Converted", label: "Converted", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/30 shadow-[0_0_8px_rgba(52,211,153,0.1)]" },
+        { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-muted text-muted-foreground border-border" }
       ];
     }
     return [
@@ -309,7 +309,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`space-y-6 pb-24 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`space-y-6 pb-24 font-sans transition-colors ${theme === 'dark' ? 'text-foreground' : 'text-slate-900'}`}>
       
       {/* Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -332,19 +332,19 @@ export default function LeadsPage() {
             >
                {/* View Toggle */}
                <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm ${
-                   theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'
+                   theme === 'dark' ? 'bg-card/80 border-border' : 'bg-white/80 border-white'
                 }`}>
                    <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-md px-2 ${
                      viewMode === 'kanban' 
-                       ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                       : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                       ? theme === 'dark' ? 'bg-muted text-primary' : 'bg-slate-100 text-slate-900'
+                       : theme === 'dark' ? 'text-muted-foreground hover:text-primary' : 'text-slate-500'
                    }`}>
                        <LayoutGrid className="w-3.5 h-3.5" />
                    </Button>
                    <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-md px-2 ${
                      viewMode === 'list' 
-                       ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                       : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                       ? theme === 'dark' ? 'bg-muted text-primary' : 'bg-slate-100 text-slate-900'
+                       : theme === 'dark' ? 'text-muted-foreground hover:text-primary' : 'text-slate-500'
                    }`}>
                        <ListIcon className="w-3.5 h-3.5" />
                    </Button>
@@ -357,7 +357,7 @@ export default function LeadsPage() {
                     onClick={() => setShowAiImport(true)}
                     size="sm"
                     className={`h-8 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
-                        theme === 'dark' ? 'text-purple-300' : ''
+                        theme === 'dark' ? 'text-primary' : ''
                     }`}
                  >
                     <Sparkles className="w-3.5 h-3.5 md:mr-2" />
@@ -365,7 +365,7 @@ export default function LeadsPage() {
                  </Button>
                  <Button size="sm" onClick={() => setShowLeadForm(true)} className={`h-8 rounded-lg shadow-lg shadow-indigo-500/20 ${
                      theme === 'dark' 
-                     ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
+                     ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
                      : 'bg-indigo-600 hover:bg-indigo-700 text-white'
                  }`}>
                     <Plus className="w-4 h-4 md:mr-1" />
@@ -396,10 +396,10 @@ export default function LeadsPage() {
         <div className="space-y-6">
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className={`hidden md:block rounded-xl border shadow-sm overflow-hidden transition-colors ${
-        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+        theme === 'dark' ? 'bg-card border-border' : 'bg-white border-slate-200'
       }`}>
          <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide select-none transition-colors ${
-           theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+           theme === 'dark' ? 'bg-background border-border text-muted-foreground' : 'bg-slate-50 border-slate-200 text-slate-700'
          }`}>
             <div className="col-span-3 text-left flex items-center gap-1 cursor-pointer hover:text-slate-900 transition-colors" onClick={() => handleSort('full_name')}>
                 Client
@@ -435,22 +435,22 @@ export default function LeadsPage() {
         </div>
 
         <div className={`divide-y transition-colors ${
-          theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'
+          theme === 'dark' ? 'divide-border' : 'divide-slate-100'
         }`}>
-            {isLoading ? <div className={`p-10 text-center ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>טוען נתונים...</div> :
+            {isLoading ? <div className={`p-10 text-center ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>טוען נתונים...</div> :
           filteredLeads.map((lead) =>
           <div key={lead.id} className={`grid grid-cols-12 gap-4 px-6 py-3 items-center transition-colors group ${
-            theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/80'
+            theme === 'dark' ? 'hover:bg-muted/50' : 'hover:bg-slate-50/80'
           }`}>
                     <div className="col-span-3 flex items-center gap-3">
                          <LeadAvatar lead={lead} className="w-10 h-10 flex-shrink-0" />
                          <div className="flex-1">
                             <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className={`font-bold transition-colors ${
-                              theme === 'dark' ? 'text-white hover:text-cyan-400' : 'text-slate-800 hover:text-red-600'
+                              theme === 'dark' ? 'text-foreground hover:text-primary' : 'text-slate-800 hover:text-red-600'
                             }`}>
                                 {lead.full_name}
                             </Link>
-                            <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city}</div>
+                            <div className={`text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>{lead.city}</div>
                             {getLastActivityDate(lead.id) && (
                               <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
                                 ✓ Last Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
@@ -468,22 +468,22 @@ export default function LeadsPage() {
                     <div className="col-span-2">
                         <StatusBadge lead={lead} statuses={displayStatuses} updateLead={updateLead} convert={convertToOpportunity} />
                     </div>
-                    <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-200' : 'text-slate-600'}`}>
-                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-400'}`} />
+                    <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-foreground' : 'text-slate-600'}`}>
+                        <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-primary' : 'text-slate-400'}`} />
                         <InlineEdit 
                           value={lead.phone_number} 
                           type="tel" 
-                          className={`font-mono ${theme === 'dark' ? 'text-slate-100 font-medium' : 'text-slate-800'}`} 
+                          className={`font-mono ${theme === 'dark' ? 'text-foreground font-medium' : 'text-slate-800'}`} 
                           onSave={(v) => updateLead.mutate({ id: lead.id, data: { phone_number: v } })} 
                         />
                         {lead.phone_number && <WhatsAppBtn phone={lead.phone_number} />}
                     </div>
-                    <div className={`col-span-2 text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <div className={`col-span-2 text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>
                         {lead.created_date ? new Date(lead.created_date).toLocaleDateString('en-US') : '-'}
                         <br/>
                         <span className="text-[10px] opacity-70">{lead.created_date ? new Date(lead.created_date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                     </div>
-                    <div className={`col-span-1 text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <div className={`col-span-1 text-sm ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-600'}`}>
                         {lead.source_year}
                     </div>
                     <div className="col-span-2 flex justify-end gap-1">
@@ -589,10 +589,10 @@ export default function LeadsPage() {
       {/* Smart Slide-Over (Sheet) */}
       <Dialog open={showLeadForm} onOpenChange={(open) => {setShowLeadForm(open);if (!open) setEditingLead(null);}}>
         <DialogContent className={`fixed right-0 top-0 left-auto translate-x-0 translate-y-0 h-full w-full sm:w-[550px] max-w-none p-0 border-l shadow-2xl transition-all duration-300 gap-0 data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right sm:rounded-none ${
-            theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
+            theme === 'dark' ? 'bg-background border-border' : 'bg-white border-slate-200'
         }`}>
-            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}>
-                <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme === 'dark' ? 'border-border' : 'border-slate-100'}`}>
+                <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-foreground' : 'text-slate-900'}`}>
                     {editingLead ? 'Edit Lead' : 'Create New Lead'}
                 </h2>
                 {/* Close button is automatically added by DialogContent usually, but we can add custom header controls here if needed */}
@@ -652,13 +652,13 @@ function StatCard({ icon: Icon, label, value, color }) {
   const { theme } = useSettings();
   return (
     <Card className={`border-none shadow-sm transition-colors ${
-      theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'
+      theme === 'dark' ? 'bg-card border-border' : 'bg-white'
     }`}>
             <CardContent className="p-4 flex items-center gap-4">
                 <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
                 <div>
-                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
-                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
+                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>{label}</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-foreground' : 'text-slate-800'}`}>{value}</p>
                 </div>
             </CardContent>
         </Card>);
