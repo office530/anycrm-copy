@@ -259,7 +259,7 @@ export default function OpportunitiesPage() {
   if (isLoading) return <div className="flex justify-center h-96 items-center"><Loader2 className="animate-spin w-8 h-8 text-teal-600" /></div>;
 
   return (
-    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-foreground' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Smart Filter Bar & Actions */}
       <div className="mb-6">
@@ -279,7 +279,7 @@ export default function OpportunitiesPage() {
                       size="sm"
                       className={`h-8 text-white shadow-lg rounded-lg ${
                           theme === 'dark' 
-                              ? 'bg-primary hover:bg-primary/90 shadow-primary/30 text-primary-foreground' 
+                              ? 'bg-cyan-500 hover:bg-cyan-600 shadow-cyan-500/30' 
                               : 'bg-purple-600 hover:bg-purple-700 shadow-purple-900/10'
                       }`}
                   >
@@ -295,44 +295,44 @@ export default function OpportunitiesPage() {
       {/* Stats Header (New!) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
-              theme === 'dark' ? 'bg-card border-border' : 'bg-white border-neutral-100'
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}><DollarSign className="w-5 h-5"/></div>
              <div>
-                 <div className={`text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-500'}`}>Total Pipeline Value</div>
-                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-foreground' : 'text-neutral-900'}`}>{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Total Pipeline Value</div>
+                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
              </div>
           </div>
           <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
-              theme === 'dark' ? 'bg-card border-border' : 'bg-white border-neutral-100'
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}><Briefcase className="w-5 h-5"/></div>
              <div>
-                 <div className={`text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-500'}`}>Active Deals</div>
-                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-foreground' : 'text-neutral-900'}`}>{stats.activeDeals}</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Active Deals</div>
+                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.activeDeals}</div>
              </div>
           </div>
           <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
-              theme === 'dark' ? 'bg-card border-border' : 'bg-white border-neutral-100'
+              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}><Trophy className="w-5 h-5"/></div>
              <div>
-                 <div className={`text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-500'}`}>Closed Won</div>
-                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-foreground' : 'text-neutral-900'}`}>{stats.wonDeals}</div>
+                 <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Closed Won</div>
+                 <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.wonDeals}</div>
              </div>
           </div>
           <div className="flex items-center justify-end gap-2">
             <div className={`p-1 rounded-xl border shadow-sm flex gap-1 h-fit transition-colors ${
-                theme === 'dark' ? 'bg-card border-border' : 'bg-white border-neutral-200'
+                theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-200'
             }`}>
                 <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' 
-                    ? theme === 'dark' ? 'bg-muted text-primary shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
-                    : theme === 'dark' ? 'text-muted-foreground hover:text-primary' : 'text-neutral-500'}>
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
                     <LayoutGrid className="w-4 h-4 mr-2" /> Board
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' 
-                    ? theme === 'dark' ? 'bg-muted text-primary shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
-                    : theme === 'dark' ? 'text-muted-foreground hover:text-primary' : 'text-neutral-500'}>
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
                     <ListIcon className="w-4 h-4 mr-2" /> List
                 </Button>
             </div>
@@ -349,7 +349,7 @@ export default function OpportunitiesPage() {
                 size="icon" 
                 className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
                   theme === 'dark' 
-                    ? 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
                     : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
                 }`}
                 onClick={() => scroll('right')}
@@ -364,7 +364,7 @@ export default function OpportunitiesPage() {
                 size="icon" 
                 className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
                   theme === 'dark' 
-                    ? 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
                     : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
                 }`}
                 onClick={() => scroll('left')}
@@ -387,15 +387,15 @@ export default function OpportunitiesPage() {
               {/* Stage Header */}
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || (theme === 'dark' ? 'bg-muted text-muted-foreground' : 'bg-neutral-100 text-neutral-700')} border border-transparent`}>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${stage.light || (theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-neutral-100 text-neutral-700')} border border-transparent`}>
                         {stage.label}
                     </span>
-                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-400'}`}>{stageOpps.length}</span>
+                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-400'}`}>{stageOpps.length}</span>
                 </div>
-                <div className={`h-1 w-full rounded-full overflow-hidden ${theme === 'dark' ? 'bg-muted' : 'bg-neutral-200'}`}>
+                <div className={`h-1 w-full rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-neutral-200'}`}>
                     <div className={`h-full ${stage.color || 'bg-neutral-400'}`} style={{ width: '100%' }}></div>
                 </div>
-                {total > 0 && <div className={`text-xs font-medium mt-1 text-right ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-500'}`}>{branding?.currency}{total.toLocaleString()}</div>}
+                {total > 0 && <div className={`text-xs font-medium mt-1 text-right ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>{branding?.currency}{total.toLocaleString()}</div>}
               </div>
 
               {/* Droppable Area */}
@@ -406,7 +406,7 @@ export default function OpportunitiesPage() {
                     ref={provided.innerRef}
                     className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] transition-colors rounded-xl ${
                       snapshot.isDraggingOver 
-                        ? theme === 'dark' ? 'bg-muted/50 ring-2 ring-dashed ring-muted-foreground' : 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' 
+                        ? theme === 'dark' ? 'bg-slate-800/50 ring-2 ring-dashed ring-slate-600' : 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' 
                         : ''
                     }`}
                   >
@@ -419,7 +419,7 @@ export default function OpportunitiesPage() {
                             {...provided.dragHandleProps}
                             className={`
                               cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border-none shadow-sm group relative overflow-hidden
-                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-primary' : theme === 'dark' ? 'bg-card border border-border shadow-none' : 'bg-white shadow-sm'}
+                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : theme === 'dark' ? 'bg-slate-800 border border-slate-700 shadow-none' : 'bg-white shadow-sm'}
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
@@ -441,28 +441,28 @@ export default function OpportunitiesPage() {
                                 return (
                                   <>
                                     {/* שם */}
-                                    <div className={`text-sm font-bold transition-colors truncate ${theme === 'dark' ? 'text-foreground group-hover:text-primary' : 'text-neutral-800 group-hover:text-teal-600'}`}>
+                                    <div className={`text-sm font-bold transition-colors truncate ${theme === 'dark' ? 'text-white group-hover:text-teal-400' : 'text-neutral-800 group-hover:text-teal-600'}`}>
                                       {opp.lead_name || "Unnamed Client"}
                                     </div>
 
                                     {/* טלפון */}
                                     {lead?.phone_number && (
-                                      <div className={`flex items-center gap-1.5 text-xs font-medium ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-700'}`}>
-                                        <Phone className={`w-3 h-3 ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-400'}`} />
+                                      <div className={`flex items-center gap-1.5 text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-700'}`}>
+                                        <Phone className={`w-3 h-3 ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`} />
                                         {lead.phone_number}
                                       </div>
                                     )}
 
                                     {/* הערות */}
                                     {lead?.notes && (
-                                      <div className={`text-[10px] p-1.5 rounded-md line-clamp-2 leading-tight ${theme === 'dark' ? 'text-muted-foreground bg-muted/50' : 'text-neutral-600 bg-neutral-50'}`}>
+                                      <div className={`text-[10px] p-1.5 rounded-md line-clamp-2 leading-tight ${theme === 'dark' ? 'text-slate-400 bg-slate-900/50' : 'text-neutral-600 bg-neutral-50'}`}>
                                         {lead.notes}
                                       </div>
                                     )}
 
                                     {/* שיחה אחרונה */}
                                     {lead?.last_contact_date && (
-                                      <div className={`flex items-center gap-1.5 text-[10px] ${theme === 'dark' ? 'text-muted-foreground' : 'text-neutral-500'}`}>
+                                      <div className={`flex items-center gap-1.5 text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>
                                         <Calendar className="w-3 h-3" />
                                         <span>Last Contact: {moment(lead.last_contact_date).format('DD/MM/YYYY')}</span>
                                       </div>
@@ -486,12 +486,12 @@ export default function OpportunitiesPage() {
       </DragDropContext>
       ) : (
         <div className={`rounded-xl border shadow-sm overflow-hidden flex flex-col transition-colors ${
-          theme === 'dark' ? 'bg-card border-border' : 'bg-white border-slate-200'
+          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
         }`}>
           <div className="overflow-x-auto">
             <div className="min-w-[800px]">
               <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide sticky top-0 z-10 transition-colors ${
-                theme === 'dark' ? 'bg-background border-border text-muted-foreground' : 'bg-slate-50 border-slate-200 text-slate-700'
+                theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
               }`}>
             <div className="col-span-3 text-left">Client</div>
             <div className="col-span-2 text-left">Phone</div>
@@ -500,12 +500,12 @@ export default function OpportunitiesPage() {
             <div className="col-span-1 text-right pr-4">Actions</div>
           </div>
           
-          <div className={`divide-y transition-colors ${theme === 'dark' ? 'divide-border' : 'divide-slate-100'}`}>
+          <div className={`divide-y transition-colors ${theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'}`}>
             {filteredOpportunities.map((opp) => {
               const stage = activeStages.find(s => s.id === opp.deal_stage);
               return (
                 <div key={opp.id} className={`grid grid-cols-12 gap-4 px-6 py-4 items-start transition-colors group ${
-                  theme === 'dark' ? 'hover:bg-muted/50' : 'hover:bg-slate-50/80'
+                  theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/80'
                 }`}>
                   {(() => {
                     const lead = leads.find(l => l.id === opp.lead_id);
@@ -514,13 +514,13 @@ export default function OpportunitiesPage() {
                         {/* שם */}
                         <div className="col-span-3 flex items-center gap-3">
                           <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base ${
-                            theme === 'dark' ? 'bg-primary/20 text-primary' : 'bg-purple-50 text-purple-700'
+                            theme === 'dark' ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-50 text-purple-700'
                           }`}>
                             {opp.lead_name?.charAt(0) || '?'}
                           </div>
                           <div 
                             className={`text-base font-bold transition-colors cursor-pointer ${
-                              theme === 'dark' ? 'text-foreground hover:text-primary' : 'text-slate-800 hover:text-purple-600'
+                              theme === 'dark' ? 'text-white hover:text-purple-400' : 'text-slate-800 hover:text-purple-600'
                             }`}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
@@ -529,19 +529,19 @@ export default function OpportunitiesPage() {
                         </div>
                         
                         {/* טלפון */}
-                        <div className={`col-span-2 text-base font-medium flex items-center gap-2 ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-700'}`}>
-                          <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-400'}`} />
+                        <div className={`col-span-2 text-base font-medium flex items-center gap-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                          <Phone className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
                           {lead?.phone_number || '-'}
                         </div>
                         
                         {/* הערות */}
-                        <div className={`col-span-4 text-sm line-clamp-2 ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-600'}`} title={lead?.notes}>
+                        <div className={`col-span-4 text-sm line-clamp-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`} title={lead?.notes}>
                           {lead?.notes || '-'}
                         </div>
                         
                         {/* שיחה אחרונה */}
-                        <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-600'}`}>
-                          <Calendar className={`w-4 h-4 ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-400'}`} />
+                        <div className={`col-span-2 text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                          <Calendar className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
                           {lead?.last_contact_date ? moment(lead.last_contact_date).format('DD/MM/YYYY') : '-'}
                         </div>
                         
@@ -551,7 +551,7 @@ export default function OpportunitiesPage() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
-                            className={`h-8 px-2 ${theme === 'dark' ? 'text-muted-foreground hover:text-primary hover:bg-muted' : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'}`}
+                            className={`h-8 px-2 ${theme === 'dark' ? 'text-slate-500 hover:text-purple-400 hover:bg-purple-900/20' : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'}`}
                             title={canEdit ? "Open Opportunity" : "View Opportunity"}
                           >
                             <Briefcase className="w-4 h-4" />
@@ -585,7 +585,7 @@ export default function OpportunitiesPage() {
       {/* טופס עריכה */}
       <Dialog open={showForm} onOpenChange={(open) => { setShowForm(open); if(!open) setEditingOpp(null); }}>
         <DialogContent className={`fixed right-0 top-0 left-auto translate-x-0 translate-y-0 h-full w-full sm:w-[600px] max-w-none p-0 border-l shadow-2xl transition-all duration-300 gap-0 data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right sm:rounded-none ${
-            theme === 'dark' ? 'bg-background border-border' : 'bg-white border-slate-200'
+            theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
         }`}>
           {(showForm || editingOpp) && (
             <OpportunityForm 

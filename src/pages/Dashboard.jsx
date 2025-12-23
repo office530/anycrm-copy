@@ -160,7 +160,7 @@ export default function Dashboard() {
   };
 
   const glassCardClasses = theme === 'dark' 
-    ? 'bg-card/60 backdrop-blur-xl border-border/50 shadow-xl shadow-black/20' 
+    ? 'bg-slate-900/60 backdrop-blur-xl border-slate-700/50 shadow-xl shadow-black/20' 
     : 'bg-white/60 backdrop-blur-xl border-white/50 shadow-xl shadow-slate-200/50';
 
   return (
@@ -172,16 +172,16 @@ export default function Dashboard() {
           {/* 1. Hero / Focus Card (Span 8) */}
           <div className={`md:col-span-8 rounded-[2rem] p-8 md:p-10 border relative overflow-hidden flex flex-col justify-between min-h-[300px] transition-all duration-500 group ${
             theme === 'dark' 
-            ? 'bg-gradient-to-br from-primary/20 via-background to-background border-primary/30' 
+            ? 'bg-gradient-to-br from-indigo-900/80 via-slate-900/90 to-slate-900 border-indigo-500/30' 
             : 'bg-gradient-to-br from-indigo-50 via-white/80 to-white border-white/60'
-          } shadow-2xl ${theme === 'dark' ? 'shadow-primary/20' : 'shadow-indigo-100/50'}`}>
+          } shadow-2xl ${theme === 'dark' ? 'shadow-indigo-900/20' : 'shadow-indigo-100/50'}`}>
               
               <div className="relative z-10 flex flex-col h-full justify-between">
                   <div>
-                    <h1 className={`text-4xl md:text-5xl font-bold tracking-tight mb-2 ${theme === 'dark' ? 'text-foreground' : 'text-slate-800'}`}>
+                    <h1 className={`text-4xl md:text-5xl font-bold tracking-tight mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
                         {getGreeting()}
                     </h1>
-                    <p className={`text-lg ${theme === 'dark' ? 'text-primary/80' : 'text-slate-500'}`}>
+                    <p className={`text-lg ${theme === 'dark' ? 'text-indigo-200' : 'text-slate-500'}`}>
                         {moment().format("dddd, MMMM Do YYYY")}
                     </p>
                   </div>
@@ -190,7 +190,7 @@ export default function Dashboard() {
                     <Link to={createPageUrl('ActNow')}>
                         <Button className={`h-14 px-8 rounded-2xl text-lg font-semibold transition-all hover:scale-105 shadow-lg ${
                             theme === 'dark' 
-                            ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/30' 
+                            ? 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/30' 
                             : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200'
                         }`}>
                             <Activity className="w-5 h-5 mr-2" />
@@ -198,20 +198,20 @@ export default function Dashboard() {
                         </Button>
                     </Link>
                     <Link to={createPageUrl('Leads')} className={`flex items-center gap-4 px-6 py-3 rounded-2xl border backdrop-blur-md hover:scale-105 transition-transform cursor-pointer ${
-                        theme === 'dark' ? 'bg-card/50 border-border text-muted-foreground hover:bg-card' : 'bg-white/50 border-white/50 text-slate-600 hover:bg-white/80'
+                        theme === 'dark' ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800' : 'bg-white/50 border-white/50 text-slate-600 hover:bg-white/80'
                     }`}>
                          <div className="flex -space-x-2">
                              {leads.filter(l => moment(l.created_date).isSame(moment(), 'day')).slice(0, 3).length > 0 ? (
                                  leads.filter(l => moment(l.created_date).isSame(moment(), 'day')).slice(0, 3).map((lead, i) => (
                                      <div key={lead.id || i} className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold uppercase ${
-                                         theme === 'dark' ? 'border-card bg-muted text-primary' : 'border-white bg-indigo-100 text-indigo-700'
+                                         theme === 'dark' ? 'border-slate-800 bg-slate-700 text-cyan-400' : 'border-white bg-indigo-100 text-indigo-700'
                                      }`} title={lead.full_name}>
                                          {lead.full_name?.substring(0, 2) || "??"}
                                      </div>
                                  ))
                              ) : (
                                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
-                                     theme === 'dark' ? 'border-card bg-muted' : 'border-white bg-slate-100'
+                                     theme === 'dark' ? 'border-slate-800 bg-slate-700' : 'border-white bg-slate-100'
                                  }`}>
                                      0
                                  </div>
@@ -226,7 +226,7 @@ export default function Dashboard() {
 
               {/* Dynamic Abstract Background */}
               <div className={`absolute -right-20 -bottom-32 w-96 h-96 rounded-full blur-[100px] opacity-60 pointer-events-none transition-transform duration-[10s] ease-in-out group-hover:scale-110 ${
-                  theme === 'dark' ? 'bg-primary' : 'bg-indigo-200'
+                  theme === 'dark' ? 'bg-indigo-600' : 'bg-indigo-200'
               }`}></div>
               <div className={`absolute top-0 right-0 p-8 opacity-20 transform rotate-12 transition-transform group-hover:rotate-0 duration-700`}>
                   <img src={branding.logoUrl} className="w-64 h-64 object-contain grayscale" alt="" />
@@ -238,7 +238,7 @@ export default function Dashboard() {
                {/* Stat 1 */}
                <div className={`col-span-2 rounded-3xl p-6 border flex items-center justify-between ${glassCardClasses}`}>
                    <div>
-                       <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>Total Revenue</p>
+                       <p className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Total Revenue</p>
                        <p className={`text-3xl font-bold tracking-tight ${theme === 'dark' ? 'text-emerald-400' : 'text-slate-800'}`}>
                            ${(stats.totalWonValue / 1000).toFixed(1)}k
                        </p>
@@ -253,8 +253,8 @@ export default function Dashboard() {
                    <div className={`w-10 h-10 mb-3 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                        <Users className="w-5 h-5" />
                    </div>
-                   <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-foreground' : 'text-slate-800'}`}>{stats.totalLeads}</p>
-                   <p className={`text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>Active Leads</p>
+                   <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{stats.totalLeads}</p>
+                   <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Active Leads</p>
                </div>
 
                {/* Stat 3 */}
@@ -262,8 +262,8 @@ export default function Dashboard() {
                    <div className={`w-10 h-10 mb-3 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
                        <Activity className="w-5 h-5" />
                    </div>
-                   <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-foreground' : 'text-slate-800'}`}>{stats.wonOppsCount}</p>
-                   <p className={`text-xs ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>Deals Won</p>
+                   <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{stats.wonOppsCount}</p>
+                   <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Deals Won</p>
                </div>
           </div>
       </div>
@@ -274,17 +274,17 @@ export default function Dashboard() {
           {/* Large Chart (Span 8) */}
           <div className={`md:col-span-8 rounded-[2rem] p-6 md:p-8 border ${glassCardClasses}`}>
               <div className="flex items-center justify-between mb-8">
-                  <h3 className={`text-xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-foreground' : 'text-slate-800'}`}>
+                  <h3 className={`text-xl font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
                       <span className="w-2 h-8 rounded-full bg-blue-500 inline-block mr-2"></span>
                       Growth Overview
                   </h3>
                    <Select value={timeRange} onValueChange={setTimeRange}>
                       <SelectTrigger className={`w-[140px] h-10 rounded-full border-none ${
-                    theme === 'dark' ? 'bg-card text-muted-foreground' : 'bg-slate-100 text-slate-600'}`
+                    theme === 'dark' ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`
                     }>
                           <SelectValue placeholder="Range" />
                       </SelectTrigger>
-                      <SelectContent className={theme === 'dark' ? 'bg-card border-border' : ''}>
+                      <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
                           <SelectItem value="week">This Week</SelectItem>
                           <SelectItem value="month">This Month</SelectItem>
                           <SelectItem value="quarter">This Quarter</SelectItem>

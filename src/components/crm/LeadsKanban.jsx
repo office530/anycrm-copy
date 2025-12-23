@@ -88,7 +88,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                 size="icon" 
                 className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
                   theme === 'dark' 
-                    ? 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
                     : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
                 }`}
                 onClick={() => scroll('right')}
@@ -103,7 +103,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                 size="icon" 
                 className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
                   theme === 'dark' 
-                    ? 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted' 
+                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
                     : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
                 }`}
                 onClick={() => scroll('left')}
@@ -127,10 +127,10 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                   // Use the text color (neon) for the border to match
                   status.color.split(' ').find(c => c.startsWith('text-'))?.replace('text-', 'border-') || 'border-slate-200'
               } ${
-                theme === 'dark' ? 'bg-card' : 'bg-white'
+                theme === 'dark' ? 'bg-slate-800' : 'bg-white'
               }`}>
-                <span className={`font-bold ${theme === 'dark' ? 'text-foreground' : 'text-slate-800'}`}>{status.label}</span>
-                <Badge variant="secondary" className={`${theme === 'dark' ? 'bg-muted text-muted-foreground' : 'bg-slate-100 text-slate-600'}`}>{statusLeads.length}</Badge>
+                <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{status.label}</span>
+                <Badge variant="secondary" className={`${theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>{statusLeads.length}</Badge>
               </div>
 
               {/* Droppable Area */}
@@ -141,7 +141,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                     ref={provided.innerRef}
                     className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] rounded-xl transition-colors pb-20 ${
                       snapshot.isDraggingOver 
-                        ? theme === 'dark' ? 'bg-muted/50 ring-2 ring-dashed ring-muted-foreground' : 'bg-slate-100/50 ring-2 ring-dashed ring-slate-300' 
+                        ? theme === 'dark' ? 'bg-slate-800/50 ring-2 ring-dashed ring-slate-600' : 'bg-slate-100/50 ring-2 ring-dashed ring-slate-300' 
                         : ''
                     }`}
                   >
@@ -155,31 +155,31 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                             className={`
                               cursor-grab active:cursor-grabbing border-none shadow-sm relative overflow-hidden group transition-all
                               ${snapshot.isDragging 
-                                ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-primary' 
-                                : theme === 'dark' ? 'bg-card hover:shadow-md hover:bg-card/80' : 'bg-white hover:shadow-md'}
+                                ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-blue-500' 
+                                : theme === 'dark' ? 'bg-slate-800 hover:shadow-md hover:bg-slate-700/80' : 'bg-white hover:shadow-md'}
                             `}
                             onClick={() => onEdit(lead)}
                           >
                             <CardContent className="p-3 space-y-2">
                               <div className="flex justify-between items-start">
-                              <div className="flex items-center gap-3">
-                                  <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] ${
-                                    theme === 'dark' 
-                                      ? status.color.includes('red') ? 'bg-destructive/50 text-destructive-foreground' : 'bg-muted text-muted-foreground'
-                                      : status.color.includes('red') ? 'bg-red-50 text-red-700' : 'bg-slate-100 text-slate-600'
-                                  }`}>
-                                      {lead.full_name?.charAt(0)}
-                                  </div>
-                                  <div>
-                                      <h4 className={`font-bold text-sm line-clamp-1 ${theme === 'dark' ? 'text-foreground' : 'text-slate-900'}`}>{lead.full_name}</h4>
-                                      <p className={`text-[10px] ${theme === 'dark' ? 'text-muted-foreground' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
-                                      {getLastActivityDate(lead.id) && (
-                                        <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
-                                          ✓ Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
-                                        </div>
-                                      )}
-                                  </div>
-                              </div>
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] ${
+                                      theme === 'dark' 
+                                        ? status.color.includes('red') ? 'bg-red-900/50 text-red-200' : 'bg-slate-700 text-slate-300'
+                                        : status.color.includes('red') ? 'bg-red-50 text-red-700' : 'bg-slate-100 text-slate-600'
+                                    }`}>
+                                        {lead.full_name?.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <h4 className={`font-bold text-sm line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{lead.full_name}</h4>
+                                        <p className={`text-[10px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
+                                        {getLastActivityDate(lead.id) && (
+                                          <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
+                                            ✓ Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
+                                          </div>
+                                        )}
+                                    </div>
+                                </div>
                                 {lead.phone_number && (
                                     <a href={`tel:${lead.phone_number}`} onClick={(e) => e.stopPropagation()} className="p-2 bg-green-50 text-green-600 rounded-full hover:bg-green-100">
                                         <Phone className="w-4 h-4" />
@@ -188,9 +188,9 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                               </div>
                               
                               {/* Quick Actions */}
-                              <div className={`flex justify-between items-center pt-2 border-t mt-2 ${theme === 'dark' ? 'border-border' : 'border-slate-50'}`}>
+                              <div className={`flex justify-between items-center pt-2 border-t mt-2 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-50'}`}>
                                  <div className="flex gap-1">
-                                    <Button variant="ghost" size="icon" className={`h-7 w-7 hover:text-red-600 ${theme === 'dark' ? 'text-muted-foreground hover:bg-muted' : 'text-slate-400'}`}
+                                    <Button variant="ghost" size="icon" className={`h-7 w-7 hover:text-red-600 ${theme === 'dark' ? 'text-slate-500 hover:bg-slate-700' : 'text-slate-400'}`}
                                         onClick={(e) => { e.stopPropagation(); onDelete(lead.id); }}>
                                         <Trash2 className="w-3 h-3" />
                                     </Button>
