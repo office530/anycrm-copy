@@ -81,24 +81,6 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="relative h-full group/kanban isolate">
-         {/* Custom Scrollbar Styles */}
-         <style>{`
-            .kanban-scrollbar::-webkit-scrollbar {
-                width: 6px;
-                height: 6px;
-            }
-            .kanban-scrollbar::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            .kanban-scrollbar::-webkit-scrollbar-thumb {
-                background: ${theme === 'dark' ? '#1E293B' : '#cbd5e1'};
-                border-radius: 10px;
-            }
-            .kanban-scrollbar::-webkit-scrollbar-thumb:hover {
-                background: ${theme === 'dark' ? '#334155' : '#94a3b8'};
-            }
-         `}</style>
-
          {/* Scroll Hints */}
          {showRightArrow && (
             <Button 
@@ -157,8 +139,8 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] rounded-xl transition-colors pb-20 kanban-scrollbar ${
-                      snapshot.isDraggingOver 
+                    className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] rounded-xl transition-colors pb-20 ${
+                      snapshot.isDraggingOver
                         ? theme === 'dark' ? 'bg-[#151E32]/50 ring-2 ring-dashed ring-[#1E293B]' : 'bg-slate-100/50 ring-2 ring-dashed ring-slate-300' 
                         : ''
                     }`}

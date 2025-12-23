@@ -84,7 +84,7 @@ export default function SmartFilterBar({
             
             {/* 1. Smart Views Tabs */}
             {views.length > 0 && (
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1">
                     {views.map(view => (
                         <button
                             key={view.id}

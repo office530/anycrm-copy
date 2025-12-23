@@ -40,6 +40,24 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className={`min-h-screen font-heebo flex transition-colors duration-300 ${theme === 'dark' ? 'bg-[#0B1121] text-slate-100' : 'bg-neutral-50 text-neutral-900'}`} dir="ltr">
       
+      {/* Global Scrollbar Styles */}
+      <style>{`
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: ${theme === 'dark' ? '#1E293B' : '#cbd5e1'};
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: ${theme === 'dark' ? '#334155' : '#94a3b8'};
+        }
+      `}</style>
+
       {/* Sidebar / Drawer - Adaptive */}
       <aside className={`
         fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-sm
