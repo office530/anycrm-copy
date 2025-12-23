@@ -7,10 +7,10 @@ import LeadDetails from './pages/LeadDetails';
 import Leads from './pages/Leads';
 import Opportunities from './pages/Opportunities';
 import Reports from './pages/Reports';
-import SalesGalaxy from './pages/SalesGalaxy';
 import SearchResults from './pages/SearchResults';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
+import SalesGalaxy from './pages/SalesGalaxy';
 import __Layout from './Layout.jsx';
 
 
@@ -24,10 +24,10 @@ export const PAGES = {
     "Leads": Leads,
     "Opportunities": Opportunities,
     "Reports": Reports,
-    "SalesGalaxy": SalesGalaxy,
     "SearchResults": SearchResults,
     "Settings": Settings,
     "Tasks": Tasks,
+    "SalesGalaxy": SalesGalaxy,
 }
 
 export const pagesConfig = {
