@@ -149,21 +149,23 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
     setValue(field, value);
   };
 
-  const inputClass = `bg-transparent border ${theme === 'dark' ? 'border-slate-700 text-white placeholder:text-slate-500' : 'border-slate-200 text-slate-900 placeholder:text-slate-400'}`;
-  const labelClass = `text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`;
-  const sectionBg = theme === 'dark' ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200';
+  const inputClass = `h-11 rounded-xl transition-all ${
+    theme === 'dark' 
+      ? 'bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:ring-purple-500/50 focus:border-purple-500' 
+      : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-purple-200 focus:border-purple-400'
+  }`;
+  const labelClass = `text-xs font-semibold uppercase tracking-wider mb-1.5 block ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`;
+  const sectionBg = theme === 'dark' ? 'bg-slate-800/30 border-slate-700/50' : 'bg-white border-slate-100 shadow-sm';
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`rounded-xl shadow-xl border flex flex-col max-h-[80vh] w-[95vw] md:w-full mx-auto overflow-hidden ${
-        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
-      }`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col h-full w-full overflow-hidden"
       dir="ltr">
 
-      <div className={`p-4 md:p-6 border-b shrink-0 flex items-center justify-between z-10 ${
-        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
+      <div className={`p-6 border-b shrink-0 flex items-center justify-between z-10 transition-colors ${
+        theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'
       }`}>
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-full ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-100'}`}>
@@ -183,11 +185,13 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </Button>
       </div>
       
-      <div className="overflow-y-auto p-4 md:p-6 flex-1">
+      <div className={`overflow-y-auto p-6 flex-1 custom-scrollbar ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-50/50'}`}>
       
       {/* Lead Selector if no lead linked */}
       {!selectedLead && !opportunity?.lead_id && (
-          <LeadSelector onSelect={handleLeadSelect} />
+          <div className="mb-6">
+            <LeadSelector onSelect={handleLeadSelect} />
+          </div>
       )}
       
       {/* Hidden validation input for lead_id */}
@@ -203,8 +207,8 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       )}
 
       {selectedLead &&
-      <div className={`mb-6 border rounded-lg p-4 space-y-3 ${
-        theme === 'dark' ? 'bg-emerald-900/20 border-emerald-800/50' : 'bg-emerald-50 border-emerald-100'
+      <div className={`mb-6 border rounded-xl p-5 space-y-4 backdrop-blur-sm ${
+        theme === 'dark' ? 'bg-emerald-900/10 border-emerald-800/30' : 'bg-emerald-50/50 border-emerald-100'
       }`}>
             <h3 className={`font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-800'}`}>
                 <Sparkles className="w-4 h-4" />
@@ -235,25 +239,22 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       }
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className={`flex w-full overflow-x-auto md:grid md:grid-cols-5 mb-6 h-auto gap-2 md:gap-0 pb-1 ${theme === 'dark' ? 'bg-slate-900/50' : ''}`}>
-          <TabsTrigger value="details" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
-            <FileText className="w-4 h-4" />
+        <TabsList className={`w-full flex h-12 p-1 rounded-xl mb-6 ${
+            theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200/50'
+        }`}>
+          <TabsTrigger value="details" className="flex-1 rounded-lg text-xs font-medium data-[state=active]:shadow-sm">
             Details
           </TabsTrigger>
-          <TabsTrigger value="documents" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`}>
-            <Briefcase className="w-4 h-4" />
-            Documents
+          <TabsTrigger value="documents" className="flex-1 rounded-lg text-xs font-medium data-[state=active]:shadow-sm">
+            Docs
           </TabsTrigger>
-          <TabsTrigger value="originalLead" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.lead_id && !initialLead?.id}>
-            <User className="w-4 h-4" />
-            Original Lead
+          <TabsTrigger value="originalLead" className="flex-1 rounded-lg text-xs font-medium data-[state=active]:shadow-sm" disabled={!opportunity?.lead_id && !initialLead?.id}>
+            Client
           </TabsTrigger>
-          <TabsTrigger value="activity" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.lead_id && !initialLead?.id}>
-            <Activity className="w-4 h-4" />
-            Activity Log
+          <TabsTrigger value="activity" className="flex-1 rounded-lg text-xs font-medium data-[state=active]:shadow-sm" disabled={!opportunity?.lead_id && !initialLead?.id}>
+            Activity
           </TabsTrigger>
-          <TabsTrigger value="tasks" className={`flex-shrink-0 flex items-center gap-2 whitespace-nowrap px-4 ${theme === 'dark' ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-white' : ''}`} disabled={!opportunity?.id}>
-            <CheckSquare className="w-4 h-4" />
+          <TabsTrigger value="tasks" className="flex-1 rounded-lg text-xs font-medium data-[state=active]:shadow-sm" disabled={!opportunity?.id}>
             Tasks
           </TabsTrigger>
         </TabsList>
@@ -381,9 +382,11 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         </div>
 
         {/* Sales Strategy Section */}
-        <div className={`p-4 rounded-lg border space-y-4 ${sectionBg}`}>
-        <h3 className={`font-semibold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>
-          <Sparkles className="w-4 h-4 text-purple-500" />
+        <div className={`p-5 rounded-2xl border space-y-4 ${sectionBg}`}>
+        <h3 className={`font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+          <div className={`p-1.5 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}>
+             <Sparkles className="w-4 h-4" />
+          </div>
           Sales Strategy
         </h3>
 
