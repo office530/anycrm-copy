@@ -213,9 +213,26 @@ export default function LeadsPage() {
 
   const updateLead = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: () => {
+    onMutate: async ({ id, data }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries(['leads']);
+      const previousLeads = queryClient.getQueryData(['leads']);
+
+      // Optimistically update
+      queryClient.setQueryData(['leads'], (old) => {
+        return old.map((lead) => 
+          lead.id === id ? { ...lead, ...data, updated_date: new Date().toISOString() } : lead
+        );
+      });
+
+      return { previousLeads };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(['leads'], context.previousLeads);
+      alert("Failed to update lead");
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(['leads']);
-      // No automatic close - handled by handlers
     }
   });
 

@@ -3,7 +3,8 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, Trash2, Pencil, CheckCircle2, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Phone, Trash2, Pencil, CheckCircle2, MessageCircle, ChevronLeft, ChevronRight, AlertCircle, Clock } from "lucide-react";
+import moment from "moment";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { useSettings } from "@/components/context/SettingsContext";
@@ -173,11 +174,27 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                                     <div>
                                         <h4 className={`font-bold text-sm line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{lead.full_name}</h4>
                                         <p className={`text-[10px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
-                                        {getLastActivityDate(lead.id) && (
-                                          <div className="text-[10px] text-emerald-600 flex items-center gap-1 mt-0.5">
-                                            ✓ Activity: {new Date(getLastActivityDate(lead.id)).toLocaleDateString('en-US')}
-                                          </div>
-                                        )}
+                                        
+                                        {/* Activity & Stale Indicators */}
+                                        <div className="flex flex-col gap-0.5 mt-1">
+                                            {getLastActivityDate(lead.id) ? (
+                                              <div className="text-[10px] text-emerald-600 flex items-center gap-1">
+                                                ✓ Activity: {moment(getLastActivityDate(lead.id)).format('DD/MM')}
+                                              </div>
+                                            ) : (
+                                              <div className={`text-[10px] flex items-center gap-1 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+                                                <Clock className="w-3 h-3" /> No activity
+                                              </div>
+                                            )}
+                                            
+                                            {/* Stale Warning: Not updated in 7 days & not converted/lost */}
+                                            {moment(lead.updated_date).isBefore(moment().subtract(7, 'days')) && 
+                                             !['Converted', 'Lost / Unqualified'].includes(lead.lead_status) && (
+                                                <div className="text-[10px] text-amber-500 flex items-center gap-1 font-medium animate-pulse">
+                                                    <AlertCircle className="w-3 h-3" /> Stale ({moment(lead.updated_date).fromNow(true)})
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                                 {lead.phone_number && (
