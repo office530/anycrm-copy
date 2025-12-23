@@ -4,10 +4,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useSettings } from "@/components/context/SettingsContext";
+import { differenceInDays } from 'date-fns';
 
 export default function GalaxyScene({ opportunities }) {
     const mountRef = useRef(null);
-    const { theme } = useSettings();
+    const { theme, pipelineStages } = useSettings();
     const navigate = useNavigate();
     const [hoveredOpp, setHoveredOpp] = useState(null);
     const mouse = useRef(new THREE.Vector2());
@@ -15,167 +16,260 @@ export default function GalaxyScene({ opportunities }) {
     const sceneRef = useRef(null);
     const cameraRef = useRef(null);
     const planetsRef = useRef([]);
+    const ringsRef = useRef([]);
 
-    // Configuration
-    const MIN_RADIUS = 20;
-    const MAX_RADIUS = 80;
+    // --- Logic Configuration ---
     
-    // Helper to get color by stage
-    const getPlanetColor = (stage) => {
-        if (stage.includes('Won')) return 0x10B981; // Emerald
-        if (stage.includes('Lost')) return 0x64748B; // Slate
-        if (stage.includes('New')) return 0x3B82F6; // Blue
-        if (stage.includes('Negotiation')) return 0xF59E0B; // Amber
-        return 0x8B5CF6; // Purple (Default/Middle)
+    // 1. Calculate Orbit Zones based on Pipeline Stages
+    // We reverse the stages so "New" is outer and "Won" is inner/Sun
+    const activeStages = useMemo(() => {
+        // Filter out Closed Lost usually, or put them way out. 
+        // Let's treat "Closed Won" as the Sun (radius 0-10)
+        // "Closed Lost" as the Outer Rim (radius 150+)
+        // The rest are distributed in between.
+        return pipelineStages.filter(s => s.id !== 'Closed Won' && s.id !== 'Closed Lost');
+    }, [pipelineStages]);
+
+    const getStageConfig = (stageId) => {
+        if (stageId === 'Closed Won') return { radius: 0, color: '#10B981' }; // The Sun
+        if (stageId === 'Closed Lost') return { radius: 150, color: '#64748B' }; // Outer Rim
+        
+        const index = activeStages.findIndex(s => s.id === stageId);
+        if (index === -1) return { radius: 120, color: '#888888' }; // Unknown
+
+        // Distribute active stages between radius 30 and 100
+        // Closer to 0 index = Closer to "New" ? No, usually Stages go New -> Won.
+        // So New (index 0) should be FAR (Radius 100)
+        // Negotiation (index high) should be CLOSE (Radius 30)
+        const totalActive = activeStages.length;
+        const invertedIndex = totalActive - 1 - index; // 0 for last stage, N for first stage
+        
+        // Normalize: New (start) -> 100, End -> 30
+        const step = 70 / Math.max(totalActive - 1, 1);
+        const radius = 30 + (invertedIndex * step);
+        
+        // Find color in settings
+        const stageSettings = activeStages[index];
+        // stageSettings.color is a tailwind class (e.g. bg-blue-400). 
+        // We need a hex for THREE.js. Let's map or fallback.
+        // Since we can't easily parse tailwind classes to hex in JS without a map, 
+        // let's use a hash/lookup or standard colors.
+        
+        return { radius, label: stageSettings.label };
     };
 
-    // Helper to get size by amount (normalized)
-    const getPlanetSize = (amount) => {
-        const base = 1.5;
-        if (!amount) return base;
-        // Logarithmic scale for better visual distribution
-        return base + Math.log10(amount + 1) * 0.8;
+    // Helper: Map Tailwind-ish names to Hex if needed, or use a generator
+    const getHexColor = (stageId) => {
+        const stage = pipelineStages.find(s => s.id === stageId);
+        // Simple mapping based on common names or just hash string to color
+        if (!stage) return 0xFFFFFF;
+        if (stage.label.includes('New')) return 0x60A5FA; // Blue 400
+        if (stage.label.includes('Discovery')) return 0x818CF8; // Indigo 400
+        if (stage.label.includes('Proposal')) return 0xC084FC; // Purple 400
+        if (stage.label.includes('Negotiation')) return 0xFBBF24; // Amber 400
+        if (stage.label.includes('Won')) return 0x34D399; // Emerald 400
+        if (stage.label.includes('Lost')) return 0x94A3B8; // Slate 400
+        return 0xCBD5E1;
     };
+
+    const getOrbitalSpeed = (updatedDate) => {
+        if (!updatedDate) return 0.002;
+        const days = differenceInDays(new Date(), new Date(updatedDate));
+        // Fresh (< 7 days) = Fast (0.005)
+        // Stale (> 30 days) = Slow (0.0005)
+        if (days < 7) return 0.008;
+        if (days < 30) return 0.003;
+        return 0.0005;
+    };
+
+    // --- Scene Setup ---
 
     useEffect(() => {
         if (!mountRef.current) return;
 
-        // 1. Setup Scene
+        // Setup
         const scene = new THREE.Scene();
         sceneRef.current = scene;
-        scene.fog = new THREE.FogExp2(theme === 'dark' ? 0x0B1121 : 0x000000, 0.002);
+        scene.fog = new THREE.FogExp2(theme === 'dark' ? 0x000000 : 0x050510, 0.0015);
 
-        // 2. Camera
-        const camera = new THREE.PerspectiveCamera(60, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 1000);
-        camera.position.set(0, 40, 90);
+        const camera = new THREE.PerspectiveCamera(60, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 2000);
+        camera.position.set(0, 60, 140);
         cameraRef.current = camera;
 
-        // 3. Renderer
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         mountRef.current.appendChild(renderer.domElement);
 
-        // 4. Controls
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
-        controls.maxDistance = 200;
+        controls.maxDistance = 400;
         controls.minDistance = 20;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
 
-        // 5. Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         scene.add(ambientLight);
-
-        const sunLight = new THREE.PointLight(0xffaa00, 2, 300);
-        sunLight.position.set(0, 0, 0);
+        const sunLight = new THREE.PointLight(0xFFD700, 3, 400);
         scene.add(sunLight);
-        
-        // Sun Mesh (The "Core")
-        const sunGeo = new THREE.SphereGeometry(8, 32, 32);
+
+        // --- The Sun (Closed Won Aggregator) ---
+        const sunGeo = new THREE.SphereGeometry(12, 64, 64);
         const sunMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
         const sun = new THREE.Mesh(sunGeo, sunMat);
-        // Add glow effect simply via sprite or just multiple meshes? Keep it simple for now.
         scene.add(sun);
 
+        // Sun Glow (Sprite)
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gradient.addColorStop(0, 'rgba(255, 215, 0, 1)');
+        gradient.addColorStop(0.4, 'rgba(255, 200, 0, 0.5)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 128, 128);
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, blending: THREE.AdditiveBlending });
+        const sunGlow = new THREE.Sprite(spriteMat);
+        sunGlow.scale.set(60, 60, 1);
+        scene.add(sunGlow);
 
-        // 6. Stars Background
-        const starsGeo = new THREE.BufferGeometry();
-        const starsCount = 2000;
-        const posArray = new Float32Array(starsCount * 3);
-        
-        for(let i = 0; i < starsCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 400; 
-        }
-        
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const starsMat = new THREE.PointsMaterial({
-            size: 0.5,
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.8,
+        // --- Orbital Rings (Visual Guides) ---
+        ringsRef.current = [];
+        activeStages.forEach((stage, idx) => {
+            const { radius } = getStageConfig(stage.id);
+            const geometry = new THREE.TorusGeometry(radius, 0.3, 16, 100);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0xffffff, 
+                transparent: true, 
+                opacity: 0.15 
+            });
+            const ring = new THREE.Mesh(geometry, material);
+            ring.rotation.x = Math.PI / 2;
+            scene.add(ring);
+            ringsRef.current.push(ring);
+            
+            // Add Label for the Ring (using Canvas Texture on a Sprite)
+            // Simplifying for performance: Just rings for now.
         });
-        const starsMesh = new THREE.Points(starsGeo, starsMat);
-        scene.add(starsMesh);
 
-
-        // 7. Planet Generation
-        planetsRef.current = [];
+        // --- Background Stars ---
+        const starsGeo = new THREE.BufferGeometry();
+        const starsCount = 3000;
+        const posArray = new Float32Array(starsCount * 3);
+        const colsArray = new Float32Array(starsCount * 3);
         
+        for(let i = 0; i < starsCount * 3; i+=3) {
+            posArray[i] = (Math.random() - 0.5) * 800;
+            posArray[i+1] = (Math.random() - 0.5) * 600;
+            posArray[i+2] = (Math.random() - 0.5) * 800;
+            // Slight blue/white variations
+            colsArray[i] = 0.8 + Math.random() * 0.2;
+            colsArray[i+1] = 0.8 + Math.random() * 0.2;
+            colsArray[i+2] = 1; 
+        }
+        starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        starsGeo.setAttribute('color', new THREE.BufferAttribute(colsArray, 3));
+        const starsMat = new THREE.PointsMaterial({ size: 0.7, vertexColors: true, transparent: true, opacity: 0.8 });
+        const stars = new THREE.Points(starsGeo, starsMat);
+        scene.add(stars);
+
+
+        // --- Planets (Opportunities) ---
+        planetsRef.current = [];
         opportunities.forEach((opp, i) => {
-            const size = getPlanetSize(opp.amount || opp.loan_amount_requested);
-            const color = getPlanetColor(opp.deal_stage);
+            if (opp.deal_stage === 'Closed Won') return; // Consumed by the sun
+
+            const config = getStageConfig(opp.deal_stage);
+            const color = getHexColor(opp.deal_stage);
+            
+            // Size based on amount
+            const value = opp.amount || opp.loan_amount_requested || 0;
+            const size = Math.max(1, Math.log10(value + 1) * 1.2);
             
             const geometry = new THREE.SphereGeometry(size, 32, 32);
             const material = new THREE.MeshStandardMaterial({ 
                 color: color,
-                roughness: 0.4,
-                metalness: 0.3,
+                roughness: 0.7,
+                metalness: 0.1,
                 emissive: color,
-                emissiveIntensity: 0.2
+                emissiveIntensity: 0.1
             });
-            const planet = new THREE.Mesh(geometry, material);
-
-            // Orbit logic
-            const angle = (i / opportunities.length) * Math.PI * 2 + (Math.random() * 0.5); // Spread them out
-            const radius = MIN_RADIUS + (Math.random() * (MAX_RADIUS - MIN_RADIUS)); // Random distance
             
+            const planet = new THREE.Mesh(geometry, material);
+            
+            // Initial Position
+            const angle = (i * 137.5) * (Math.PI / 180); // Golden angle distribution
+            const variance = (Math.random() - 0.5) * 15; // Jitter in radius
+            const finalRadius = config.radius + variance;
+            
+            planet.position.x = Math.cos(angle) * finalRadius;
+            planet.position.z = Math.sin(angle) * finalRadius;
+            planet.position.y = (Math.random() - 0.5) * (finalRadius * 0.2); // Disc-like distribution
+
             planet.userData = { 
                 opp, 
                 angle, 
-                radius, 
-                speed: 0.001 + (Math.random() * 0.002), // Random orbital speed
-                originalScale: 1
+                radius: finalRadius,
+                speed: getOrbitalSpeed(opp.updated_date),
+                baseY: planet.position.y
             };
-
-            planet.position.x = Math.cos(angle) * radius;
-            planet.position.z = Math.sin(angle) * radius;
-            // Add slight Y variation for "3D" feel
-            planet.position.y = (Math.random() - 0.5) * 10;
 
             scene.add(planet);
             planetsRef.current.push(planet);
-            
-            // Add a subtle ring/orbit line for each? Too expensive visually maybe.
+
+            // Add value Ring/Moon if very high value?
+            if (value > 100000) {
+                 const ringGeo = new THREE.TorusGeometry(size + 1, 0.1, 16, 50);
+                 const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
+                 const ring = new THREE.Mesh(ringGeo, ringMat);
+                 ring.rotation.x = Math.PI / 2;
+                 planet.add(ring);
+            }
         });
 
-
-        // 8. Event Listeners
+        // Event Listeners
         const onMouseMove = (event) => {
-            // Calculate mouse position in normalized device coordinates (-1 to +1) based on canvas size
             const rect = renderer.domElement.getBoundingClientRect();
             mouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             mouse.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         };
-
         const onClick = () => {
             if (hoveredOpp) {
-                // Navigate or open modal
-                // For now, we'll let the React overlay handle the "View" button, 
-                // but clicking the planet itself could also trigger it.
-                // navigate(`${createPageUrl('Opportunities')}?opportunityId=${hoveredOpp.id}`);
+                // Future: Navigate to detail
             }
         };
-
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('click', onClick);
 
-        // 9. Animation Loop
+        // Animation Loop
         const animate = () => {
             requestAnimationFrame(animate);
 
-            // Rotate planets
+            // Rotate Planets
             planetsRef.current.forEach(planet => {
                 planet.userData.angle += planet.userData.speed;
                 planet.position.x = Math.cos(planet.userData.angle) * planet.userData.radius;
                 planet.position.z = Math.sin(planet.userData.angle) * planet.userData.radius;
+                
+                // Bobbing effect
+                planet.position.y = planet.userData.baseY + Math.sin(Date.now() * 0.001 + planet.userData.angle * 10) * 1;
+                
                 planet.rotation.y += 0.01;
             });
 
-            // Rotate stars slowly
-            starsMesh.rotation.y += 0.0002;
+            // Rotate Galaxy (Stars)
+            stars.rotation.y += 0.0001;
 
-            // Raycaster logic
+            // Sun pulse
+            const pulse = 1 + Math.sin(Date.now() * 0.002) * 0.05;
+            sun.scale.set(pulse, pulse, pulse);
+
+            // Raycasting
             raycaster.current.setFromCamera(mouse.current, camera);
             const intersects = raycaster.current.intersectObjects(planetsRef.current);
 
@@ -184,72 +278,86 @@ export default function GalaxyScene({ opportunities }) {
                 if (hoveredOpp?.id !== object.userData.opp.id) {
                     setHoveredOpp(object.userData.opp);
                     document.body.style.cursor = 'pointer';
+                    controls.autoRotate = false; // Pause rotation on hover
                     
-                    // Highlight effect
+                    // Highlight
                     object.material.emissiveIntensity = 0.8;
-                    object.scale.set(1.2, 1.2, 1.2);
                 }
             } else {
                 if (hoveredOpp) {
                     setHoveredOpp(null);
                     document.body.style.cursor = 'default';
+                    controls.autoRotate = true;
                     
-                    // Reset all
-                    planetsRef.current.forEach(p => {
-                        p.material.emissiveIntensity = 0.2;
-                        p.scale.set(1, 1, 1);
-                    });
+                    // Reset Highlight
+                    planetsRef.current.forEach(p => p.material.emissiveIntensity = 0.1);
                 }
             }
 
             controls.update();
             renderer.render(scene, camera);
         };
-
         animate();
 
-        // Cleanup
         return () => {
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('click', onClick);
-            mountRef.current?.removeChild(renderer.domElement);
-            // Dispose geometries/materials to avoid leaks
+            if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
             sunGeo.dispose(); sunMat.dispose();
             starsGeo.dispose(); starsMat.dispose();
         };
 
-    }, [opportunities, theme]); // Re-run if data changes hard (or we could optimize to update positions)
+    }, [opportunities, theme, activeStages]);
 
     return (
         <div className="relative w-full h-full">
             <div ref={mountRef} className="w-full h-full" />
             
-            {/* HUD / Overlay */}
+            {/* Legend / Key */}
+            <div className="absolute bottom-6 left-6 pointer-events-none">
+                 <div className="space-y-1">
+                     {activeStages.map((stage) => {
+                         const color = getHexColor(stage.id);
+                         return (
+                             <div key={stage.id} className="flex items-center gap-2">
+                                 <div className="w-3 h-3 rounded-full border border-white/20 shadow-[0_0_10px_rgba(0,0,0,0.5)]" 
+                                      style={{ backgroundColor: '#' + color.toString(16).padStart(6, '0') }} />
+                                 <span className="text-white/60 text-xs font-mono uppercase tracking-widest">{stage.label}</span>
+                             </div>
+                         );
+                     })}
+                 </div>
+            </div>
+
+            {/* HUD */}
             {hoveredOpp && (
-                <div className="absolute bottom-10 left-10 p-6 rounded-2xl backdrop-blur-xl bg-black/40 border border-white/10 text-white shadow-2xl animate-in fade-in slide-in-from-bottom-4 max-w-sm pointer-events-none select-none">
-                    <h2 className="text-2xl font-bold mb-1">{hoveredOpp.lead_name || 'Opportunity'}</h2>
-                    <p className="text-emerald-400 font-mono text-lg mb-2">
-                        {hoveredOpp.amount ? `$${hoveredOpp.amount.toLocaleString()}` : (hoveredOpp.loan_amount_requested ? `₪${hoveredOpp.loan_amount_requested.toLocaleString()}` : 'No Amount')}
-                    </p>
-                    <div className="flex gap-2 mb-3">
-                        <span className="px-2 py-1 rounded bg-white/10 text-xs">{hoveredOpp.deal_stage}</span>
-                        <span className="px-2 py-1 rounded bg-white/10 text-xs">{hoveredOpp.product_type}</span>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-12 pointer-events-none z-20">
+                    <div className="flex flex-col items-center gap-2">
+                        {/* Connecting Line */}
+                        <div className="h-8 w-px bg-gradient-to-b from-transparent to-white/50"></div>
+                        
+                        <div className="bg-black/80 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow-2xl min-w-[240px] text-center transform transition-all duration-300 scale-100 animate-in fade-in zoom-in-95">
+                            <div className="text-xs font-mono text-emerald-400 mb-1 uppercase tracking-wider">{hoveredOpp.deal_stage}</div>
+                            <div className="text-lg font-bold text-white leading-tight">{hoveredOpp.lead_name}</div>
+                            <div className="text-sm text-slate-400 mb-2">{hoveredOpp.product_type}</div>
+                            <div className="text-2xl font-mono text-amber-400 font-bold">
+                                {hoveredOpp.amount ? `$${hoveredOpp.amount.toLocaleString()}` : (hoveredOpp.loan_amount_requested ? `₪${hoveredOpp.loan_amount_requested.toLocaleString()}` : 'N/A')}
+                            </div>
+                            {hoveredOpp.updated_date && (
+                                <div className="text-[10px] text-slate-500 mt-2">
+                                    Last Active: {new Date(hoveredOpp.updated_date).toLocaleDateString()}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <p className="text-white/60 text-sm line-clamp-2">{hoveredOpp.notes || 'No additional notes.'}</p>
                 </div>
             )}
             
             <div className="absolute top-6 left-6 pointer-events-none">
-                <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 tracking-tight" style={{ textShadow: '0 0 30px rgba(255, 200, 0, 0.3)' }}>
-                    SALES GALAXY
+                <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 tracking-tighter filter drop-shadow-lg" style={{ fontFamily: 'system-ui' }}>
+                    GALAXY
                 </h1>
-                <p className="text-white/50 text-sm mt-1 font-mono tracking-widest uppercase">Pipeline Visualization System v1.0</p>
-            </div>
-
-            <div className="absolute bottom-6 right-6 text-white/30 text-xs font-mono">
-                <p>Orbit: Rotate</p>
-                <p>Scroll: Zoom</p>
-                <p>Click: Details</p>
+                <p className="text-emerald-500/80 text-xs font-mono tracking-[0.3em] uppercase ml-1">Live Pipeline Physics</p>
             </div>
         </div>
     );
