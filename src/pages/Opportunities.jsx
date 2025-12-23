@@ -28,7 +28,7 @@ export default function OpportunitiesPage() {
   const [viewMode, setViewMode] = useState('kanban');
   
   // Smart Filters with URL Sync
-  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, search, setSearch } = useUrlFilters('all');
+  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, setViewState, search, setSearch } = useUrlFilters('all');
 
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -159,9 +159,7 @@ export default function OpportunitiesPage() {
   ];
 
   const handleViewChange = (viewId) => {
-      setActiveView(viewId);
-      // Reset filters when switching views for clarity
-      setActiveFilters({});
+      setViewState(viewId, {});
   };
 
   const createOppMutation = useMutation({
