@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Medal, Crown } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function LeaderboardWidget({ opportunities }) {
     const { theme, branding } = useSettings();

@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, Target, AlertCircle } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 export default function ForecastWidget({ opportunities, timeRange, periodTarget = 500000 }) {
     const { theme, branding } = useSettings();
