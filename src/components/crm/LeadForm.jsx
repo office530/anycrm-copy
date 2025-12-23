@@ -145,7 +145,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
       <div className="overflow-y-auto p-4 md:p-6 flex-1">
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className={`flex w-full overflow-x-auto mb-6 p-1 h-auto gap-1 scrollbar-hide ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-100/80'}`}>
+        <TabsList className={`flex w-full flex-nowrap justify-start overflow-x-auto mb-6 p-1 h-auto gap-2 scrollbar-hide ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-100/80'}`}>
           {['details', 'opportunities', 'activity', 'tasks', 'documents', 'discovery', 'ai'].map(tab => {
             const icons = { details: User, opportunities: Briefcase, activity: Activity, tasks: CheckSquare, documents: FileText, discovery: ClipboardList, ai: Sparkles };
             const labels = { details: '360 Profile', opportunities: 'Opportunities', activity: 'Activity', tasks: 'Tasks', documents: 'Documents', discovery: 'Script', ai: 'AI Analysis' };
@@ -157,7 +157,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                 key={tab} 
                 value={tab} 
                 disabled={isDisabled}
-                className={`flex flex-col md:flex-row items-center justify-center gap-2 py-2 px-3 min-w-fit flex-1 whitespace-nowrap data-[state=active]:shadow-sm ${
+                className={`flex-shrink-0 flex flex-col md:flex-row items-center justify-center gap-2 py-2 px-4 min-w-fit whitespace-nowrap rounded-md transition-all data-[state=active]:shadow-sm ${
                   theme === 'dark' 
                     ? 'data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400 text-slate-400' 
                     : tab === 'ai' ? 'data-[state=active]:bg-white data-[state=active]:text-purple-700' : 'data-[state=active]:bg-white data-[state=active]:text-red-700'
