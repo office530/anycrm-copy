@@ -197,20 +197,30 @@ export default function Dashboard() {
                             Start "Act Now" Engine
                         </Button>
                     </Link>
-                    <div className={`flex items-center gap-4 px-6 py-3 rounded-2xl border backdrop-blur-md ${
-                        theme === 'dark' ? 'bg-slate-800/50 border-slate-700 text-slate-300' : 'bg-white/50 border-white/50 text-slate-600'
+                    <Link to={createPageUrl('Leads')} className={`flex items-center gap-4 px-6 py-3 rounded-2xl border backdrop-blur-md hover:scale-105 transition-transform cursor-pointer ${
+                        theme === 'dark' ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-800' : 'bg-white/50 border-white/50 text-slate-600 hover:bg-white/80'
                     }`}>
                          <div className="flex -space-x-2">
-                             {[1,2,3].map(i => (
-                                 <div key={i} className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                             {leads.filter(l => moment(l.created_date).isSame(moment(), 'day')).slice(0, 3).length > 0 ? (
+                                 leads.filter(l => moment(l.created_date).isSame(moment(), 'day')).slice(0, 3).map((lead, i) => (
+                                     <div key={lead.id || i} className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold uppercase ${
+                                         theme === 'dark' ? 'border-slate-800 bg-slate-700 text-cyan-400' : 'border-white bg-indigo-100 text-indigo-700'
+                                     }`} title={lead.full_name}>
+                                         {lead.full_name?.substring(0, 2) || "??"}
+                                     </div>
+                                 ))
+                             ) : (
+                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                                      theme === 'dark' ? 'border-slate-800 bg-slate-700' : 'border-white bg-slate-100'
                                  }`}>
-                                     {String.fromCharCode(64+i)}
+                                     0
                                  </div>
-                             ))}
+                             )}
                          </div>
-                         <span className="text-sm font-medium">{stats.newLeads} New Leads Today</span>
-                    </div>
+                         <span className="text-sm font-medium">
+                             {leads.filter(l => moment(l.created_date).isSame(moment(), 'day')).length} New Leads Today
+                         </span>
+                    </Link>
                   </div>
               </div>
 
