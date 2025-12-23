@@ -264,7 +264,7 @@ export default function GalaxyScene({ opportunities }) {
         };
 
         const updateTooltip = () => {
-            if (!cameraRef.current || !sceneRef.current || !hoveredObject) return;
+            if (!cameraRef.current || !sceneRef.current || !hoveredObject || !mountRef.current) return;
             
             // Project 3D position to 2D screen space
             const target = hoveredObject; 
@@ -289,8 +289,11 @@ export default function GalaxyScene({ opportunities }) {
         window.addEventListener('mousemove', onMouseMove);
 
         // Animation Loop
+        let frameId;
         const animate = () => {
-            requestAnimationFrame(animate);
+            frameId = requestAnimationFrame(animate);
+
+            if (!mountRef.current) return;
 
             // Orbit Planets
             interactablesRef.current.forEach(obj => {
@@ -340,9 +343,13 @@ export default function GalaxyScene({ opportunities }) {
         animate();
 
         return () => {
+            cancelAnimationFrame(frameId);
             window.removeEventListener('mousemove', onMouseMove);
-            if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
+            if (mountRef.current && renderer.domElement.parentNode === mountRef.current) {
+                mountRef.current.removeChild(renderer.domElement);
+            }
             sunGeo.dispose(); sunMat.dispose();
+            renderer.dispose();
         };
     }, [activeDeals, wonDeals, lostDeals, totalWonAmount, theme, activeStages, sunScaleFactor]);
 
