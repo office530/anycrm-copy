@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSettings } from "@/components/context/SettingsContext";
 import AiLeadImport from "@/components/crm/AiLeadImport";
 import { usePermissions } from '@/components/hooks/usePermissions';
+import SmartFilterBar from "@/components/common/SmartFilterBar";
 
 import { useLocation } from "react-router-dom";
 
@@ -58,7 +59,10 @@ export default function LeadsPage() {
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('kanban'); // Default to kanban view
-  const [filters, setFilters] = useState({ search: "", year: "all", status: "all", tag: "all" });
+  // New Smart Filter State
+  const [activeView, setActiveView] = useState('all');
+  const [search, setSearch] = useState("");
+  const [activeFilters, setActiveFilters] = useState({}); // { status: 'New', year: '2024' }
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
 
@@ -124,6 +128,45 @@ export default function LeadsPage() {
     });
     return Array.from(tags);
   }, [leads]);
+
+  // Schema for SmartFilterBar
+  const filterSchema = useMemo(() => [
+    { 
+        key: 'status', 
+        label: 'Status', 
+        type: 'select', 
+        options: leadStatuses.map(s => ({ label: s.label, value: s.value })) 
+    },
+    { 
+        key: 'tag', 
+        label: 'Tag', 
+        type: 'select', 
+        options: uniqueTags.map(t => ({ label: t, value: t })) 
+    },
+    {
+        key: 'source_year',
+        label: 'Year',
+        type: 'select',
+        options: ['2023', '2024', '2025'].map(y => ({ label: y, value: y }))
+    },
+    { key: 'city', label: 'City', type: 'text' }
+  ], [leadStatuses, uniqueTags]);
+
+  const views = [
+      { id: 'all', label: 'All Leads' },
+      { id: 'new', label: 'New Today' },
+      { id: 'my_leads', label: 'My Leads' },
+      { id: 'requires_action', label: 'Action Required 🔴' }
+  ];
+
+  const handleViewChange = (viewId) => {
+      setActiveView(viewId);
+      // Reset filters or set presets based on view
+      if (viewId === 'all') setActiveFilters({});
+      if (viewId === 'new') setActiveFilters({ status: 'New' }); // Simplified logic, could be date based
+      if (viewId === 'my_leads') setActiveFilters({}); // Logic handled in filtering
+      if (viewId === 'requires_action') setActiveFilters({ status: 'Attempting Contact' });
+  };
 
   // חישוב סטטיסטיקות
   const stats = useMemo(() => {
@@ -195,38 +238,46 @@ export default function LeadsPage() {
     }
   });
 
-  // סינון
+  // Filter Logic
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
-      // 1. Soft Delete Check
+      // 1. Soft Delete
       if (lead.is_deleted) return false;
 
-      // 2. Row Level Security (Permission Check)
+      // 2. RLS
       if (currentUser && currentUser.role !== 'admin') {
          const isCreator = lead.created_by === currentUser.email;
          const isAssigned = lead.assigned_to === currentUser.email;
          if (!isCreator && !isAssigned) return false;
       }
 
-      // Special case: revival list
-      if (filters.status === "revival_2023") {
-        return (lead.original_status_color === "Green" || lead.original_status_color === "Yellow") && !lead.last_contact_date;
+      // 3. View Logic
+      if (activeView === 'my_leads') {
+          if (lead.assigned_to !== currentUser?.email) return false;
+      }
+      if (activeView === 'new') {
+           // Simple "New" status check for now, ideally check created_date === today
+           // if (lead.lead_status !== 'New') return false; 
+           // Better: Created Today
+           const isToday = new Date(lead.created_date).toDateString() === new Date().toDateString();
+           if (!isToday) return false;
       }
 
-      // Search filter - only by name
-      const searchTerm = filters.search.toLowerCase().trim();
-      const matchesSearch = !searchTerm || (lead.full_name || "").toLowerCase().includes(searchTerm);
+      // 4. Smart Filters
+      if (activeFilters.status && lead.lead_status !== activeFilters.status) return false;
+      if (activeFilters.tag && (!lead.tags || !lead.tags.includes(activeFilters.tag))) return false;
+      if (activeFilters.source_year && String(lead.source_year) !== activeFilters.source_year) return false;
+      if (activeFilters.city && (!lead.city || !lead.city.toLowerCase().includes(activeFilters.city.toLowerCase()))) return false;
 
-      // Year filter
-      const matchesYear = filters.year === "all" || String(lead.source_year) === filters.year;
+      // 5. Search
+      const searchTerm = search.toLowerCase().trim();
+      if (searchTerm) {
+          const matchesName = (lead.full_name || "").toLowerCase().includes(searchTerm);
+          const matchesPhone = (lead.phone_number || "").includes(searchTerm);
+          if (!matchesName && !matchesPhone) return false;
+      }
 
-      // Status filter
-      const matchesStatus = filters.status === "all" || lead.lead_status === filters.status;
-
-      // Tag filter
-      const matchesTag = filters.tag === "all" || (lead.tags && lead.tags.includes(filters.tag));
-
-      return matchesSearch && matchesYear && matchesStatus && matchesTag;
+      return true;
     }).sort((a, b) => {
       if (!sortConfig.key) return b.id - a.id; // Default sort by ID descending
 
@@ -257,97 +308,65 @@ export default function LeadsPage() {
         <StatCard icon={Activity} label="Active in Pipeline" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
       </div>
 
-      {/* Glassmorphic Command Bar */}
-      <div className={`sticky top-4 z-40 mx-2 md:mx-0 p-3 rounded-2xl border backdrop-blur-xl shadow-lg flex flex-col md:flex-row gap-3 items-center transition-all duration-300 ${
-        theme === 'dark' ? 'bg-slate-900/80 border-slate-700/50 shadow-black/20' : 'bg-white/80 border-white/50 shadow-slate-200/50'
-      }`}>
-        {/* Search Input */}
-        <div className="relative flex-1 w-full">
-            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
-            <Input
-              placeholder="Search leads..."
-              className={`pl-11 h-11 rounded-xl border-none shadow-inner transition-all ${
-                theme === 'dark' 
-                  ? 'bg-slate-800/50 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500/50' 
-                  : 'bg-slate-100/50 text-slate-900 focus:ring-2 focus:ring-red-200'
-              }`}
-              value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })} 
+      {/* Smart Filter Bar */}
+      <div className="sticky top-4 z-40 mx-2 md:mx-0 flex flex-col md:flex-row gap-3 items-start md:items-center justify-between mb-4">
+          <div className="flex-1 w-full">
+            <SmartFilterBar 
+                views={views}
+                activeView={activeView}
+                onViewChange={handleViewChange}
+                schema={filterSchema}
+                filters={activeFilters}
+                onFilterChange={setActiveFilters}
+                search={search}
+                onSearchChange={setSearch}
             />
-        </div>
+          </div>
 
-        {/* Filters Row */}
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
-            <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger className={`h-11 min-w-[140px] rounded-xl border-none shadow-sm transition-all ${
-                  theme === 'dark' ? 'bg-slate-800/50 text-slate-200 hover:bg-slate-800' : 'bg-white text-slate-700 hover:bg-slate-50'
+          <div className="flex items-center gap-2 w-full md:w-auto mt-8 md:mt-0">
+               {/* View Toggle */}
+               <div className={`h-10 p-1 rounded-xl flex border shadow-sm ${
+                   theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'
                 }`}>
-                    <Filter className="w-4 h-4 mr-2 opacity-70" />
-                    <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                    <SelectItem value="revival_2023" className="text-red-500">♻️ Revival List</SelectItem>
-                </SelectContent>
-            </Select>
-
-            <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
-                <SelectTrigger className={`h-11 min-w-[120px] rounded-xl border-none shadow-sm transition-all ${
-                  theme === 'dark' ? 'bg-slate-800/50 text-slate-200 hover:bg-slate-800' : 'bg-white text-slate-700 hover:bg-slate-50'
-                }`}>
-                    <Tag className="w-4 h-4 mr-2 opacity-70" />
-                    <SelectValue placeholder="Tags" />
-                </SelectTrigger>
-                <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
-                    <SelectItem value="all">All Tags</SelectItem>
-                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag}>{tag}</SelectItem>)}
-                </SelectContent>
-            </Select>
-
-            {/* View Toggle */}
-            <div className={`h-11 p-1 rounded-xl flex border border-transparent shadow-sm ${
-               theme === 'dark' ? 'bg-slate-800/50' : 'bg-white'
-             }`}>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-lg px-3 ${
-                  viewMode === 'kanban' 
-                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
-                }`}>
-                    <LayoutGrid className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-lg px-3 ${
-                  viewMode === 'list' 
-                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                    : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
-                }`}>
-                    <ListIcon className="w-4 h-4" />
-                </Button>
-             </div>
-        </div>
-
-        {/* Actions */}
-        {canCreate && (
-           <div className="flex gap-2 w-full md:w-auto">
-             <Button 
-                onClick={() => setShowAiImport(true)}
-                className={`h-11 flex-1 md:flex-none rounded-xl border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
-                    theme === 'dark' ? 'text-purple-300' : ''
-                }`}
-             >
-                <Sparkles className="w-4 h-4 mr-2" />
-                AI Import
-             </Button>
-             <Button onClick={() => setShowLeadForm(true)} className={`h-11 flex-1 md:flex-none rounded-xl shadow-lg shadow-indigo-500/20 ${
-                 theme === 'dark' 
-                 ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
-                 : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-             }`}>
-                <Plus className="w-5 h-5 mr-1" />
-                New
-             </Button>
-           </div>
-        )}
+                   <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-lg px-3 ${
+                     viewMode === 'kanban' 
+                       ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
+                       : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                   }`}>
+                       <LayoutGrid className="w-4 h-4" />
+                   </Button>
+                   <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-lg px-3 ${
+                     viewMode === 'list' 
+                       ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
+                       : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                   }`}>
+                       <ListIcon className="w-4 h-4" />
+                   </Button>
+                </div>
+            
+             {/* Actions */}
+             {canCreate && (
+               <div className="flex gap-2 flex-1 md:flex-none">
+                 <Button 
+                    onClick={() => setShowAiImport(true)}
+                    className={`h-10 flex-1 md:flex-none rounded-xl border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
+                        theme === 'dark' ? 'text-purple-300' : ''
+                    }`}
+                 >
+                    <Sparkles className="w-4 h-4 md:mr-2" />
+                    <span className="hidden md:inline">AI Import</span>
+                 </Button>
+                 <Button onClick={() => setShowLeadForm(true)} className={`h-10 flex-1 md:flex-none rounded-xl shadow-lg shadow-indigo-500/20 ${
+                     theme === 'dark' 
+                     ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
+                     : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                 }`}>
+                    <Plus className="w-5 h-5 md:mr-1" />
+                    <span className="hidden md:inline">New</span>
+                 </Button>
+               </div>
+             )}
+          </div>
       </div>
 
       {/* --- תצוגת קאנבן --- */}
