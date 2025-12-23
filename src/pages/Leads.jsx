@@ -326,76 +326,78 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`space-y-6 pb-24 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col h-[calc(100vh-140px)] font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
-      {/* Top Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard icon={Users} label="Total Leads" value={stats.total} color="bg-red-100 text-red-700" />
-        <StatCard icon={CheckCircle2} label="Converted to Opportunity" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
-        <StatCard icon={Activity} label="Active in Pipeline" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
-      </div>
+      <div className="flex-shrink-0 space-y-4 mb-4">
+        {/* Top Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StatCard icon={Users} label="Total Leads" value={stats.total} color="bg-red-100 text-red-700" />
+            <StatCard icon={CheckCircle2} label="Converted to Opportunity" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
+            <StatCard icon={Activity} label="Active in Pipeline" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
+        </div>
 
-      {/* Smart Filter Bar */}
-      <div className="sticky top-4 z-40 mx-2 md:mx-0 mb-4">
-            <SmartFilterBar 
-                views={views}
-                activeView={activeView}
-                onViewChange={handleViewChange}
-                schema={filterSchema}
-                filters={activeFilters}
-                onFilterChange={setActiveFilters}
-                search={search}
-                onSearchChange={setSearch}
-            >
-               {/* View Toggle */}
-               <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm ${
-                   theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'
-                }`}>
-                   <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-md px-2 ${
-                     viewMode === 'kanban' 
-                       ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                       : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
-                   }`}>
-                       <LayoutGrid className="w-3.5 h-3.5" />
-                   </Button>
-                   <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-md px-2 ${
-                     viewMode === 'list' 
-                       ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                       : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
-                   }`}>
-                       <ListIcon className="w-3.5 h-3.5" />
-                   </Button>
+        {/* Smart Filter Bar */}
+        <div className="z-40 mx-2 md:mx-0">
+                <SmartFilterBar 
+                    views={views}
+                    activeView={activeView}
+                    onViewChange={handleViewChange}
+                    schema={filterSchema}
+                    filters={activeFilters}
+                    onFilterChange={setActiveFilters}
+                    search={search}
+                    onSearchChange={setSearch}
+                >
+                {/* View Toggle */}
+                <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm ${
+                    theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'
+                    }`}>
+                    <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-md px-2 ${
+                        viewMode === 'kanban' 
+                        ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
+                        : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                    }`}>
+                        <LayoutGrid className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-md px-2 ${
+                        viewMode === 'list' 
+                        ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
+                        : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
+                    }`}>
+                        <ListIcon className="w-3.5 h-3.5" />
+                    </Button>
+                    </div>
+
+                {/* Actions */}
+                {canCreate && (
+                <div className="flex gap-2">
+                    <Button 
+                        onClick={() => setShowAiImport(true)}
+                        size="sm"
+                        className={`h-8 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
+                            theme === 'dark' ? 'text-purple-300' : ''
+                        }`}
+                    >
+                        <Sparkles className="w-3.5 h-3.5 md:mr-2" />
+                        <span className="hidden md:inline text-xs font-medium">AI Import</span>
+                    </Button>
+                    <Button size="sm" onClick={() => setShowLeadForm(true)} className={`h-8 rounded-lg shadow-lg shadow-indigo-500/20 ${
+                        theme === 'dark' 
+                        ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    }`}>
+                        <Plus className="w-4 h-4 md:mr-1" />
+                        <span className="hidden md:inline text-xs font-medium">New</span>
+                    </Button>
                 </div>
-
-             {/* Actions */}
-             {canCreate && (
-               <div className="flex gap-2">
-                 <Button 
-                    onClick={() => setShowAiImport(true)}
-                    size="sm"
-                    className={`h-8 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
-                        theme === 'dark' ? 'text-purple-300' : ''
-                    }`}
-                 >
-                    <Sparkles className="w-3.5 h-3.5 md:mr-2" />
-                    <span className="hidden md:inline text-xs font-medium">AI Import</span>
-                 </Button>
-                 <Button size="sm" onClick={() => setShowLeadForm(true)} className={`h-8 rounded-lg shadow-lg shadow-indigo-500/20 ${
-                     theme === 'dark' 
-                     ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
-                     : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                 }`}>
-                    <Plus className="w-4 h-4 md:mr-1" />
-                    <span className="hidden md:inline text-xs font-medium">New</span>
-                 </Button>
-               </div>
-             )}
-            </SmartFilterBar>
+                )}
+                </SmartFilterBar>
+        </div>
       </div>
 
       {/* --- תצוגת קאנבן --- */}
       {viewMode === 'kanban' && (
-        <div className="h-[calc(100vh-280px)]">
+        <div className="flex-1 min-h-0">
             <LeadsKanban 
                 leads={filteredLeads} 
                 statuses={displayStatuses}
