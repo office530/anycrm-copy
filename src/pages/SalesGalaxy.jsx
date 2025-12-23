@@ -13,7 +13,7 @@ export default function SalesGalaxy() {
     
     const { data: opportunities, isLoading } = useQuery({
         queryKey: ['opportunities'],
-        queryFn: () => base44.entities.Opportunity.list(),
+        queryFn: () => base44.entities.Opportunity.list(null, 1000),
         initialData: []
     });
 

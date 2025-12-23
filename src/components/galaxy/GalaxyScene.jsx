@@ -272,9 +272,17 @@ export default function GalaxyScene({ opportunities }) {
             target.getWorldPosition(vec);
             vec.project(cameraRef.current);
 
-            const x = (vec.x * .5 + .5) * mountRef.current.clientWidth;
-            const y = (-(vec.y * .5) + .5) * mountRef.current.clientHeight;
+            let x = (vec.x * .5 + .5) * mountRef.current.clientWidth;
+            let y = (-(vec.y * .5) + .5) * mountRef.current.clientHeight;
 
+            // Clamp to screen bounds to prevent overflow
+            const padding = 20;
+            const tooltipWidth = 300; // Approx
+            const tooltipHeight = 200; // Approx
+
+            if (x + tooltipWidth > mountRef.current.clientWidth) x -= (tooltipWidth + 40);
+            if (y + tooltipHeight > mountRef.current.clientHeight) y -= tooltipHeight;
+            
             setTooltipPos({ x, y });
         };
 
@@ -344,7 +352,7 @@ export default function GalaxyScene({ opportunities }) {
             
             {/* Main Title */}
             <div className="absolute top-8 left-8 pointer-events-none select-none">
-                <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-500 to-amber-700 tracking-tighter drop-shadow-2xl">
+                <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-500 to-amber-700 tracking-tighter drop-shadow-2xl relative z-0">
                     GALAXY
                 </h1>
                 <p className="text-white/30 text-sm font-mono tracking-[0.5em] uppercase ml-1 mt-2">
@@ -355,22 +363,18 @@ export default function GalaxyScene({ opportunities }) {
             {/* Dynamic Detailed Menu (Tooltip) */}
             {hoveredObject && (
                 <div 
-                    className="absolute z-50 pointer-events-none"
+                    className="absolute z-[100] pointer-events-none transition-all duration-75 ease-out"
                     style={{ 
                         left: tooltipPos.x, 
                         top: tooltipPos.y,
-                        transform: 'translate(20px, -50%)' // Offset to right
+                        transform: 'translate(20px, -20%)'
                     }}
                 >
-                    {/* Connecting Line */}
-                    <div className="absolute top-1/2 right-full h-[1px] w-[20px] bg-white/30" />
-                    <div className="absolute top-1/2 right-full w-1 h-1 rounded-full bg-white/80 transform -translate-y-1/2" />
-
                     <div className={cn(
-                        "bg-black/90 backdrop-blur-xl border p-5 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] min-w-[280px] animate-in fade-in slide-in-from-left-4 duration-200",
-                        hoveredObject.userData.type === 'SUN' ? "border-amber-500/50 shadow-amber-900/20" :
-                        hoveredObject.userData.type === 'BLACK_HOLE' ? "border-purple-500/50 shadow-purple-900/20" :
-                        "border-white/20"
+                        "bg-[#09090b] border p-6 rounded-xl shadow-2xl min-w-[320px] animate-in fade-in zoom-in-95 duration-150",
+                        hoveredObject.userData.type === 'SUN' ? "border-amber-500/50 shadow-[0_0_30px_rgba(245,158,11,0.2)]" :
+                        hoveredObject.userData.type === 'BLACK_HOLE' ? "border-purple-500/50 shadow-[0_0_30px_rgba(139,92,246,0.2)]" :
+                        "border-slate-800 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
                     )}>
                         
                         {/* HEADER */}
@@ -398,14 +402,27 @@ export default function GalaxyScene({ opportunities }) {
                                 <>
                                     <h3 className="text-xl font-bold text-white leading-tight">{hoveredObject.userData.opp.lead_name}</h3>
                                     <p className="text-sm text-white/50">{hoveredObject.userData.opp.product_type || 'Opportunity'}</p>
-                                    <div className="mt-3 pt-3 border-t border-white/10 flex items-baseline gap-2">
-                                        <span className="text-3xl font-mono font-bold text-amber-400">
-                                            {(hoveredObject.userData.opp.amount || hoveredObject.userData.opp.loan_amount_requested || 0).toLocaleString()}
-                                        </span>
-                                        <span className="text-xs text-amber-400/50 uppercase font-bold">{useSettings().branding?.currency || '$'}</span>
+                                    <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
+                                        <div>
+                                            <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Value</div>
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="text-2xl font-mono font-bold text-white">
+                                                    {(hoveredObject.userData.opp.amount || hoveredObject.userData.opp.loan_amount_requested || 0).toLocaleString()}
+                                                </span>
+                                                <span className="text-xs text-slate-500 font-bold">{useSettings().branding?.currency || '$'}</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Probability</div>
+                                            <div className="text-2xl font-mono font-bold text-white">
+                                                {hoveredObject.userData.opp.probability || 0}%
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="mt-2 text-[10px] text-white/30">
-                                        Last Update: {differenceInDays(new Date(), new Date(hoveredObject.userData.opp.updated_date || new Date()))} days ago
+                                    
+                                    <div className="mt-4 flex items-center justify-between text-[11px] text-slate-500 font-mono border-t border-white/5 pt-2">
+                                        <span>Target: {hoveredObject.userData.opp.expected_close_date ? new Date(hoveredObject.userData.opp.expected_close_date).toLocaleDateString() : 'N/A'}</span>
+                                        <span>{differenceInDays(new Date(), new Date(hoveredObject.userData.opp.updated_date || new Date()))}d ago</span>
                                     </div>
                                 </>
                             ) : (
