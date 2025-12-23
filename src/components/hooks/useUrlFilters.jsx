@@ -67,5 +67,39 @@ export function useUrlFilters(defaultView = 'all') {
         });
     }, [setSearchParams]);
 
-    return { view, setView, search, setSearch, filters, setFilters };
+    // Atomic update for View + Filters (to avoid race conditions)
+    const setViewState = useCallback((newView, newFilters) => {
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            
+            // 1. Set View
+            if (newView && newView !== defaultView) {
+                next.set('view', newView);
+            } else {
+                next.delete('view');
+            }
+
+            // 2. Clear old filters (preserve q and action)
+            const keysToDelete = [];
+            for (const key of next.keys()) {
+                if (key !== 'view' && key !== 'q' && key !== 'action') {
+                    keysToDelete.push(key);
+                }
+            }
+            keysToDelete.forEach(k => next.delete(k));
+
+            // 3. Set new filters
+            if (newFilters) {
+                Object.entries(newFilters).forEach(([k, v]) => {
+                    if (v !== null && v !== undefined && v !== '') {
+                        next.set(k, v);
+                    }
+                });
+            }
+            
+            return next;
+        });
+    }, [setSearchParams, defaultView]);
+
+    return { view, setView, search, setSearch, filters, setFilters, setViewState };
 }

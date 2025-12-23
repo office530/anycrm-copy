@@ -62,7 +62,7 @@ export default function LeadsPage() {
   const [viewMode, setViewMode] = useState('kanban'); // Default to kanban view
   
   // Smart Filters with URL Sync
-  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, search, setSearch } = useUrlFilters('all');
+  const { view: activeView, setView: setActiveView, filters: activeFilters, setFilters: setActiveFilters, setViewState, search, setSearch } = useUrlFilters('all');
   
   const [sortConfig, setSortConfig] = useState({ key: 'created_date', direction: 'desc' });
   const [showAiImport, setShowAiImport] = useState(false);
@@ -153,20 +153,29 @@ export default function LeadsPage() {
     { key: 'city', label: 'City', type: 'text' }
   ], [leadStatuses, uniqueTags]);
 
+  const actionRequiredCount = useMemo(() => {
+      return leads.filter(l => l.lead_status === 'Attempting Contact').length;
+  }, [leads]);
+
   const views = [
       { id: 'all', label: 'All Leads' },
       { id: 'new', label: 'New Today' },
       { id: 'my_leads', label: 'My Leads' },
-      { id: 'requires_action', label: 'Action Required 🔴' }
+      { id: 'requires_action', label: (
+          <span className="flex items-center gap-2">
+             Action Required 
+             {actionRequiredCount > 0 && <span className="flex h-2 w-2 rounded-full bg-red-500" />}
+          </span>
+      ) }
   ];
 
   const handleViewChange = (viewId) => {
-      setActiveView(viewId);
-      // Reset filters or set presets based on view
+      // Use atomic update to prevent race conditions between view and filters
       const newFilters = {};
       if (viewId === 'new') newFilters.status = 'New';
       if (viewId === 'requires_action') newFilters.status = 'Attempting Contact';
-      setActiveFilters(newFilters);
+      
+      setViewState(viewId, newFilters);
   };
 
   // חישוב סטטיסטיקות
