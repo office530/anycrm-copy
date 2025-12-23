@@ -25,7 +25,7 @@ function LayoutContent({ children, currentPageName }) {
   { name: 'Tasks', path: 'Tasks', icon: CheckSquare },
   { name: 'Reports', path: 'Reports', icon: BarChart3 },
   { name: 'Automation', path: 'Automation', icon: Zap },
-  { name: 'Promotion', path: 'Promotion', icon: Sparkles },
+
   { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe },
   ];
 
