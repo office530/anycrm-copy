@@ -1,33 +1,31 @@
-import ActNow from './pages/ActNow';
-import Automation from './pages/Automation';
 import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
-import ImportLeads from './pages/ImportLeads';
-import LeadDetails from './pages/LeadDetails';
 import Leads from './pages/Leads';
 import Opportunities from './pages/Opportunities';
-import Promotion from './pages/Promotion';
+import Automation from './pages/Automation';
+import LeadDetails from './pages/LeadDetails';
+import ImportLeads from './pages/ImportLeads';
 import Reports from './pages/Reports';
-import SearchResults from './pages/SearchResults';
 import Settings from './pages/Settings';
+import SearchResults from './pages/SearchResults';
 import Tasks from './pages/Tasks';
+import Promotion from './pages/Promotion';
+import ActNow from './pages/ActNow';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "ActNow": ActNow,
-    "Automation": Automation,
     "Dashboard": Dashboard,
-    "Home": Home,
-    "ImportLeads": ImportLeads,
-    "LeadDetails": LeadDetails,
     "Leads": Leads,
     "Opportunities": Opportunities,
-    "Promotion": Promotion,
+    "Automation": Automation,
+    "LeadDetails": LeadDetails,
+    "ImportLeads": ImportLeads,
     "Reports": Reports,
-    "SearchResults": SearchResults,
     "Settings": Settings,
+    "SearchResults": SearchResults,
     "Tasks": Tasks,
+    "Promotion": Promotion,
+    "ActNow": ActNow,
 }
 
 export const pagesConfig = {

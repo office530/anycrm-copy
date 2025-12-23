@@ -1,129 +1,441 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, AreaChart, Area } from
+'recharts';
+import { Users, DollarSign, Activity, CheckCircle2, Clock, Calendar, AlertCircle, Plus } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import moment from 'moment';
+import TasksWidget from '@/components/dashboard/TasksWidget';
+import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
 import { useSettings } from '@/components/context/SettingsContext';
-import { KpiCardOps, AiInsightsWidget } from '@/components/dashboard/OperationalWidgets';
-import { SalesAreaChart } from '@/components/dashboard/SalesAreaChart';
-import { HotLeadsTable } from '@/components/dashboard/HotLeadsTable';
-import { ActionCenter } from '@/components/dashboard/ActionCenter';
-import { Users, DollarSign, Activity, TrendingUp } from 'lucide-react';
-
-/**
- * MOCK DATA
- * Robust data set to ensure immediate, beautiful rendering.
- */
-const MOCK_DATA = {
-  user: {
-    firstName: "Alex",
-    highRiskLeads: 3
-  },
-  kpiStats: [
-    {
-      title: "Total Revenue",
-      value: "$124,500",
-      icon: DollarSign,
-      trend: "up",
-      trendValue: "12%",
-      trendLabel: "vs last month"
-    },
-    {
-      title: "Active Leads",
-      value: "45",
-      icon: Users,
-      trend: "up",
-      trendValue: "8%",
-      trendLabel: "vs last week"
-    },
-    {
-      title: "Win Rate",
-      value: "24%",
-      icon: Activity,
-      trend: "down",
-      trendValue: "2%",
-      trendLabel: "vs target"
-    },
-    {
-      title: "Avg. Deal Size",
-      value: "$12,450",
-      icon: TrendingUp,
-      trend: "up",
-      trendValue: "5%",
-      trendLabel: "vs last quarter"
-    }
-  ],
-  salesTrend: [
-    { name: 'Jan', revenue: 4000, leads: 24 },
-    { name: 'Feb', revenue: 3000, leads: 18 },
-    { name: 'Mar', revenue: 5000, leads: 35 },
-    { name: 'Apr', revenue: 4500, leads: 28 },
-    { name: 'May', revenue: 6000, leads: 42 },
-    { name: 'Jun', revenue: 7500, leads: 48 },
-    { name: 'Jul', revenue: 8000, leads: 52 },
-  ],
-  insights: [
-    "Lead 'Acme Corp' viewed pricing page 5 times today.",
-    "3 high-value opportunities have stalled in 'Proposal' stage > 7 days.",
-    "Competitor mentioned in recent call with 'Global Tech'."
-  ],
-  hotLeads: [
-    { id: 1, name: "Sarah Connor", email: "sarah@skynet.com", status: "Negotiation", score: 85 },
-    { id: 2, name: "John Wick", email: "j.wick@continental.com", status: "New", score: 45 },
-    { id: 3, name: "Bruce Wayne", email: "bruce@wayneent.com", status: "Won", score: 100 },
-    { id: 4, name: "Tony Stark", email: "tony@stark.com", status: "Proposal", score: 75 },
-    { id: 5, name: "Peter Parker", email: "peter@dailybugle.com", status: "Qualifying", score: 60 },
-  ],
-  tasks: [
-    { id: 1, time: "09:00 AM", title: "Team Sync", subtitle: "Weekly pipeline review", priority: "Medium" },
-    { id: 2, time: "10:30 AM", title: "Call Sarah Connor", subtitle: "Discuss contract terms", priority: "High" },
-    { id: 3, time: "02:00 PM", title: "Demo with Acme", subtitle: "Product walkthrough", priority: "High" },
-    { id: 4, time: "04:30 PM", title: "Email Follow-up", subtitle: "Send proposal to Stark Ind", priority: "Medium" },
-    { id: 5, time: "05:00 PM", title: "Update CRM", subtitle: "Log daily activities", priority: "Low" },
-  ]
-};
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function Dashboard() {
-  const { branding } = useSettings(); // Keep using context for consistency if needed, though we use mock data primarily.
+  const [timeRange, setTimeRange] = useState('all'); // 'today', 'week', 'month', 'quarter', 'year', 'all'
+  const [showAddWidget, setShowAddWidget] = useState(false);
+  const { theme, branding, pipelineStages } = useSettings();
+  const queryClient = useQueryClient();
+
+  const getStageColor = (stageName) => {
+    // Normalize stage name (remove translations in parens)
+    const normalizedName = stageName?.split('(')[0]?.trim();
+    const stage = pipelineStages?.find(s => s.label === normalizedName || s.id === normalizedName || s.label?.startsWith(normalizedName));
+    const colorClass = stage?.color || 'bg-slate-400';
+    
+    // Map Tailwind classes to Hex for Recharts
+    const colorMap = {
+      'bg-blue-400': '#22d3ee', // Neon Cyan
+      'bg-blue-500': '#06b6d4',
+      'bg-indigo-400': '#a78bfa', // Neon Violet
+      'bg-indigo-500': '#8b5cf6',
+      'bg-purple-400': '#e879f9', // Neon Fuchsia
+      'bg-purple-500': '#d946ef',
+      'bg-amber-400': '#facc15', // Neon Yellow
+      'bg-amber-500': '#eab308',
+      'bg-emerald-500': '#34d399', // Neon Emerald
+      'bg-emerald-400': '#4ade80', // Neon Green
+      'bg-slate-300': '#e2e8f0', // Lighter Slate
+      'bg-slate-400': '#cbd5e1',
+      'bg-slate-500': '#94a3b8',
+      'bg-red-500': '#f43f5e', // Neon Rose
+    };
+
+    return colorMap[colorClass] || '#8884d8';
+  };
+
+  const { data: leads = [], isLoading: isLoadingLeads } = useQuery({ queryKey: ['leads'], queryFn: () => base44.entities.Lead.list() });
+  const { data: opportunities = [], isLoading: isLoadingOpps } = useQuery({ queryKey: ['opportunities'], queryFn: () => base44.entities.Opportunity.list() });
+  const { data: tasks = [], isLoading: isLoadingTasks } = useQuery({ queryKey: ['tasks'], queryFn: () => base44.entities.Task.list() });
+  const [tempWidgets, setTempWidgets] = useState([]);
+
+  // Filter data by time range
+  const { filteredLeads, filteredOpps, dateRangeLabel } = useMemo(() => {
+    let start = moment();
+    let label = "";
+
+    switch (timeRange) {
+      case 'today':
+        start = moment().startOf('day');
+        label = "Today";
+        break;
+      case 'week':
+        start = moment().startOf('week');
+        label = "Current Week";
+        break;
+      case 'month':
+        start = moment().startOf('month');
+        label = "Current Month";
+        break;
+      case 'quarter':
+        start = moment().startOf('quarter');
+        label = "Current Quarter";
+        break;
+      case 'year':
+        start = moment().startOf('year');
+        label = "Current Year";
+        break;
+      default:
+        start = moment('2000-01-01');
+        label = "All Time";
+    }
+
+    return {
+      filteredLeads: leads.filter((l) => moment(l.custom_data?.simulated_date || l.created_date).isSameOrAfter(start)),
+      filteredOpps: opportunities.filter((o) => moment(o.custom_data?.simulated_date || o.created_date).isSameOrAfter(start)),
+      dateRangeLabel: label
+    };
+  }, [leads, opportunities, timeRange]);
+
+  // חישוב מדדים (KPIs)
+  const stats = useMemo(() => {
+    const totalLeads = filteredLeads.length;
+    const newLeads = filteredLeads.filter((l) => l.lead_status === 'New').length;
+    const convertedLeads = filteredLeads.filter((l) => l.lead_status?.includes('Converted')).length;
+
+    const totalOpps = filteredOpps.length;
+    const wonOpps = filteredOpps.filter((o) => o.deal_stage?.includes('Won'));
+    const totalWonValue = wonOpps.reduce((sum, o) => sum + (o.amount || 0), 0);
+
+    // Opportunity Stages
+    const oppsByStage = filteredOpps.reduce((acc, o) => {
+      const stage = o.deal_stage || 'Other';
+      acc[stage] = (acc[stage] || 0) + 1;
+      return acc;
+    }, {});
+    const stageData = Object.entries(oppsByStage).map(([name, value]) => ({ 
+      name, 
+      value,
+      fill: getStageColor(name)
+    }));
+
+    // Sales Trends Data (Leads vs Won Deals)
+    const trendMap = {};
+    const dateFormat = timeRange === 'year' ? 'MMM' : 'DD/MM';
+
+    filteredLeads.forEach((l) => {
+      const date = moment(l.custom_data?.simulated_date || l.created_date).format(dateFormat);
+      if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
+      trendMap[date].leads++;
+    });
+
+    wonOpps.forEach((o) => {
+      const date = moment(o.custom_data?.simulated_date || o.updated_date || o.created_date).format(dateFormat);
+      if (!trendMap[date]) trendMap[date] = { date, leads: 0, sales: 0 };
+      trendMap[date].sales++;
+    });
+
+    const trendData = Object.values(trendMap).sort((a, b) => 0); // Simple sort
+
+    // Tasks
+    const today = moment().endOf('day');
+    const upcomingTasks = tasks.filter((t) => {
+      if (t.status === 'done') return false;
+      const due = moment(t.due_date);
+      return due.isValid() && due.isSameOrBefore(today.clone().add(7, 'days'));
+    }).sort((a, b) => moment(a.due_date).valueOf() - moment(b.due_date).valueOf()).slice(0, 5);
+
+    return {
+      totalLeads, newLeads, convertedLeads,
+      totalOpps, wonOppsCount: wonOpps.length, totalWonValue,
+      stageData, trendData, upcomingTasks
+    };
+  }, [filteredLeads, filteredOpps, tasks, timeRange, pipelineStages]);
+
+  if (isLoadingLeads || isLoadingOpps || isLoadingTasks) return <div className="p-8"><Skeleton className="h-96 w-full rounded-3xl" /></div>;
 
   return (
-    <div className="space-y-6 p-4 md:p-8 pt-6 max-w-[1600px] mx-auto">
-      
-      {/* HEADER: AI Daily Brief */}
-      <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Good Morning, {MOCK_DATA.user.firstName}
-          </h2>
-          <p className="text-muted-foreground mt-1">
-            You have <span className="font-semibold text-red-500 bg-red-50 dark:bg-red-900/20 px-1 rounded">{MOCK_DATA.user.highRiskLeads} high-risk leads</span> to call today.
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6 md:space-y-8 pb-24 md:pb-12 max-w-7xl mx-auto">
 
-      {/* DASHBOARD GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        
-        {/* ROW 1: KPI CARDS */}
-        {MOCK_DATA.kpiStats.map((kpi, index) => (
-          <div key={index} className="col-span-1 md:col-span-6 lg:col-span-3">
-            <KpiCardOps {...kpi} />
+      {/* Branding Hero Section */}
+      <div className={`rounded-3xl p-6 md:p-8 shadow-sm border flex flex-col-reverse md:flex-row items-center justify-between overflow-hidden relative gap-6 md:gap-0 transition-colors duration-300 ${
+      theme === 'dark' ?
+      'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700' :
+      'bg-gradient-to-br from-white to-neutral-50/50 md:bg-white border-neutral-100'}`
+      }>
+          <div className="relative z-10 max-w-lg text-center md:text-left w-full md:w-auto">
+              <h1 className={`text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>Welcome</h1>
+              <p className="text-base md:text-lg mb-6 text-cyan-400">Leads Database</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                <Link to={createPageUrl('ActNow')}>
+                  <Button className={`rounded-full px-6 text-white transition-all ${
+                theme === 'dark' ?
+                'bg-cyan-500 hover:bg-cyan-600 shadow-lg shadow-cyan-500/50' :
+                'bg-red-700 hover:bg-red-800'}`
+                }>
+                      Act Now
+                  </Button>
+                </Link>
+                <Link to={createPageUrl('Reports')}>
+                  <Button variant="outline" className={`rounded-full px-6 transition-all border-2 ${
+              theme === 'dark' ?
+              'border-purple-500/60 text-purple-400 hover:bg-purple-500/10 hover:border-purple-400 hover:text-purple-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]' :
+              'bg-white border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300'}`
+              }>
+                      View Reports
+                  </Button>
+                </Link>
+              </div>
           </div>
-        ))}
+          <div className="relative z-10">
+              <img
+                src={branding.logoUrl}
+                alt="AnyCRM Logo"
+                className={`h-28 md:h-40 object-contain rounded-full transition-all duration-500 ${theme === 'dark' ? 'drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' : 'drop-shadow-xl'}`} 
+              />
+          </div>
+          {/* Decorative Background */}
+          <div className={`absolute right-0 top-0 w-full md:w-1/3 h-full bg-gradient-to-b md:bg-gradient-to-l opacity-50 pointer-events-none ${
+        theme === 'dark' ?
+        'from-cyan-500/20 md:from-cyan-500/20 to-transparent' :
+        'from-red-50/50 md:from-red-50 to-transparent'}`
+        }></div>
+          </div>
 
-        {/* ROW 2: MAIN CHART & AI INSIGHTS */}
-        <div className="col-span-1 md:col-span-12 lg:col-span-8 h-[400px]">
-          <SalesAreaChart data={MOCK_DATA.salesTrend} />
+      {/* Header & Filter */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 text-center md:text-left">
+        <div className="w-full md:w-auto">
+            <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>Performance Overview</h2>
+            <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>Data for: {dateRangeLabel}</p>
         </div>
-        <div className="col-span-1 md:col-span-12 lg:col-span-4 h-[400px]">
-          <AiInsightsWidget insights={MOCK_DATA.insights} />
-        </div>
+        <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className={`w-[180px] ${
+          theme === 'dark' ? 'bg-slate-800 border-purple-500/50 text-fuchsia-300 shadow-[0_0_10px_rgba(216,180,254,0.1)]' : 'bg-white border-red-100 focus:ring-red-200'}`
+          }>
+                <Calendar className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-fuchsia-300' : 'text-neutral-600'}`} />
+                <SelectValue placeholder="Select Range" />
+            </SelectTrigger>
+            <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : ''}>
+                <SelectItem value="today" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Today</SelectItem>
+                <SelectItem value="week" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Week</SelectItem>
+                <SelectItem value="month" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Month</SelectItem>
+                <SelectItem value="quarter" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Quarter</SelectItem>
+                <SelectItem value="year" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>Current Year</SelectItem>
+                <SelectItem value="all" className={theme === 'dark' ? 'text-purple-400 focus:text-purple-300 focus:bg-slate-700' : ''}>All Time</SelectItem>
+            </SelectContent>
+        </Select>
+      </div>
 
-        {/* ROW 3: HOT LEADS & ACTION CENTER */}
-        <div className="col-span-1 md:col-span-12 lg:col-span-8 h-[400px]">
-          <HotLeadsTable leads={MOCK_DATA.hotLeads} />
-        </div>
-        <div className="col-span-1 md:col-span-12 lg:col-span-4 h-[400px]">
-          <ActionCenter tasks={MOCK_DATA.tasks} />
-        </div>
+      {/* KPIs Row 1: Leads Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <KpiCard title="Total Leads" value={stats.totalLeads} icon={Users} color="bg-red-500" subtext={`${stats.newLeads} new this period`} />
+        <KpiCard title="Converted Leads" value={stats.convertedLeads} icon={Activity} color="bg-purple-500" subtext={`${(stats.convertedLeads / (stats.totalLeads || 1) * 100).toFixed(1)}% conversion rate`} />
+        <KpiCard title="Won Revenue" value={`$${stats.totalWonValue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" subtext={`${stats.wonOppsCount} deals won`} />
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-fr">
+          
+          {/* Sales Trend Chart (Span 2) */}
+          <Card className={`lg:col-span-2 border-none shadow-sm rounded-2xl flex flex-col h-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+              <CardHeader>
+                  <CardTitle className={`text-lg font-semibold tracking-tight flex items-center gap-2 ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-blue-700'}`}>
+                      <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-700'}`} /> Sales & Leads Trend
+                  </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 min-h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.trendData}>
+                        <defs>
+                            <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#a3a3a3" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#a3a3a3" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#b91c1c" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#b91c1c" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                        <RechartsTooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                        <Area type="monotone" dataKey="leads" name="Leads" stroke="#a3a3a3" fill="url(#colorLeads)" strokeWidth={2} />
+                        <Area type="monotone" dataKey="sales" name="Sales" stroke="#b91c1c" fill="url(#colorSales)" strokeWidth={2} />
+                    </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+          </Card>
+
+          {/* Pipeline Summary (Span 1) */}
+          <Card className={`shadow-sm rounded-2xl p-6 md:p-8 relative overflow-hidden flex flex-col h-full justify-between transition-colors ${
+          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`
+          }>
+              <div className="relative z-10 space-y-6">
+                  {/* Header */}
+                  <div>
+                      <div className={`mb-2 text-sm font-medium tracking-wide ${theme === 'dark' ? 'text-cyan-400' : 'text-slate-500'}`}>Pipeline Status</div>
+                      <div className={`text-4xl md:text-5xl font-bold mb-1 ${theme === 'dark' ? 'text-white drop-shadow-sm' : 'text-slate-900'}`}>{stats.totalOpps - stats.wonOppsCount}</div>
+                      <div className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Active Opportunities</div>
+                  </div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-red-950/20 border-red-900/30' : 'bg-red-50 border-red-100'}`}>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-700'}`}>${(filteredOpps.reduce((sum, o) => sum + (o.amount || 0), 0) / 1000).toFixed(1)}k</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Total Pipeline Value</div>
+                      </div>
+                      <div className={`rounded-xl p-4 border ${theme === 'dark' ? 'bg-emerald-950/20 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100'}`}>
+                          <div className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'}`}>{stats.wonOppsCount}</div>
+                          <div className={`text-xs mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Deals Won</div>
+                      </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="space-y-2">
+                      <div className={`flex justify-between text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                          <span>Success Rate</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{(stats.wonOppsCount / (stats.totalOpps || 1) * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className={`w-full rounded-full h-2.5 overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}>
+                          <div className={`bg-gradient-to-r h-full rounded-full transition-all duration-500 ${theme === 'dark' ? 'from-cyan-500 to-purple-500' : 'from-red-500 to-red-600'}`} style={{ width: `${stats.wonOppsCount / (stats.totalOpps || 1) * 100}%` }}></div>
+                      </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className={`space-y-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
+                      <div className="flex justify-between items-center text-sm">
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Avg. Deal Value</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>${(filteredOpps.reduce((sum, o) => sum + (o.amount || 0), 0) / (filteredOpps.length || 1)).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Advanced Stage</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{filteredOpps.filter((o) => o.deal_stage?.includes('Negotiation') || o.deal_stage?.includes('Proposal')).length}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                          <span className={theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}>Expected Win This Month</span>
+                          <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>${filteredOpps.filter((o) => o.expected_close_date && moment(o.expected_close_date).isSame(moment(), 'month')).reduce((sum, o) => sum + (o.amount || 0) * (o.probability || 0) / 100, 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
+                      </div>
+                  </div>
+              </div>
+              {/* Decorations */}
+              <div className={`absolute -bottom-20 -right-20 w-64 h-64 blur-3xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-red-900/5' : 'bg-red-50'}`}></div>
+              <div className={`absolute -top-10 -left-10 w-40 h-40 blur-2xl rounded-full pointer-events-none transition-colors ${theme === 'dark' ? 'bg-slate-800/5' : 'bg-slate-50'}`}></div>
+          </Card>
+
+          {/* Opportunity Stages (Span 1) */}
+          <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+              <CardHeader>
+                  <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-blue-700'}`}>Opportunities by Stage</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 min-h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stats.stageData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis 
+                            dataKey="name" 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ 
+                                fontSize: 10, 
+                                fill: theme === 'dark' ? '#94a3b8' : '#475569',
+                                width: 50
+                            }} 
+                            interval={0} 
+                        />
+                        <YAxis hide />
+                        <RechartsTooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '8px' }} />
+                        <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40} name="Count">
+                          {stats.stageData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+          </Card>
+
+          {/* Tasks Widget (Span 1) */}
+          <TasksWidget className="h-full" />
+
+          {/* Custom Widgets */}
+          {tempWidgets.map((widget) => (
+              <CustomWidget key={widget.id} config={widget} theme={theme} />
+          ))}
+
+          {/* Add Report Placeholder (Span 1) */}
+          <div onClick={() => setShowAddWidget(true)} className="block h-full cursor-pointer">
+            <Card className={`h-full border-2 border-dashed flex flex-col items-center justify-center transition-all group min-h-[200px] ${
+              theme === 'dark' ? 
+              'bg-slate-800/50 border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]' : 
+              'bg-neutral-50/50 border-neutral-200 hover:border-purple-200 hover:bg-white'
+            }`}>
+              <div className={`p-3 rounded-full mb-3 transition-all duration-300 ${
+                theme === 'dark' ? 'bg-slate-800 group-hover:bg-purple-500/20 text-slate-400 group-hover:text-purple-400 group-hover:scale-110' : 'bg-white group-hover:bg-purple-50 text-slate-400 group-hover:text-purple-600 shadow-sm group-hover:scale-110'
+              }`}>
+                <Plus className="w-8 h-8" />
+              </div>
+              <span className={`font-medium text-lg ${theme === 'dark' ? 'text-slate-400 group-hover:text-purple-300' : 'text-slate-600 group-hover:text-purple-700'}`}>
+                Add New Report
+              </span>
+            </Card>
+          </div>
 
       </div>
-    </div>
+
+      <AddWidgetDialog 
+        open={showAddWidget} 
+        onOpenChange={setShowAddWidget} 
+        onSave={(data) => {
+          setTempWidgets([...tempWidgets, { ...data, id: Date.now() }]);
+          setShowAddWidget(false);
+        }} 
+      />
+    </div>);
+
+}
+
+function CustomWidget({ config, theme }) {
+  // Simple rendering of custom widget placeholder/chart
+  // In a real implementation, this would render the actual chart based on config
+  return (
+      <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full min-h-[300px] ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+          <CardHeader>
+              <CardTitle className={`text-lg font-semibold tracking-tight ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-blue-700'}`}>
+                  {config.name}
+              </CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 flex items-center justify-center text-slate-500">
+             {/* Simplified display for now since we don't have the generic chart component ready in this context */}
+             <div className="text-center">
+                 <Activity className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                 <p className="text-sm">Custom {config.type} for {config.entity_type}</p>
+                 <p className="text-xs opacity-70">Group by: {config.config?.xAxis}</p>
+             </div>
+          </CardContent>
+      </Card>
   );
+}
+
+function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
+  const { theme } = useSettings();
+  return (
+    <div className={`p-5 md:p-6 rounded-3xl shadow-sm border relative overflow-hidden group hover:shadow-md transition-all ${
+    theme === 'dark' ?
+    'bg-slate-800 border-slate-700 hover:border-cyan-500/50' :
+    'bg-white border-neutral-100'}`
+    }>
+            <div className="relative z-10 text-center">
+                <div className="flex items-center justify-center mb-4">
+                    <div className={`p-3 rounded-2xl ${color} ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-10'}`}>
+                        <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
+                    </div>
+                    {total && <span className={`text-xs font-bold px-2 py-1 rounded-full ml-2 ${
+          theme === 'dark' ? 'text-cyan-400 bg-slate-700' : 'text-neutral-500 bg-neutral-50'}`
+          }>{total} Total</span>}
+                </div>
+                <h3 className={`text-2xl md:text-3xl font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-neutral-800'}`}>{value}</h3>
+                <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>{title}</p>
+                <p className={`text-xs mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>{subtext}</p>
+            </div>
+        </div>);
+
 }
