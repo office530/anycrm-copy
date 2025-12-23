@@ -116,13 +116,13 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
       <div 
         ref={scrollContainerRef}
         onScroll={checkScroll}
-        className="flex gap-4 overflow-x-auto pb-20 h-full items-start scrollbar-hide px-2 scroll-smooth"
+        className="flex gap-4 overflow-x-auto pb-4 h-full items-start scrollbar-hide px-2 scroll-smooth"
       >
         {statuses.map((status) => {
           const statusLeads = getLeadsByStatus(status.value);
           
           return (
-            <div key={status.value} className="flex-shrink-0 w-[40vw] sm:w-[40vw] md:w-48 lg:w-52 flex flex-col h-full max-h-[calc(100vh-200px)]">
+            <div key={status.value} className="flex-shrink-0 w-[40vw] sm:w-[40vw] md:w-48 lg:w-52 flex flex-col h-full">
               {/* Stage Header */}
               <div className={`mb-3 p-3 rounded-xl border-b-4 flex justify-between items-center shadow-sm transition-colors ${
                   // Use the text color (neon) for the border to match
