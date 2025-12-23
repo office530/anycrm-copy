@@ -49,18 +49,16 @@ export default function TasksWidget({ className }) {
   };
 
   return (
-    <Card className={`border-none shadow-sm rounded-2xl flex flex-col h-full min-h-[350px] transition-colors ${
-      theme === 'dark' ? 'bg-slate-800' : 'bg-white'
-    } ${className || ''}`}>
-      <CardHeader className="pb-2 shrink-0">
+    <Card className={`border-none shadow-none bg-transparent flex flex-col h-full min-h-[350px] ${className || ''}`}>
+      <CardHeader className="pb-4 shrink-0 px-6 pt-6">
         <CardTitle className="text-lg flex items-center justify-between">
-          <Link to={createPageUrl('Tasks')} className={`flex items-center gap-2 hover:opacity-80 transition-opacity ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 font-bold' : 'text-blue-700 font-bold'}`}>
-            Upcoming Tasks
+          <Link to={createPageUrl('Tasks')} className={`flex items-center gap-2 hover:opacity-80 transition-opacity text-xl ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+            Focus List
           </Link>
-          <Badge variant="outline" className={`text-xs ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{upcomingTasks.length}</Badge>
+          <Badge className={`rounded-full px-2 ${theme === 'dark' ? 'bg-indigo-500 text-white' : 'bg-indigo-100 text-indigo-700'}`}>{upcomingTasks.length}</Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto pr-2">
+      <CardContent className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
         {upcomingTasks.length === 0 ? (
           <div className={`text-center py-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
             <CheckCircle2 className="w-10 h-10 mx-auto mb-2 opacity-20" />
@@ -76,22 +74,18 @@ export default function TasksWidget({ className }) {
               return (
                 <div
                   key={task.id}
-                  className={`p-3 rounded-xl border group hover:shadow-md transition-all duration-300 ${
+                  className={`p-4 rounded-2xl border transition-all duration-300 ${
                     theme === 'dark'
                       ? isDone 
-                        ? 'bg-emerald-950/30 border-emerald-800/50 opacity-60' 
+                        ? 'bg-slate-800/30 border-slate-700 opacity-50' 
                         : isOverdue 
-                        ? 'bg-red-950/40 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]' 
-                        : isToday
-                        ? 'bg-amber-950/40 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
-                        : 'bg-slate-800/80 border-slate-700 hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)]'
+                        ? 'bg-red-500/10 border-red-500/30' 
+                        : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:border-indigo-500/50'
                       : isDone
-                        ? 'bg-emerald-50 border-emerald-100 opacity-70'
+                        ? 'bg-slate-50 border-slate-100 opacity-50'
                         : isOverdue
-                        ? 'bg-red-50 border-red-200 shadow-sm'
-                        : isToday
-                        ? 'bg-amber-50 border-amber-200 shadow-sm'
-                        : 'bg-white border-slate-100 hover:border-blue-200 hover:shadow-md'
+                        ? 'bg-red-50 border-red-100'
+                        : 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-start gap-2">
