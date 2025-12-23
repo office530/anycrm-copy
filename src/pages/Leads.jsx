@@ -257,110 +257,97 @@ export default function LeadsPage() {
         <StatCard icon={Activity} label="Active in Pipeline" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
       </div>
 
-      {/* Toolbar & Search */}
-      <div className={`p-4 rounded-xl shadow-sm border flex flex-col md:flex-row gap-4 justify-between items-start md:items-center transition-colors ${
-        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+      {/* Glassmorphic Command Bar */}
+      <div className={`sticky top-4 z-40 mx-2 md:mx-0 p-3 rounded-2xl border backdrop-blur-xl shadow-lg flex flex-col md:flex-row gap-3 items-center transition-all duration-300 ${
+        theme === 'dark' ? 'bg-slate-900/80 border-slate-700/50 shadow-black/20' : 'bg-white/80 border-white/50 shadow-slate-200/50'
       }`}>
-        <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 flex-1">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        {/* Search Input */}
+        <div className="relative flex-1 w-full">
+            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
             <Input
-              placeholder="Search by name..."
-              className={`pl-10 rounded-lg transition-colors ${
+              placeholder="Search leads..."
+              className={`pl-11 h-11 rounded-xl border-none shadow-inner transition-all ${
                 theme === 'dark' 
-                  ? 'bg-slate-900 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-500 focus:ring-cyan-500' 
-                  : 'border-slate-300 focus:border-red-500 focus:ring-red-500'
+                  ? 'bg-slate-800/50 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500/50' 
+                  : 'bg-slate-100/50 text-slate-900 focus:ring-2 focus:ring-red-200'
               }`}
               value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })} />
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })} 
+            />
+        </div>
 
-          </div>
-          <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
-                <SelectTrigger className={`w-full md:w-[160px] font-medium rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'bg-slate-900 border-slate-600 text-white' 
-                    : 'border-slate-300 text-slate-700'
+        {/* Filters Row */}
+        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
+            <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
+                <SelectTrigger className={`h-11 min-w-[140px] rounded-xl border-none shadow-sm transition-all ${
+                  theme === 'dark' ? 'bg-slate-800/50 text-slate-200 hover:bg-slate-800' : 'bg-white text-slate-700 hover:bg-slate-50'
                 }`}>
-                    <Filter className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                    <Filter className="w-4 h-4 mr-2 opacity-70" />
                     <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent className={`text-left transition-colors ${
-                  theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-slate-900'
-                }`}>
-                    <SelectItem value="all" className="text-left">All Statuses</SelectItem>
-                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value} className="text-left hover:bg-slate-50">{opt.label}</SelectItem>)}
-                    <SelectItem value="revival_2023" className="text-red-600 font-bold text-left hover:bg-red-50">♻️ Revival List</SelectItem>
+                <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    {leadStatuses.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                    <SelectItem value="revival_2023" className="text-red-500">♻️ Revival List</SelectItem>
                 </SelectContent>
-          </Select>
+            </Select>
 
-          <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
-                <SelectTrigger className={`w-full md:w-[140px] font-medium rounded-lg transition-colors ${
-                  theme === 'dark' 
-                    ? 'bg-slate-900 border-slate-600 text-white' 
-                    : 'border-slate-300 text-slate-700'
+            <Select value={filters.tag} onValueChange={(v) => setFilters({ ...filters, tag: v })}>
+                <SelectTrigger className={`h-11 min-w-[120px] rounded-xl border-none shadow-sm transition-all ${
+                  theme === 'dark' ? 'bg-slate-800/50 text-slate-200 hover:bg-slate-800' : 'bg-white text-slate-700 hover:bg-slate-50'
                 }`}>
-                    <Tag className={`w-4 h-4 mr-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                    <Tag className="w-4 h-4 mr-2 opacity-70" />
                     <SelectValue placeholder="Tags" />
                 </SelectTrigger>
-                <SelectContent className={`text-left transition-colors ${
-                  theme === 'dark' ? 'bg-slate-800 text-white border-slate-700' : 'bg-white text-slate-900'
-                }`}>
-                    <SelectItem value="all" className="text-left">All Tags</SelectItem>
-                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag} className="text-left hover:bg-slate-50">{tag}</SelectItem>)}
+                <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : ''}>
+                    <SelectItem value="all">All Tags</SelectItem>
+                    {uniqueTags.map((tag) => <SelectItem key={tag} value={tag}>{tag}</SelectItem>)}
                 </SelectContent>
-          </Select>
+            </Select>
 
-
-          </div>
-
-          <div className="flex gap-2 w-full md:w-auto items-center flex-wrap md:flex-nowrap">
-             {/* View Toggle */}
-             <div className={`p-1 rounded-lg flex border transition-colors ${
-               theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-200'
+            {/* View Toggle */}
+            <div className={`h-11 p-1 rounded-xl flex border border-transparent shadow-sm ${
+               theme === 'dark' ? 'bg-slate-800/50' : 'bg-white'
              }`}>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-7 px-2 ${
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-lg px-3 ${
                   viewMode === 'kanban' 
-                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-white shadow-sm text-slate-900'
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
                     : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
                 }`}>
                     <LayoutGrid className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-7 px-2 ${
+                <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-lg px-3 ${
                   viewMode === 'list' 
-                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-white shadow-sm text-slate-900'
+                    ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
                     : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
                 }`}>
                     <ListIcon className="w-4 h-4" />
                 </Button>
              </div>
-
-             {canCreate && (
-               <>
-                 <Button 
-                    variant="outline" 
-                    onClick={() => setShowAiImport(true)}
-                    className="bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-blue-100 font-medium"
-                 >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    AI Import
-                 </Button>
-                 <Link to={createPageUrl('ImportLeads')} className="hidden md:flex">
-                    <Button variant="outline" className={`transition-colors ${
-                      theme === 'dark' 
-                        ? 'bg-slate-900 text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white' 
-                        : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100 hover:text-slate-900'
-                    }`}>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Regular Import
-                    </Button>
-                 </Link>
-                <Button onClick={() => setShowLeadForm(true)} className="w-full md:w-auto md:flex-none bg-red-700 hover:bg-red-800 text-white font-bold shadow-md shadow-red-900/10 order-first md:order-last">
-                    <Plus className="w-4 h-4 mr-2" />
-                    New Lead
-                </Button>
-               </>
-             )}
         </div>
+
+        {/* Actions */}
+        {canCreate && (
+           <div className="flex gap-2 w-full md:w-auto">
+             <Button 
+                onClick={() => setShowAiImport(true)}
+                className={`h-11 flex-1 md:flex-none rounded-xl border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
+                    theme === 'dark' ? 'text-purple-300' : ''
+                }`}
+             >
+                <Sparkles className="w-4 h-4 mr-2" />
+                AI Import
+             </Button>
+             <Button onClick={() => setShowLeadForm(true)} className={`h-11 flex-1 md:flex-none rounded-xl shadow-lg shadow-indigo-500/20 ${
+                 theme === 'dark' 
+                 ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
+                 : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+             }`}>
+                <Plus className="w-5 h-5 mr-1" />
+                New
+             </Button>
+           </div>
+        )}
       </div>
 
       {/* --- תצוגת קאנבן --- */}
@@ -430,11 +417,7 @@ export default function LeadsPage() {
             theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/80'
           }`}>
                     <div className="col-span-3 flex items-center gap-3">
-                         <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${
-                           theme === 'dark' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-red-50 text-red-700'
-                         }`}>
-                            {lead.full_name?.charAt(0)}
-                         </div>
+                         <LeadAvatar lead={lead} className="w-10 h-10 flex-shrink-0" />
                          <div className="flex-1">
                             <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className={`font-bold transition-colors ${
                               theme === 'dark' ? 'text-white hover:text-cyan-400' : 'text-slate-800 hover:text-red-600'
@@ -513,11 +496,7 @@ export default function LeadsPage() {
         }`}>
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                          theme === 'dark' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-red-50 text-red-700'
-                        }`}>
-                            {lead.full_name?.charAt(0)}
-                        </div>
+                        <LeadAvatar lead={lead} className="w-12 h-12 flex-shrink-0" />
                         <div>
                             <Link to={`${createPageUrl('LeadDetails')}?leadId=${lead.id}`} className={`font-bold text-lg transition-colors block ${
                               theme === 'dark' ? 'text-white hover:text-cyan-400' : 'text-slate-900 hover:text-red-600'
@@ -581,9 +560,18 @@ export default function LeadsPage() {
       </div>
       )}
 
-      {/* דיאלוג עריכה */}
+      {/* Smart Slide-Over (Sheet) */}
       <Dialog open={showLeadForm} onOpenChange={(open) => {setShowLeadForm(open);if (!open) setEditingLead(null);}}>
-        <DialogContent className="max-w-2xl p-0 bg-transparent border-none">
+        <DialogContent className={`fixed right-0 top-0 h-full w-full sm:w-[550px] max-w-none p-0 border-l shadow-2xl transition-all duration-300 gap-0 data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right ${
+            theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
+        }`}>
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}>
+                <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                    {editingLead ? 'Edit Lead' : 'Create New Lead'}
+                </h2>
+                {/* Close button is automatically added by DialogContent usually, but we can add custom header controls here if needed */}
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           <LeadForm
             lead={editingLead}
             onSaveAndClose={(data) => {
@@ -619,7 +607,7 @@ export default function LeadsPage() {
             }}
             onCancel={() => { setShowLeadForm(false); setEditingLead(null); }}
             isSubmitting={createLead.isPending || updateLead.isPending} />
-
+            </div>
         </DialogContent>
       </Dialog>
 
@@ -675,6 +663,47 @@ function StatusBadge({ lead, statuses, updateLead, convert }) {
         const isRevival = val === 'revival_2023' || s?.label?.includes('החייאה');
         return <Badge variant="outline" className={`${isRevival ? 'text-red-600 font-bold border-red-200 bg-red-50' : s?.color?.replace('font-medium', '') || 'bg-slate-100 text-slate-900 font-normal'} border-0 px-3 py-1 w-full justify-start`}>{s?.label || val}</Badge>;
       }} />);
+}
 
+function LeadAvatar({ lead, className }) {
+  const { theme } = useSettings();
+  const score = lead.ai_quality_score || 0;
+  const temp = lead.lead_temperature || 'Cold';
+  
+  const isHot = temp === 'Hot' || score >= 80;
+  const isWarm = temp === 'Warm' || (score >= 50 && score < 80);
+  
+  // Dynamic glow color
+  const glowColor = isHot ? 'bg-red-500' : isWarm ? 'bg-amber-400' : 'bg-blue-400';
+  const ringColor = isHot ? 'ring-red-500' : isWarm ? 'ring-amber-400' : 'ring-blue-200';
+  
+  return (
+    <div className={`relative group ${className}`}>
+      {/* Pulse Effect for Hot/Warm */}
+      {(isHot || isWarm) && (
+        <span className={`absolute -inset-1 rounded-full opacity-30 animate-pulse blur-sm ${glowColor}`}></span>
+      )}
+      
+      {/* Avatar Circle */}
+      <div className={`w-full h-full rounded-full flex items-center justify-center font-bold text-sm relative z-10 transition-all border-2 ${
+        theme === 'dark' 
+          ? `bg-slate-800 text-white ${isHot ? 'border-red-500/50' : 'border-slate-700'}` 
+          : `bg-white text-slate-700 ${isHot ? 'border-red-200' : 'border-slate-200'}`
+      }`}>
+        {lead.full_name?.charAt(0)}
+      </div>
 
+      {/* Status Dot */}
+      <span className={`absolute bottom-0 right-0 w-3 h-3 border-2 rounded-full z-20 ${
+          theme === 'dark' ? 'border-slate-900' : 'border-white'
+      } ${glowColor}`}></span>
+      
+      {/* Tooltip for AI Score (Optional) */}
+      {score > 0 && (
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap z-30 pointer-events-none">
+              Score: {score}
+          </div>
+      )}
+    </div>
+  );
 }
