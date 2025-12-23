@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Clock, ArrowRight } from "lucide-react";
+import { AlertTriangle, Clock, ArrowRight, Mail } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import { differenceInDays } from 'date-fns';
 import { Link } from 'react-router-dom';
@@ -10,6 +10,21 @@ import { Badge } from "@/components/ui/badge";
 export default function StagnantDealsWidget({ opportunities }) {
     const { theme, branding } = useSettings();
     const isDark = theme === 'dark';
+
+    const handleNudge = (e, deal) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (!deal.email) {
+            alert("No email address found for this opportunity.");
+            return;
+        }
+
+        const subject = encodeURIComponent(`Following up on ${deal.product_type || 'our discussion'}`);
+        const body = encodeURIComponent(`Hi ${deal.lead_name?.split(' ')[0] || 'there'},\n\nI wanted to circle back on our conversation regarding the ${deal.product_type} opportunity. Is there anything blocking us from moving forward?\n\nBest,\n`);
+        
+        window.location.href = `mailto:${deal.email}?subject=${subject}&body=${body}`;
+    };
 
     const stagnantDeals = useMemo(() => {
         const thresholdDays = 14;
@@ -71,9 +86,18 @@ export default function StagnantDealsWidget({ opportunities }) {
                                 <Badge variant="outline" className={`${isDark ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-red-50 text-red-600 border-red-100'}`}>
                                     {deal.daysInStage} days stuck
                                 </Badge>
-                                <Link to={createPageUrl('Opportunities')} className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full ${isDark ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-700'}`}>
-                                    <ArrowRight className="w-3 h-3" />
-                                </Link>
+                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button 
+                                        onClick={(e) => handleNudge(e, deal)}
+                                        title="Send Nudge Email"
+                                        className={`p-1.5 rounded-full transition-colors ${isDark ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500 hover:text-white' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'}`}
+                                    >
+                                        <Mail className="w-3 h-3" />
+                                    </button>
+                                    <Link to={createPageUrl('Opportunities')} className={`p-1.5 rounded-full ${isDark ? 'bg-slate-700 text-white hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                                        <ArrowRight className="w-3 h-3" />
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     ))
