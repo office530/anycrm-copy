@@ -297,7 +297,7 @@ export default function LeadsPage() {
       if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [leads, filters, sortConfig]);
+  }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
     <div className={`space-y-6 pb-24 font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
