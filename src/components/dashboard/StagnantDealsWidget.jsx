@@ -37,9 +37,8 @@ export default function StagnantDealsWidget({ opportunities }) {
                 daysInStage: differenceInDays(now, new Date(o.updated_date || o.created_date))
             }))
             .filter(o => o.daysInStage > thresholdDays)
-            .sort((a, b) => b.amount - a.amount)
-            .slice(0, 4);
-    }, [opportunities]);
+            .sort((a, b) => b.amount - a.amount);
+        }, [opportunities]);
 
     return (
         <Card className="h-full border-none shadow-none bg-transparent">
@@ -49,7 +48,12 @@ export default function StagnantDealsWidget({ opportunities }) {
                     At Risk (Stagnant)
                 </CardTitle>
             </CardHeader>
-            <CardContent className="px-0 space-y-3">
+            <CardContent className="px-0 space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                <style>{`
+                    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { background: ${isDark ? '#334155' : '#cbd5e1'}; border-radius: 4px; }
+                `}</style>
                 {stagnantDeals.length === 0 ? (
                     <div className={`flex flex-col items-center justify-center h-48 rounded-xl border-2 border-dashed ${isDark ? 'border-slate-800 bg-slate-800/20' : 'border-slate-200 bg-slate-50'}`}>
                         <div className="p-3 rounded-full bg-emerald-100 text-emerald-600 mb-2">
@@ -70,9 +74,12 @@ export default function StagnantDealsWidget({ opportunities }) {
                         >
                             <div className="flex justify-between items-start mb-1">
                                 <div>
-                                    <h4 className={`text-sm font-semibold truncate max-w-[140px] ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
+                                    <Link 
+                                        to={`${createPageUrl('Opportunities')}?opportunityId=${deal.id}`}
+                                        className={`text-sm font-semibold truncate max-w-[140px] hover:underline hover:text-indigo-500 cursor-pointer block ${isDark ? 'text-slate-200' : 'text-slate-700'}`}
+                                    >
                                         {deal.lead_name || 'Unknown Opportunity'}
-                                    </h4>
+                                    </Link>
                                     <p className="text-xs text-slate-500">{deal.deal_stage}</p>
                                 </div>
                                 <div className="text-right">
