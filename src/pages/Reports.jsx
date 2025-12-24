@@ -113,8 +113,8 @@ export default function ReportsPage() {
     <div className={`min-h-screen p-6 transition-colors ${theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50/50'}`} dir="ltr">
       <div className="max-w-[1600px] mx-auto space-y-6">
           {/* Header */}
-          <div className={`rounded-xl shadow-sm border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors ${
-              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          <div className={`rounded-xl shadow-lg backdrop-blur-xl border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors ${
+              theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
           }`}>
             <div>
               <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-neutral-900'}`}>Reports & Analytics</h1>

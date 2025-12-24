@@ -393,8 +393,8 @@ export default function OpportunitiesPage() {
 
       {/* Stats Header (New!) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
-              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
+              theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}><DollarSign className="w-5 h-5"/></div>
              <div>
@@ -517,8 +517,8 @@ export default function OpportunitiesPage() {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`
-                              cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border-none shadow-sm group relative overflow-hidden
-                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : theme === 'dark' ? 'bg-slate-800 border border-slate-700 shadow-none' : 'bg-white shadow-sm'}
+                              cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border shadow-sm group relative overflow-hidden backdrop-blur-md
+                              ${snapshot.isDragging ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-teal-500' : theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'}
                             `}
                             onClick={() => { setEditingOpp(opp); setShowForm(true); }}
                           >
@@ -592,8 +592,8 @@ export default function OpportunitiesPage() {
         </div>
       </DragDropContext>
       ) : (
-        <div className={`rounded-xl border shadow-sm overflow-hidden flex flex-col transition-colors ${
-          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+        <div className={`rounded-xl border shadow-lg overflow-hidden flex flex-col transition-colors backdrop-blur-xl ${
+          theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
         }`}>
           <div className="overflow-x-auto">
             <div className="min-w-[800px]">

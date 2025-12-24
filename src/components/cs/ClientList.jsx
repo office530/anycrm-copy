@@ -24,8 +24,8 @@ export default function ClientList({ clients, onSelectClient }) {
     };
 
     return (
-        <div className={`rounded-xl border shadow-sm ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+        <div className={`rounded-xl border shadow-lg backdrop-blur-xl ${isDark ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'}`}>
+            <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 flex justify-between items-center">
                 <h3 className={`font-bold text-lg ${isDark ? 'text-white' : 'text-slate-900'}`}>Clients</h3>
                 <div className="relative w-64">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-slate-400" />

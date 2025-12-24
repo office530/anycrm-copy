@@ -483,10 +483,10 @@ function CustomWidget({ config, theme }) {
 function KpiCard({ title, value, subtext, icon: Icon, color, total }) {
   const { theme } = useSettings();
   return (
-    <div className={`p-5 md:p-6 rounded-3xl shadow-sm border relative overflow-hidden group hover:shadow-md transition-all ${
+    <div className={`p-5 md:p-6 rounded-3xl shadow-lg border relative overflow-hidden group hover:scale-[1.02] transition-all backdrop-blur-xl ${
     theme === 'dark' ?
-    'bg-slate-800 border-slate-700 hover:border-cyan-500/50' :
-    'bg-white border-neutral-100'}`
+    'bg-slate-800/60 border-slate-700/50 hover:border-cyan-500/50 text-white' :
+    'bg-white/60 border-white/50 text-slate-900'}`
     }>
             <div className="relative z-10 text-center">
                 <div className="flex items-center justify-center mb-4">

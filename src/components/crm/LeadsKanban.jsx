@@ -154,10 +154,10 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`
-                              cursor-grab active:cursor-grabbing border-none shadow-sm relative overflow-hidden group transition-all
+                              cursor-grab active:cursor-grabbing border shadow-sm relative overflow-hidden group transition-all backdrop-blur-md
                               ${snapshot.isDragging 
                                 ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-blue-500' 
-                                : theme === 'dark' ? 'bg-slate-800 hover:shadow-md hover:bg-slate-700/80' : 'bg-white hover:shadow-md'}
+                                : theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50 hover:bg-slate-700/80' : 'bg-white/60 border-white/50 hover:bg-white/80'}
                             `}
                             onClick={() => onEdit(lead)}
                           >

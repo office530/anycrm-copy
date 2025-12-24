@@ -134,8 +134,8 @@ export default function TasksPage() {
         <StatCard icon={Calendar} label="To Do" value={stats.today} color="bg-orange-500" />
       </div>
 
-      <div className={`p-4 rounded-xl shadow-sm border flex flex-col md:flex-row gap-3 transition-colors ${
-        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+      <div className={`p-4 rounded-xl shadow-lg border flex flex-col md:flex-row gap-3 transition-colors backdrop-blur-xl ${
+        theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
       }`}>
         <div className="relative flex-1">
           <Input
@@ -262,8 +262,8 @@ export default function TasksPage() {
 function StatCard({ icon: Icon, label, value, color }) {
   const { theme } = useSettings();
   return (
-    <Card className={`border-none shadow-sm transition-colors ${
-      theme === 'dark' ? 'bg-slate-800' : 'bg-white'
+    <Card className={`border shadow-lg backdrop-blur-xl transition-colors ${
+      theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
     }`}>
       <CardContent className="p-4 flex items-center gap-4">
         <div className={`p-3 rounded-xl ${color} ${theme === 'dark' ? 'bg-opacity-20' : 'bg-opacity-10'}`}>
@@ -292,14 +292,14 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`rounded-xl border p-4 hover:shadow-md transition-all ${
+      className={`rounded-xl border p-4 hover:shadow-md transition-all backdrop-blur-md ${
         theme === 'dark' ?
           isDone ? 'bg-emerald-500/10 border-emerald-500/30' :
             isOverdue ? 'bg-red-500/10 border-red-500/30' :
-              'bg-slate-800 border-slate-700' :
+              'bg-slate-800/60 border-slate-700/50' :
           isDone ? 'bg-emerald-50/30 border-emerald-200' :
             isOverdue ? 'bg-red-50/30 border-red-200' :
-              'bg-white border-slate-200'
+              'bg-white/60 border-white/50'
       }`}
     >
       <div className="flex items-start gap-3">
