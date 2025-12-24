@@ -233,8 +233,9 @@ export default function Dashboard() {
               <div className={`absolute -right-20 -bottom-32 w-96 h-96 rounded-full blur-[100px] opacity-60 pointer-events-none transition-transform duration-[10s] ease-in-out group-hover:scale-110 ${
                   theme === 'dark' ? 'bg-indigo-600' : 'bg-indigo-200'
               }`}></div>
-              <div className={`absolute top-4 right-8 opacity-10 transform rotate-12 transition-transform group-hover:rotate-0 duration-700 pointer-events-none select-none`}>
-                  <span className="text-[7rem] font-black text-transparent leading-none" style={{ WebkitTextStroke: theme === 'dark' ? '2px rgba(255,255,255,0.8)' : '2px rgba(100,116,139,0.3)' }}>
+              {/* Watermark Logo Text */}
+              <div className={`absolute top-1/2 -translate-y-1/2 right-8 md:right-16 opacity-[0.07] transform -rotate-6 transition-all duration-700 group-hover:rotate-0 group-hover:scale-105 group-hover:opacity-10 pointer-events-none select-none`}>
+                  <span className="text-6xl md:text-[7rem] font-black text-transparent leading-none whitespace-nowrap" style={{ WebkitTextStroke: theme === 'dark' ? '2px rgba(255,255,255,0.9)' : '2px rgba(15, 23, 42, 0.8)' }}>
                       {branding.companyName}
                   </span>
               </div>
