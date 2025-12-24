@@ -117,7 +117,7 @@ export default function ClientDetails({ client, open, onClose }) {
                                     <div>
                                         <div className="flex justify-between text-sm mb-1">
                                             <span className="text-blue-300">Renewal Date</span>
-                                            <span className="font-mono">{client.renewal_date}</span>
+                                            <span className="text-blue-300 font-mono">{client.renewal_date}</span>
                                         </div>
                                         <Progress value={65} className="h-2" />
                                         <p className="text-xs text-slate-500 mt-1">200 days remaining</p>
