@@ -148,7 +148,11 @@ export default function ClientDetails({ client, open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto ${isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`}>
+            <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto backdrop-blur-2xl border ${
+                isDark 
+                ? 'bg-slate-900/80 border-white/10 text-white shadow-2xl shadow-black/50' 
+                : 'bg-white/80 border-white/40 shadow-2xl'
+            }`}>
                 <DialogHeader className="mb-4">
                     <div className="flex justify-between items-start">
                         <div>
@@ -177,8 +181,8 @@ export default function ClientDetails({ client, open, onClose }) {
 
                     <TabsContent value="overview" className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className={isDark ? 'bg-slate-800 border-slate-700' : ''}>
-                                <CardHeader><CardTitle className="text-slate-50 text-lg font-semibold tracking-tight">Client Info</CardTitle></CardHeader>
+                            <Card className={isDark ? 'bg-slate-800/50 border-white/5' : 'bg-white/50 border-white/40'}>
+                                <CardHeader><CardTitle className={`text-lg font-semibold tracking-tight ${isDark ? 'text-slate-50' : 'text-slate-800'}`}>Client Info</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
                                         <Mail className="w-4 h-4 text-slate-400" />
@@ -201,7 +205,7 @@ export default function ClientDetails({ client, open, onClose }) {
                                 </CardContent>
                             </Card>
 
-                            <Card className={isDark ? 'bg-slate-800 border-slate-700' : ''}>
+                            <Card className={isDark ? 'bg-slate-800/50 border-white/5' : 'bg-white/50 border-white/40'}>
                                 <CardHeader><CardTitle className="text-[#8cf54d] text-lg font-semibold tracking-tight">Subscription</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
