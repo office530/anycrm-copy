@@ -15,6 +15,7 @@ import SearchResults from './pages/SearchResults';
 import SequenceBuilder from './pages/SequenceBuilder';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
+import TemplateEditor from './pages/TemplateEditor';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +37,7 @@ export const PAGES = {
     "SequenceBuilder": SequenceBuilder,
     "Settings": Settings,
     "Tasks": Tasks,
+    "TemplateEditor": TemplateEditor,
 }
 
 export const pagesConfig = {
