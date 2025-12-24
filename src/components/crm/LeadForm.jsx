@@ -450,7 +450,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                   Save
                 </Button>
                 <div className="flex gap-3">
-                  <Button type="button" variant="outline" onClick={onCancel} className="border-slate-300 hover:bg-slate-50">Cancel</Button>
+                  <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'border-slate-300 hover:bg-slate-50'}>Cancel</Button>
                   {lead ? (
                     <Button onClick={handleSubmit(handleSaveAndStay, onFormError)} className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 shadow-sm shadow-red-900/20" disabled={isSubmitting}>
                       {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : null}
