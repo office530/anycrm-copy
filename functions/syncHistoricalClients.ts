@@ -3,22 +3,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        // We use service role to ensure we can read all opportunities and update them regardless of owner if needed,
-        // but for safety let's stick to user auth if possible, or assume admin is running this.
-        // Actually, for a background migration, user auth is fine if the user is admin.
         
-        const user = await base44.auth.me();
-        if (!user) {
-             return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        // Use service role for migration to bypass RLS and ensure all data is processed
+        const adminClient = base44.asServiceRole;
 
         // 1. Fetch all Won Opportunities that don't have a client_id
-        // Filter support might be limited for "is_empty", so we'll fetch list and filter in memory for complex checks
-        const opportunities = await base44.entities.Opportunity.list();
-        const leads = await base44.entities.Lead.list();
+        const opportunities = await adminClient.entities.Opportunity.list();
+        const leads = await adminClient.entities.Lead.list();
 
         const wonOpportunities = opportunities.filter(o => 
-            (o.deal_stage && o.deal_stage.includes('Won')) && !o.client_id
+            (o.deal_stage && (o.deal_stage.includes('Won') || o.deal_stage === 'Closed Won')) && !o.client_id
         );
 
         let processedCount = 0;
@@ -53,19 +47,20 @@ Deno.serve(async (req) => {
                     health_score: 100,
                     last_engagement_date: opportunity.updated_date || new Date().toISOString(),
                     renewal_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-                    assigned_csm: user.email, 
+                    // For migration, we might not have a specific CSM, so we can leave it empty or assign to a default admin if we knew one. 
+                    // Let's leave assigned_csm empty or use 'system' if needed, but schema doesn't require it.
                     documents: allDocs
                 };
 
                 // Create Client
-                const newClient = await base44.entities.Client.create(clientData);
+                const newClient = await adminClient.entities.Client.create(clientData);
 
                 // Update Opportunity
-                await base44.entities.Opportunity.update(opportunity.id, { client_id: newClient.id });
+                await adminClient.entities.Opportunity.update(opportunity.id, { client_id: newClient.id });
                 
                 // Update Lead if needed
                 if (lead.lead_status !== "Converted") {
-                    await base44.entities.Lead.update(lead.id, { lead_status: "Converted" });
+                    await adminClient.entities.Lead.update(lead.id, { lead_status: "Converted" });
                 }
 
                 processedCount++;
