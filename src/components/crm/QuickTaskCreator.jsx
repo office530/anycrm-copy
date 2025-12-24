@@ -5,9 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Calendar, Plus, Loader2, CheckCircle2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useSettings } from "@/components/context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function QuickTaskCreator({ leadId, leadName }) {
+  const { theme } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -49,15 +51,27 @@ export default function QuickTaskCreator({ leadId, leadName }) {
     }
   };
 
+  const inputClass = theme === 'dark' 
+    ? "bg-slate-900 border-slate-700 text-white placeholder:text-slate-500 focus:border-cyan-500" 
+    : "bg-white border-slate-300 focus:border-blue-500";
+    
+  const labelClass = theme === 'dark' ? "text-slate-300 font-semibold" : "text-slate-800 font-semibold";
+
   return (
-    <div className="col-span-1 md:col-span-2 border-t border-slate-200 pt-6 mt-4">
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+    <div className={`col-span-1 md:col-span-2 border-t pt-6 mt-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+      <div className={`border rounded-xl p-4 transition-colors ${
+        theme === 'dark' ? 'bg-cyan-900/10 border-cyan-500/30' : 'bg-blue-50 border-blue-200'
+      }`}>
         {!isOpen ? (
           <Button
             type="button"
             variant="outline"
             onClick={() => setIsOpen(true)}
-            className="w-full bg-white hover:bg-blue-50 border-blue-300 text-blue-700 font-medium"
+            className={`w-full font-medium ${
+                theme === 'dark' 
+                ? 'bg-slate-800 hover:bg-slate-700 border-slate-600 text-cyan-400' 
+                : 'bg-white hover:bg-blue-50 border-blue-300 text-blue-700'
+            }`}
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Follow-up Task
@@ -71,8 +85,8 @@ export default function QuickTaskCreator({ leadId, leadName }) {
               className="space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-slate-900 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-blue-600" />
+                <h4 className={`font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  <Calendar className={`w-4 h-4 ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`} />
                   New Task - {leadName}
                 </h4>
                 <Button
@@ -80,7 +94,7 @@ export default function QuickTaskCreator({ leadId, leadName }) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="text-slate-500 hover:text-slate-700"
+                  className={theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-700'}
                 >
                   Cancel
                 </Button>
@@ -88,32 +102,32 @@ export default function QuickTaskCreator({ leadId, leadName }) {
 
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-slate-800 font-semibold">Task Title *</Label>
+                  <Label className={labelClass}>Task Title *</Label>
                   <Input
                     value={taskData.title}
                     onChange={(e) => setTaskData({ ...taskData, title: e.target.value })}
                     placeholder="e.g., Call back regarding offer"
-                    className="border-slate-300 focus:border-blue-500"
+                    className={inputClass}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-slate-800 font-semibold">Description (Optional)</Label>
+                  <Label className={labelClass}>Description (Optional)</Label>
                   <Textarea
                     value={taskData.description}
                     onChange={(e) => setTaskData({ ...taskData, description: e.target.value })}
                     placeholder="More details..."
-                    className="border-slate-300 focus:border-blue-500 h-20 resize-none"
+                    className={`${inputClass} h-20 resize-none`}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label className="text-slate-800 font-semibold">Due Date</Label>
+                  <Label className={labelClass}>Due Date</Label>
                   <Input
                     type="date"
                     value={taskData.due_date}
                     onChange={(e) => setTaskData({ ...taskData, due_date: e.target.value })}
-                    className="border-slate-300 focus:border-blue-500"
+                    className={inputClass}
                   />
                 </div>
 
@@ -121,7 +135,7 @@ export default function QuickTaskCreator({ leadId, leadName }) {
                   type="button"
                   onClick={handleCreateTask}
                   disabled={isCreating || showSuccess}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                  className={`w-full font-medium ${theme === 'dark' ? 'bg-cyan-600 hover:bg-cyan-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
                 >
                   {isCreating && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                   {showSuccess && <CheckCircle2 className="w-4 h-4 mr-2" />}
