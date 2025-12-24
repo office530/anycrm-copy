@@ -22,22 +22,35 @@ export default function ClientDetails({ client, open, onClose }) {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Fetch fresh client data to ensure updates are reflected immediately
+  const { data: freshClient } = useQuery({
+      queryKey: ['client', client?.id],
+      queryFn: async () => {
+          const res = await base44.entities.Client.filter({id: client.id});
+          return res[0];
+      },
+      enabled: !!client,
+      initialData: client
+  });
+
+  const activeClient = freshClient || client;
+
   // Fetch related tasks and activities
   const { data: tasks } = useQuery({
-    queryKey: ['tasks', client?.id],
+    queryKey: ['tasks', activeClient?.id],
     queryFn: () => base44.entities.Task.list(),
-    enabled: !!client
+    enabled: !!activeClient
   });
 
-  const clientTasks = tasks?.filter((t) => t.related_client_id === client?.id) || [];
+  const clientTasks = tasks?.filter((t) => t.related_client_id === activeClient?.id) || [];
 
   const { data: activities } = useQuery({
-    queryKey: ['activities', client?.id],
+    queryKey: ['activities', activeClient?.id],
     queryFn: () => base44.entities.Activity.list(),
-    enabled: !!client
+    enabled: !!activeClient
   });
 
-  const clientActivities = activities?.filter((a) => a.related_client_id === client?.id) || [];
+  const clientActivities = activities?.filter((a) => a.related_client_id === activeClient?.id) || [];
 
   // Onboarding Logic
   const { data: onboardingTemplates } = useQuery({
@@ -46,32 +59,48 @@ export default function ClientDetails({ client, open, onClose }) {
       initialData: []
   });
 
-  const assignTemplate = async (templateId) => {
-      const template = onboardingTemplates.find(t => t.id === templateId);
-      if (!template) return;
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
 
-      const startDate = new Date();
-      const newItems = template.items.map(item => {
-          const dueDate = new Date(startDate);
-          dueDate.setDate(dueDate.getDate() + (item.relative_due_days || 0));
+  const assignTemplate = async () => {
+      if (!selectedTemplateId) return;
+      setIsAssigning(true);
+      try {
+          const template = onboardingTemplates.find(t => t.id === selectedTemplateId);
+          if (!template) return;
 
-          return {
-              id: Math.random().toString(36).substr(2, 9),
-              text: item.text,
-              phase: item.phase || 'General',
-              assigned_to: item.default_assignee || 'CSM',
-              due_date: dueDate.toISOString().split('T')[0],
-              is_completed: false,
-              completed_at: null
-          };
-      });
+          const startDate = new Date();
+          const newItems = template.items.map(item => {
+              const dueDate = new Date(startDate);
+              dueDate.setDate(dueDate.getDate() + (item.relative_due_days || 0));
 
-      await base44.entities.Client.update(client.id, { onboarding_items: newItems });
-      queryClient.invalidateQueries(['clients']);
+              return {
+                  id: Math.random().toString(36).substr(2, 9),
+                  text: item.text,
+                  phase: item.phase || 'General',
+                  assigned_to: item.default_assignee || 'CSM',
+                  due_date: dueDate.toISOString().split('T')[0],
+                  is_completed: false,
+                  completed_at: null
+              };
+          });
+
+          await base44.entities.Client.update(activeClient.id, { 
+              onboarding_items: newItems,
+              onboarding_status: 'In Progress' 
+          });
+          queryClient.invalidateQueries(['clients']);
+          queryClient.invalidateQueries(['client', activeClient.id]);
+      } catch (e) {
+          console.error(e);
+          alert("Failed to assign template");
+      } finally {
+          setIsAssigning(false);
+      }
   };
 
   const toggleOnboardingItem = async (itemId, currentStatus) => {
-      const updatedItems = (client.onboarding_items || []).map(item => {
+      const updatedItems = (activeClient.onboarding_items || []).map(item => {
           if (item.id === itemId) {
               return {
                   ...item,
@@ -85,14 +114,15 @@ export default function ClientDetails({ client, open, onClose }) {
       // Auto update status if all done
       const allDone = updatedItems.every(i => i.is_completed);
       const updates = { onboarding_items: updatedItems };
-      if (allDone && client.onboarding_status !== 'Completed') {
+      if (allDone && activeClient.onboarding_status !== 'Completed') {
           updates.onboarding_status = 'Completed';
-      } else if (!allDone && updatedItems.some(i => i.is_completed) && client.onboarding_status === 'Not Started') {
+      } else if (!allDone && updatedItems.some(i => i.is_completed) && activeClient.onboarding_status === 'Not Started') {
           updates.onboarding_status = 'In Progress';
       }
 
-      await base44.entities.Client.update(client.id, updates);
+      await base44.entities.Client.update(activeClient.id, updates);
       queryClient.invalidateQueries(['clients']);
+      queryClient.invalidateQueries(['client', activeClient.id]);
   };
 
   // File Upload Handler (Simulated for UI)
@@ -103,10 +133,11 @@ export default function ClientDetails({ client, open, onClose }) {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       const newDoc = { name: file.name, url: file_url, type: file.type };
-      const updatedDocs = [...(client.documents || []), newDoc];
+      const updatedDocs = [...(activeClient.documents || []), newDoc];
 
-      await base44.entities.Client.update(client.id, { documents: updatedDocs });
+      await base44.entities.Client.update(activeClient.id, { documents: updatedDocs });
       queryClient.invalidateQueries(['clients']);
+      queryClient.invalidateQueries(['client', activeClient.id]);
     } catch (err) {
       console.error(err);
       alert("Failed to upload file");
@@ -236,48 +267,76 @@ export default function ClientDetails({ client, open, onClose }) {
                                 <h3 className="font-bold flex items-center gap-2"><ListChecks className="w-5 h-5 text-blue-500"/> Onboarding Checklist</h3>
                                 <p className="text-xs text-slate-500">Track implementation progress</p>
                              </div>
-                             {(!client.onboarding_items || client.onboarding_items.length === 0) && (
+                             {(!activeClient.onboarding_items || activeClient.onboarding_items.length === 0) && (
                                 <div className="flex items-center gap-2">
-                                    <Select onValueChange={assignTemplate}>
-                                        <SelectTrigger className="w-[200px] h-8 text-xs">
-                                            <SelectValue placeholder="Load Template..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {onboardingTemplates.sort((a, b) => {
-                                                const aMatch = (a.product_type === client.product_type) + (a.customer_segment === client.customer_segment);
-                                                const bMatch = (b.product_type === client.product_type) + (b.customer_segment === client.customer_segment);
-                                                return bMatch - aMatch;
-                                            }).map(t => (
-                                                <SelectItem key={t.id} value={t.id}>
-                                                    {t.title}
-                                                    {(t.product_type === client.product_type || t.customer_segment === client.customer_segment) ? ' (Recommended)' : ''}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    {/* Placeholder for future actions */}
                                 </div>
                              )}
                         </div>
 
-                        {(!client.onboarding_items || client.onboarding_items.length === 0) ? (
-                            <div className="text-center py-10 border-2 border-dashed rounded-xl border-slate-200 dark:border-slate-700">
-                                <ListChecks className="w-10 h-10 mx-auto text-slate-300 mb-3" />
-                                <p className="text-slate-500">No checklist assigned.</p>
-                                <p className="text-xs text-slate-400">Select a template above to start.</p>
+                        {(!activeClient.onboarding_items || activeClient.onboarding_items.length === 0) ? (
+                            <div className={`text-center py-12 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${
+                                isDark ? 'border-slate-700 bg-slate-900/50' : 'border-slate-200 bg-slate-50'
+                            }`}>
+                                <div className={`p-4 rounded-full mb-4 ${isDark ? 'bg-slate-800 text-slate-400' : 'bg-white text-slate-300 shadow-sm'}`}>
+                                    <ListChecks className="w-8 h-8" />
+                                </div>
+                                <h4 className={`text-lg font-semibold mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Start Onboarding</h4>
+                                <p className="text-sm text-slate-500 max-w-sm mb-6">
+                                    Choose a template to generate the onboarding checklist for {activeClient.full_name}.
+                                </p>
+                                
+                                <div className="flex items-center gap-2 w-full max-w-md px-4">
+                                    <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
+                                        <SelectTrigger className={`flex-1 h-10 ${isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white'}`}>
+                                            <SelectValue placeholder="Select a template..." />
+                                        </SelectTrigger>
+                                        <SelectContent className={isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white'}>
+                                            {onboardingTemplates.sort((a, b) => {
+                                                const aMatch = (a.product_type === activeClient.product_type) + (a.customer_segment === activeClient.customer_segment);
+                                                const bMatch = (b.product_type === activeClient.product_type) + (b.customer_segment === activeClient.customer_segment);
+                                                return bMatch - aMatch;
+                                            }).map(t => (
+                                                <SelectItem key={t.id} value={t.id} className="cursor-pointer">
+                                                    <span className="font-medium">{t.title}</span>
+                                                    {(t.product_type === activeClient.product_type || t.customer_segment === activeClient.customer_segment) && (
+                                                        <span className="ml-2 text-xs text-emerald-500 font-bold">Recommended</span>
+                                                    )}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <Button 
+                                        onClick={assignTemplate} 
+                                        disabled={!selectedTemplateId || isAssigning}
+                                        className={isDark ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'}
+                                    >
+                                        {isAssigning ? 'Assigning...' : 'Start'}
+                                    </Button>
+                                </div>
                             </div>
                         ) : (
-                            <div className="space-y-6">
+                            <div className="space-y-6 animate-in fade-in duration-500">
                                 {/* Progress Header */}
-                                <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                                    <div className="flex justify-between text-sm font-semibold mb-2">
-                                        <span>Onboarding Progress</span>
-                                        <span className="text-blue-600">{Math.round((client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100)}%</span>
+                                <div className={`p-5 rounded-2xl border ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                    <div className="flex justify-between items-end mb-3">
+                                        <div>
+                                            <h4 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Onboarding Progress</h4>
+                                            <p className="text-xs text-slate-500 mt-1">{activeClient.onboarding_items.filter(i => i.is_completed).length} of {activeClient.onboarding_items.length} tasks completed</p>
+                                        </div>
+                                        <div className={`text-2xl font-bold ${
+                                            (activeClient.onboarding_items.filter(i => i.is_completed).length / activeClient.onboarding_items.length) === 1 
+                                            ? 'text-emerald-500' 
+                                            : 'text-blue-500'
+                                        }`}>
+                                            {Math.round((activeClient.onboarding_items.filter(i => i.is_completed).length / activeClient.onboarding_items.length) * 100)}%
+                                        </div>
                                     </div>
-                                    <Progress value={(client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100} className="h-3" />
+                                    <Progress value={(activeClient.onboarding_items.filter(i => i.is_completed).length / activeClient.onboarding_items.length) * 100} className={`h-3 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-100'}`} />
                                 </div>
 
                                 {/* Group by Phase */}
-                                {Object.entries(client.onboarding_items.reduce((acc, item) => {
+                                {Object.entries(activeClient.onboarding_items.reduce((acc, item) => {
                                     const phase = item.phase || 'General';
                                     if (!acc[phase]) acc[phase] = [];
                                     acc[phase].push(item);
