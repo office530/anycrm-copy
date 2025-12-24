@@ -72,10 +72,10 @@ export default function LeaderboardWidget({ opportunities }) {
                             </div>
                             <div className="text-right">
                                 <p className={`text-sm font-bold font-mono ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                                    {branding.currency}{(agent.revenue / 1000).toFixed(1)}k
+                                    {branding.currency}{(agent.revenue / 1000000).toFixed(1)}M
                                 </p>
                                 <p className="text-xs text-slate-500">
-                                    Pipe: ${(agent.pipeline / 1000).toFixed(0)}k
+                                    Pipe: {branding.currency}{(agent.pipeline / 1000000).toFixed(1)}M
                                 </p>
                             </div>
                         </Link>
