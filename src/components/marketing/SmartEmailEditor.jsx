@@ -3,7 +3,7 @@ import {
     ArrowLeft, MoreHorizontal, Sparkles, Zap, 
     MessageSquare, User, Send, X, ChevronDown,
     Bold, Italic, List, Link as LinkIcon, AlertTriangle,
-    CheckCircle2, AlertCircle, Info
+    CheckCircle2, AlertCircle, Info, Split
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -11,23 +11,23 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { useSettings } from '@/components/context/SettingsContext';
 
 // Custom Toolbar for Quill
-const CustomToolbar = () => (
-    <div id="toolbar" className="flex items-center gap-1 border-b border-slate-700/50 p-2 mb-2 sticky top-0 bg-[#0b1120]/95 backdrop-blur z-10">
-        <button className="ql-bold p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
+const CustomToolbar = ({ theme }) => (
+    <div id="toolbar" className={`flex items-center gap-1 border-b p-2 mb-2 sticky top-0 backdrop-blur z-10 ${theme === 'dark' ? 'border-slate-700/50 bg-slate-900/95' : 'border-slate-200 bg-white/95'}`}>
+        <button className={`ql-bold p-2 rounded transition-colors ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}>
             <Bold className="w-4 h-4" />
         </button>
-        <button className="ql-italic p-2 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
+        <button className={`ql-italic p-2 rounded transition-colors ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}>
             <Italic className="w-4 h-4" />
         </button>
-        <div className="w-px h-4 bg-slate-700 mx-2" />
+        <div className={`w-px h-4 mx-2 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`} />
         <button className="ql-list" value="bullet">
             <List className="w-4 h-4" />
         </button>
@@ -47,6 +47,7 @@ export default function SmartEmailEditor() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const templateId = searchParams.get('id');
+    const { theme } = useSettings();
     
     // State
     const [templateName, setTemplateName] = useState("New Campaign Template");
@@ -66,7 +67,6 @@ export default function SmartEmailEditor() {
     // Initial Load
     useEffect(() => {
         if (templateId) {
-            // Fetch template
             base44.entities.MarketingTemplate.read({ id: templateId }).then(res => {
                 if (res && res[0]) {
                     setTemplateName(res[0].name);
@@ -81,11 +81,9 @@ export default function SmartEmailEditor() {
     // Live Resonance Calc
     useEffect(() => {
         const calculateResonance = (text) => {
-            // Mock logic: length + randomness
             if (!text || text.length < 10) return 0;
             const base = 50;
-            const randomVar = Math.floor(Math.random() * 40) - 20; // -20 to +20
-            // Buzzword penalty
+            const randomVar = Math.floor(Math.random() * 40) - 20; 
             const hasBuzzword = text.toLowerCase().includes('synergy');
             const penalty = hasBuzzword ? 15 : 0;
             return Math.min(100, Math.max(0, base + randomVar - penalty));
@@ -98,29 +96,8 @@ export default function SmartEmailEditor() {
         return () => clearTimeout(timer);
     }, [content]);
 
-    // "Synergy" Highlighter logic
-    // We'll use a simple replacement for display in a separate view or rely on Quill's formatting if possible.
-    // For MVP, sticking to standard Quill but checking content. 
-    // If we want the underline interaction inside the editor, we'd need a custom blot.
-    // Instead, I'll show a warning tooltip over the editor or using a custom rendering trick if requested.
-    // Let's implement a custom overlay for the "synergy" word if found.
-    // Or simpler: We process the HTML content for display?
-    // Actually, user asked for "In the Main Editor... Micro-Interaction".
-    // I'll try to use a simple text replacement in Quill value? No, that messes up cursor.
-    // Let's stick to a visual indicator below the editor or a "Linting" message for stability.
-    // OR, I can use the standard "background color" style in Quill to highlight it automatically.
-    
-    useEffect(() => {
-        if (content.toLowerCase().includes('synergy') && quillRef.current) {
-            // This is complex to do perfectly in real-time without cursor jumping.
-            // I will skip the auto-highlight inside text for now to avoid bugs, 
-            // and instead show a prominent alert in the UI if "synergy" is detected.
-        }
-    }, [content]);
-
     const handleAutoTune = async () => {
         setIsGenerating(true);
-        // Simulate API call
         await new Promise(r => setTimeout(r, 1500));
         
         setContent(`Hi {{FirstName}},<br/><br/>I reviewed your Q3 goals and believe we can help you reduce churn by 12%.<br/><br/>Do you have 10 mins this Tuesday?`);
@@ -147,33 +124,44 @@ export default function SmartEmailEditor() {
     };
 
     const getScoreColor = (score) => {
-        if (score < 40) return { dot: "bg-red-500", text: "text-red-400", label: "High Spam Risk", badge: "bg-red-500/10 border-red-500/20" };
-        if (score < 70) return { dot: "bg-amber-500", text: "text-amber-400", label: "Generic", badge: "bg-amber-500/10 border-amber-500/20" };
-        return { dot: "bg-emerald-500", text: "text-emerald-400", label: "High Resonance", badge: "bg-emerald-500/10 border-emerald-500/20" };
+        if (score < 40) return { dot: "bg-red-500", text: "text-red-500", label: "High Spam Risk", badge: theme === 'dark' ? "bg-red-500/10 border-red-500/20" : "bg-red-50 border-red-200" };
+        if (score < 70) return { dot: "bg-amber-500", text: "text-amber-500", label: "Generic", badge: theme === 'dark' ? "bg-amber-500/10 border-amber-500/20" : "bg-amber-50 border-amber-200" };
+        return { dot: "bg-emerald-500", text: "text-emerald-500", label: "High Resonance", badge: theme === 'dark' ? "bg-emerald-500/10 border-emerald-500/20" : "bg-emerald-50 border-emerald-200" };
     };
 
     const scoreMeta = getScoreColor(resonanceScore);
 
+    // Theme Classes
+    const bgBase = theme === 'dark' ? 'bg-[#0f172a]' : 'bg-slate-50';
+    const bgHeader = theme === 'dark' ? 'bg-[#0f172a] border-slate-800' : 'bg-white border-slate-200';
+    const textMain = theme === 'dark' ? 'text-slate-100' : 'text-slate-900';
+    const textSub = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+    const inputBg = theme === 'dark' ? 'bg-transparent text-white' : 'bg-transparent text-slate-900';
+    const editorBg = theme === 'dark' ? 'bg-slate-800/30 border-slate-700/50' : 'bg-white border-slate-200 shadow-sm';
+    const sidePanelBg = theme === 'dark' ? 'bg-[#1e293b] border-slate-800' : 'bg-white border-slate-200';
+    const chatUserBg = theme === 'dark' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700';
+    const chatTwinBg = theme === 'dark' ? 'bg-blue-900/20 text-blue-200 border-blue-800/30' : 'bg-blue-50 text-blue-800 border-blue-100';
+
     return (
-        <div className="flex flex-col h-screen overflow-hidden bg-[#0b1120] text-slate-100">
+        <div className={`flex flex-col h-screen overflow-hidden ${bgBase} ${textMain}`}>
             {/* A. Header */}
-            <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 shrink-0 bg-[#0b1120] z-20">
+            <header className={`h-16 border-b flex items-center justify-between px-6 shrink-0 z-20 transition-colors ${bgHeader}`}>
                 <div className="flex items-center gap-4 flex-1">
-                    <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-slate-400 hover:text-white hover:bg-slate-800">
+                    <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className={theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'}>
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <Input 
                         value={templateName}
                         onChange={(e) => setTemplateName(e.target.value)}
-                        className="bg-transparent border-none text-xl font-bold text-white placeholder:text-slate-600 focus-visible:ring-0 px-0 w-96 h-auto"
+                        className={`border-none text-xl font-bold placeholder:text-slate-400 focus-visible:ring-0 px-0 w-96 h-auto ${inputBg}`}
                         placeholder="Template Name..."
                     />
                 </div>
 
                 <div className="flex items-center gap-6">
                     {/* Traffic Light Badge */}
-                    <div className={`flex items-center gap-3 px-4 py-1.5 rounded-full border ${scoreMeta.badge} transition-all duration-500`}>
-                        <div className={`w-2.5 h-2.5 rounded-full ${scoreMeta.dot} shadow-[0_0_10px_rgba(0,0,0,0.5)] shadow-current animate-pulse`} />
+                    <div className={`flex items-center gap-3 px-4 py-1.5 rounded-full border transition-all duration-500 ${scoreMeta.badge}`}>
+                        <div className={`w-2.5 h-2.5 rounded-full ${scoreMeta.dot} animate-pulse`} />
                         <span className={`text-sm font-medium ${scoreMeta.text}`}>{scoreMeta.label} ({resonanceScore})</span>
                     </div>
 
@@ -181,18 +169,18 @@ export default function SmartEmailEditor() {
                     <Button 
                         onClick={handleAutoTune}
                         disabled={isGenerating}
-                        className="bg-blue-600 hover:bg-blue-500 text-white border-none shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105"
+                        className="bg-blue-600 hover:bg-blue-500 text-white border-none shadow-md shadow-blue-500/20 transition-all hover:scale-105"
                     >
                         {isGenerating ? <Sparkles className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
                         {isGenerating ? 'Optimizing...' : 'Auto-Tune'}
                     </Button>
 
-                    <div className="h-6 w-px bg-slate-800 mx-2" />
+                    <div className={`h-6 w-px mx-2 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`} />
 
                     {/* Lab Mode Toggle */}
                     <div className="flex items-center gap-3">
-                        <Label htmlFor="lab-mode" className={`cursor-pointer font-medium ${isLabMode ? 'text-blue-400' : 'text-slate-400'}`}>
-                            🧪 Lab Mode
+                        <Label htmlFor="lab-mode" className={`cursor-pointer font-medium flex items-center gap-2 ${isLabMode ? 'text-blue-500' : textSub}`}>
+                            <Split className="w-4 h-4" /> Lab Mode
                         </Label>
                         <Switch 
                             id="lab-mode" 
@@ -214,12 +202,12 @@ export default function SmartEmailEditor() {
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
                                 placeholder="Subject Line..."
-                                className="bg-transparent border-b border-slate-700 rounded-none px-0 text-2xl font-light text-slate-100 placeholder:text-slate-600 focus-visible:ring-0 focus-visible:border-blue-500 transition-colors h-14"
+                                className={`bg-transparent border-b rounded-none px-0 text-2xl font-light placeholder:text-slate-400 focus-visible:ring-0 focus-visible:border-blue-500 transition-colors h-14 ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-slate-300 text-slate-900'}`}
                             />
                         </div>
 
-                        <div className="flex-1 bg-slate-800/30 rounded-xl border border-slate-700/50 backdrop-blur-sm overflow-hidden flex flex-col shadow-xl">
-                            <CustomToolbar />
+                        <div className={`flex-1 rounded-xl border backdrop-blur-sm overflow-hidden flex flex-col ${editorBg}`}>
+                            <CustomToolbar theme={theme} />
                             <ReactQuill 
                                 theme="snow"
                                 value={content}
@@ -230,13 +218,13 @@ export default function SmartEmailEditor() {
                                         container: "#toolbar"
                                     }
                                 }}
-                                className="flex-1 flex flex-col bg-transparent text-slate-100"
+                                className={`flex-1 flex flex-col bg-transparent ${theme === 'dark' ? 'text-slate-100 placeholder:text-slate-500' : 'text-slate-900 placeholder:text-slate-400'}`}
                                 placeholder="Start writing your masterpiece..."
                             />
                             
-                            {/* "Synergy" Warning Overlay - Simulating the micro-interaction */}
+                            {/* "Synergy" Warning Overlay */}
                             {content.toLowerCase().includes('synergy') && (
-                                <div className="absolute bottom-4 left-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-200 p-3 rounded-lg flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2">
+                                <div className={`absolute bottom-4 left-4 right-4 p-3 rounded-lg flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 border ${theme === 'dark' ? 'bg-amber-500/10 border-amber-500/20 text-amber-200' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
                                     <AlertTriangle className="w-5 h-5 text-amber-500" />
                                     <p className="text-sm">
                                         <span className="font-bold underline decoration-amber-500 decoration-wavy">synergy</span> detected. 
@@ -249,24 +237,24 @@ export default function SmartEmailEditor() {
                 </main>
 
                 {/* C. Lab Mode Panel */}
-                <aside className={`border-l border-slate-800 bg-[#0f172a] transition-all duration-500 ease-in-out flex flex-col ${isLabMode ? 'w-[30%] translate-x-0 opacity-100' : 'w-0 translate-x-full opacity-0 overflow-hidden'}`}>
-                    <div className="p-6 border-b border-slate-800 bg-slate-900/50">
+                <aside className={`border-l transition-all duration-500 ease-in-out flex flex-col ${sidePanelBg} ${isLabMode ? 'w-[30%] translate-x-0 opacity-100' : 'w-0 translate-x-full opacity-0 overflow-hidden'}`}>
+                    <div className={`p-6 border-b ${theme === 'dark' ? 'border-slate-800 bg-slate-900/50' : 'border-slate-200 bg-slate-50/50'}`}>
                         <div className="flex items-center gap-2 mb-1">
-                            <Zap className="w-4 h-4 text-blue-400" />
-                            <h2 className="font-bold text-slate-100">Psychographic Simulation</h2>
+                            <Zap className="w-4 h-4 text-blue-500" />
+                            <h2 className={`font-bold ${textMain}`}>Psychographic Simulation</h2>
                         </div>
-                        <p className="text-xs text-slate-500">Test how your content resonates with different personalities.</p>
+                        <p className={`text-xs ${textSub}`}>Test how your content resonates with different personalities.</p>
                     </div>
 
                     <div className="p-6 space-y-6 flex-1 overflow-y-auto">
                         {/* Section 1: Persona */}
                         <div className="space-y-3">
-                            <Label className="text-xs uppercase text-slate-500 font-bold tracking-wider">Target Persona</Label>
+                            <Label className={`text-xs uppercase font-bold tracking-wider ${textSub}`}>Target Persona</Label>
                             <Select value={selectedPersona} onValueChange={setSelectedPersona}>
-                                <SelectTrigger className="bg-slate-800 border-slate-700 text-slate-200">
+                                <SelectTrigger className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-800 border-slate-700 text-slate-200">
+                                <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
                                     {MOCK_PERSONAS.map(p => (
                                         <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                                     ))}
@@ -275,17 +263,17 @@ export default function SmartEmailEditor() {
                             
                             {/* Persona Details Card */}
                             {selectedPersona && (
-                                <div className="bg-slate-800/50 rounded-lg p-3 text-xs space-y-2 border border-slate-700/50">
+                                <div className={`rounded-lg p-3 text-xs space-y-2 border ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-slate-50 border-slate-200'}`}>
                                     <div className="flex justify-between">
-                                        <span className="text-slate-400">DISC:</span>
-                                        <span className="text-blue-300 font-medium">{MOCK_PERSONAS.find(p => p.id === selectedPersona).disc}</span>
+                                        <span className={textSub}>DISC:</span>
+                                        <span className="text-blue-500 font-medium">{MOCK_PERSONAS.find(p => p.id === selectedPersona).disc}</span>
                                     </div>
                                     <div className="flex gap-2">
                                         <div className="flex-1">
                                             <span className="text-emerald-500 block mb-1">Likes</span>
                                             <div className="flex flex-wrap gap-1">
                                                 {MOCK_PERSONAS.find(p => p.id === selectedPersona).style.likes.map(l => (
-                                                    <span key={l} className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded">{l}</span>
+                                                    <span key={l} className={`px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-700'}`}>{l}</span>
                                                 ))}
                                             </div>
                                         </div>
@@ -293,7 +281,7 @@ export default function SmartEmailEditor() {
                                             <span className="text-red-400 block mb-1">Dislikes</span>
                                             <div className="flex flex-wrap gap-1">
                                                 {MOCK_PERSONAS.find(p => p.id === selectedPersona).style.dislikes.map(l => (
-                                                    <span key={l} className="bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded">{l}</span>
+                                                    <span key={l} className={`px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-red-500/10 text-red-400' : 'bg-red-50 text-red-700'}`}>{l}</span>
                                                 ))}
                                             </div>
                                         </div>
@@ -303,19 +291,19 @@ export default function SmartEmailEditor() {
                         </div>
 
                         {/* Section 2: Chat Window */}
-                        <div className="flex-1 flex flex-col bg-slate-900 rounded-xl border border-slate-800 overflow-hidden min-h-[300px]">
-                            <div className="p-3 bg-slate-800/50 border-b border-slate-800 flex justify-between items-center">
-                                <span className="text-xs font-bold text-slate-400">Live Simulation</span>
-                                <Badge variant="outline" className="text-[10px] border-blue-500/30 text-blue-400">Digital Twin Active</Badge>
+                        <div className={`flex-1 flex flex-col rounded-xl border overflow-hidden min-h-[300px] ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+                            <div className={`p-3 border-b flex justify-between items-center ${theme === 'dark' ? 'bg-slate-800/50 border-slate-800' : 'bg-slate-50/50 border-slate-200'}`}>
+                                <span className={`text-xs font-bold ${textSub}`}>Live Simulation</span>
+                                <Badge variant="outline" className="text-[10px] border-blue-500/30 text-blue-500 bg-blue-500/5">Digital Twin Active</Badge>
                             </div>
                             
                             <div className="flex-1 p-4 space-y-4 overflow-y-auto">
                                 {chatHistory.map((msg, i) => (
                                     <div key={i} className={`flex gap-3 ${msg.role === 'twin' ? '' : 'flex-row-reverse'}`}>
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'twin' ? 'bg-blue-600' : 'bg-slate-700'}`}>
-                                            {msg.role === 'twin' ? <User className="w-4 h-4 text-white" /> : <Zap className="w-4 h-4 text-slate-300" />}
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'twin' ? 'bg-blue-600' : (theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200')}`}>
+                                            {msg.role === 'twin' ? <User className="w-4 h-4 text-white" /> : <Zap className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`} />}
                                         </div>
-                                        <div className={`rounded-lg p-3 text-sm max-w-[85%] ${msg.role === 'twin' ? 'bg-slate-800 text-slate-200' : 'bg-blue-900/20 text-blue-200 border border-blue-800/30'}`}>
+                                        <div className={`rounded-lg p-3 text-sm max-w-[85%] border ${msg.role === 'twin' ? chatTwinBg : chatUserBg}`}>
                                             {msg.text}
                                         </div>
                                     </div>
@@ -325,16 +313,16 @@ export default function SmartEmailEditor() {
                                         <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 animate-pulse">
                                             <User className="w-4 h-4 text-white" />
                                         </div>
-                                        <div className="rounded-lg p-3 text-sm bg-slate-800 text-slate-400 italic">
+                                        <div className={`rounded-lg p-3 text-sm italic ${theme === 'dark' ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
                                             Thinking...
                                         </div>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="p-3 border-t border-slate-800 bg-slate-800/30">
+                            <div className={`p-3 border-t ${theme === 'dark' ? 'border-slate-800 bg-slate-800/30' : 'border-slate-200 bg-slate-50/50'}`}>
                                 <Button 
-                                    className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200"
+                                    className={`w-full ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'}`}
                                     onClick={handleSimulateReply}
                                     disabled={isSimulating || !content}
                                 >
@@ -350,7 +338,7 @@ export default function SmartEmailEditor() {
             <style>{`
                 .ql-container.ql-snow { border: none !important; }
                 .ql-editor { font-size: 1.125rem; line-height: 1.75; min-height: 300px; }
-                .ql-editor.ql-blank::before { color: #475569; font-style: normal; }
+                .ql-editor.ql-blank::before { color: ${theme === 'dark' ? '#94a3b8' : '#cbd5e1'}; font-style: normal; }
             `}</style>
         </div>
     );

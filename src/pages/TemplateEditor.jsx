@@ -3,7 +3,7 @@ import SmartEmailEditor from '@/components/marketing/SmartEmailEditor';
 
 export default function TemplateEditorPage() {
     return (
-        <div className="min-h-screen bg-[#0b1120] text-slate-100 font-sans selection:bg-blue-500/30">
+        <div className="min-h-screen font-sans selection:bg-blue-500/30">
             <SmartEmailEditor />
         </div>
     );
