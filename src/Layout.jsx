@@ -77,14 +77,29 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Ambient Background Blobs for Liquid Glass Effect - Optimized for Mobile */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className={`absolute top-[-20%] right-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] rounded-full blur-[60px] md:blur-[120px] opacity-30 animate-pulse ${theme === 'dark' ? 'bg-indigo-600' : 'bg-rose-300'}`} />
-          <div className={`absolute bottom-[-20%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full blur-[50px] md:blur-[100px] opacity-20 ${theme === 'dark' ? 'bg-cyan-600' : 'bg-blue-300'}`} />
-          <div className={`absolute top-[40%] left-[30%] w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-full blur-[40px] md:blur-[80px] opacity-20 hidden md:block ${theme === 'dark' ? 'bg-purple-600' : 'bg-violet-300'}`} />
+          <div className={`absolute top-[-20%] right-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] rounded-full blur-[60px] md:blur-[120px] opacity-40 animate-blob ${theme === 'dark' ? 'bg-indigo-600/60' : 'bg-rose-300'}`} />
+          <div className={`absolute bottom-[-20%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full blur-[50px] md:blur-[100px] opacity-30 animate-blob animation-delay-2000 ${theme === 'dark' ? 'bg-cyan-600/60' : 'bg-blue-300'}`} />
+          <div className={`absolute top-[40%] left-[30%] w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-full blur-[40px] md:blur-[80px] opacity-30 hidden md:block animate-blob animation-delay-4000 ${theme === 'dark' ? 'bg-purple-600/60' : 'bg-violet-300'}`} />
       </div>
       <CommandPalette />
 
       {/* Global Scrollbar Styles */}
       <style>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 20s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -103,10 +118,10 @@ function LayoutContent({ children, currentPageName }) {
 
       {/* Sidebar / Drawer - Adaptive - Liquid Glass */}
       <aside className={`
-        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-lg backdrop-blur-xl
+        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-lg backdrop-blur-2xl backdrop-saturate-150
         ${theme === 'dark' 
-          ? 'bg-[#151E32]/70 text-slate-200 border-white/5 shadow-black/20' 
-          : 'bg-white/70 text-neutral-800 border-white/40 shadow-xl shadow-rose-100/20'}
+          ? 'bg-[#151E32]/60 text-slate-200 border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.03)]' 
+          : 'bg-white/60 text-neutral-800 border-white/50 shadow-[inset_0_0_20px_rgba(255,255,255,0.5)]'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative z-10">
@@ -224,10 +239,10 @@ function LayoutContent({ children, currentPageName }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen z-10 relative">
         {/* Mobile Header */}
-        <header className={`lg:hidden backdrop-blur-xl border-b px-4 h-16 flex items-center justify-between sticky top-0 z-40 transition-all duration-200 ${
+        <header className={`lg:hidden backdrop-blur-2xl backdrop-saturate-150 border-b px-4 h-16 flex items-center justify-between sticky top-0 z-40 transition-all duration-200 ${
             theme === 'dark' 
-                ? 'bg-[#151E32]/70 border-white/5' 
-                : 'bg-white/70 border-white/40'
+                ? 'bg-[#151E32]/60 border-white/10 shadow-[inset_0_-1px_10px_rgba(255,255,255,0.02)]' 
+                : 'bg-white/60 border-white/50 shadow-[inset_0_-1px_10px_rgba(255,255,255,0.4)]'
         }`}>
             <div className="flex items-center gap-3">
                 <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className={theme === 'dark' ? 'hover:bg-[#1E293B]' : 'hover:bg-neutral-100 -ml-2'}>
@@ -246,10 +261,10 @@ function LayoutContent({ children, currentPageName }) {
         </header>
 
         {/* Topbar Desktop - Liquid Glass */}
-        <header className={`hidden lg:flex backdrop-blur-xl border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-colors duration-300 ${
+        <header className={`hidden lg:flex backdrop-blur-2xl backdrop-saturate-150 border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-colors duration-300 ${
             theme === 'dark' 
-                ? 'bg-[#0B1121]/50 border-white/5' 
-                : 'bg-white/50 border-white/40'
+                ? 'bg-[#0B1121]/40 border-white/10 shadow-[inset_0_-1px_20px_rgba(255,255,255,0.02)]' 
+                : 'bg-white/40 border-white/50 shadow-[inset_0_-1px_20px_rgba(255,255,255,0.4)]'
         }`}>
             <h1 className={`text-2xl font-bold ${
                 theme === 'dark' 
