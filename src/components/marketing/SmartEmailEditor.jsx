@@ -17,6 +17,7 @@ import 'react-quill/dist/quill.snow.css';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useSettings } from '@/components/context/SettingsContext';
+import { useQuery } from '@tanstack/react-query';
 
 // Custom Toolbar for Quill
 const CustomToolbar = ({ theme }) => (
