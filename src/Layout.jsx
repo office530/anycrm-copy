@@ -24,7 +24,7 @@ function LayoutContent({ children, currentPageName }) {
   { name: 'Act Now', path: 'ActNow', icon: Brain, color: 'orange' },
   { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },
   { name: 'Reports', path: 'Reports', icon: BarChart3, color: 'emerald' },
-  { name: 'Automation', path: 'Automation', icon: Zap, color: 'indigo' },
+  { name: 'Automations', path: 'Automations', icon: Zap, color: 'indigo' },
   { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe, color: 'amber' },
   ];
 
