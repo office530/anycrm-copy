@@ -72,7 +72,7 @@ export default function ClientDetails({ client, open, onClose }) {
                             <Badge className={client.health_score > 80 ? 'bg-green-500' : 'bg-yellow-500'}>
                                 Health: {client.health_score}
                             </Badge>
-                            <Badge variant="outline">{client.onboarding_status}</Badge>
+                            <Badge variant="outline" className="text-slate-50 px-2.5 py-0.5 text-xs font-semibold rounded-md inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">{client.onboarding_status}</Badge>
                         </div>
                     </div>
                 </DialogHeader>
@@ -119,7 +119,7 @@ export default function ClientDetails({ client, open, onClose }) {
                                             <span className="text-blue-300">Renewal Date</span>
                                             <span className="text-blue-300 font-mono">{client.renewal_date}</span>
                                         </div>
-                                        <Progress value={65} className="h-2" />
+                                        <Progress value={65} className="bg-sky-200 rounded-full relative w-full overflow-hidden h-2" />
                                         <p className="text-xs text-slate-500 mt-1">200 days remaining</p>
                                     </div>
                                     <div className="flex justify-between items-center p-3 rounded-lg bg-slate-100 dark:bg-slate-900">
