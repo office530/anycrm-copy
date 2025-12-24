@@ -20,6 +20,8 @@ import LeadAiAnalysis from "./LeadAiAnalysis";
 import LastTouchInfo from "./LastTouchInfo";
 import QuickTaskCreator from "./QuickTaskCreator";
 import RelatedTasks from "./RelatedTasks";
+import CompanyPicker from "./CompanyPicker";
+import EmbeddedCompanyCard from "./EmbeddedCompanyCard";
 
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { theme } = useSettings();
@@ -40,7 +42,8 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     notes: "",
     lead_temperature: "Cold",
     tags: [],
-    custom_data: {}
+    custom_data: {},
+    company_id: "" 
     }
   });
 
@@ -177,6 +180,13 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
         <TabsContent value="details">
           <div className="space-y-6">
             {lead && <LastTouchInfo entity={lead} entityType="Lead" />}
+
+            {/* Embedded Company Info if linked */}
+            {lead?.company_id && (
+                <div className="mb-4">
+                    <EmbeddedCompanyCard companyId={lead.company_id} />
+                </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
@@ -211,6 +221,14 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                   className={inputClass} />
 
                 {errors.phone_number && <span className="text-red-500 text-sm font-medium">{errors.phone_number.message}</span>}
+              </div>
+
+              <div className="space-y-1">
+                <Label className={labelClass}>Company</Label>
+                <CompanyPicker 
+                    value={watch("company_id")} 
+                    onChange={(id) => setValue("company_id", id)} 
+                />
               </div>
 
               <div className="space-y-1">

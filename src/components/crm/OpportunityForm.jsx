@@ -14,6 +14,7 @@ import FileUpload from "../common/FileUpload";
 import { useQuery } from "@tanstack/react-query";
 import LeadSelector from "./LeadSelector";
 import RelatedTasks from "./RelatedTasks";
+import CompanyPicker from "./CompanyPicker";
 
 export default function OpportunityForm({ opportunity, initialLead, onSubmit, onCancel, isSubmitting, title }) {
   const { pipelineStages, theme } = useSettings();
@@ -311,6 +312,14 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* Phone and Email removed as they appear in Original Lead Details */}
+
+          <div className="space-y-2">
+            <Label className={labelClass}>Company</Label>
+            <CompanyPicker 
+                value={watch("company_id")} 
+                onChange={(id) => setValue("company_id", id)} 
+            />
+          </div>
 
           <div className="space-y-2">
             <Label className={labelClass}>Product Type</Label>
