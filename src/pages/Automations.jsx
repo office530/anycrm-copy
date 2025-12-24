@@ -33,7 +33,7 @@ const templates = [
 }];
 
 
-export default function AutomationPage() {
+export default function AutomationsPage() {
   const { theme } = useSettings();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('rules');
