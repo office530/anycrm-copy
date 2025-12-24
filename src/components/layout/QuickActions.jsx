@@ -109,10 +109,8 @@ export default function QuickActions() {
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
                     h-16 w-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300
-                    ${isOpen 
-                        ? 'rotate-45 bg-slate-800' 
-                        : (theme === 'dark' ? 'bg-cyan-500 text-slate-900 hover:bg-cyan-400' : 'bg-red-600 text-white hover:bg-red-700')
-                    }
+                    ${isOpen ? 'rotate-45' : ''}
+                    ${theme === 'dark' ? 'bg-cyan-500 text-slate-900 hover:bg-cyan-400' : 'bg-red-600 text-white hover:bg-red-700'}
                     border-4 ${theme === 'dark' ? 'border-slate-800' : 'border-white'}
                 `}
             >
