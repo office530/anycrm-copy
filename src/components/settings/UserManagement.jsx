@@ -185,6 +185,87 @@ export default function UserManagement() {
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Pending Invites Section */}
+            {invites && invites.length > 0 && (
+                <div className="mt-8">
+                    <h3 className={`text-lg font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Pending Invitations</h3>
+                    <div className={`rounded-xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+                        <Table>
+                            <TableHeader className={theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50'}>
+                                <TableRow>
+                                    <TableHead className={theme === 'dark' ? 'text-slate-300' : ''}>Email</TableHead>
+                                    <TableHead className={theme === 'dark' ? 'text-slate-300' : ''}>Role</TableHead>
+                                    <TableHead className={theme === 'dark' ? 'text-slate-300' : ''}>Status</TableHead>
+                                    <TableHead className={theme === 'dark' ? 'text-slate-300' : ''}>Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {invites.filter(i => i.status === 'pending').map((invite) => (
+                                    <TableRow key={invite.id} className={theme === 'dark' ? 'border-slate-700' : ''}>
+                                        <TableCell className={theme === 'dark' ? 'text-slate-300' : ''}>{invite.email}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline">{invite.role}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Pending</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="sm"
+                                                onClick={() => {
+                                                    if(confirm('Revoke invitation?')) {
+                                                        base44.entities.Invite.delete(invite.id).then(() => queryClient.invalidateQueries(['invites']));
+                                                    }
+                                                }}
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            >
+                                                Revoke
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </div>
+            )}
+
+            <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Invite New User</DialogTitle>
+                        <DialogDescription>
+                            Send an invitation email to add a new user to your organization.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleInvite} className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label>Email Address</Label>
+                            <Input name="email" type="email" required placeholder="colleague@company.com" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Role</Label>
+                            <Select name="role" defaultValue="user">
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="user">User (Standard Access)</SelectItem>
+                                    <SelectItem value="admin">Admin (Full Access)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <DialogFooter>
+                            <Button type="button" variant="ghost" onClick={() => setShowInviteDialog(false)}>Cancel</Button>
+                            <Button type="submit" disabled={inviteMutation.isPending} className="bg-slate-900 text-white">
+                                {inviteMutation.isPending ? "Sending..." : "Send Invitation"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
