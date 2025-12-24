@@ -50,12 +50,21 @@ export default function ClientDetails({ client, open, onClose }) {
       const template = onboardingTemplates.find(t => t.id === templateId);
       if (!template) return;
 
-      const newItems = template.items.map(text => ({
-          id: Math.random().toString(36).substr(2, 9),
-          text,
-          is_completed: false,
-          completed_at: null
-      }));
+      const startDate = new Date();
+      const newItems = template.items.map(item => {
+          const dueDate = new Date(startDate);
+          dueDate.setDate(dueDate.getDate() + (item.relative_due_days || 0));
+
+          return {
+              id: Math.random().toString(36).substr(2, 9),
+              text: item.text,
+              phase: item.phase || 'General',
+              assigned_to: item.default_assignee || 'CSM',
+              due_date: dueDate.toISOString().split('T')[0],
+              is_completed: false,
+              completed_at: null
+          };
+      });
 
       await base44.entities.Client.update(client.id, { onboarding_items: newItems });
       queryClient.invalidateQueries(['clients']);
@@ -257,38 +266,74 @@ export default function ClientDetails({ client, open, onClose }) {
                                 <p className="text-xs text-slate-400">Select a template above to start.</p>
                             </div>
                         ) : (
-                            <div className="space-y-3">
-                                {client.onboarding_items.map((item) => (
-                                    <div key={item.id} className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
-                                        item.is_completed 
-                                            ? (isDark ? 'bg-slate-800/50 border-slate-700 opacity-60' : 'bg-slate-50 border-slate-200 opacity-60')
-                                            : (isDark ? 'bg-slate-800 border-slate-600' : 'bg-white border-slate-200 shadow-sm')
-                                    }`}>
-                                        <Checkbox 
-                                            checked={item.is_completed} 
-                                            onCheckedChange={() => toggleOnboardingItem(item.id, item.is_completed)}
-                                            className="mt-1"
-                                        />
-                                        <div className="flex-1">
-                                            <p className={`text-sm font-medium ${item.is_completed ? 'line-through' : ''}`}>
-                                                {item.text}
-                                            </p>
-                                            {item.is_completed && item.completed_at && (
-                                                <p className="text-[10px] text-green-600 mt-1 flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" /> Completed {new Date(item.completed_at).toLocaleDateString()}
-                                                </p>
-                                            )}
-                                        </div>
+                            <div className="space-y-6">
+                                {/* Progress Header */}
+                                <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                                    <div className="flex justify-between text-sm font-semibold mb-2">
+                                        <span>Onboarding Progress</span>
+                                        <span className="text-blue-600">{Math.round((client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100)}%</span>
+                                    </div>
+                                    <Progress value={(client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100} className="h-3" />
+                                </div>
+
+                                {/* Group by Phase */}
+                                {Object.entries(client.onboarding_items.reduce((acc, item) => {
+                                    const phase = item.phase || 'General';
+                                    if (!acc[phase]) acc[phase] = [];
+                                    acc[phase].push(item);
+                                    return acc;
+                                }, {})).map(([phase, items]) => (
+                                    <div key={phase} className="space-y-3">
+                                        <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">{phase}</h4>
+                                        {items.map((item) => (
+                                            <div key={item.id} className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
+                                                item.is_completed 
+                                                    ? (isDark ? 'bg-slate-800/50 border-slate-700 opacity-60' : 'bg-slate-50 border-slate-200 opacity-60')
+                                                    : (isDark ? 'bg-slate-800 border-slate-600' : 'bg-white border-slate-200 shadow-sm')
+                                            }`}>
+                                                <Checkbox 
+                                                    checked={item.is_completed} 
+                                                    onCheckedChange={() => toggleOnboardingItem(item.id, item.is_completed)}
+                                                    className="mt-1"
+                                                />
+                                                <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2">
+                                                    <div className="md:col-span-6">
+                                                        <p className={`text-sm font-medium ${item.is_completed ? 'line-through text-slate-500' : ''}`}>
+                                                            {item.text}
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div className="md:col-span-3 flex items-center">
+                                                        <div className={`text-xs px-2 py-1 rounded-full border ${
+                                                            item.assigned_to === 'CSM' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                                            item.assigned_to === 'Client' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                                            item.assigned_to === 'Technical Support' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                                            'bg-slate-100 text-slate-700'
+                                                        }`}>
+                                                            {item.assigned_to}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="md:col-span-3 flex items-center justify-end text-xs text-slate-500">
+                                                        {item.is_completed && item.completed_at ? (
+                                                            <span className="text-green-600 flex items-center gap-1">
+                                                                <Clock className="w-3 h-3" /> {new Date(item.completed_at).toLocaleDateString()}
+                                                            </span>
+                                                        ) : (
+                                                            item.due_date && (
+                                                                <span className={`flex items-center gap-1 ${
+                                                                    new Date(item.due_date) < new Date() ? 'text-red-500 font-bold' : ''
+                                                                }`}>
+                                                                    <Calendar className="w-3 h-3" /> {new Date(item.due_date).toLocaleDateString()}
+                                                                </span>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
-                                
-                                <div className="pt-4 border-t mt-4">
-                                     <div className="flex justify-between text-xs text-slate-500 mb-2">
-                                         <span>Progress</span>
-                                         <span>{Math.round((client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100)}%</span>
-                                     </div>
-                                     <Progress value={(client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100} className="h-2" />
-                                </div>
                             </div>
                         )}
                     </TabsContent>

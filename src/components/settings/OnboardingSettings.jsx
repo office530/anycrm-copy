@@ -57,11 +57,21 @@ export default function OnboardingSettings() {
         }
     };
 
+    const [newItemPhase, setNewItemPhase] = useState("General");
+    const [newItemAssignee, setNewItemAssignee] = useState("CSM");
+    const [newItemDueDays, setNewItemDueDays] = useState(0);
+
     const handleAddItem = () => {
         if (!newItemText.trim()) return;
+        const newItem = {
+            text: newItemText.trim(),
+            phase: newItemPhase,
+            default_assignee: newItemAssignee,
+            relative_due_days: parseInt(newItemDueDays)
+        };
         setCurrentTemplate({
             ...currentTemplate,
-            items: [...(currentTemplate.items || []), newItemText.trim()]
+            items: [...(currentTemplate.items || []), newItem]
         });
         setNewItemText("");
     };
@@ -134,23 +144,68 @@ export default function OnboardingSettings() {
                         <CardTitle className="text-sm">Checklist Items</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex gap-2">
-                            <Input 
-                                value={newItemText}
-                                onChange={(e) => setNewItemText(e.target.value)}
-                                placeholder="Add new task..."
-                                onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
-                            />
-                            <Button onClick={handleAddItem} size="icon"><Plus className="w-4 h-4" /></Button>
+                        <div className="grid grid-cols-12 gap-2 items-end bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border">
+                            <div className="col-span-5 space-y-1">
+                                <Label className="text-xs">Task Name</Label>
+                                <Input 
+                                    value={newItemText}
+                                    onChange={(e) => setNewItemText(e.target.value)}
+                                    placeholder="Add new task..."
+                                />
+                            </div>
+                            <div className="col-span-3 space-y-1">
+                                <Label className="text-xs">Phase</Label>
+                                <Input 
+                                    value={newItemPhase}
+                                    onChange={(e) => setNewItemPhase(e.target.value)}
+                                    placeholder="Phase"
+                                />
+                            </div>
+                            <div className="col-span-2 space-y-1">
+                                <Label className="text-xs">Assignee</Label>
+                                <Select value={newItemAssignee} onValueChange={setNewItemAssignee}>
+                                    <SelectTrigger className="h-9">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="CSM">CSM</SelectItem>
+                                        <SelectItem value="Client">Client</SelectItem>
+                                        <SelectItem value="Technical Support">Tech Support</SelectItem>
+                                        <SelectItem value="Sales">Sales</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="col-span-1 space-y-1">
+                                <Label className="text-xs">Days</Label>
+                                <Input 
+                                    type="number"
+                                    value={newItemDueDays}
+                                    onChange={(e) => setNewItemDueDays(e.target.value)}
+                                />
+                            </div>
+                            <div className="col-span-1">
+                                <Button onClick={handleAddItem} size="icon" className="w-full"><Plus className="w-4 h-4" /></Button>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
                             {(currentTemplate.items || []).map((item, idx) => (
                                 <div key={idx} className={`p-3 rounded-lg flex justify-between items-center ${isDark ? 'bg-slate-900' : 'bg-slate-50'}`}>
-                                    <span>{item}</span>
-                                    <Button variant="ghost" size="sm" onClick={() => handleRemoveItem(idx)} className="text-red-500 hover:text-red-600">
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
+                                    <div className="grid grid-cols-12 gap-4 w-full items-center">
+                                        <span className="col-span-5 font-medium text-sm">{typeof item === 'object' ? item.text : item}</span>
+                                        <span className="col-span-3 text-xs text-slate-500">{typeof item === 'object' ? item.phase : '-'}</span>
+                                        <span className="col-span-2 text-xs px-2 py-1 rounded bg-slate-200 dark:bg-slate-800 w-fit">
+                                            {typeof item === 'object' ? item.default_assignee : '-'}
+                                        </span>
+                                        <span className="col-span-1 text-xs text-slate-400">
+                                            +{typeof item === 'object' ? item.relative_due_days : 0}d
+                                        </span>
+                                        <div className="col-span-1 text-right">
+                                            <Button variant="ghost" size="sm" onClick={() => handleRemoveItem(idx)} className="text-red-500 hover:text-red-600 h-8 w-8 p-0">
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                             {(!currentTemplate.items || currentTemplate.items.length === 0) && (
@@ -206,7 +261,7 @@ export default function OnboardingSettings() {
                                 {(template.items || []).slice(0, 3).map((item, idx) => (
                                     <div key={idx} className="flex items-center gap-2 text-sm text-slate-500">
                                         <CheckSquare className="w-3 h-3" />
-                                        <span className="truncate">{item}</span>
+                                        <span className="truncate">{typeof item === 'object' ? item.text : item}</span>
                                     </div>
                                 ))}
                                 {(template.items || []).length > 3 && (
