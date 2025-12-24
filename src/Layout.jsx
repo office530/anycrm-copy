@@ -11,6 +11,7 @@ import { ActNowProvider } from '@/components/context/ActNowContext';
 import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
+import QuickActions from '@/components/layout/QuickActions';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -284,6 +285,7 @@ function LayoutContent({ children, currentPageName }) {
             </div>
         </main>
         
+        <QuickActions />
         <MobileBottomNav activePage={currentPageName} />
         </div>
 
