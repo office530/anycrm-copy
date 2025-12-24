@@ -20,20 +20,26 @@ import { useSettings } from '@/components/context/SettingsContext';
 
 // Custom Toolbar for Quill
 const CustomToolbar = ({ theme }) => (
-    <div id="toolbar" className={`flex items-center gap-1 border-b p-2 mb-2 sticky top-0 backdrop-blur z-10 ${theme === 'dark' ? 'border-slate-700/50 bg-slate-900/95' : 'border-slate-200 bg-white/95'}`}>
-        <button className={`ql-bold p-2 rounded transition-colors ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}>
-            <Bold className="w-4 h-4" />
-        </button>
-        <button className={`ql-italic p-2 rounded transition-colors ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-white' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`}>
-            <Italic className="w-4 h-4" />
-        </button>
-        <div className={`w-px h-4 mx-2 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`} />
-        <button className="ql-list" value="bullet">
-            <List className="w-4 h-4" />
-        </button>
-        <button className="ql-link">
-            <LinkIcon className="w-4 h-4" />
-        </button>
+    <div id="toolbar" className={`flex items-center gap-1 border-b px-4 py-3 sticky top-0 backdrop-blur-md z-10 transition-colors ${theme === 'dark' ? 'border-slate-700/50 bg-[#0f172a]/80' : 'border-slate-100 bg-white/80'}`}>
+        <div className={`flex items-center gap-1 p-1 rounded-lg ${theme === 'dark' ? 'bg-slate-800/50 border border-slate-700/50' : 'bg-slate-100/50 border border-slate-200/50'}`}>
+            <button className={`ql-bold p-1.5 rounded-md transition-all ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-white hover:shadow-sm hover:text-slate-900'}`}>
+                <Bold className="w-4 h-4" />
+            </button>
+            <button className={`ql-italic p-1.5 rounded-md transition-all ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-white hover:shadow-sm hover:text-slate-900'}`}>
+                <Italic className="w-4 h-4" />
+            </button>
+        </div>
+        
+        <div className={`w-px h-5 mx-2 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`} />
+        
+        <div className={`flex items-center gap-1 p-1 rounded-lg ${theme === 'dark' ? 'bg-slate-800/50 border border-slate-700/50' : 'bg-slate-100/50 border border-slate-200/50'}`}>
+            <button className="ql-list" value="bullet">
+                <List className="w-4 h-4" />
+            </button>
+            <button className="ql-link">
+                <LinkIcon className="w-4 h-4" />
+            </button>
+        </div>
     </div>
 );
 
@@ -299,42 +305,59 @@ export default function SmartEmailEditor() {
             <div className="flex-1 flex overflow-hidden">
                 {/* B. Main Editor */}
                 <main className={`flex-1 flex flex-col transition-all duration-500 relative ${isLabMode ? 'w-[70%]' : 'w-full'}`}>
-                    <div className="flex-1 max-w-4xl mx-auto w-full p-8 flex flex-col">
-                        <div className="mb-6 space-y-4">
-                            <Input 
-                                value={subject}
-                                onChange={(e) => setSubject(e.target.value)}
-                                placeholder="Subject Line..."
-                                className={`bg-transparent border-b rounded-none px-0 text-2xl font-light placeholder:text-slate-400 focus-visible:ring-0 focus-visible:border-blue-500 transition-colors h-14 ${theme === 'dark' ? 'border-slate-700 text-white' : 'border-slate-300 text-slate-900'}`}
-                            />
-                        </div>
-
-                        <div className={`flex-1 rounded-xl border backdrop-blur-sm overflow-hidden flex flex-col ${editorBg}`}>
-                            <CustomToolbar theme={theme} />
-                            <ReactQuill 
-                                theme="snow"
-                                value={content}
-                                onChange={setContent}
-                                ref={quillRef}
-                                modules={{
-                                    toolbar: {
-                                        container: "#toolbar"
-                                    }
-                                }}
-                                className={`flex-1 flex flex-col bg-transparent ${theme === 'dark' ? 'text-slate-100 placeholder:text-slate-500' : 'text-slate-900 placeholder:text-slate-400'}`}
-                                placeholder="Start writing your masterpiece..."
-                            />
+                    <div className="flex-1 max-w-4xl mx-auto w-full p-6 lg:p-10 flex flex-col h-full">
+                        {/* Integrated Editor Container */}
+                        <div className={`flex-1 rounded-2xl border shadow-xl flex flex-col overflow-hidden transition-all duration-300 ${theme === 'dark' ? 'bg-[#1e293b]/50 border-slate-700/50 shadow-black/20' : 'bg-white border-slate-200 shadow-slate-200/50'}`}>
                             
-                            {/* "Synergy" Warning Overlay */}
-                            {content.toLowerCase().includes('synergy') && (
-                                <div className={`absolute bottom-4 left-4 right-4 p-3 rounded-lg flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 border ${theme === 'dark' ? 'bg-amber-500/10 border-amber-500/20 text-amber-200' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
-                                    <AlertTriangle className="w-5 h-5 text-amber-500" />
-                                    <p className="text-sm">
-                                        <span className="font-bold underline decoration-amber-500 decoration-wavy">synergy</span> detected. 
-                                        <span className="opacity-75 ml-1">AI Hint: This word is considered a buzzword. Try 'collaboration' instead.</span>
-                                    </p>
+                            {/* Subject Line Area */}
+                            <div className={`px-8 pt-8 pb-4 border-b ${theme === 'dark' ? 'border-slate-700/30' : 'border-slate-100'}`}>
+                                <div className="relative">
+                                    <Input 
+                                        value={subject}
+                                        onChange={(e) => setSubject(e.target.value)}
+                                        placeholder="Subject"
+                                        className={`bg-transparent border-none px-0 text-2xl font-semibold placeholder:text-slate-400/50 focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
+                                    />
+                                    {!subject && (
+                                        <span className={`absolute left-0 top-0 text-2xl font-light pointer-events-none transition-opacity ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`}>
+                                            Type your subject here...
+                                        </span>
+                                    )}
                                 </div>
-                            )}
+                            </div>
+
+                            <CustomToolbar theme={theme} />
+                            
+                            <div className="flex-1 relative flex flex-col min-h-0">
+                                <ReactQuill 
+                                    theme="snow"
+                                    value={content}
+                                    onChange={setContent}
+                                    ref={quillRef}
+                                    modules={{
+                                        toolbar: {
+                                            container: "#toolbar"
+                                        }
+                                    }}
+                                    className={`flex-1 flex flex-col bg-transparent overflow-y-auto ${theme === 'dark' ? 'text-slate-100' : 'text-slate-900'}`}
+                                    placeholder="Start writing..."
+                                />
+                                
+                                {/* "Synergy" Warning Overlay */}
+                                {content.toLowerCase().includes('synergy') && (
+                                    <div className={`absolute bottom-6 left-6 right-6 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 border backdrop-blur-md shadow-lg ${theme === 'dark' ? 'bg-amber-950/40 border-amber-500/20 text-amber-200' : 'bg-amber-50/90 border-amber-200 text-amber-800'}`}>
+                                        <div className="p-2 bg-amber-500/10 rounded-full">
+                                            <AlertTriangle className="w-5 h-5 text-amber-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium">Buzzword Detected</p>
+                                            <p className="text-sm opacity-90">
+                                                <span className="font-bold underline decoration-amber-500 decoration-wavy">synergy</span> is often ignored. Try <span className="font-semibold text-emerald-500 bg-emerald-500/10 px-1 rounded">collaboration</span> instead.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </main>
