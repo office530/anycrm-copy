@@ -487,14 +487,22 @@ export default function SmartEmailEditor() {
                                     <div className="flex gap-2">
                                         <Badge 
                                             variant={crmType === 'lead' ? 'default' : 'outline'} 
-                                            className={`cursor-pointer flex-1 justify-center ${crmType === 'lead' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                                            className={`cursor-pointer flex-1 justify-center transition-all ${
+                                                crmType === 'lead' 
+                                                    ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' 
+                                                    : (theme === 'dark' ? 'text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white' : 'text-slate-600 hover:bg-slate-100')
+                                            }`}
                                             onClick={() => { setCrmType('lead'); setSelectedCrmId(""); }}
                                         >
                                             Leads
                                         </Badge>
                                         <Badge 
                                             variant={crmType === 'opportunity' ? 'default' : 'outline'} 
-                                            className={`cursor-pointer flex-1 justify-center ${crmType === 'opportunity' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                                            className={`cursor-pointer flex-1 justify-center transition-all ${
+                                                crmType === 'opportunity' 
+                                                    ? 'bg-purple-600 hover:bg-purple-700 text-white border-purple-600' 
+                                                    : (theme === 'dark' ? 'text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white' : 'text-slate-600 hover:bg-slate-100')
+                                            }`}
                                             onClick={() => { setCrmType('opportunity'); setSelectedCrmId(""); }}
                                         >
                                             Opportunities
