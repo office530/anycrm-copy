@@ -96,7 +96,7 @@ export function SettingsProvider({ children }) {
         return defaultSettings; // Fallback
       }
     },
-    staleTime: 1000 * 60 * 5 // 5 minutes
+    staleTime: 0 // Always fetch fresh data
   });
 
   // 2. Mutations
