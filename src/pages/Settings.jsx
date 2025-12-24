@@ -32,8 +32,9 @@ export default function SettingsPage() {
         items: [
             ...(isAdmin ? [{ id: "organization", label: "Organization Settings", icon: Building2 }] : []),
             { id: "team", label: "Team & Users", icon: Users },
-            { id: "audit", label: "Audit Log", icon: Activity },
+            // Permissions moved to be logically associated with Team & Users
             ...(isAdmin ? [{ id: "user_management", label: "Permissions & Roles", icon: Lock }] : []),
+            { id: "audit", label: "Audit Log", icon: Activity },
         ]
     },
     {
