@@ -277,16 +277,30 @@ export default function SmartEmailEditor() {
         let reply = "";
         
         if (personaSource === 'crm') {
-            // Simulate AI generating response based on real CRM data
-            const isHot = persona.disc_profile === 'Hot' || persona.ai_simulation_prompt.includes('Hot');
-            const hasObjection = persona.ai_simulation_prompt.includes('Objection');
-            
-            if (isHot) {
-                reply = "Thanks for reaching out. This actually aligns with what we were discussing internally. Do you have time for a quick call?";
-            } else if (hasObjection) {
-                reply = "I'm hesitant. As I mentioned before, our main concern is " + (crmType === 'opportunity' ? "budget and timeline" : "implementation time") + ". Does this email address that?";
-            } else {
-                reply = `[Auto-Generated based on ${crmType} profile]: "This is interesting, but I'm swamped. Can you send me a one-pager instead of a call?"`;
+            try {
+                // Real AI Simulation using LLM
+                const prompt = `
+                    You are simulating a reply to an email.
+                    
+                    YOUR PERSONA:
+                    ${persona.ai_simulation_prompt}
+                    
+                    INCOMING EMAIL:
+                    Subject: ${subject || '(No Subject)'}
+                    Body: ${content.replace(/<[^>]*>?/gm, '') || '(Empty Body)'}
+                    
+                    INSTRUCTIONS:
+                    - Write a short, realistic reply (1-2 sentences max) as this persona.
+                    - If the email is just "hi" or very short/vague, be confused, dismissive, or brief (e.g. "What is this about?", "Please remove me", or just "Hi?").
+                    - Do NOT hallucinate that the email contained a pitch if it didn't.
+                    - Do NOT be overly polite if the persona is busy/skeptical.
+                `;
+
+                const res = await base44.integrations.Core.InvokeLLM({ prompt });
+                reply = res.trim().replace(/^"|"$/g, '');
+            } catch (e) {
+                console.error("Simulation error:", e);
+                reply = "Simulation failed. Please try again.";
             }
         } else {
             // Existing Mock Logic
