@@ -234,8 +234,15 @@ export default function ClientDetails({ client, open, onClose }) {
                                             <SelectValue placeholder="Load Template..." />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {onboardingTemplates.map(t => (
-                                                <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
+                                            {onboardingTemplates.sort((a, b) => {
+                                                const aMatch = (a.product_type === client.product_type) + (a.customer_segment === client.customer_segment);
+                                                const bMatch = (b.product_type === client.product_type) + (b.customer_segment === client.customer_segment);
+                                                return bMatch - aMatch;
+                                            }).map(t => (
+                                                <SelectItem key={t.id} value={t.id}>
+                                                    {t.title}
+                                                    {(t.product_type === client.product_type || t.customer_segment === client.customer_segment) ? ' (Recommended)' : ''}
+                                                </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
