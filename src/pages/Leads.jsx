@@ -349,8 +349,8 @@ export default function LeadsPage() {
                     onSearchChange={setSearch}
                 >
                 {/* View Toggle */}
-                <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm ${
-                    theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-white/80 border-white'
+                <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm backdrop-blur-md ${
+                    theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
                     }`}>
                     <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-md px-2 ${
                         viewMode === 'kanban' 
@@ -414,8 +414,8 @@ export default function LeadsPage() {
       {viewMode === 'list' && (
         <div className="space-y-6">
       {/* --- תצוגת דסקטופ (טבלה) --- */}
-      <div className={`hidden md:block rounded-xl border shadow-sm overflow-hidden transition-colors ${
-        theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+      <div className={`hidden md:block rounded-xl border shadow-lg overflow-hidden transition-colors backdrop-blur-xl ${
+        theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
       }`}>
          <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b text-xs font-bold uppercase tracking-wide select-none transition-colors ${
            theme === 'dark' ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
@@ -536,8 +536,8 @@ export default function LeadsPage() {
       {/* --- תצוגת מובייל (כרטיסים) --- */}
       <div className="md:hidden space-y-4">
          {filteredLeads.map((lead) =>
-        <div key={lead.id} className={`p-4 rounded-xl shadow-sm border flex flex-col gap-3 transition-colors ${
-          theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
+        <div key={lead.id} className={`p-4 rounded-xl shadow-lg border flex flex-col gap-3 transition-colors backdrop-blur-xl ${
+          theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
         }`}>
                 <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -670,8 +670,8 @@ export default function LeadsPage() {
 function StatCard({ icon: Icon, label, value, color }) {
   const { theme } = useSettings();
   return (
-    <Card className={`border-none shadow-sm transition-colors ${
-      theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white'
+    <Card className={`border shadow-lg backdrop-blur-xl transition-colors ${
+      theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
     }`}>
             <CardContent className="p-4 flex items-center gap-4">
                 <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
