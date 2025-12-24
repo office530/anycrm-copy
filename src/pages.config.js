@@ -14,6 +14,7 @@ import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
 import MarketingSequences from './pages/MarketingSequences';
 import MarketingTemplates from './pages/MarketingTemplates';
+import SequenceBuilder from './pages/SequenceBuilder';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "Tasks": Tasks,
     "MarketingSequences": MarketingSequences,
     "MarketingTemplates": MarketingTemplates,
+    "SequenceBuilder": SequenceBuilder,
 }
 
 export const pagesConfig = {

@@ -1,12 +1,10 @@
 import React from 'react';
+import MarketingDashboard from '@/components/marketing/MarketingDashboard';
 
-export default function MarketingSequences() {
+export default function MarketingSequencesPage() {
     return (
-        <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Marketing Sequences</h1>
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <p className="text-gray-500">Sequence Builder Coming Soon...</p>
-            </div>
+        <div className="p-8 max-w-[1600px] mx-auto">
+            <MarketingDashboard />
         </div>
     );
 }
