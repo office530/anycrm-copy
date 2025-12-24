@@ -19,7 +19,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 // --- Node Component ---
-const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd }) => {
+const FlowNode = ({ node, isSelected, onClick, onDragStart, onConnectStart, onConnectEnd }) => {
     const { theme } = useSettings();
     const getIcon = () => {
         switch(node.type) {
@@ -80,9 +80,20 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd })
             )}
 
             {/* Connection Points */}
-            <div className="absolute top-1/2 -right-1 w-2 h-2 bg-slate-300 rounded-full hover:bg-blue-500 cursor-crosshair" title="Output" />
+            {/* Output Point */}
+            <div 
+                className="absolute top-1/2 -right-1 w-3 h-3 bg-slate-300 rounded-full hover:bg-blue-500 cursor-crosshair z-20 border border-slate-500 transition-colors" 
+                title="Drag to connect"
+                onMouseDown={(e) => onConnectStart(e, node.id)}
+            />
+            
+            {/* Input Point */}
             {node.type !== 'START' && (
-                <div className="absolute top-1/2 -left-1 w-2 h-2 bg-slate-300 rounded-full hover:bg-blue-500 cursor-crosshair" title="Input" />
+                <div 
+                    className="absolute top-1/2 -left-1 w-3 h-3 bg-slate-300 rounded-full hover:bg-blue-500 cursor-crosshair z-20 border border-slate-500 transition-colors" 
+                    title="Drop to connect"
+                    onMouseUp={(e) => onConnectEnd(e, node.id)}
+                />
             )}
         </div>
     );
@@ -121,6 +132,7 @@ export default function SequenceCanvas({ sequenceId }) {
     const [selectedNodeId, setSelectedNodeId] = useState(null);
     const [inspectorOpen, setInspectorOpen] = useState(true);
     const [dragState, setDragState] = useState({ isDragging: false, nodeId: null, startX: 0, startY: 0 });
+    const [connecting, setConnecting] = useState(null); // { sourceId: string, mouseX: number, mouseY: number }
 
     const containerRef = useRef(null);
 
@@ -289,16 +301,53 @@ export default function SequenceCanvas({ sequenceId }) {
         setInspectorOpen(true);
     };
 
+    // Connection Logic
+    const handleConnectStart = (e, sourceId) => {
+        e.stopPropagation();
+        // Calculate offset relative to container
+        const rect = containerRef.current.getBoundingClientRect();
+        setConnecting({
+            sourceId,
+            startX: e.clientX - rect.left,
+            startY: e.clientY - rect.top,
+            currX: e.clientX - rect.left,
+            currY: e.clientY - rect.top
+        });
+    };
+
+    const handleConnectEnd = (e, targetId) => {
+        e.stopPropagation();
+        if (connecting && connecting.sourceId !== targetId) {
+            // Check if connection already exists
+            const exists = connections.some(c => c.from === connecting.sourceId && c.to === targetId);
+            if (!exists) {
+                setConnections([...connections, { from: connecting.sourceId, to: targetId }]);
+            }
+        }
+        setConnecting(null);
+    };
+
     const handleMouseMove = (e) => {
         if (dragState.isDragging) {
             const newX = e.clientX - dragState.offsetX;
             const newY = e.clientY - dragState.offsetY;
             setNodes(nodes.map(n => n.id === dragState.nodeId ? { ...n, x: newX, y: newY } : n));
         }
+        if (connecting) {
+             const rect = containerRef.current.getBoundingClientRect();
+             setConnecting(prev => ({
+                 ...prev,
+                 currX: e.clientX - rect.left,
+                 currY: e.clientY - rect.top
+             }));
+        }
     };
 
     const handleMouseUp = () => {
         setDragState({ isDragging: false, nodeId: null, startX: 0, startY: 0 });
+        if (connecting) {
+            setConnecting(null); // Cancel connection if dropped on empty space
+        }
     };
 
     const handleAddNode = (type, label) => {
@@ -418,6 +467,18 @@ export default function SequenceCanvas({ sequenceId }) {
                          return <ConnectionLine key={i} start={points.start} end={points.end} />;
                     })}
 
+                    {/* Temp Connection Line */}
+                    {connecting && (() => {
+                        const sourceNode = nodes.find(n => n.id === connecting.sourceId);
+                        if (!sourceNode) return null;
+                        return (
+                            <ConnectionLine 
+                                start={{ x: sourceNode.x + 256, y: sourceNode.y + 40 }}
+                                end={{ x: connecting.currX, y: connecting.currY }}
+                            />
+                        );
+                    })()}
+
                     {/* Render Nodes */}
                     {nodes.map(node => (
                         <FlowNode 
@@ -426,6 +487,8 @@ export default function SequenceCanvas({ sequenceId }) {
                             isSelected={selectedNodeId === node.id}
                             onDragStart={handleDragStart}
                             onClick={handleNodeClick}
+                            onConnectStart={handleConnectStart}
+                            onConnectEnd={handleConnectEnd}
                         />
                     ))}
 
