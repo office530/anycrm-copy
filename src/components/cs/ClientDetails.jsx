@@ -178,23 +178,23 @@ export default function ClientDetails({ client, open, onClose }) {
                     <TabsContent value="overview" className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card className={isDark ? 'bg-slate-800 border-slate-700' : ''}>
-                                <CardHeader><CardTitle className="text-slate-50 text-lg font-semibold tracking-tight">Client Info</CardTitle></CardHeader>
+                                <CardHeader><CardTitle className={`${isDark ? 'text-slate-50' : 'text-slate-900'} text-lg font-semibold tracking-tight`}>Client Info</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Mail className="w-4 h-4 text-slate-400" />
-                                        <span className="text-slate-50">{client.email}</span>
+                                        <Mail className={`w-4 h-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} />
+                                        <span className={isDark ? 'text-slate-50' : 'text-slate-900'}>{client.email}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <Phone className="w-4 h-4 text-slate-400" />
-                                        <span className="text-slate-50">{client.phone_number}</span>
+                                        <Phone className={`w-4 h-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} />
+                                        <span className={isDark ? 'text-slate-50' : 'text-slate-900'}>{client.phone_number}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <Calendar className="w-4 h-4 text-slate-400" />
-                                        <span className="text-slate-50">Contract Start: {client.contract_start_date}</span>
+                                        <Calendar className={`w-4 h-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} />
+                                        <span className={isDark ? 'text-slate-50' : 'text-slate-900'}>Contract Start: {client.contract_start_date}</span>
                                     </div>
-                                    <div className="pt-4 border-t border-dashed border-slate-700">
-                                        <p className="text-slate-50 mb-2 text-sm font-semibold">CS Notes</p>
-                                        <p className="text-sm text-slate-400 italic">
+                                    <div className={`pt-4 border-t border-dashed ${isDark ? 'border-slate-700' : 'border-slate-200'}`}>
+                                        <p className={`${isDark ? 'text-slate-50' : 'text-slate-900'} mb-2 text-sm font-semibold`}>CS Notes</p>
+                                        <p className={`text-sm italic ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                                             {client.cs_notes || "No notes yet..."}
                                         </p>
                                     </div>
@@ -202,12 +202,12 @@ export default function ClientDetails({ client, open, onClose }) {
                             </Card>
 
                             <Card className={isDark ? 'bg-slate-800 border-slate-700' : ''}>
-                                <CardHeader><CardTitle className="text-[#8cf54d] text-lg font-semibold tracking-tight">Subscription</CardTitle></CardHeader>
+                                <CardHeader><CardTitle className={`${isDark ? 'text-[#8cf54d]' : 'text-green-600'} text-lg font-semibold tracking-tight`}>Subscription</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
                                         <div className="flex justify-between text-sm mb-1">
-                                            <span className="text-blue-300">Renewal Date</span>
-                                            <span className="text-blue-300 font-mono">{client.renewal_date}</span>
+                                            <span className={isDark ? 'text-blue-300' : 'text-blue-600'}>Renewal Date</span>
+                                            <span className={`${isDark ? 'text-blue-300' : 'text-blue-600'} font-mono`}>{client.renewal_date}</span>
                                         </div>
                                         <Progress value={65} className="bg-sky-200 rounded-full relative w-full overflow-hidden h-2" />
                                         <p className="text-xs text-slate-500 mt-1">200 days remaining</p>
