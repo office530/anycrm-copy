@@ -50,10 +50,12 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onConnectStart, onCo
             style={{ left: node.x, top: node.y }}
             onMouseDown={(e) => onDragStart(e, node.id)}
             onClick={(e) => onClick(e, node.id)}
-            onMouseUp={(e) => onConnectEnd(e, node.id)}
         >
-            {/* Drop Target Overlay (visible when hovering with a connection) */}
+            {/* Drop Target Overlay (visible when hovering) */}
             <div className="absolute inset-0 rounded-lg bg-blue-500/10 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity border-2 border-blue-500/50 hidden group-hover:block" />
+            
+            {/* Click-Click Helper Overlay (only visible when connecting is active global state would be needed, but simplified for now) */}
+            
             <div className="flex items-center gap-3 mb-2">
                 <div className={`p-2 rounded-md border ${iconBg}`}>
                     {getIcon()}
@@ -83,11 +85,11 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onConnectStart, onCo
             )}
 
             {/* Connection Points */}
-            {/* Output Point - Larger Hit Area */}
+            {/* Output Point - Click to Connect */}
             <div 
                 className="absolute top-1/2 -right-3 w-8 h-8 flex items-center justify-center cursor-crosshair z-30 group"
-                onMouseDown={(e) => onConnectStart(e, node.id)}
-                title="Drag to connect"
+                onClick={(e) => onConnectStart(e, node.id)}
+                title="Click to start connection"
             >
                 <div className="w-3 h-3 bg-slate-300 rounded-full group-hover:bg-blue-500 group-hover:scale-125 border border-slate-500 transition-all shadow-sm" />
             </div>
@@ -300,14 +302,23 @@ export default function SequenceCanvas({ sequenceId }) {
 
     const handleNodeClick = (e, id) => {
         e.stopPropagation();
+        
+        // If we are in connection mode, clicking a node means "Connect Here"
+        if (connecting) {
+            handleConnectEnd(e, id);
+            return;
+        }
+
         setSelectedNodeId(id);
         setInspectorOpen(true);
     };
 
-    // Connection Logic
+    // Connection Logic - Click-Click approach
     const handleConnectStart = (e, sourceId) => {
-        e.stopPropagation();
-        // Calculate offset relative to container
+        e.stopPropagation(); // Prevent drag start
+        
+        // If we are already connecting from this node, maybe cancel? Or restart.
+        // Let's just restart to be safe.
         const rect = containerRef.current.getBoundingClientRect();
         setConnecting({
             sourceId,
@@ -316,18 +327,28 @@ export default function SequenceCanvas({ sequenceId }) {
             currX: e.clientX - rect.left,
             currY: e.clientY - rect.top
         });
+        toast("Select a step to connect", { description: "Click on another step to complete the connection.", duration: 2000 });
     };
 
     const handleConnectEnd = (e, targetId) => {
         e.stopPropagation();
-        if (connecting && connecting.sourceId !== targetId) {
-            // Check if connection already exists
-            const exists = connections.some(c => c.from === connecting.sourceId && c.to === targetId);
-            if (!exists) {
-                setConnections([...connections, { from: connecting.sourceId, to: targetId }]);
+        if (connecting) {
+            if (connecting.sourceId !== targetId) {
+                const exists = connections.some(c => c.from === connecting.sourceId && c.to === targetId);
+                if (!exists) {
+                    setConnections([...connections, { from: connecting.sourceId, to: targetId }]);
+                    toast.success("Connected!");
+                }
             }
+            setConnecting(null);
         }
-        setConnecting(null);
+    };
+    
+    // Handler for clicking the canvas background
+    const handleCanvasClick = (e) => {
+        if (connecting) {
+            setConnecting(null); // Cancel connection mode
+        }
     };
 
     const handleMouseMove = (e) => {
@@ -348,9 +369,8 @@ export default function SequenceCanvas({ sequenceId }) {
 
     const handleMouseUp = () => {
         setDragState({ isDragging: false, nodeId: null, startX: 0, startY: 0 });
-        if (connecting) {
-            setConnecting(null); // Cancel connection if dropped on empty space
-        }
+        // NOTE: We do NOT clear connecting here anymore, to support click-click interaction.
+        // Connection is cleared only on handleConnectEnd (valid target) or handleCanvasClick (cancel).
     };
 
     const handleAddNode = (type, label) => {
@@ -463,6 +483,7 @@ export default function SequenceCanvas({ sequenceId }) {
                         backgroundImage: `radial-gradient(${theme === 'dark' ? '#334155' : '#cbd5e1'} 1px, transparent 1px)`,
                         backgroundSize: '20px 20px'
                     }}
+                    onClick={handleCanvasClick}
                 >
                     {/* Render Connections */}
                     {connections.map((conn, i) => {
