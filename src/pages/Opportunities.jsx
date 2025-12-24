@@ -402,8 +402,8 @@ export default function OpportunitiesPage() {
                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{branding?.currency}{stats.totalPipeline.toLocaleString()}</div>
              </div>
           </div>
-          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
-              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
+              theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}><Briefcase className="w-5 h-5"/></div>
              <div>
@@ -411,8 +411,8 @@ export default function OpportunitiesPage() {
                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.activeDeals}</div>
              </div>
           </div>
-          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-sm transition-colors ${
-              theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-100'
+          <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
+              theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
           }`}>
              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}><Trophy className="w-5 h-5"/></div>
              <div>
