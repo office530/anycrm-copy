@@ -12,6 +12,8 @@ import SalesGalaxy from './pages/SalesGalaxy';
 import SearchResults from './pages/SearchResults';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
+import MarketingSequences from './pages/MarketingSequences';
+import MarketingTemplates from './pages/MarketingTemplates';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +32,8 @@ export const PAGES = {
     "SearchResults": SearchResults,
     "Settings": Settings,
     "Tasks": Tasks,
+    "MarketingSequences": MarketingSequences,
+    "MarketingTemplates": MarketingTemplates,
 }
 
 export const pagesConfig = {

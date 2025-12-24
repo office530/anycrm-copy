@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe, GitFork, Mail
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,7 +39,10 @@ function LayoutContent({ children, currentPageName }) {
     },
     {
       title: 'Marketing',
-      items: []
+      items: [
+        { name: 'Sequences', path: 'MarketingSequences', icon: GitFork, color: 'blue' },
+        { name: 'Templates', path: 'MarketingTemplates', icon: Mail, color: 'purple' }
+      ]
     }
   ];
 
