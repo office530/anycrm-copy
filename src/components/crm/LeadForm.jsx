@@ -440,7 +440,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
             
             <div className={`flex flex-col items-end gap-2 pt-6 border-t mt-4 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
               {Object.keys(errors).length > 0 &&
-              <span className={`text-sm font-bold px-3 py-1 rounded-full animate-pulse ${theme === 'dark' ? 'bg-red-900/50 text-red-400' : 'bg-red-50 text-red-600'}`}>
+              <span className={`text-sm font-bold px-3 py-1 rounded-full animate-pulse border ${theme === 'dark' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-100 text-red-600'}`}>
                       Please check form errors
                   </span>
               }
