@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { FileIcon, FileText, CheckSquare, Plus, Mail, Phone, Calendar, Download, Trash2, ExternalLink, ListChecks } from "lucide-react";
+import { FileIcon, FileText, CheckSquare, Plus, Mail, Phone, Calendar, Download, Trash2, ExternalLink, ListChecks, Clock } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
