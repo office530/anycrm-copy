@@ -148,7 +148,7 @@ export default function ClientDetails({ client, open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto ${isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`}>
+            <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto backdrop-blur-2xl border shadow-2xl ${isDark ? 'bg-slate-900/80 border-white/10 text-white' : 'bg-white/80 border-white/40'}`}>
                 <DialogHeader className="mb-4">
                     <div className="flex justify-between items-start">
                         <div>

@@ -68,8 +68,15 @@ function LayoutContent({ children, currentPageName }) {
   // Accent: Emerald/Teal
 
   return (
-    <div className={`min-h-screen font-heebo flex transition-colors duration-300 ${theme === 'dark' ? 'bg-[#0B1121] text-slate-100' : 'bg-neutral-50 text-neutral-900'}`} dir="ltr">
-      
+    <div className={`min-h-screen font-heebo flex transition-colors duration-300 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0f172a] text-slate-100' : 'bg-slate-50 text-neutral-900'}`} dir="ltr">
+
+      {/* Ambient Background Blobs for Liquid Glass Effect */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className={`absolute top-[-20%] right-[-10%] w-[800px] h-[800px] rounded-full blur-[120px] opacity-30 animate-pulse ${theme === 'dark' ? 'bg-indigo-600' : 'bg-rose-300'}`} />
+          <div className={`absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[100px] opacity-20 ${theme === 'dark' ? 'bg-cyan-600' : 'bg-blue-300'}`} />
+          <div className={`absolute top-[40%] left-[30%] w-[400px] h-[400px] rounded-full blur-[80px] opacity-20 ${theme === 'dark' ? 'bg-purple-600' : 'bg-violet-300'}`} />
+      </div>
+
       {/* Global Scrollbar Styles */}
       <style>{`
         ::-webkit-scrollbar {
@@ -88,13 +95,15 @@ function LayoutContent({ children, currentPageName }) {
         }
       `}</style>
 
-      {/* Sidebar / Drawer - Adaptive */}
+      {/* Sidebar / Drawer - Adaptive - Liquid Glass */}
       <aside className={`
-        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-sm
-        ${theme === 'dark' ? 'bg-[#151E32] text-slate-200 border-[#1E293B]' : 'bg-white text-neutral-800 border-neutral-100'}
+        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-lg backdrop-blur-xl
+        ${theme === 'dark' 
+          ? 'bg-[#151E32]/70 text-slate-200 border-white/5 shadow-black/20' 
+          : 'bg-white/70 text-neutral-800 border-white/40 shadow-xl shadow-rose-100/20'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex flex-col h-full relative">
+        <div className="flex flex-col h-full relative z-10">
             {/* Mobile Close Button - Absolute Top Right */}
             <div className="absolute top-4 right-4 lg:hidden z-10">
                 <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)} className="h-10 w-10 rounded-full bg-neutral-100 text-neutral-500">
@@ -207,12 +216,12 @@ function LayoutContent({ children, currentPageName }) {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden h-screen z-10 relative">
         {/* Mobile Header */}
-        <header className={`lg:hidden backdrop-blur-sm border-b px-4 h-16 flex items-center justify-between sticky top-0 z-40 transition-all duration-200 ${
+        <header className={`lg:hidden backdrop-blur-xl border-b px-4 h-16 flex items-center justify-between sticky top-0 z-40 transition-all duration-200 ${
             theme === 'dark' 
-                ? 'bg-[#151E32]/95 border-[#1E293B]' 
-                : 'bg-white/95 border-neutral-100'
+                ? 'bg-[#151E32]/70 border-white/5' 
+                : 'bg-white/70 border-white/40'
         }`}>
             <div className="flex items-center gap-3">
                 <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(true)} className={theme === 'dark' ? 'hover:bg-[#1E293B]' : 'hover:bg-neutral-100 -ml-2'}>
@@ -230,11 +239,11 @@ function LayoutContent({ children, currentPageName }) {
             </div>
         </header>
 
-        {/* Topbar Desktop */}
-        <header className={`hidden lg:flex backdrop-blur-md border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-colors duration-300 ${
+        {/* Topbar Desktop - Liquid Glass */}
+        <header className={`hidden lg:flex backdrop-blur-xl border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-colors duration-300 ${
             theme === 'dark' 
-                ? 'bg-[#0B1121]/80 border-[#1E293B]' 
-                : 'bg-white/80 border-neutral-200/60'
+                ? 'bg-[#0B1121]/50 border-white/5' 
+                : 'bg-white/50 border-white/40'
         }`}>
             <h1 className={`text-2xl font-bold ${
                 theme === 'dark' 
@@ -265,10 +274,8 @@ function LayoutContent({ children, currentPageName }) {
             </div>
         </header>
 
-        {/* Page Content Scrollable Area */}
-        <main className={`flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth transition-colors duration-300 ${
-            theme === 'dark' ? 'bg-[#0B1121]' : 'bg-neutral-50'
-        }`}>
+        {/* Page Content Scrollable Area - Transparent for blobs */}
+        <main className={`flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth transition-colors duration-300 bg-transparent`}>
             <div className="max-w-7xl mx-auto">
                 {children}
             </div>
