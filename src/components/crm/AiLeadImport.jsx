@@ -199,9 +199,7 @@ ${textToAnalyze}`,
                         <Sparkles className="w-6 h-6 text-purple-600" />
                         Smart AI Lead Import
                     </DialogTitle>
-                    <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className={`-mt-2 -ml-2 ${theme === 'dark' ? 'text-slate-400 hover:text-slate-300 hover:bg-slate-800' : 'text-slate-400 hover:text-slate-600'}`}>
-                        <X className="w-5 h-5" />
-                    </Button>
+
                 </div>
                 <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                   Paste free text or upload an image, and AI will automatically extract the details
