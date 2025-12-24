@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import NotificationSettings from '@/components/notifications/NotificationSettings';
-// import OrganizationSettings from '@/components/settings/OrganizationSettings';
+import OrganizationSettings from '@/components/settings/OrganizationSettings';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import PipelineSettings from '@/components/settings/PipelineSettings';
 import TagSettings from '@/components/settings/TagSettings';
@@ -10,26 +10,30 @@ import IntegrationSettings from '@/components/settings/IntegrationSettings';
 import AuditLogSettings from '@/components/settings/AuditLogSettings';
 import UserManagement from '@/components/settings/UserManagement';
 import OnboardingSettings from '@/components/settings/OnboardingSettings';
+import SettingsOverview from '@/components/settings/SettingsOverview';
 import { useSettings } from '@/components/context/SettingsContext';
 import { usePermissions } from '@/components/hooks/usePermissions';
+import { Input } from "@/components/ui/input";
 import { 
     Building2, GitMerge, Tags, Bell, User, Shield, 
-    Database, Users, Puzzle, Activity, PenTool, Lock, CheckSquare
+    Database, Users, Puzzle, Activity, PenTool, Lock, CheckSquare, Search, ArrowLeft, LayoutGrid
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("overview");
+  const [searchQuery, setSearchQuery] = useState("");
   const { theme } = useSettings();
   const { isAdmin } = usePermissions();
 
-  const menuGroups = [
+  const menuGroups = useMemo(() => [
     {
         title: "General",
         items: [
-            // { id: "organization", label: "Organization Settings", icon: Building2 },
+            ...(isAdmin ? [{ id: "organization", label: "Organization Settings", icon: Building2 }] : []),
             { id: "team", label: "Team & Users", icon: Users },
             { id: "audit", label: "Audit Log", icon: Activity },
-            ...(isAdmin ? [{ id: "user_management", label: "Permissions", icon: Lock }] : []),
+            ...(isAdmin ? [{ id: "user_management", label: "Permissions & Roles", icon: Lock }] : []),
         ]
     },
     {
@@ -49,21 +53,73 @@ export default function SettingsPage() {
             { id: "notifications", label: "Notifications", icon: Bell },
         ]
     }
-  ];
+  ], [isAdmin]);
+
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery) return menuGroups;
+    
+    return menuGroups.map(group => ({
+      ...group,
+      items: group.items.filter(item => 
+        item.label.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    })).filter(group => group.items.length > 0);
+  }, [menuGroups, searchQuery]);
 
   return (
     <div className="max-w-7xl mx-auto pb-20" dir="ltr">
         {/* Header */}
-        <div className="mb-8">
-            <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>System Settings</h1>
-            <p className={`mt-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>Advanced configuration for organization and users</p>
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' : 'text-slate-900'}`}>
+                    {activeTab === 'overview' ? 'Settings Hub' : 'System Settings'}
+                </h1>
+                <p className={`mt-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                    {activeTab === 'overview' 
+                        ? 'Central control panel for your organization and preferences' 
+                        : 'Configure your workspace and preferences'}
+                </p>
+            </div>
+            
+            <div className="relative w-full md:w-80">
+                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                <Input 
+                    placeholder="Find a setting..." 
+                    className={`pl-10 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500' : 'bg-white'}`}
+                    value={searchQuery}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        if (activeTab === 'overview' && e.target.value) {
+                            // optional: could auto-switch view or just filter the cards in overview
+                        }
+                    }}
+                />
+            </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 min-h-[600px]">
             {/* Sidebar Menu */}
             <aside className="w-full lg:w-64 flex-shrink-0">
                 <nav className="flex flex-col gap-6">
-                    {menuGroups.map((group, idx) => (
+                    <div className="space-y-1">
+                         <button
+                            onClick={() => setActiveTab("overview")}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full
+                                ${activeTab === "overview"
+                                    ? theme === 'dark'
+                                        ? "bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold"
+                                        : "bg-slate-900 text-white shadow-sm font-bold"
+                                    : theme === 'dark'
+                                        ? "text-slate-100 hover:bg-slate-800"
+                                        : "text-slate-700 hover:bg-slate-100"
+                                }`}
+                        >
+                            <LayoutGrid className="w-4 h-4" />
+                            <span>Dashboard Overview</span>
+                        </button>
+                    </div>
+
+                    {filteredGroups.map((group, idx) => (
                         <div key={idx} className="space-y-1">
                             <h3 className={`px-2 text-xs font-semibold uppercase tracking-wider mb-2 ${
                                 theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
@@ -77,7 +133,7 @@ export default function SettingsPage() {
                                         <button
                                             key={item.id}
                                             onClick={() => setActiveTab(item.id)}
-                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-left
+                                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all text-left w-full
                                                 ${isActive 
                                                     ? theme === 'dark'
                                                         ? "bg-slate-700 text-cyan-400 shadow-sm border border-cyan-500/30 font-bold"
@@ -109,20 +165,40 @@ export default function SettingsPage() {
             </aside>
 
             {/* Content Area */}
-            <main className={`flex-1 rounded-xl shadow-sm border p-1 md:p-6 min-h-[500px] transition-colors ${
+            <main className={`flex-1 rounded-xl shadow-sm border p-4 md:p-8 min-h-[500px] transition-colors ${
                 theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
             }`}>
-                {/* {activeTab === "organization" && <OrganizationSettings />} */}
-                {activeTab === "profile" && <ProfileSettings />}
-                {activeTab === "pipeline" && <PipelineSettings />}
-                {activeTab === "tags" && <TagSettings />}
-                {activeTab === "onboarding" && <OnboardingSettings />}
-                {activeTab === "custom_fields" && <CustomFieldSettings />}
-                {activeTab === "integrations" && <IntegrationSettings />}
-                {activeTab === "team" && <TeamSettings />}
-                {activeTab === "audit" && <AuditLogSettings />}
-                {activeTab === "notifications" && <NotificationSettings />}
-                {activeTab === "user_management" && isAdmin && <UserManagement />}
+                {activeTab === "overview" && (
+                    <SettingsOverview 
+                        menuGroups={filteredGroups} 
+                        onNavigate={(id) => {
+                            setActiveTab(id);
+                            setSearchQuery(""); // clear search on nav
+                        }} 
+                    />
+                )}
+                
+                {activeTab !== "overview" && (
+                    <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="mb-6 flex items-center gap-2 lg:hidden">
+                            <Button variant="ghost" size="sm" onClick={() => setActiveTab("overview")}>
+                                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+                            </Button>
+                        </div>
+                        
+                        {activeTab === "organization" && <OrganizationSettings />}
+                        {activeTab === "profile" && <ProfileSettings />}
+                        {activeTab === "pipeline" && <PipelineSettings />}
+                        {activeTab === "tags" && <TagSettings />}
+                        {activeTab === "onboarding" && <OnboardingSettings />}
+                        {activeTab === "custom_fields" && <CustomFieldSettings />}
+                        {activeTab === "integrations" && <IntegrationSettings />}
+                        {activeTab === "team" && <TeamSettings />}
+                        {activeTab === "audit" && <AuditLogSettings />}
+                        {activeTab === "notifications" && <NotificationSettings />}
+                        {activeTab === "user_management" && isAdmin && <UserManagement />}
+                    </div>
+                )}
             </main>
         </div>
     </div>
