@@ -134,10 +134,40 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
         theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'
       }`}>
         <div>
-          <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-            {lead ? "Lead File" : "Add New Lead"}
+          <h2 className={`text-2xl font-bold flex items-center gap-3 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+            {lead ? (
+                <>
+                    {lead.full_name || "Lead File"}
+                    {lead.lead_status && (
+                        <Badge variant="outline" className={`text-sm font-normal ${
+                            theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'
+                        }`}>
+                            {lead.lead_status}
+                        </Badge>
+                    )}
+                </>
+            ) : "Add New Lead"}
           </h2>
-          <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage details and activities</p>
+          <div className={`text-sm mt-1 flex items-center gap-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+             {lead ? (
+                <>
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>Lead File</span>
+                    {lead.email && (
+                        <>
+                            <span className="opacity-50">•</span>
+                            <span>{lead.email}</span>
+                        </>
+                    )}
+                     {lead.phone_number && (
+                        <>
+                            <span className="opacity-50">•</span>
+                            <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {lead.phone_number}</span>
+                        </>
+                    )}
+                </>
+             ) : "Manage details and activities"}
+          </div>
         </div>
         <div className="flex items-center gap-2">
 
