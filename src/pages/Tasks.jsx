@@ -356,7 +356,7 @@ function TaskCard({ task, onToggle, onArchive, onEdit, onDelete, isArchived }) {
           )}
 
           {task.description && (
-            <p className={`text-sm text-slate-600 mb-2 ${isDone ? 'line-through text-slate-400' : ''}`}>
+            <p className={`text-sm mb-2 ${isDone ? 'line-through text-slate-500 dark:text-slate-500' : theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
               {task.description}
             </p>
           )}
