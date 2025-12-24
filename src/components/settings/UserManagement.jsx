@@ -11,9 +11,17 @@ export default function UserManagement() {
     const { theme } = useSettings();
     const queryClient = useQueryClient();
 
+    const [showInviteDialog, setShowInviteDialog] = useState(false);
+    
     const { data: users, isLoading } = useQuery({
         queryKey: ['users_management'],
         queryFn: () => base44.entities.User.list(),
+        initialData: []
+    });
+
+    const { data: invites } = useQuery({
+        queryKey: ['invites'],
+        queryFn: () => base44.entities.Invite.list(),
         initialData: []
     });
 
