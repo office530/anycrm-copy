@@ -6,7 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles, CheckSquare, X, Phone } from "lucide-react";
+import { Loader2, Activity, User, ClipboardList, FileText, Briefcase, Sparkles, CheckSquare, X, Phone, ArrowRightCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from '@/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +26,10 @@ import RelatedTasks from "./RelatedTasks";
 
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { theme } = useSettings();
+  const navigate = useNavigate();
+  const [showConvertDialog, setShowConvertDialog] = useState(false);
+  const [convertCompanyName, setConvertCompanyName] = useState("");
+  const [isConverting, setIsConverting] = useState(false);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: lead || {
@@ -92,6 +99,31 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     setValue("lead_temperature", temp);
   }, [lastContactDate, originalStatusColor, setValue]);
 
+  const handleConvertLead = async () => {
+      setIsConverting(true);
+      try {
+          const res = await base44.functions.invoke('convertLead', {
+              leadId: lead.id,
+              companyName: convertCompanyName,
+              createNewCompany: true // Simplified flow for now
+          });
+
+          if (res.data.success) {
+              toast.success("Lead converted successfully!");
+              setShowConvertDialog(false);
+              onCancel(); // Close modal
+              navigate(createPageUrl(`ContactDetails?id=${res.data.contactId}`));
+          } else {
+              toast.error(res.data.error || "Conversion failed");
+          }
+      } catch (err) {
+          toast.error("Failed to convert lead");
+          console.error(err);
+      } finally {
+          setIsConverting(false);
+      }
+  };
+
   const handleSaveAndClose = (data) => {
     const sanitized = { ...data };
     const numberFields = ['age'];
@@ -140,6 +172,19 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
           <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage details and activities</p>
         </div>
         <div className="flex items-center gap-2">
+            {lead && !lead.is_converted && (
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                        setConvertCompanyName(lead.custom_data?.company_name || ""); // Pre-fill if available
+                        setShowConvertDialog(true);
+                    }}
+                    className="hidden md:flex gap-2 text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                >
+                    <ArrowRightCircle className="w-4 h-4" /> Convert to Contact
+                </Button>
+            )}
 
             <Button variant="ghost" size="icon" onClick={onCancel} className={`${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600'}`}>
             <X className="w-5 h-5" />
@@ -499,6 +544,35 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
         </TabsContent>
       </Tabs>
       </div>
+
+      <Dialog open={showConvertDialog} onOpenChange={setShowConvertDialog}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Convert Lead to Contact</DialogTitle>
+                  <DialogDescription>
+                      This will create a new Contact and Company record, and move this lead to the 'Converted' status.
+                  </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                      <Label>Company Name</Label>
+                      <Input 
+                          value={convertCompanyName} 
+                          onChange={(e) => setConvertCompanyName(e.target.value)}
+                          placeholder="Enter company name..."
+                      />
+                  </div>
+              </div>
+              <DialogFooter>
+                  <Button variant="ghost" onClick={() => setShowConvertDialog(false)}>Cancel</Button>
+                  <Button onClick={handleConvertLead} disabled={isConverting || !convertCompanyName} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                      {isConverting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                      Convert & View Contact
+                  </Button>
+              </DialogFooter>
+          </DialogContent>
+      </Dialog>
+
     </motion.div>);
 
 }
