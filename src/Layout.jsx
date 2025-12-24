@@ -16,18 +16,34 @@ function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { branding, theme, toggleTheme } = useSettings();
   
-  // Exact paths
-  const navigation = [
-  { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard, color: 'cyan' },
-  { name: 'Leads', path: 'Leads', icon: Users, color: 'purple' },
-  { name: 'Opportunities', path: 'Opportunities', icon: Briefcase, color: 'pink' },
-  { name: 'Act Now', path: 'ActNow', icon: Brain, color: 'orange' },
-  { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },
-  { name: 'Reports', path: 'Reports', icon: BarChart3, color: 'emerald' },
-  { name: 'Automations', path: 'Automations', icon: Zap, color: 'indigo' },
-  { name: 'CS Management', path: 'CSManagement', icon: Sparkles, color: 'blue' },
-  { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe, color: 'amber' },
+  // Navigation Groups
+  const navigationGroups = [
+    {
+      title: 'Sales',
+      items: [
+        { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard, color: 'cyan' },
+        { name: 'Leads', path: 'Leads', icon: Users, color: 'purple' },
+        { name: 'Opportunities', path: 'Opportunities', icon: Briefcase, color: 'pink' },
+        { name: 'Act Now', path: 'ActNow', icon: Brain, color: 'orange' },
+        { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },
+        { name: 'Reports', path: 'Reports', icon: BarChart3, color: 'emerald' },
+        { name: 'Automations', path: 'Automations', icon: Zap, color: 'indigo' },
+        { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe, color: 'amber' },
+      ]
+    },
+    {
+      title: 'Clients',
+      items: [
+        { name: 'CS Management', path: 'CSManagement', icon: Sparkles, color: 'blue' },
+      ]
+    },
+    {
+      title: 'Marketing',
+      items: []
+    }
   ];
+
+  const navigation = navigationGroups.flatMap(group => group.items);
 
   // Dark Mode Color Configurations
   const darkColors = {
@@ -103,37 +119,52 @@ function LayoutContent({ children, currentPageName }) {
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 px-6 lg:px-4 py-8 space-y-3 lg:space-y-2 overflow-y-auto">
-                {navigation.map((item) => {
-                const isActive = currentPageName === item.path;
-                const themeColor = darkColors[item.color] || darkColors.emerald;
+            <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
+                {navigationGroups.map((group, idx) => (
+                  <div key={idx}>
+                    <h3 className={`px-4 mb-3 text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`}>
+                      {group.title}
+                    </h3>
+                    <div className="space-y-1">
+                      {group.items.length === 0 ? (
+                        <div className={`px-4 py-2 text-sm italic ${theme === 'dark' ? 'text-slate-600' : 'text-neutral-400'}`}>
+                          Coming soon
+                        </div>
+                      ) : (
+                        group.items.map((item) => {
+                          const isActive = currentPageName === item.path;
+                          const themeColor = darkColors[item.color] || darkColors.emerald;
 
-                return (
-                    <Link
-                    key={item.path}
-                    to={createPageUrl(item.path)}
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={`
-                        group flex items-center gap-4 lg:gap-3 px-6 lg:px-4 py-5 lg:py-3.5 text-lg lg:text-sm font-medium rounded-2xl lg:rounded-xl transition-all duration-200 relative overflow-hidden
-                        ${isActive 
-                        ? theme === 'dark' 
-                          ? `${themeColor.active} font-bold shadow-sm` 
-                          : 'bg-red-50 text-red-700 font-bold shadow-sm'
-                        : theme === 'dark'
-                          ? `text-slate-400 hover:bg-[#1E293B] ${themeColor.hover}`
-                          : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/50 lg:bg-transparent'}
-                    `}
-                    >
-                    <item.icon className={`w-6 h-6 lg:w-5 lg:h-5 transition-colors ${
-                      isActive 
-                        ? theme === 'dark' ? themeColor.icon : 'text-red-700'
-                        : theme === 'dark' ? `text-slate-500 group-${themeColor.hover}` : 'text-neutral-400 group-hover:text-red-600'
-                    }`} />
-                    <span className="relative z-10">{item.name}</span>
-                    {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 lg:h-6 rounded-r-full ${theme === 'dark' ? `${themeColor.indicator} shadow-lg` : 'bg-red-600'}`} />}
-                    </Link>
-                );
-                })}
+                          return (
+                              <Link
+                              key={item.path}
+                              to={createPageUrl(item.path)}
+                              onClick={() => setIsSidebarOpen(false)}
+                              className={`
+                                  group flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden
+                                  ${isActive 
+                                  ? theme === 'dark' 
+                                    ? `${themeColor.active} font-bold shadow-sm` 
+                                    : 'bg-red-50 text-red-700 font-bold shadow-sm'
+                                  : theme === 'dark'
+                                    ? `text-slate-400 hover:bg-[#1E293B] ${themeColor.hover}`
+                                    : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/50 lg:bg-transparent'}
+                              `}
+                              >
+                              <item.icon className={`w-5 h-5 transition-colors ${
+                                isActive 
+                                  ? theme === 'dark' ? themeColor.icon : 'text-red-700'
+                                  : theme === 'dark' ? `text-slate-500 group-${themeColor.hover}` : 'text-neutral-400 group-hover:text-red-600'
+                              }`} />
+                              <span className="relative z-10">{item.name}</span>
+                              {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full ${theme === 'dark' ? `${themeColor.indicator} shadow-lg` : 'bg-red-600'}`} />}
+                              </Link>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                ))}
             </nav>
 
             {/* Footer / Settings */}
