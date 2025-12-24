@@ -146,17 +146,25 @@ export default function SequenceCanvas() {
         };
     };
 
+    const bgBase = theme === 'dark' ? 'bg-slate-900' : 'bg-slate-50';
+    const bgPanel = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200';
+    const bgHeader = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200';
+    const textMain = theme === 'dark' ? 'text-slate-100' : 'text-slate-900';
+    const textSub = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+    const itemBg = theme === 'dark' ? 'bg-slate-900 border-slate-700 hover:border-blue-500' : 'bg-slate-50 border-slate-200 hover:border-blue-300';
+    const inspectorHeaderBg = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-200';
+
     return (
-        <div className="flex h-screen flex-col bg-slate-50 font-sans" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+        <div className={`flex h-screen flex-col ${bgBase} font-sans`} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
             {/* Header */}
-            <header className="h-16 bg-white border-b px-6 flex items-center justify-between shrink-0 z-20 relative">
+            <header className={`h-16 border-b px-6 flex items-center justify-between shrink-0 z-20 relative ${bgHeader}`}>
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+                    <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className={theme === 'dark' ? 'text-slate-300 hover:bg-slate-700' : ''}>
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <div>
-                        <h1 className="font-bold text-slate-900">SaaS CEO Outreach</h1>
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <h1 className={`font-bold ${textMain}`}>SaaS CEO Outreach</h1>
+                        <div className={`flex items-center gap-2 text-xs ${textSub}`}>
                              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Active</span>
                              <span>•</span>
                              <span>Last saved: 2 mins ago</span>
@@ -164,7 +172,7 @@ export default function SequenceCanvas() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" className="text-slate-600">
+                    <Button variant="outline" className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'text-slate-600'}>
                         <Play className="w-4 h-4 mr-2" /> Test Run
                     </Button>
                     <Button className="bg-blue-600 hover:bg-blue-700">
@@ -175,40 +183,32 @@ export default function SequenceCanvas() {
 
             <div className="flex-1 flex overflow-hidden relative">
                 {/* Left Sidebar - Toolbox */}
-                <aside className="w-64 bg-white border-r z-10 flex flex-col">
-                    <div className="p-4 border-b">
+                <aside className={`w-64 border-r z-10 flex flex-col ${bgPanel}`}>
+                    <div className={`p-4 border-b ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
                         <h3 className="text-xs font-bold uppercase text-slate-400 tracking-wider">Toolbox</h3>
                     </div>
                     <div className="p-4 space-y-3 overflow-y-auto">
-                         <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-grab hover:border-blue-300 hover:shadow-sm transition-all flex items-center gap-3">
-                             <Mail className="w-5 h-5 text-blue-500" />
-                             <span className="text-sm font-medium">Send Email</span>
-                         </div>
-                         <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-grab hover:border-blue-300 hover:shadow-sm transition-all flex items-center gap-3">
-                             <Clock className="w-5 h-5 text-amber-500" />
-                             <span className="text-sm font-medium">Wait / Delay</span>
-                         </div>
-                         <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-grab hover:border-blue-300 hover:shadow-sm transition-all flex items-center gap-3">
-                             <CheckSquare className="w-5 h-5 text-purple-500" />
-                             <span className="text-sm font-medium">Task / Call</span>
-                         </div>
-                         <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-grab hover:border-blue-300 hover:shadow-sm transition-all flex items-center gap-3">
-                             <GitBranch className="w-5 h-5 text-emerald-500" />
-                             <span className="text-sm font-medium">Condition</span>
-                         </div>
-                         <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-grab hover:border-blue-300 hover:shadow-sm transition-all flex items-center gap-3">
-                             <Target className="w-5 h-5 text-red-500" />
-                             <span className="text-sm font-medium">Goal</span>
-                         </div>
+                         {[
+                             { icon: Mail, label: 'Send Email', color: 'text-blue-500' },
+                             { icon: Clock, label: 'Wait / Delay', color: 'text-amber-500' },
+                             { icon: CheckSquare, label: 'Task / Call', color: 'text-purple-500' },
+                             { icon: GitBranch, label: 'Condition', color: 'text-emerald-500' },
+                             { icon: Target, label: 'Goal', color: 'text-red-500' },
+                         ].map((item, idx) => (
+                             <div key={idx} className={`p-3 border rounded-lg cursor-grab hover:shadow-sm transition-all flex items-center gap-3 ${itemBg}`}>
+                                 <item.icon className={`w-5 h-5 ${item.color}`} />
+                                 <span className={`text-sm font-medium ${textMain}`}>{item.label}</span>
+                             </div>
+                         ))}
                     </div>
                 </aside>
 
                 {/* Main Canvas */}
                 <main 
-                    className="flex-1 relative overflow-hidden bg-slate-50 cursor-grab active:cursor-grabbing"
+                    className={`flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing ${bgBase}`}
                     ref={containerRef}
                     style={{
-                        backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)',
+                        backgroundImage: `radial-gradient(${theme === 'dark' ? '#334155' : '#cbd5e1'} 1px, transparent 1px)`,
                         backgroundSize: '20px 20px'
                     }}
                 >
@@ -231,10 +231,10 @@ export default function SequenceCanvas() {
                 </main>
 
                 {/* Right Sidebar - Inspector */}
-                <aside className={`w-80 bg-white border-l z-10 flex flex-col transition-all duration-300 ${inspectorOpen ? 'translate-x-0' : 'translate-x-full absolute right-0 h-full'}`}>
-                    <div className="p-4 border-b flex justify-between items-center bg-slate-50/50">
-                        <h3 className="text-sm font-bold text-slate-800">Inspector</h3>
-                        <Button variant="ghost" size="icon" onClick={() => setInspectorOpen(false)}><X className="w-4 h-4" /></Button>
+                <aside className={`w-80 border-l z-10 flex flex-col transition-all duration-300 ${inspectorOpen ? 'translate-x-0' : 'translate-x-full absolute right-0 h-full'} ${bgPanel}`}>
+                    <div className={`p-4 border-b flex justify-between items-center ${inspectorHeaderBg}`}>
+                        <h3 className={`text-sm font-bold ${textMain}`}>Inspector</h3>
+                        <Button variant="ghost" size="icon" onClick={() => setInspectorOpen(false)} className={theme === 'dark' ? 'text-slate-400 hover:text-slate-200' : ''}><X className="w-4 h-4" /></Button>
                     </div>
                     
                     {selectedNodeId ? (
@@ -244,7 +244,7 @@ export default function SequenceCanvas() {
                                 {nodes.find(n => n.id === selectedNodeId)?.type !== 'START' && (
                                     <div>
                                         <Label className="text-xs text-slate-500 uppercase tracking-wider">Step Name</Label>
-                                        <Input defaultValue={nodes.find(n => n.id === selectedNodeId)?.label} className="mt-1" />
+                                        <Input defaultValue={nodes.find(n => n.id === selectedNodeId)?.label} className={`mt-1 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`} />
                                     </div>
                                 )}
 
@@ -254,25 +254,25 @@ export default function SequenceCanvas() {
 
                                 {nodes.find(n => n.id === selectedNodeId)?.type === 'EMAIL' && (
                                     <>
-                                        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
+                                        <div className={`flex items-center justify-between p-3 rounded-lg border ${theme === 'dark' ? 'bg-purple-900/20 border-purple-800' : 'bg-purple-50 border-purple-100'}`}>
                                             <div className="flex items-center gap-2">
                                                 <GitBranch className="w-4 h-4 text-purple-600" />
-                                                <span className="text-sm font-medium text-purple-900">A/B Test</span>
+                                                <span className={`text-sm font-medium ${theme === 'dark' ? 'text-purple-300' : 'text-purple-900'}`}>A/B Test</span>
                                             </div>
                                             <Switch defaultChecked />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label>Email Template</Label>
-                                            <div className="p-3 border rounded-lg hover:bg-slate-50 cursor-pointer flex items-center justify-between">
-                                                <span className="text-sm truncate">Intro Template v2</span>
+                                            <Label className={textMain}>Email Template</Label>
+                                            <div className={`p-3 border rounded-lg cursor-pointer flex items-center justify-between ${theme === 'dark' ? 'hover:bg-slate-700 border-slate-600' : 'hover:bg-slate-50'}`}>
+                                                <span className={`text-sm truncate ${textMain}`}>Intro Template v2</span>
                                                 <Settings className="w-4 h-4 text-slate-400" />
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label>Safety Check</Label>
-                                            <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
+                                            <Label className={textMain}>Safety Check</Label>
+                                            <div className={`flex items-center gap-2 text-sm p-2 rounded border ${theme === 'dark' ? 'bg-amber-900/20 text-amber-500 border-amber-800' : 'bg-amber-50 text-amber-600 border-amber-200'}`}>
                                                 <AlertOctagon className="w-4 h-4" />
                                                 <span>Missing Fallback for {'{{Company}}'}</span>
                                             </div>
@@ -283,10 +283,10 @@ export default function SequenceCanvas() {
                                 {nodes.find(n => n.id === selectedNodeId)?.type === 'DELAY' && (
                                     <div className="space-y-4">
                                         <div>
-                                            <Label>Wait Duration</Label>
+                                            <Label className={textMain}>Wait Duration</Label>
                                             <div className="flex gap-2 mt-1">
-                                                <Input type="number" defaultValue="3" className="w-20" />
-                                                <select className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                                                <Input type="number" defaultValue="3" className={`w-20 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`} />
+                                                <select className={`flex-1 rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : 'bg-background border-input'}`}>
                                                     <option>Days</option>
                                                     <option>Hours</option>
                                                     <option>Minutes</option>
@@ -295,7 +295,7 @@ export default function SequenceCanvas() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Switch id="business-hours" defaultChecked />
-                                            <Label htmlFor="business-hours" className="font-normal text-slate-600">Business Hours Only</Label>
+                                            <Label htmlFor="business-hours" className={`font-normal ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>Business Hours Only</Label>
                                         </div>
                                     </div>
                                 )}

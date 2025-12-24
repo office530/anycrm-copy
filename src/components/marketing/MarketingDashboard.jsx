@@ -10,9 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useSettings } from '@/components/context/SettingsContext';
 
 export default function MarketingDashboard() {
     const navigate = useNavigate();
+    const { theme } = useSettings();
 
     // Mock Data
     const kpiData = [
@@ -42,15 +44,18 @@ export default function MarketingDashboard() {
         { id: 3, text: "Not interested, remove me.", email: "jim@tech.net", date: "4 hours ago" },
     ];
 
+    const cardClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900';
+    const subTextClass = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Marketing Performance</h1>
-                    <p className="text-slate-500">Revenue-focused overview of your campaigns</p>
+                    <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Marketing Performance</h1>
+                    <p className={subTextClass}>Revenue-focused overview of your campaigns</p>
                 </div>
                 <div className="flex gap-2">
-                     <Button variant="outline">
+                     <Button variant="outline" className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : ''}>
                         <Download className="w-4 h-4 mr-2" /> Export Report
                     </Button>
                     <Button onClick={() => navigate(createPageUrl('SequenceBuilder'))} className="bg-blue-600 hover:bg-blue-700">
@@ -62,13 +67,13 @@ export default function MarketingDashboard() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {kpiData.map((kpi, index) => (
-                    <Card key={index} className="border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <Card key={index} className={`${cardClass} shadow-sm hover:shadow-md transition-shadow`}>
                         <CardContent className="p-6 flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-slate-500">{kpi.title}</p>
-                                <p className="text-2xl font-bold text-slate-900 mt-1">{kpi.value}</p>
+                                <p className={`text-sm font-medium ${subTextClass}`}>{kpi.title}</p>
+                                <p className={`text-2xl font-bold mt-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{kpi.value}</p>
                             </div>
-                            <div className={`p-3 rounded-full ${kpi.bg}`}>
+                            <div className={`p-3 rounded-full ${theme === 'dark' ? 'bg-opacity-20' : ''} ${kpi.bg}`}>
                                 <kpi.icon className={`w-6 h-6 ${kpi.color}`} />
                             </div>
                         </CardContent>
@@ -78,40 +83,47 @@ export default function MarketingDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Funnel Fallout Chart */}
-                <Card className="lg:col-span-2 border-slate-200">
+                <Card className={`lg:col-span-2 ${cardClass}`}>
                     <CardHeader>
-                        <CardTitle>Funnel Fallout</CardTitle>
+                        <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Funnel Fallout</CardTitle>
                     </CardHeader>
                     <CardContent className="h-[300px]">
                          <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={funnelData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                <XAxis type="number" />
-                                <YAxis dataKey="name" type="category" width={80} tick={{fontSize: 12}} />
-                                <Tooltip cursor={{fill: 'transparent'}} />
-                                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={32} label={{ position: 'right' }} />
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={theme === 'dark' ? '#334155' : '#e2e8f0'} />
+                                <XAxis type="number" tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b' }} />
+                                <YAxis dataKey="name" type="category" width={80} tick={{fontSize: 12, fill: theme === 'dark' ? '#94a3b8' : '#64748b'}} />
+                                <Tooltip 
+                                    cursor={{fill: 'transparent'}} 
+                                    contentStyle={{ 
+                                        backgroundColor: theme === 'dark' ? '#1e293b' : '#fff',
+                                        borderColor: theme === 'dark' ? '#334155' : '#e2e8f0',
+                                        color: theme === 'dark' ? '#fff' : '#000'
+                                    }}
+                                />
+                                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={32} label={{ position: 'right', fill: theme === 'dark' ? '#94a3b8' : '#64748b' }} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
 
                 {/* Negative Sentiment Watchlist */}
-                <Card className="border-slate-200">
+                <Card className={cardClass}>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-red-600 flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5" /> Negative Sentiment
                         </CardTitle>
-                        <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">Risk Watch</Badge>
+                        <Badge variant="outline" className={`bg-red-50 text-red-600 border-red-200 ${theme === 'dark' ? 'bg-red-900/20 border-red-800' : ''}`}>Risk Watch</Badge>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             {negativeSentiments.map((item) => (
-                                <div key={item.id} className="p-3 bg-red-50/50 border border-red-100 rounded-lg">
+                                <div key={item.id} className={`p-3 rounded-lg border ${theme === 'dark' ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50/50 border-red-100'}`}>
                                     <div className="flex justify-between items-start mb-1">
-                                        <span className="text-xs font-semibold text-red-800">{item.email}</span>
+                                        <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>{item.email}</span>
                                         <span className="text-[10px] text-red-400">{item.date}</span>
                                     </div>
-                                    <p className="text-sm text-slate-700 italic">"{item.text}"</p>
+                                    <p className={`text-sm italic ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>"{item.text}"</p>
                                 </div>
                             ))}
                         </div>
@@ -120,14 +132,14 @@ export default function MarketingDashboard() {
             </div>
 
             {/* Sequence Leaderboard */}
-            <Card className="border-slate-200">
+            <Card className={cardClass}>
                 <CardHeader>
-                    <CardTitle>Sequence Leaderboard</CardTitle>
+                    <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Sequence Leaderboard</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-500 uppercase font-semibold">
+                            <thead className={`${theme === 'dark' ? 'bg-slate-900/50 text-slate-400' : 'bg-slate-50 text-slate-500'} uppercase font-semibold`}>
                                 <tr>
                                     <th className="px-4 py-3 rounded-l-lg">Sequence Name</th>
                                     <th className="px-4 py-3">Owner</th>
@@ -137,13 +149,13 @@ export default function MarketingDashboard() {
                                     <th className="px-4 py-3 text-right rounded-r-lg">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className={`divide-y ${theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'}`}>
                                 {sequences.map((seq) => (
-                                    <tr key={seq.id} className="hover:bg-slate-50/50">
-                                        <td className="px-4 py-3 font-medium text-slate-900">{seq.name}</td>
-                                        <td className="px-4 py-3 text-slate-500">{seq.owner}</td>
+                                    <tr key={seq.id} className={theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/50'}>
+                                        <td className={`px-4 py-3 font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}`}>{seq.name}</td>
+                                        <td className={`px-4 py-3 ${subTextClass}`}>{seq.owner}</td>
                                         <td className="px-4 py-3">
-                                            <Badge variant="secondary" className="bg-slate-100 text-slate-600">{seq.persona}</Badge>
+                                            <Badge variant="secondary" className={theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}>{seq.persona}</Badge>
                                         </td>
                                         <td className="px-4 py-3 font-semibold text-emerald-600">{seq.replyRate}</td>
                                         <td className="px-4 py-3 font-semibold text-purple-600">{seq.booked}</td>
@@ -151,7 +163,7 @@ export default function MarketingDashboard() {
                                             <Button 
                                                 size="sm" 
                                                 variant="ghost" 
-                                                className={seq.status === 'Active' ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50" : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"}
+                                                className={seq.status === 'Active' ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20" : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"}
                                             >
                                                 {seq.status === 'Active' ? <PauseCircle className="w-4 h-4 mr-1" /> : <PlayCircle className="w-4 h-4 mr-1" />}
                                                 {seq.status === 'Active' ? 'Pause' : 'Resume'}
