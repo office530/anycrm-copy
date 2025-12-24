@@ -25,12 +25,14 @@ function LayoutContent({ children, currentPageName }) {
   { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },
   { name: 'Reports', path: 'Reports', icon: BarChart3, color: 'emerald' },
   { name: 'Automations', path: 'Automations', icon: Zap, color: 'indigo' },
+  { name: 'CS Management', path: 'CSManagement', icon: Sparkles, color: 'blue' },
   { name: 'Galaxy', path: 'SalesGalaxy', icon: Globe, color: 'amber' },
   ];
 
   // Dark Mode Color Configurations
   const darkColors = {
       cyan: { active: 'bg-cyan-500/15 text-cyan-400 shadow-cyan-500/10', icon: 'text-cyan-400', indicator: 'bg-cyan-400 shadow-cyan-400/50', hover: 'hover:text-cyan-400' },
+      blue: { active: 'bg-blue-500/15 text-blue-400 shadow-blue-500/10', icon: 'text-blue-400', indicator: 'bg-blue-400 shadow-blue-400/50', hover: 'hover:text-blue-400' },
       purple: { active: 'bg-purple-500/15 text-purple-400 shadow-purple-500/10', icon: 'text-purple-400', indicator: 'bg-purple-400 shadow-purple-400/50', hover: 'hover:text-purple-400' },
       pink: { active: 'bg-pink-500/15 text-pink-400 shadow-pink-500/10', icon: 'text-pink-400', indicator: 'bg-pink-400 shadow-pink-400/50', hover: 'hover:text-pink-400' },
       orange: { active: 'bg-orange-500/15 text-orange-400 shadow-orange-500/10', icon: 'text-orange-400', indicator: 'bg-orange-400 shadow-orange-400/50', hover: 'hover:text-orange-400' },
