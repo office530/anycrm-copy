@@ -315,8 +315,7 @@ export default function SmartEmailEditor() {
                                     <Input 
                                         value={subject}
                                         onChange={(e) => setSubject(e.target.value)}
-                                        placeholder="Subject"
-                                        className={`bg-transparent border-none px-0 text-2xl font-semibold placeholder:text-slate-400/50 focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
+                                        className={`bg-transparent border-none px-0 text-2xl font-semibold placeholder:text-transparent focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
                                     />
                                     {!subject && (
                                         <span className={`absolute left-0 top-0 text-2xl font-light pointer-events-none transition-opacity ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`}>
