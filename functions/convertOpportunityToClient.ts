@@ -16,8 +16,11 @@ Deno.serve(async (req) => {
              return Response.json({ error: 'Missing opportunityId' }, { status: 400 });
         }
 
+        // Use service role for consistent behavior and permission bypass for system actions
+        const adminClient = base44.asServiceRole;
+
         // 1. Fetch Opportunity
-        const opportunities = await base44.entities.Opportunity.list();
+        const opportunities = await adminClient.entities.Opportunity.list();
         const opportunity = opportunities.find(o => o.id === opportunityId);
 
         if (!opportunity) {
@@ -29,7 +32,7 @@ Deno.serve(async (req) => {
         }
 
         // 2. Fetch Lead
-        const leads = await base44.entities.Lead.list();
+        const leads = await adminClient.entities.Lead.list();
         const lead = leads.find(l => l.id === opportunity.lead_id);
 
         if (!lead) {
@@ -55,7 +58,7 @@ Deno.serve(async (req) => {
             initial_amount: opportunity.amount,
             contract_start_date: new Date().toISOString().split('T')[0], // Today as start date for conversion
             onboarding_status: "Not Started",
-            customer_segment: opportunity.amount > 50000 ? "Key Account" : opportunity.amount > 10000 ? "Enterprise" : "SMB", // Simple logic
+            customer_segment: (opportunity.amount || 0) > 50000 ? "Key Account" : (opportunity.amount || 0) > 10000 ? "Enterprise" : "SMB", 
             health_score: 100,
             last_engagement_date: new Date().toISOString(),
             renewal_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0], // 1 year renewal default
@@ -64,13 +67,13 @@ Deno.serve(async (req) => {
         };
 
         // 4. Create Client
-        const newClient = await base44.entities.Client.create(clientData);
+        const newClient = await adminClient.entities.Client.create(clientData);
 
         // 5. Update Opportunity
-        await base44.entities.Opportunity.update(opportunity.id, { client_id: newClient.id });
+        await adminClient.entities.Opportunity.update(opportunity.id, { client_id: newClient.id });
 
         // 6. Create Onboarding Task
-        await base44.entities.Task.create({
+        await adminClient.entities.Task.create({
             title: `Onboard new client: ${newClient.full_name}`,
             description: `Complete initial onboarding checklist for ${newClient.full_name}. Source Opportunity: ${opportunity.product_type}`,
             status: "todo",
@@ -82,7 +85,7 @@ Deno.serve(async (req) => {
 
         // 7. Update Lead status to Converted if not already
         if (lead.lead_status !== "Converted") {
-            await base44.entities.Lead.update(lead.id, { lead_status: "Converted" });
+            await adminClient.entities.Lead.update(lead.id, { lead_status: "Converted" });
         }
 
         return Response.json({ success: true, client: newClient });
