@@ -55,7 +55,7 @@ export default function MarketingDashboard() {
                     <p className={subTextClass}>Revenue-focused overview of your campaigns</p>
                 </div>
                 <div className="flex gap-2">
-                     <Button variant="outline" className={theme === 'dark' ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : ''}>
+                     <Button variant="outline" className={theme === 'dark' ? 'bg-slate-800 text-white border-slate-700 hover:bg-slate-700' : 'bg-white text-slate-900 border-slate-200 hover:bg-slate-50'}>
                         <Download className="w-4 h-4 mr-2" /> Export Report
                     </Button>
                     <Button onClick={() => navigate(createPageUrl('SequenceBuilder'))} className="bg-blue-600 hover:bg-blue-700">
