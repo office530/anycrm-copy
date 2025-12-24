@@ -46,11 +46,14 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onConnectStart, onCo
 
     return (
         <div
-            className={`absolute ${bgClass} rounded-lg shadow-sm border w-64 p-3 cursor-grab active:cursor-grabbing transition-all ${getColors()}`}
+            className={`absolute ${bgClass} rounded-lg shadow-sm border w-64 p-3 cursor-grab active:cursor-grabbing transition-all ${getColors()} group`}
             style={{ left: node.x, top: node.y }}
             onMouseDown={(e) => onDragStart(e, node.id)}
             onClick={(e) => onClick(e, node.id)}
+            onMouseUp={(e) => onConnectEnd(e, node.id)}
         >
+            {/* Drop Target Overlay (visible when hovering with a connection) */}
+            <div className="absolute inset-0 rounded-lg bg-blue-500/10 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity border-2 border-blue-500/50 hidden group-hover:block" />
             <div className="flex items-center gap-3 mb-2">
                 <div className={`p-2 rounded-md border ${iconBg}`}>
                     {getIcon()}
@@ -80,19 +83,19 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onConnectStart, onCo
             )}
 
             {/* Connection Points */}
-            {/* Output Point */}
+            {/* Output Point - Larger Hit Area */}
             <div 
-                className="absolute top-1/2 -right-1 w-3 h-3 bg-slate-300 rounded-full hover:bg-blue-500 cursor-crosshair z-20 border border-slate-500 transition-colors" 
-                title="Drag to connect"
+                className="absolute top-1/2 -right-3 w-8 h-8 flex items-center justify-center cursor-crosshair z-30 group"
                 onMouseDown={(e) => onConnectStart(e, node.id)}
-            />
+                title="Drag to connect"
+            >
+                <div className="w-3 h-3 bg-slate-300 rounded-full group-hover:bg-blue-500 group-hover:scale-125 border border-slate-500 transition-all shadow-sm" />
+            </div>
             
-            {/* Input Point */}
+            {/* Input Point - Visual Only (Drop handled by node) */}
             {node.type !== 'START' && (
                 <div 
-                    className="absolute top-1/2 -left-1 w-3 h-3 bg-slate-300 rounded-full hover:bg-blue-500 cursor-crosshair z-20 border border-slate-500 transition-colors" 
-                    title="Drop to connect"
-                    onMouseUp={(e) => onConnectEnd(e, node.id)}
+                    className="absolute top-1/2 -left-1 w-3 h-3 bg-slate-300 rounded-full z-20 border border-slate-500" 
                 />
             )}
         </div>
