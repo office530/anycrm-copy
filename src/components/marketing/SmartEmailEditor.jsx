@@ -401,7 +401,7 @@ export default function SmartEmailEditor() {
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
                                     placeholder="Subject line..."
-                                    className={`border-none px-0 text-xl font-semibold shadow-none focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white placeholder:text-slate-600' : 'text-slate-900 placeholder:text-slate-300'}`}
+                                    className={`border-none px-0 text-xl font-semibold shadow-none focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white placeholder:text-slate-500' : 'text-slate-900 placeholder:text-slate-300'}`}
                                 />
                             </div>
 
@@ -444,9 +444,9 @@ export default function SmartEmailEditor() {
                 </main>
 
                 {/* Right Sidebar - Lab Mode */}
-                <aside className={`border-l transition-all duration-300 ease-in-out flex flex-col w-[380px] bg-slate-50 dark:bg-slate-900/50 dark:border-slate-800 ${isLabMode ? 'mr-0' : '-mr-[380px]'}`}>
-                    <div className="p-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
-                        <h2 className="font-semibold text-sm flex items-center gap-2 dark:text-slate-100">
+                <aside className={`border-l transition-all duration-300 ease-in-out flex flex-col w-[380px] ${theme === 'dark' ? 'bg-slate-900/30 border-slate-800' : 'bg-slate-50 border-slate-200'} ${isLabMode ? 'mr-0' : '-mr-[380px]'}`}>
+                    <div className={`p-4 border-b ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+                        <h2 className={`font-semibold text-sm flex items-center gap-2 ${theme === 'dark' ? 'text-slate-100' : 'text-slate-900'}`}>
                             <Zap className="w-4 h-4 text-indigo-500" />
                             Simulation Lab
                         </h2>
@@ -461,13 +461,13 @@ export default function SmartEmailEditor() {
                             <div className={`p-1 rounded-lg flex ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
                                 <button 
                                     onClick={() => setPersonaSource('preset')}
-                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'preset' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-500'}`}
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'preset' ? (theme === 'dark' ? 'bg-slate-700 text-white shadow' : 'bg-white text-slate-900 shadow') : 'text-slate-500'}`}
                                 >
                                     Presets
                                 </button>
                                 <button 
                                     onClick={() => setPersonaSource('crm')}
-                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'crm' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-500'}`}
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'crm' ? (theme === 'dark' ? 'bg-slate-700 text-white shadow' : 'bg-white text-slate-900 shadow') : 'text-slate-500'}`}
                                 >
                                     CRM Data
                                 </button>
@@ -476,10 +476,10 @@ export default function SmartEmailEditor() {
                             {/* Dropdowns */}
                             {personaSource === 'preset' ? (
                                 <Select value={selectedPersona} onValueChange={setSelectedPersona}>
-                                    <SelectTrigger className="h-9 text-sm">
+                                    <SelectTrigger className={`h-9 text-sm ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : ''}>
                                         {MOCK_PERSONAS.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -492,7 +492,7 @@ export default function SmartEmailEditor() {
                                     <select 
                                         value={selectedCrmId}
                                         onChange={(e) => setSelectedCrmId(e.target.value)}
-                                        className={`w-full p-2 rounded-md text-sm border ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}
+                                        className={`w-full p-2 rounded-md text-sm border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-200'}`}
                                     >
                                         <option value="">-- Select --</option>
                                         {crmType === 'lead' 
@@ -508,7 +508,7 @@ export default function SmartEmailEditor() {
                                 <div className={`mt-2 p-3 rounded-lg text-xs space-y-1 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-50'}`}>
                                     <div className="flex justify-between font-medium">
                                         <span className="text-slate-500">Role</span>
-                                        <span className="text-slate-700 dark:text-slate-300">{currentPersona.role}</span>
+                                        <span className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>{currentPersona.role}</span>
                                     </div>
                                     <div className="flex justify-between font-medium">
                                         <span className="text-slate-500">Trait</span>
@@ -520,15 +520,15 @@ export default function SmartEmailEditor() {
 
                         {/* Chat Interface */}
                         <div className={`flex flex-col h-[400px] rounded-xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
-                            <div className="p-3 border-b dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 flex justify-between items-center">
+                            <div className={`p-3 border-b flex justify-between items-center ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-slate-50/50 border-slate-200'}`}>
                                 <span className="text-xs font-semibold text-slate-500">AI Feedback</span>
                             </div>
                             
-                            <div className="flex-1 p-3 space-y-3 overflow-y-auto bg-slate-50/30 dark:bg-slate-950/30">
+                            <div className={`flex-1 p-3 space-y-3 overflow-y-auto ${theme === 'dark' ? 'bg-slate-950/30' : 'bg-slate-50/30'}`}>
                                 {chatHistory.map((msg, i) => (
                                     <div key={i} className={`flex gap-2 ${msg.role === 'twin' ? '' : 'flex-row-reverse'}`}>
-                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'twin' ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}>
-                                            {msg.role === 'twin' ? <User className="w-3 h-3 text-white" /> : <Zap className="w-3 h-3 text-slate-500 dark:text-slate-300" />}
+                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'twin' ? 'bg-indigo-600' : (theme === 'dark' ? 'bg-slate-700' : 'bg-slate-300')}`}>
+                                            {msg.role === 'twin' ? <User className="w-3 h-3 text-white" /> : <Zap className={`w-3 h-3 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-500'}`} />}
                                         </div>
                                         <div className={`rounded-lg p-2.5 text-sm max-w-[90%] shadow-sm ${
                                             msg.role === 'twin' 
@@ -547,7 +547,7 @@ export default function SmartEmailEditor() {
                                 )}
                             </div>
 
-                            <div className="p-3 border-t dark:border-slate-800 bg-white dark:bg-slate-900">
+                            <div className={`p-3 border-t ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
                                 <Button 
                                     size="sm"
                                     className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
