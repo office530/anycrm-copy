@@ -28,11 +28,7 @@ export default function ClientDashboard({ clients }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             {cards.map((stat, index) => (
-                <Card key={index} className={`border-none shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-[1.02] ${
-                    isDark 
-                    ? 'bg-slate-800/40 border border-white/5' 
-                    : 'bg-white/60 border border-white/40'
-                }`}>
+                <Card key={index} className={`border-none shadow-sm ${isDark ? 'bg-slate-800' : 'bg-white'}`}>
                     <CardContent className="p-4 flex items-center justify-between">
                         <div>
                             <p className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{stat.title}</p>
