@@ -7,22 +7,40 @@ Deno.serve(async (req) => {
         // Use service role for migration to bypass RLS and ensure all data is processed
         const adminClient = base44.asServiceRole;
 
-        // 1. Fetch all Won Opportunities that don't have a client_id
+        // Fetch data using service role
         const opportunities = await adminClient.entities.Opportunity.list();
         const leads = await adminClient.entities.Lead.list();
+        const existingClients = await adminClient.entities.Client.list();
 
         const wonOpportunities = opportunities.filter(o => 
-            (o.deal_stage && (o.deal_stage.includes('Won') || o.deal_stage === 'Closed Won')) && !o.client_id
+            (o.deal_stage && (o.deal_stage.includes('Won') || o.deal_stage === 'Closed Won'))
         );
 
         let processedCount = 0;
+        let skippedCount = 0;
         const errors = [];
 
         for (const opportunity of wonOpportunities) {
             try {
+                 // Check if already linked
+                if (opportunity.client_id) {
+                    skippedCount++;
+                    continue;
+                }
+
+                 // Double check if a client exists with this crm_opportunity_id (avoid duplicates)
+                const existingClient = existingClients.find(c => c.crm_opportunity_id === opportunity.id);
+                if (existingClient) {
+                     // Update opportunity with link if missing
+                     await adminClient.entities.Opportunity.update(opportunity.id, { client_id: existingClient.id });
+                     skippedCount++;
+                     continue;
+                }
+
                 const lead = leads.find(l => l.id === opportunity.lead_id);
                 if (!lead) {
-                    errors.push(`Lead not found for opportunity ${opportunity.id}`);
+                    // errors.push(`Lead not found for opportunity ${opportunity.id}`);
+                    // Don't fail, just skip or create with minimal data? Skip for now.
                     continue;
                 }
 
@@ -47,8 +65,6 @@ Deno.serve(async (req) => {
                     health_score: 100,
                     last_engagement_date: opportunity.updated_date || new Date().toISOString(),
                     renewal_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-                    // For migration, we might not have a specific CSM, so we can leave it empty or assign to a default admin if we knew one. 
-                    // Let's leave assigned_csm empty or use 'system' if needed, but schema doesn't require it.
                     documents: allDocs
                 };
 
@@ -74,7 +90,8 @@ Deno.serve(async (req) => {
         return Response.json({ 
             success: true, 
             processed: processedCount, 
-            total_found: wonOpportunities.length,
+            skipped: skippedCount,
+            total_won: wonOpportunities.length,
             errors 
         });
 
