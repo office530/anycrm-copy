@@ -19,7 +19,7 @@ export default function ClientDashboard({ clients }) {
 
     const cards = [
         { title: "Total Clients", value: stats.totalClients, icon: Users, color: "text-blue-500", bg: "bg-blue-100 dark:bg-blue-900/20" },
-        { title: "Total ARR/Revenue", value: `$${(stats.totalRevenue / 1000).toFixed(1)}k`, icon: TrendingUp, color: "text-green-500", bg: "bg-green-100 dark:bg-green-900/20" },
+        { title: "Total ARR/Revenue", value: `$${(stats.totalRevenue / 1000000).toFixed(1)}M`, icon: TrendingUp, color: "text-green-500", bg: "bg-green-100 dark:bg-green-900/20" },
         { title: "Avg Health Score", value: `${stats.avgHealth}%`, icon: CheckCircle, color: stats.avgHealth > 80 ? "text-green-500" : "text-yellow-500", bg: stats.avgHealth > 80 ? "bg-green-100 dark:bg-green-900/20" : "bg-yellow-100 dark:bg-yellow-900/20" },
         { title: "In Onboarding", value: stats.onboarding, icon: Users, color: "text-purple-500", bg: "bg-purple-100 dark:bg-purple-900/20" },
         { title: "At Risk", value: stats.atRisk, icon: AlertTriangle, color: "text-red-500", bg: "bg-red-100 dark:bg-red-900/20" }
