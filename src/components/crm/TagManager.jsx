@@ -36,7 +36,7 @@ export default function TagManager({ tags = [], onChange }) {
             variant="secondary" 
             className={`px-2 py-1 text-sm font-medium flex items-center gap-1 border ${
                 theme === 'dark' 
-                ? 'bg-slate-800 text-cyan-400 hover:bg-slate-700 border-slate-600' 
+                ? 'bg-slate-900 text-cyan-400 hover:bg-slate-800 border-slate-700' 
                 : 'bg-slate-100 text-red-700 hover:bg-slate-200 border-slate-200'
             }`}
           >
