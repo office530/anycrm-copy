@@ -449,31 +449,89 @@ export default function SmartEmailEditor() {
                         {/* Section 1: Persona */}
                         <div className="space-y-3">
                             <Label className={`text-xs uppercase font-bold tracking-wider ${textSub}`}>Target Persona</Label>
-                            <Select value={selectedPersona} onValueChange={setSelectedPersona}>
-                                <SelectTrigger className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
-                                    {MOCK_PERSONAS.map(p => (
-                                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
                             
-                            {/* Persona Details Card */}
-                            {selectedPersona && (
-                                <div className={`rounded-lg p-3 text-xs space-y-2 border ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-slate-50 border-slate-200'}`}>
+                            {/* Source Toggle */}
+                            <div className={`p-1 rounded-lg flex mb-2 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                                <button 
+                                    onClick={() => setPersonaSource('preset')}
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'preset' ? (theme === 'dark' ? 'bg-slate-700 text-white shadow' : 'bg-white text-slate-900 shadow') : 'text-slate-500'}`}
+                                >
+                                    Presets
+                                </button>
+                                <button 
+                                    onClick={() => setPersonaSource('crm')}
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'crm' ? (theme === 'dark' ? 'bg-slate-700 text-white shadow' : 'bg-white text-slate-900 shadow') : 'text-slate-500'}`}
+                                >
+                                    From CRM
+                                </button>
+                            </div>
+
+                            {/* Preset Selection */}
+                            {personaSource === 'preset' && (
+                                <Select value={selectedPersona} onValueChange={setSelectedPersona}>
+                                    <SelectTrigger className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
+                                        {MOCK_PERSONAS.map(p => (
+                                            <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+
+                            {/* CRM Selection */}
+                            {personaSource === 'crm' && (
+                                <div className="space-y-3 animate-in fade-in slide-in-from-top-1">
+                                    <div className="flex gap-2">
+                                        <Badge 
+                                            variant={crmType === 'lead' ? 'default' : 'outline'} 
+                                            className={`cursor-pointer flex-1 justify-center ${crmType === 'lead' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+                                            onClick={() => { setCrmType('lead'); setSelectedCrmId(""); }}
+                                        >
+                                            Leads
+                                        </Badge>
+                                        <Badge 
+                                            variant={crmType === 'opportunity' ? 'default' : 'outline'} 
+                                            className={`cursor-pointer flex-1 justify-center ${crmType === 'opportunity' ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                                            onClick={() => { setCrmType('opportunity'); setSelectedCrmId(""); }}
+                                        >
+                                            Opportunities
+                                        </Badge>
+                                    </div>
+
+                                    <select 
+                                        value={selectedCrmId}
+                                        onChange={(e) => setSelectedCrmId(e.target.value)}
+                                        className={`w-full p-2.5 rounded-md text-sm border focus:ring-2 focus:ring-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-200'}`}
+                                    >
+                                        <option value="">-- Choose {crmType === 'lead' ? 'Lead' : 'Deal'} --</option>
+                                        {crmType === 'lead' 
+                                            ? leads.map(l => (
+                                                <option key={l.id} value={l.id}>{l.full_name} ({l.lead_status})</option>
+                                            ))
+                                            : opportunities.map(o => (
+                                                <option key={o.id} value={o.id}>{o.lead_name} - ${o.amount}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            )}
+                            
+                            {/* Dynamic Persona Details Card */}
+                            {currentPersona && (
+                                <div className={`rounded-lg p-3 text-xs space-y-2 border mt-4 animate-in fade-in slide-in-from-top-2 ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-slate-50 border-slate-200'}`}>
                                     <div className="flex justify-between items-center">
                                         <span className={textSub}>Role:</span>
-                                        <span className={textMain}>{MOCK_PERSONAS.find(p => p.id === selectedPersona).role}</span>
+                                        <span className={`font-medium ${textMain} truncate max-w-[150px]`}>{currentPersona.role}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className={textSub}>DISC:</span>
-                                        <span className="text-blue-500 font-medium">{MOCK_PERSONAS.find(p => p.id === selectedPersona).disc_profile}</span>
+                                        <span className={textSub}>DISC/Analysis:</span>
+                                        <span className="text-blue-500 font-medium truncate max-w-[150px]">{currentPersona.disc_profile}</span>
                                     </div>
                                     <div className={`mt-2 p-2 rounded ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
-                                        <span className={`block mb-1 font-semibold ${textSub}`}>AI Prompt:</span>
-                                        <p className={`italic ${textMain}`}>"{MOCK_PERSONAS.find(p => p.id === selectedPersona).ai_simulation_prompt}"</p>
+                                        <span className={`block mb-1 font-semibold ${textSub}`}>AI Prompt Preview:</span>
+                                        <p className={`italic line-clamp-3 ${textMain}`}>"{currentPersona.ai_simulation_prompt}"</p>
                                     </div>
                                 </div>
                             )}
