@@ -36,6 +36,29 @@ export default function UserManagement() {
         }
     });
 
+    const inviteMutation = useMutation({
+        mutationFn: (data) => base44.entities.Invite.create(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['invites']);
+            setShowInviteDialog(false);
+            alert("Invitation sent successfully");
+        },
+        onError: (err) => {
+            alert("Failed to send invitation: " + err.message);
+        }
+    });
+
+    const handleInvite = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        inviteMutation.mutate({
+            email: formData.get('email'),
+            role: formData.get('role'),
+            status: 'pending',
+            invited_by: 'admin' // In real app, use current user email
+        });
+    };
+
     const handleApprove = (user) => {
         updateUserMutation.mutate({
             id: user.id,
