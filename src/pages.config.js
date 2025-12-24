@@ -16,10 +16,6 @@ import SequenceBuilder from './pages/SequenceBuilder';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
 import TemplateEditor from './pages/TemplateEditor';
-import Companies from './pages/Companies';
-import Contacts from './pages/Contacts';
-import CompanyProfile from './pages/CompanyProfile';
-import ContactDetails from './pages/ContactDetails';
 import __Layout from './Layout.jsx';
 
 
@@ -42,10 +38,6 @@ export const PAGES = {
     "Settings": Settings,
     "Tasks": Tasks,
     "TemplateEditor": TemplateEditor,
-    "Companies": Companies,
-    "Contacts": Contacts,
-    "CompanyProfile": CompanyProfile,
-    "ContactDetails": ContactDetails,
 }
 
 export const pagesConfig = {

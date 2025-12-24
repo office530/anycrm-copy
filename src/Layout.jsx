@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe, GitFork, Mail, Building2, Contact
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe, GitFork, Mail
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -23,8 +23,6 @@ function LayoutContent({ children, currentPageName }) {
       items: [
         { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard, color: 'cyan' },
         { name: 'Leads', path: 'Leads', icon: Users, color: 'purple' },
-        { name: 'Companies', path: 'Companies', icon: Building2, color: 'blue' },
-        { name: 'Contacts', path: 'Contacts', icon: Contact, color: 'teal' },
         { name: 'Opportunities', path: 'Opportunities', icon: Briefcase, color: 'pink' },
         { name: 'Act Now', path: 'ActNow', icon: Brain, color: 'orange' },
         { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },

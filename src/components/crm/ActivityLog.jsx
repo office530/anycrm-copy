@@ -33,25 +33,17 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import ActivityForm from "./ActivityForm";
 
-export default function ActivityLog({ leadId, opportunityId, companyId, contactId }) {
+export default function ActivityLog({ leadId, opportunityId }) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingActivity, setEditingActivity] = useState(null);
 
   const queryClient = useQueryClient();
 
-  const queryFilter = {};
-  if (leadId) queryFilter.lead_id = leadId;
-  if (opportunityId) queryFilter.opportunity_id = opportunityId;
-  if (companyId) queryFilter.company_id = companyId;
-  if (contactId) queryFilter.contact_id = contactId;
-
-  const queryKey = ['activities', leadId, opportunityId, companyId, contactId].filter(Boolean);
-
   // Fetch Activities
   const { data: activities, isLoading } = useQuery({
-    queryKey,
-    queryFn: () => base44.entities.Activity.filter(queryFilter),
-    enabled: Object.keys(queryFilter).length > 0
+    queryKey: ['activities', leadId],
+    queryFn: () => base44.entities.Activity.filter({ lead_id: leadId }),
+    enabled: !!leadId
   });
 
   // Fetch all users for display names
@@ -68,19 +60,14 @@ export default function ActivityLog({ leadId, opportunityId, companyId, contactI
 
   // Create Activity Mutation
   const createActivity = useMutation({
-    mutationFn: (data) => {
-        const payload = {
-            ...data,
-            date: new Date(data.date).toISOString()
-        };
-        if (leadId) payload.lead_id = leadId;
-        if (opportunityId) payload.opportunity_id = opportunityId;
-        if (companyId) payload.company_id = companyId;
-        if (contactId) payload.contact_id = contactId;
-        return base44.entities.Activity.create(payload);
-    },
+    mutationFn: (data) => base44.entities.Activity.create({
+      ...data,
+      lead_id: leadId,
+      opportunity_id: opportunityId,
+      date: new Date(data.date).toISOString()
+    }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries(['activities', leadId]);
       setIsAdding(false);
       toast.success("Activity added successfully");
     }
@@ -93,7 +80,7 @@ export default function ActivityLog({ leadId, opportunityId, companyId, contactI
       date: new Date(data.date).toISOString()
     }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries(['activities', leadId]);
       setEditingActivity(null);
       toast.success("Activity updated successfully");
     }
