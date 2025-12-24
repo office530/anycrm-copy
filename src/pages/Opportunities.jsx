@@ -236,6 +236,9 @@ export default function OpportunitiesPage() {
       });
 
       if (newStage.includes('Closed Won')) {
+          // Trigger Automation
+          base44.functions.invoke('convertOpportunityToClient', { opportunityId: opp.id });
+          
           triggerConfetti();
           // Custom Toast Logic
           const toastEl = document.createElement('div');

@@ -20,39 +20,13 @@ export default function CSManagementPage() {
         initialData: []
     });
 
-    const syncMutation = useMutation({
-        mutationFn: () => base44.functions.invoke('syncHistoricalClients', {}),
-        onSuccess: (response) => {
-            queryClient.invalidateQueries(['clients']);
-            if (response.data.success) {
-                alert(`Sync Complete! Processed: ${response.data.processed}, Skipped: ${response.data.skipped}`);
-            } else {
-                alert("Sync completed with potential issues. Check console.");
-            }
-        },
-        onError: (err) => {
-            console.error(err);
-            alert("Failed to sync clients.");
-        }
-    });
-
     if (isLoading) {
         return <div className="flex h-screen items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>;
     }
 
     return (
         <div className={`min-h-screen p-6 ${isDark ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-900'}`}>
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Customer Success Hub</h1>
-                <Button 
-                    onClick={() => syncMutation.mutate()} 
-                    disabled={syncMutation.isPending}
-                    className="gap-2"
-                >
-                    {syncMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                    {syncMutation.isPending ? 'Syncing...' : 'Sync Historical Data'}
-                </Button>
-            </div>
+            <h1 className="text-3xl font-bold mb-6">Customer Success Hub</h1>
             
             <ClientDashboard clients={clients} />
             
