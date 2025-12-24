@@ -34,6 +34,7 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
       phone_number: initialLead?.phone_number || "",
       email: initialLead?.email || "",
       product_type: "Consulting",
+      deal_type: "Business",
       amount: "",
       deal_stage: "New",
       probability: 20,
@@ -373,6 +374,31 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           <div className="space-y-2">
             <Label className={labelClass}>Expected Close Date</Label>
             <Input type="date" {...register("expected_close_date")} className={inputClass} />
+          </div>
+
+          <div className="space-y-2">
+            <Label className={labelClass}>Deal Type</Label>
+            <div className={`grid grid-cols-2 p-1 rounded-xl ${theme === 'dark' ? 'bg-slate-800/50 border border-slate-700' : 'bg-slate-100 border border-slate-200'}`}>
+                {['Business', 'Private'].map((type) => {
+                    const isSelected = watch('deal_type') === type;
+                    return (
+                        <button
+                            key={type}
+                            type="button"
+                            onClick={() => setValue('deal_type', type)}
+                            className={`flex items-center justify-center py-2 text-sm font-medium rounded-lg transition-all ${
+                                isSelected 
+                                    ? (theme === 'dark' ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'bg-white text-blue-700 shadow-sm border border-slate-100')
+                                    : (theme === 'dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700')
+                            }`}
+                        >
+                            {type}
+                        </button>
+                    )
+                })}
+            </div>
+            {/* Hidden input to ensure value is registered */}
+            <input type="hidden" {...register("deal_type")} />
           </div>
         </div>
 
