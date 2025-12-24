@@ -23,7 +23,7 @@ import RelatedTasks from "./RelatedTasks";
 
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { theme } = useSettings();
-  const [isCallMode, setIsCallMode] = React.useState(false);
+
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     defaultValues: lead || {
     full_name: "",
@@ -140,55 +140,14 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
           <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage details and activities</p>
         </div>
         <div className="flex items-center gap-2">
-            {lead && (
-                <Button 
-                    variant={isCallMode ? "destructive" : "outline"}
-                    size="sm"
-                    onClick={() => setIsCallMode(!isCallMode)}
-                    className={`gap-2 transition-all ${isCallMode ? 'animate-pulse' : ''} ${theme === 'dark' && !isCallMode ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}`}
-                >
-                    <Phone className="w-4 h-4" />
-                    {isCallMode ? "End Call Mode" : "Start Call Mode"}
-                </Button>
-            )}
+
             <Button variant="ghost" size="icon" onClick={onCancel} className={`${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600'}`}>
             <X className="w-5 h-5" />
             </Button>
         </div>
       </div>
 
-      <div className={`overflow-y-auto p-4 md:p-6 flex-1 ${isCallMode ? 'overflow-hidden' : ''}`}>
-      {isCallMode && lead ? (
-          <div className="flex flex-col md:flex-row h-full gap-6">
-              {/* Left Side: Discovery Script (Read-Only/Reference) */}
-              <div className={`w-full md:w-1/2 flex flex-col h-full rounded-xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                  <div className={`p-3 border-b flex items-center justify-between ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
-                      <h3 className={`font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
-                          <ClipboardList className="w-4 h-4 text-indigo-500" /> 
-                          Discovery Script
-                      </h3>
-                      <Badge variant="outline" className="text-xs">Reference</Badge>
-                  </div>
-                  <div className="flex-1 overflow-y-auto p-0">
-                      <DiscoveryScript leadId={lead.id} />
-                  </div>
-              </div>
-
-              {/* Right Side: Activity Log (Input) */}
-              <div className={`w-full md:w-1/2 flex flex-col h-full rounded-xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                  <div className={`p-3 border-b flex items-center justify-between ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
-                      <h3 className={`font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
-                          <Activity className="w-4 h-4 text-emerald-500" /> 
-                          Log Activity
-                      </h3>
-                      <Badge variant="secondary" className="bg-red-100 text-red-600 animate-pulse">Live Call</Badge>
-                  </div>
-                  <div className="flex-1 overflow-y-auto p-0">
-                      <ActivityLog leadId={lead.id} />
-                  </div>
-              </div>
-          </div>
-      ) : (
+      <div className="overflow-y-auto p-4 md:p-6 flex-1">
       <Tabs defaultValue="details" className="w-full">
         <TabsList className={`flex w-full flex-nowrap justify-start overflow-x-auto mb-6 p-1 h-auto gap-2 scrollbar-hide ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-slate-100/80'}`}>
           {['details', 'opportunities', 'activity', 'tasks', 'documents', 'discovery', 'ai'].map(tab => {
@@ -539,7 +498,6 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
            {lead ? <LeadAiAnalysis lead={lead} /> : <div className="text-center py-10 text-slate-400">Save the lead first</div>}
         </TabsContent>
       </Tabs>
-      )}
       </div>
     </motion.div>);
 
