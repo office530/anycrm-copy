@@ -9,11 +9,12 @@ import CustomFieldSettings from '@/components/settings/CustomFieldSettings';
 import IntegrationSettings from '@/components/settings/IntegrationSettings';
 import AuditLogSettings from '@/components/settings/AuditLogSettings';
 import UserManagement from '@/components/settings/UserManagement';
+import OnboardingSettings from '@/components/settings/OnboardingSettings';
 import { useSettings } from '@/components/context/SettingsContext';
 import { usePermissions } from '@/components/hooks/usePermissions';
 import { 
     Building2, GitMerge, Tags, Bell, User, Shield, 
-    Database, Users, Puzzle, Activity, PenTool, Lock
+    Database, Users, Puzzle, Activity, PenTool, Lock, CheckSquare
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -36,6 +37,7 @@ export default function SettingsPage() {
         items: [
             { id: "pipeline", label: "Pipeline Stages", icon: GitMerge },
             { id: "tags", label: "System Tags", icon: Tags },
+            { id: "onboarding", label: "Onboarding Templates", icon: CheckSquare },
             ...(isAdmin ? [{ id: "custom_fields", label: "Custom Fields", icon: PenTool }] : []),
             { id: "integrations", label: "Integrations", icon: Puzzle },
         ]
@@ -114,6 +116,7 @@ export default function SettingsPage() {
                 {activeTab === "profile" && <ProfileSettings />}
                 {activeTab === "pipeline" && <PipelineSettings />}
                 {activeTab === "tags" && <TagSettings />}
+                {activeTab === "onboarding" && <OnboardingSettings />}
                 {activeTab === "custom_fields" && <CustomFieldSettings />}
                 {activeTab === "integrations" && <IntegrationSettings />}
                 {activeTab === "team" && <TeamSettings />}

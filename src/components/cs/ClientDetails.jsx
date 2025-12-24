@@ -37,6 +37,53 @@ export default function ClientDetails({ client, open, onClose }) {
 
   const clientActivities = activities?.filter((a) => a.related_client_id === client?.id) || [];
 
+  // Onboarding Logic
+  const { data: onboardingTemplates } = useQuery({
+      queryKey: ['onboarding_templates'],
+      queryFn: () => base44.entities.OnboardingTemplate.list(),
+      initialData: []
+  });
+
+  const assignTemplate = async (templateId) => {
+      const template = onboardingTemplates.find(t => t.id === templateId);
+      if (!template) return;
+
+      const newItems = template.items.map(text => ({
+          id: Math.random().toString(36).substr(2, 9),
+          text,
+          is_completed: false,
+          completed_at: null
+      }));
+
+      await base44.entities.Client.update(client.id, { onboarding_items: newItems });
+      queryClient.invalidateQueries(['clients']);
+  };
+
+  const toggleOnboardingItem = async (itemId, currentStatus) => {
+      const updatedItems = (client.onboarding_items || []).map(item => {
+          if (item.id === itemId) {
+              return {
+                  ...item,
+                  is_completed: !currentStatus,
+                  completed_at: !currentStatus ? new Date().toISOString() : null
+              };
+          }
+          return item;
+      });
+
+      // Auto update status if all done
+      const allDone = updatedItems.every(i => i.is_completed);
+      const updates = { onboarding_items: updatedItems };
+      if (allDone && client.onboarding_status !== 'Completed') {
+          updates.onboarding_status = 'Completed';
+      } else if (!allDone && updatedItems.some(i => i.is_completed) && client.onboarding_status === 'Not Started') {
+          updates.onboarding_status = 'In Progress';
+      }
+
+      await base44.entities.Client.update(client.id, updates);
+      queryClient.invalidateQueries(['clients']);
+  };
+
   // File Upload Handler (Simulated for UI)
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -169,6 +216,71 @@ export default function ClientDetails({ client, open, onClose }) {
                                 </div>
               }
                         </div>
+                    </TabsContent>
+
+                    <TabsContent value="onboarding" className="space-y-6">
+                        <div className="flex justify-between items-center mb-2">
+                             <div>
+                                <h3 className="font-bold flex items-center gap-2"><ListChecks className="w-5 h-5 text-blue-500"/> Onboarding Checklist</h3>
+                                <p className="text-xs text-slate-500">Track implementation progress</p>
+                             </div>
+                             {(!client.onboarding_items || client.onboarding_items.length === 0) && (
+                                <div className="flex items-center gap-2">
+                                    <Select onValueChange={assignTemplate}>
+                                        <SelectTrigger className="w-[200px] h-8 text-xs">
+                                            <SelectValue placeholder="Load Template..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {onboardingTemplates.map(t => (
+                                                <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                             )}
+                        </div>
+
+                        {(!client.onboarding_items || client.onboarding_items.length === 0) ? (
+                            <div className="text-center py-10 border-2 border-dashed rounded-xl border-slate-200 dark:border-slate-700">
+                                <ListChecks className="w-10 h-10 mx-auto text-slate-300 mb-3" />
+                                <p className="text-slate-500">No checklist assigned.</p>
+                                <p className="text-xs text-slate-400">Select a template above to start.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {client.onboarding_items.map((item) => (
+                                    <div key={item.id} className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
+                                        item.is_completed 
+                                            ? (isDark ? 'bg-slate-800/50 border-slate-700 opacity-60' : 'bg-slate-50 border-slate-200 opacity-60')
+                                            : (isDark ? 'bg-slate-800 border-slate-600' : 'bg-white border-slate-200 shadow-sm')
+                                    }`}>
+                                        <Checkbox 
+                                            checked={item.is_completed} 
+                                            onCheckedChange={() => toggleOnboardingItem(item.id, item.is_completed)}
+                                            className="mt-1"
+                                        />
+                                        <div className="flex-1">
+                                            <p className={`text-sm font-medium ${item.is_completed ? 'line-through' : ''}`}>
+                                                {item.text}
+                                            </p>
+                                            {item.is_completed && item.completed_at && (
+                                                <p className="text-[10px] text-green-600 mt-1 flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" /> Completed {new Date(item.completed_at).toLocaleDateString()}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                
+                                <div className="pt-4 border-t mt-4">
+                                     <div className="flex justify-between text-xs text-slate-500 mb-2">
+                                         <span>Progress</span>
+                                         <span>{Math.round((client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100)}%</span>
+                                     </div>
+                                     <Progress value={(client.onboarding_items.filter(i => i.is_completed).length / client.onboarding_items.length) * 100} className="h-2" />
+                                </div>
+                            </div>
+                        )}
                     </TabsContent>
 
                     <TabsContent value="tasks" className="space-y-4">
