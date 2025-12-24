@@ -75,11 +75,19 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className={`min-h-screen font-heebo flex transition-colors duration-300 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0f172a] text-slate-100' : 'bg-slate-50 text-neutral-900'}`} dir="ltr">
 
-      {/* Ambient Background Blobs for Liquid Glass Effect - Optimized for Mobile */}
+      {/* Ambient Background Blobs for Liquid Glass Effect - Enhanced */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className={`absolute top-[-20%] right-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] rounded-full blur-[60px] md:blur-[120px] opacity-30 animate-pulse ${theme === 'dark' ? 'bg-indigo-600' : 'bg-rose-300'}`} />
-          <div className={`absolute bottom-[-20%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full blur-[50px] md:blur-[100px] opacity-20 ${theme === 'dark' ? 'bg-cyan-600' : 'bg-blue-300'}`} />
-          <div className={`absolute top-[40%] left-[30%] w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-full blur-[40px] md:blur-[80px] opacity-20 hidden md:block ${theme === 'dark' ? 'bg-purple-600' : 'bg-violet-300'}`} />
+          {/* Primary Blob */}
+          <div className={`absolute top-[-10%] right-[-5%] w-[600px] md:w-[900px] h-[600px] md:h-[900px] rounded-full blur-[80px] md:blur-[140px] opacity-40 mix-blend-screen animate-pulse ${theme === 'dark' ? 'bg-indigo-600' : 'bg-rose-400'}`} style={{ animationDuration: '8s' }} />
+
+          {/* Secondary Blob - Offset */}
+          <div className={`absolute bottom-[-10%] left-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] rounded-full blur-[70px] md:blur-[130px] opacity-30 mix-blend-screen ${theme === 'dark' ? 'bg-cyan-600' : 'bg-blue-400'}`} />
+
+          {/* Tertiary Floating Blob */}
+          <div className={`absolute top-[30%] left-[20%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full blur-[60px] md:blur-[120px] opacity-25 mix-blend-screen animate-pulse ${theme === 'dark' ? 'bg-purple-600' : 'bg-violet-400'}`} style={{ animationDuration: '12s' }} />
+
+          {/* Noise Texture Overlay for realism */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
       </div>
       <CommandPalette />
 
@@ -101,12 +109,12 @@ function LayoutContent({ children, currentPageName }) {
         }
       `}</style>
 
-      {/* Sidebar / Drawer - Adaptive - Liquid Glass */}
+      {/* Sidebar / Drawer - Enhanced Liquid Glass */}
       <aside className={`
-        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-lg backdrop-blur-xl
+        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-2xl backdrop-blur-2xl
         ${theme === 'dark' 
-          ? 'bg-[#151E32]/70 text-slate-200 border-white/5 shadow-black/20' 
-          : 'bg-white/70 text-neutral-800 border-white/40 shadow-xl shadow-rose-100/20'}
+          ? 'bg-[#0B1121]/60 text-slate-200 border-white/10 shadow-black/40 supports-[backdrop-filter]:bg-[#0B1121]/40' 
+          : 'bg-white/60 text-neutral-800 border-white/60 shadow-xl shadow-rose-100/30 supports-[backdrop-filter]:bg-white/40'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative z-10">
@@ -245,11 +253,11 @@ function LayoutContent({ children, currentPageName }) {
             </div>
         </header>
 
-        {/* Topbar Desktop - Liquid Glass */}
-        <header className={`hidden lg:flex backdrop-blur-xl border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-colors duration-300 ${
+        {/* Topbar Desktop - Enhanced Liquid Glass */}
+        <header className={`hidden lg:flex backdrop-blur-xl border-b h-20 items-center justify-between px-8 sticky top-0 z-30 transition-all duration-300 ${
             theme === 'dark' 
-                ? 'bg-[#0B1121]/50 border-white/5' 
-                : 'bg-white/50 border-white/40'
+                ? 'bg-[#0B1121]/40 border-white/10 shadow-lg shadow-black/5' 
+                : 'bg-white/40 border-white/60 shadow-sm'
         }`}>
             <h1 className={`text-2xl font-bold ${
                 theme === 'dark' 

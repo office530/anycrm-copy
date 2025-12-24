@@ -73,8 +73,10 @@ export default function QuickActions() {
                                 transition={{ duration: 0.2, delay: index * 0.05 }}
                                 className="flex items-center gap-3"
                             >
-                                <span className={`text-sm font-medium px-2 py-1 rounded-md shadow-sm backdrop-blur-sm ${
-                                    theme === 'dark' ? 'bg-slate-900/80 text-white' : 'bg-white/80 text-slate-700'
+                                <span className={`text-sm font-medium px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md border ${
+                                    theme === 'dark' 
+                                      ? 'bg-slate-900/60 text-white border-white/10' 
+                                      : 'bg-white/60 text-slate-800 border-white/40'
                                 }`}>
                                     {action.label}
                                 </span>
@@ -108,10 +110,11 @@ export default function QuickActions() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
-                    h-16 w-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300
+                    h-16 w-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 backdrop-blur-sm
                     ${isOpen ? 'rotate-45' : ''}
-                    ${theme === 'dark' ? 'bg-cyan-500 text-slate-900 hover:bg-cyan-400' : 'bg-red-600 text-white hover:bg-red-700'}
-                    border-4 ${theme === 'dark' ? 'border-slate-800' : 'border-white'}
+                    ${theme === 'dark' 
+                        ? 'bg-cyan-500/90 text-slate-900 hover:bg-cyan-400 border border-white/20 shadow-[0_0_30px_rgba(34,211,238,0.5)]' 
+                        : 'bg-red-600/90 text-white hover:bg-red-700 border border-white/20 shadow-[0_8px_30px_rgba(220,38,38,0.4)]'}
                 `}
             >
                 <Plus className={`w-8 h-8 transition-transform duration-300 ${isOpen ? 'rotate-90' : ''}`} />

@@ -25,10 +25,10 @@ export default function MobileBottomNav({ activePage }) {
   // Removed simple classes to use inline gradient logic
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 border-t h-16 px-6 flex items-center justify-between z-50 lg:hidden transition-colors duration-300 pb-safe ${
+    <div className={`fixed bottom-0 left-0 right-0 border-t h-16 px-6 flex items-center justify-between z-50 lg:hidden transition-all duration-300 pb-safe backdrop-blur-2xl ${
         theme === 'dark' 
-        ? 'bg-slate-900/90 backdrop-blur-md border-slate-800 shadow-[0_-4px_20px_-1px_rgba(0,0,0,0.5)]' 
-        : 'bg-white/90 backdrop-blur-md border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]'
+        ? 'bg-[#0B1121]/70 border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.4)]' 
+        : 'bg-white/70 border-white/50 shadow-[0_-8px_30px_rgba(0,0,0,0.05)]'
     }`}>
             <Link to={createPageUrl('Dashboard')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Dashboard') ? (theme === 'dark' ? 'bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-red-50') : ''}`}>
                 <LayoutDashboard className={`w-6 h-6 ${isActive('Dashboard') ? (theme === 'dark' ? 'text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
@@ -44,10 +44,10 @@ export default function MobileBottomNav({ activePage }) {
             <div className="relative -top-5">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center p-0 transition-all duration-300 ${
+                        <Button className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center p-0 transition-all duration-300 backdrop-blur-sm border ${
                             theme === 'dark'
-                            ? 'bg-cyan-500 hover:bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.4)] text-slate-900'
-                            : 'bg-red-600 hover:bg-red-700 shadow-red-600/30 text-white'
+                            ? 'bg-cyan-500/90 hover:bg-cyan-400 border-white/20 shadow-[0_0_20px_rgba(34,211,238,0.5)] text-slate-900'
+                            : 'bg-red-600/90 hover:bg-red-700 border-white/20 shadow-red-600/40 text-white'
                         }`}>
                             <Plus className="w-8 h-8" />
                         </Button>
