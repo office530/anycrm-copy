@@ -3,9 +3,11 @@ import { Clock, User as UserIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useSettings } from "@/components/context/SettingsContext";
 import moment from "moment";
 
 export default function LastTouchInfo({ entity, entityType = "Lead" }) {
+    const { theme } = useSettings();
     const { data: updatedByUser } = useQuery({
         queryKey: ['user', entity?.updated_by],
         queryFn: async () => {
@@ -23,19 +25,27 @@ export default function LastTouchInfo({ entity, entityType = "Lead" }) {
     const fullDate = moment(entity.updated_date).format("DD/MM/YYYY HH:mm");
 
     return (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+        <div className={`border rounded-xl p-4 flex items-center justify-between transition-colors ${
+            theme === 'dark' 
+                ? 'bg-slate-900/50 border-slate-700' 
+                : 'bg-slate-50 border-slate-200'
+        }`}>
             <div className="flex items-center gap-3">
-                <div className="bg-blue-100 p-2 rounded-full">
-                    <Clock className="w-4 h-4 text-blue-600" />
+                <div className={`p-2 rounded-full ${theme === 'dark' ? 'bg-cyan-900/30' : 'bg-blue-100'}`}>
+                    <Clock className={`w-4 h-4 ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`} />
                 </div>
                 <div>
-                    <div className="text-xs text-slate-500 font-medium">Last Touch</div>
-                    <div className="text-sm font-bold text-slate-800">{timeAgo}</div>
-                    <div className="text-[10px] text-slate-400">{fullDate}</div>
+                    <div className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Last Touch</div>
+                    <div className={`text-sm font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>{timeAgo}</div>
+                    <div className={`text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>{fullDate}</div>
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-white border-slate-200 text-slate-700 font-medium flex items-center gap-1.5">
+                <Badge variant="outline" className={`font-medium flex items-center gap-1.5 ${
+                    theme === 'dark' 
+                        ? 'bg-slate-800 border-slate-700 text-slate-300' 
+                        : 'bg-white border-slate-200 text-slate-700'
+                }`}>
                     <UserIcon className="w-3 h-3" />
                     {displayName}
                 </Badge>
