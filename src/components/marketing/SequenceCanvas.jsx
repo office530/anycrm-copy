@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
     Mail, Clock, CheckCircle, AlertOctagon, GitBranch, 
     MousePointer2, Target, Plus, X, Settings, GripVertical,
-    Play, Save, CheckSquare, Search, ArrowLeft
+    Play, Save, CheckSquare, Search, ArrowLeft, Zap
 } from 'lucide-react';
+import SmartTriggerConfig from './SmartTriggerConfig';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd })
             case 'TASK': return <CheckSquare className="w-4 h-4 text-purple-500" />;
             case 'DECISION': return <GitBranch className="w-4 h-4 text-emerald-500" />;
             case 'GOAL': return <Target className="w-4 h-4 text-red-500" />;
+            case 'START': return <Zap className="w-4 h-4 text-emerald-500" />;
             default: return <Settings className="w-4 h-4 text-slate-500" />;
         }
     };
@@ -239,10 +241,16 @@ export default function SequenceCanvas() {
                         <div className="p-6 space-y-6 overflow-y-auto">
                             {/* Node Specific Settings */}
                             <div className="space-y-4">
-                                <div>
-                                    <Label className="text-xs text-slate-500 uppercase tracking-wider">Step Name</Label>
-                                    <Input defaultValue={nodes.find(n => n.id === selectedNodeId)?.label} className="mt-1" />
-                                </div>
+                                {nodes.find(n => n.id === selectedNodeId)?.type !== 'START' && (
+                                    <div>
+                                        <Label className="text-xs text-slate-500 uppercase tracking-wider">Step Name</Label>
+                                        <Input defaultValue={nodes.find(n => n.id === selectedNodeId)?.label} className="mt-1" />
+                                    </div>
+                                )}
+
+                                {nodes.find(n => n.id === selectedNodeId)?.type === 'START' && (
+                                    <SmartTriggerConfig />
+                                )}
 
                                 {nodes.find(n => n.id === selectedNodeId)?.type === 'EMAIL' && (
                                     <>
