@@ -30,32 +30,38 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd })
 
     const getColors = () => {
         if (isSelected) return "ring-2 ring-blue-500 border-blue-500";
+        if (theme === 'dark') return "border-slate-700 hover:border-blue-400";
         return "border-slate-200 hover:border-blue-300";
     };
 
+    const bgClass = theme === 'dark' ? 'bg-slate-800' : 'bg-white';
+    const textMain = theme === 'dark' ? 'text-slate-100' : 'text-slate-900';
+    const textSub = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
+    const iconBg = theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-100';
+
     return (
         <div
-            className={`absolute bg-white rounded-lg shadow-sm border w-64 p-3 cursor-grab active:cursor-grabbing transition-all ${getColors()}`}
+            className={`absolute ${bgClass} rounded-lg shadow-sm border w-64 p-3 cursor-grab active:cursor-grabbing transition-all ${getColors()}`}
             style={{ left: node.x, top: node.y }}
             onMouseDown={(e) => onDragStart(e, node.id)}
         >
             <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-slate-50 rounded-md border border-slate-100">
+                <div className={`p-2 rounded-md border ${iconBg}`}>
                     {getIcon()}
                 </div>
                 <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate">{node.label}</p>
-                    <p className="text-xs text-slate-500 truncate">{node.subLabel}</p>
+                    <p className={`text-sm font-bold truncate ${textMain}`}>{node.label}</p>
+                    <p className={`text-xs truncate ${textSub}`}>{node.subLabel}</p>
                 </div>
-                <GripVertical className="w-4 h-4 text-slate-300" />
+                <GripVertical className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`} />
             </div>
 
             {node.stats && (
-                <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-100">
-                    <Badge variant="secondary" className="text-[10px] h-5 px-1 bg-blue-50 text-blue-700">
+                <div className={`flex items-center gap-2 mt-2 pt-2 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
+                    <Badge variant="secondary" className={`text-[10px] h-5 px-1 ${theme === 'dark' ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                         Open: {node.stats.openRate}%
                     </Badge>
-                    <Badge variant="secondary" className="text-[10px] h-5 px-1 bg-emerald-50 text-emerald-700">
+                    <Badge variant="secondary" className={`text-[10px] h-5 px-1 ${theme === 'dark' ? 'bg-emerald-900/30 text-emerald-300' : 'bg-emerald-50 text-emerald-700'}`}>
                         Click: {node.stats.clickRate}%
                     </Badge>
                 </div>
@@ -78,13 +84,14 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd })
 
 // --- Connection Line Component ---
 const ConnectionLine = ({ start, end }) => {
+    const { theme } = useSettings();
     // Bezier curve calculation
     const controlPointOffset = Math.abs(end.x - start.x) / 2;
     const path = `M ${start.x} ${start.y} C ${start.x + controlPointOffset} ${start.y}, ${end.x - controlPointOffset} ${end.y}, ${end.x} ${end.y}`;
 
     return (
         <svg className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-visible">
-            <path d={path} stroke="#cbd5e1" strokeWidth="2" fill="none" />
+            <path d={path} stroke={theme === 'dark' ? '#475569' : '#cbd5e1'} strokeWidth="2" fill="none" />
             <path d={path} stroke="transparent" strokeWidth="10" fill="none" className="pointer-events-auto hover:stroke-blue-200 cursor-pointer" />
         </svg>
     );
@@ -92,6 +99,7 @@ const ConnectionLine = ({ start, end }) => {
 
 export default function SequenceCanvas() {
     const navigate = useNavigate();
+    const { theme } = useSettings();
     const [nodes, setNodes] = useState([
         { id: 'start', type: 'START', x: 100, y: 100, label: 'Start Sequence', subLabel: 'Trigger: New Lead' },
         { id: 'email1', type: 'EMAIL', x: 400, y: 100, label: 'Intro Email', subLabel: 'Day 1 - Welcome', stats: { openRate: 45, clickRate: 12 }, abTest: true },
