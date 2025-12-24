@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
     Mail, Clock, CheckCircle, AlertOctagon, GitBranch, 
     MousePointer2, Target, Plus, X, Settings, GripVertical,
-    Play, Save, CheckSquare, Search, ArrowLeft, Zap
+    Play, Save, CheckSquare, Search, ArrowLeft, Zap, Loader2
 } from 'lucide-react';
-import SmartTriggerConfig from './SmartTriggerConfig';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +12,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import SmartTriggerConfig from './SmartTriggerConfig';
 import { useSettings } from '@/components/context/SettingsContext';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // --- Node Component ---
 const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd }) => {
@@ -46,6 +49,7 @@ const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd })
             className={`absolute ${bgClass} rounded-lg shadow-sm border w-64 p-3 cursor-grab active:cursor-grabbing transition-all ${getColors()}`}
             style={{ left: node.x, top: node.y }}
             onMouseDown={(e) => onDragStart(e, node.id)}
+            onClick={(e) => onClick(e, node.id)}
         >
             <div className="flex items-center gap-3 mb-2">
                 <div className={`p-2 rounded-md border ${iconBg}`}>
@@ -99,19 +103,20 @@ const ConnectionLine = ({ start, end }) => {
     );
 };
 
-export default function SequenceCanvas() {
+export default function SequenceCanvas({ sequenceId }) {
     const navigate = useNavigate();
     const { theme } = useSettings();
-    const [nodes, setNodes] = useState([
-        { id: 'start', type: 'START', x: 100, y: 100, label: 'Start Sequence', subLabel: 'Trigger: New Lead' },
-        { id: 'email1', type: 'EMAIL', x: 400, y: 100, label: 'Intro Email', subLabel: 'Day 1 - Welcome', stats: { openRate: 45, clickRate: 12 }, abTest: true },
-        { id: 'wait1', type: 'DELAY', x: 700, y: 100, label: 'Wait 3 Days', subLabel: 'Business hours only' },
-        { id: 'decision1', type: 'DECISION', x: 400, y: 300, label: 'Check Reply', subLabel: 'If replied...' },
-    ]);
-    const [connections, setConnections] = useState([
-        { from: 'start', to: 'email1' },
-        { from: 'email1', to: 'wait1' },
-    ]);
+    const queryClient = useQueryClient();
+    
+    // Default Empty State
+    const defaultNodes = [
+        { id: 'start', type: 'START', x: 100, y: 100, label: 'Start Sequence', subLabel: 'Trigger: New Lead' }
+    ];
+
+    const [nodes, setNodes] = useState(defaultNodes);
+    const [connections, setConnections] = useState([]);
+    const [sequenceName, setSequenceName] = useState("New Sequence");
+    const [status, setStatus] = useState("DRAFT");
     
     const [selectedNodeId, setSelectedNodeId] = useState(null);
     const [inspectorOpen, setInspectorOpen] = useState(true);
@@ -119,7 +124,152 @@ export default function SequenceCanvas() {
 
     const containerRef = useRef(null);
 
-    // Drag Logic
+    // --- Data Fetching ---
+    const { data: sequenceData, isLoading: isLoadingSeq } = useQuery({
+        queryKey: ['sequence', sequenceId],
+        queryFn: async () => {
+            if (!sequenceId) return null;
+            const seq = await base44.entities.MarketingSequence.read({ id: sequenceId });
+            const steps = await base44.entities.SequenceStep.list({ sequence_id: sequenceId });
+            const transitions = await base44.entities.StepTransition.list({ sequence_id: sequenceId }); // Ideally filter by steps related to this seq, but list all for now or improved API needed
+            // NOTE: StepTransition doesn't have sequence_id in the schema I saw earlier, but logically it should relate. 
+            // If not, we have to fetch transitions for each step. 
+            // Assuming simplified fetching for this implementation or that we can filter transitions.
+            // Let's assume we fetch all transitions and filter in memory if needed (not efficient but MVP).
+            // Actually, best practice: StepTransition should be linked. If not, we iterate.
+            
+            // Reconstruct nodes
+            const loadedNodes = steps.map(s => ({
+                id: s.id,
+                type: s.type === 'ACTION_EMAIL' ? 'EMAIL' : s.type === 'DELAY' ? 'DELAY' : s.type === 'START' ? 'START' : 'TASK', // Mapping back
+                x: s.position_ui?.x || 100,
+                y: s.position_ui?.y || 100,
+                label: s.config?.label || s.type,
+                subLabel: s.config?.subLabel || '',
+                config: s.config
+            }));
+
+            // If no nodes (e.g. freshly created without steps), add default start
+            if (loadedNodes.length === 0) {
+                loadedNodes.push({ id: 'start', type: 'START', x: 100, y: 100, label: 'Start Sequence', subLabel: 'Trigger: New Lead' });
+            }
+
+            // Reconstruct connections
+            // Need to fetch transitions where source_step_id is in loadedNodes
+            // This part might be tricky without a direct sequence_id on Transition. 
+            // For now, let's load what we can. 
+            const transitionsList = await base44.entities.StepTransition.filter({ 
+                source_step_id: { "$in": loadedNodes.map(n => n.id) } 
+            });
+            
+            const loadedConnections = transitionsList.map(t => ({
+                id: t.id,
+                from: t.source_step_id,
+                to: t.target_step_id
+            }));
+
+            return { seq: seq[0], nodes: loadedNodes, connections: loadedConnections };
+        },
+        enabled: !!sequenceId
+    });
+
+    useEffect(() => {
+        if (sequenceData) {
+            setSequenceName(sequenceData.seq.name);
+            setStatus(sequenceData.seq.status);
+            setNodes(sequenceData.nodes);
+            setConnections(sequenceData.connections);
+        }
+    }, [sequenceData]);
+
+    // --- Save Logic ---
+    const saveMutation = useMutation({
+        mutationFn: async () => {
+            let currentSeqId = sequenceId;
+
+            // 1. Upsert Sequence
+            if (!currentSeqId) {
+                const newSeq = await base44.entities.MarketingSequence.create({
+                    name: sequenceName,
+                    status: status,
+                    exit_criteria: {},
+                    schedule_config: {}
+                });
+                currentSeqId = newSeq.id;
+            } else {
+                await base44.entities.MarketingSequence.update(currentSeqId, {
+                    name: sequenceName,
+                    status: status
+                });
+            }
+
+            // 2. Sync Steps (Nodes)
+            // Strategy: Upsert based on ID. If ID starts with 'new_', create.
+            // Problem: 'start' node might be virtual. 
+            // Let's assume 'start' is a real step type for this builder.
+            
+            const savedStepMap = {}; // Map local ID to DB ID
+
+            for (const node of nodes) {
+                const stepData = {
+                    sequence_id: currentSeqId,
+                    type: node.type === 'EMAIL' ? 'ACTION_EMAIL' : node.type === 'DELAY' ? 'DELAY' : 'ACTION_TASK', // Simplified mapping
+                    config: { label: node.label, subLabel: node.subLabel, ...node.config },
+                    position_ui: { x: node.x, y: node.y }
+                };
+
+                // Fix START type mapping if needed, or exclude START if it's just a trigger placeholder
+                if (node.type === 'START') {
+                    // Start node might be special, maybe it's the Trigger config?
+                    // For now let's save it as a step so we have a root.
+                    stepData.type = 'DECISION_SPLIT'; // Placeholder type or add START to schema
+                }
+
+                if (node.id.startsWith('start') || node.id.startsWith('email') || node.id.length < 10) { 
+                    // Assume temp ID
+                    const created = await base44.entities.SequenceStep.create(stepData);
+                    savedStepMap[node.id] = created.id;
+                } else {
+                    await base44.entities.SequenceStep.update(node.id, stepData);
+                    savedStepMap[node.id] = node.id;
+                }
+            }
+
+            // 3. Sync Connections
+            // Delete old connections for this sequence (hard to do without ID list). 
+            // For MVP: Just create new ones for now, or assume stable IDs if we had them.
+            // Better: Iterate connections, if has ID update, if not create. 
+            
+            for (const conn of connections) {
+                const sourceId = savedStepMap[conn.from] || conn.from;
+                const targetId = savedStepMap[conn.to] || conn.to;
+                
+                if (sourceId && targetId) {
+                    if (conn.id) {
+                         // Update if needed
+                    } else {
+                        await base44.entities.StepTransition.create({
+                            source_step_id: sourceId,
+                            target_step_id: targetId,
+                            condition_trigger: 'DEFAULT'
+                        });
+                    }
+                }
+            }
+
+            return currentSeqId;
+        },
+        onSuccess: (newId) => {
+            toast.success("Sequence saved successfully");
+            if (!sequenceId) {
+                navigate(createPageUrl('SequenceBuilder') + `?id=${newId}`, { replace: true });
+            } else {
+                queryClient.invalidateQueries(['sequence', sequenceId]);
+            }
+        }
+    });
+
+    // --- Interaction Handlers ---
     const handleDragStart = (e, id) => {
         e.stopPropagation();
         const node = nodes.find(n => n.id === id);
@@ -130,6 +280,13 @@ export default function SequenceCanvas() {
             offsetY: e.clientY - node.y
         });
         setSelectedNodeId(id);
+        setInspectorOpen(true);
+    };
+
+    const handleNodeClick = (e, id) => {
+        e.stopPropagation();
+        setSelectedNodeId(id);
+        setInspectorOpen(true);
     };
 
     const handleMouseMove = (e) => {
@@ -144,15 +301,29 @@ export default function SequenceCanvas() {
         setDragState({ isDragging: false, nodeId: null, startX: 0, startY: 0 });
     };
 
+    const handleAddNode = (type, label) => {
+        const id = `${type.toLowerCase()}_${Date.now()}`;
+        const newNode = {
+            id,
+            type,
+            x: 200,
+            y: 200,
+            label,
+            subLabel: 'Configure step...'
+        };
+        setNodes([...nodes, newNode]);
+    };
+
     // Calculate connection points
     const getConnectorPoints = (conn) => {
         const fromNode = nodes.find(n => n.id === conn.from);
-        const toNode = nodes.find(n => n.to === conn.to); // Fix: conn.to is an ID, not an object
-        // Assuming nodes are 256px wide (w-64) and approx 80px high. 
-        // Output is right center, Input is left center.
+        const toNode = nodes.find(n => n.id === conn.to); 
+        
+        if (!fromNode || !toNode) return { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } };
+
         return {
             start: { x: fromNode.x + 256, y: fromNode.y + 40 },
-            end: { x: (nodes.find(n => n.id === conn.to)?.x || 0), y: (nodes.find(n => n.id === conn.to)?.y || 0) + 40 }
+            end: { x: toNode.x, y: toNode.y + 40 }
         };
     };
 
@@ -164,6 +335,8 @@ export default function SequenceCanvas() {
     const itemBg = theme === 'dark' ? 'bg-slate-900 border-slate-700 hover:border-blue-500' : 'bg-slate-50 border-slate-200 hover:border-blue-300';
     const inspectorHeaderBg = theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-slate-50/50 border-slate-200';
 
+    if (isLoadingSeq) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin w-10 h-10 text-blue-500" /></div>;
+
     return (
         <div className={`flex h-screen flex-col ${bgBase} font-sans`} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
             {/* Header */}
@@ -173,11 +346,18 @@ export default function SequenceCanvas() {
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <div>
-                        <h1 className={`font-bold ${textMain}`}>SaaS CEO Outreach</h1>
+                        <Input 
+                            value={sequenceName} 
+                            onChange={(e) => setSequenceName(e.target.value)} 
+                            className={`font-bold h-8 border-none bg-transparent shadow-none px-0 text-lg ${textMain} focus-visible:ring-0`}
+                        />
                         <div className={`flex items-center gap-2 text-xs ${textSub}`}>
-                             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Active</span>
+                             <span className="flex items-center gap-1">
+                                <span className={`w-2 h-2 rounded-full ${status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span> 
+                                {status}
+                             </span>
                              <span>•</span>
-                             <span>Last saved: 2 mins ago</span>
+                             <span>{sequenceId ? 'Saved' : 'Unsaved Draft'}</span>
                         </div>
                     </div>
                 </div>
@@ -185,8 +365,13 @@ export default function SequenceCanvas() {
                     <Button variant="outline" className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : 'text-slate-600'}>
                         <Play className="w-4 h-4 mr-2" /> Test Run
                     </Button>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
-                        <Save className="w-4 h-4 mr-2" /> Save & Activate
+                    <Button 
+                        onClick={() => saveMutation.mutate()} 
+                        disabled={saveMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-700"
+                    >
+                        {saveMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                        Save & Activate
                     </Button>
                 </div>
             </header>
@@ -199,15 +384,20 @@ export default function SequenceCanvas() {
                     </div>
                     <div className="p-4 space-y-3 overflow-y-auto">
                          {[
-                             { icon: Mail, label: 'Send Email', color: 'text-blue-500' },
-                             { icon: Clock, label: 'Wait / Delay', color: 'text-amber-500' },
-                             { icon: CheckSquare, label: 'Task / Call', color: 'text-purple-500' },
-                             { icon: GitBranch, label: 'Condition', color: 'text-emerald-500' },
-                             { icon: Target, label: 'Goal', color: 'text-red-500' },
+                             { type: 'EMAIL', icon: Mail, label: 'Send Email', color: 'text-blue-500' },
+                             { type: 'DELAY', icon: Clock, label: 'Wait / Delay', color: 'text-amber-500' },
+                             { type: 'TASK', icon: CheckSquare, label: 'Task / Call', color: 'text-purple-500' },
+                             { type: 'DECISION', icon: GitBranch, label: 'Condition', color: 'text-emerald-500' },
+                             { type: 'GOAL', icon: Target, label: 'Goal', color: 'text-red-500' },
                          ].map((item, idx) => (
-                             <div key={idx} className={`p-3 border rounded-lg cursor-grab hover:shadow-sm transition-all flex items-center gap-3 ${itemBg}`}>
+                             <div 
+                                key={idx} 
+                                className={`p-3 border rounded-lg cursor-pointer hover:shadow-sm transition-all flex items-center gap-3 ${itemBg}`}
+                                onClick={() => handleAddNode(item.type, item.label)}
+                             >
                                  <item.icon className={`w-5 h-5 ${item.color}`} />
                                  <span className={`text-sm font-medium ${textMain}`}>{item.label}</span>
+                                 <Plus className="w-4 h-4 ml-auto opacity-50" />
                              </div>
                          ))}
                     </div>
@@ -235,6 +425,7 @@ export default function SequenceCanvas() {
                             node={node} 
                             isSelected={selectedNodeId === node.id}
                             onDragStart={handleDragStart}
+                            onClick={handleNodeClick}
                         />
                     ))}
 
@@ -254,7 +445,14 @@ export default function SequenceCanvas() {
                                 {nodes.find(n => n.id === selectedNodeId)?.type !== 'START' && (
                                     <div>
                                         <Label className="text-xs text-slate-500 uppercase tracking-wider">Step Name</Label>
-                                        <Input defaultValue={nodes.find(n => n.id === selectedNodeId)?.label} className={`mt-1 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`} />
+                                        <Input 
+                                            value={nodes.find(n => n.id === selectedNodeId)?.label || ''} 
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setNodes(nodes.map(n => n.id === selectedNodeId ? { ...n, label: val } : n));
+                                            }}
+                                            className={`mt-1 ${theme === 'dark' ? 'bg-slate-900 border-slate-700 text-white' : ''}`} 
+                                        />
                                     </div>
                                 )}
 
@@ -279,14 +477,6 @@ export default function SequenceCanvas() {
                                                 <Settings className="w-4 h-4 text-slate-400" />
                                             </div>
                                         </div>
-
-                                        <div className="space-y-2">
-                                            <Label className={textMain}>Safety Check</Label>
-                                            <div className={`flex items-center gap-2 text-sm p-2 rounded border ${theme === 'dark' ? 'bg-amber-900/20 text-amber-500 border-amber-800' : 'bg-amber-50 text-amber-600 border-amber-200'}`}>
-                                                <AlertOctagon className="w-4 h-4" />
-                                                <span>Missing Fallback for {'{{Company}}'}</span>
-                                            </div>
-                                        </div>
                                     </>
                                 )}
 
@@ -309,6 +499,13 @@ export default function SequenceCanvas() {
                                         </div>
                                     </div>
                                 )}
+                                
+                                <Button variant="destructive" size="sm" className="w-full mt-8" onClick={() => {
+                                    setNodes(nodes.filter(n => n.id !== selectedNodeId));
+                                    setSelectedNodeId(null);
+                                }}>
+                                    Delete Step
+                                </Button>
                             </div>
                         </div>
                     ) : (

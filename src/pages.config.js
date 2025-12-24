@@ -6,15 +6,15 @@ import Home from './pages/Home';
 import ImportLeads from './pages/ImportLeads';
 import LeadDetails from './pages/LeadDetails';
 import Leads from './pages/Leads';
+import MarketingSequences from './pages/MarketingSequences';
+import MarketingTemplates from './pages/MarketingTemplates';
 import Opportunities from './pages/Opportunities';
 import Reports from './pages/Reports';
 import SalesGalaxy from './pages/SalesGalaxy';
 import SearchResults from './pages/SearchResults';
+import SequenceBuilder from './pages/SequenceBuilder';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
-import MarketingSequences from './pages/MarketingSequences';
-import MarketingTemplates from './pages/MarketingTemplates';
-import SequenceBuilder from './pages/SequenceBuilder';
 import __Layout from './Layout.jsx';
 
 
@@ -27,15 +27,15 @@ export const PAGES = {
     "ImportLeads": ImportLeads,
     "LeadDetails": LeadDetails,
     "Leads": Leads,
+    "MarketingSequences": MarketingSequences,
+    "MarketingTemplates": MarketingTemplates,
     "Opportunities": Opportunities,
     "Reports": Reports,
     "SalesGalaxy": SalesGalaxy,
     "SearchResults": SearchResults,
+    "SequenceBuilder": SequenceBuilder,
     "Settings": Settings,
     "Tasks": Tasks,
-    "MarketingSequences": MarketingSequences,
-    "MarketingTemplates": MarketingTemplates,
-    "SequenceBuilder": SequenceBuilder,
 }
 
 export const pagesConfig = {
