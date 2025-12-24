@@ -15,50 +15,50 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function ClientDetails({ client, open, onClose }) {
-    const { theme } = useSettings();
-    const isDark = theme === 'dark';
-    const queryClient = useQueryClient();
-    const [activeTab, setActiveTab] = useState("overview");
+  const { theme } = useSettings();
+  const isDark = theme === 'dark';
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("overview");
 
-    // Fetch related tasks and activities
-    const { data: tasks } = useQuery({
-        queryKey: ['tasks', client?.id],
-        queryFn: () => base44.entities.Task.list(),
-        enabled: !!client
-    });
+  // Fetch related tasks and activities
+  const { data: tasks } = useQuery({
+    queryKey: ['tasks', client?.id],
+    queryFn: () => base44.entities.Task.list(),
+    enabled: !!client
+  });
 
-    const clientTasks = tasks?.filter(t => t.related_client_id === client?.id) || [];
+  const clientTasks = tasks?.filter((t) => t.related_client_id === client?.id) || [];
 
-    const { data: activities } = useQuery({
-        queryKey: ['activities', client?.id],
-        queryFn: () => base44.entities.Activity.list(),
-        enabled: !!client
-    });
+  const { data: activities } = useQuery({
+    queryKey: ['activities', client?.id],
+    queryFn: () => base44.entities.Activity.list(),
+    enabled: !!client
+  });
 
-    const clientActivities = activities?.filter(a => a.related_client_id === client?.id) || [];
+  const clientActivities = activities?.filter((a) => a.related_client_id === client?.id) || [];
 
-    // File Upload Handler (Simulated for UI)
-    const handleFileUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        try {
-            const { file_url } = await base44.integrations.Core.UploadFile({ file });
-            const newDoc = { name: file.name, url: file_url, type: file.type };
-            const updatedDocs = [...(client.documents || []), newDoc];
-            
-            await base44.entities.Client.update(client.id, { documents: updatedDocs });
-            queryClient.invalidateQueries(['clients']);
-        } catch (err) {
-            console.error(err);
-            alert("Failed to upload file");
-        }
-    };
+  // File Upload Handler (Simulated for UI)
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    if (!client) return null;
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const newDoc = { name: file.name, url: file_url, type: file.type };
+      const updatedDocs = [...(client.documents || []), newDoc];
 
-    return (
-        <Dialog open={open} onOpenChange={onClose}>
+      await base44.entities.Client.update(client.id, { documents: updatedDocs });
+      queryClient.invalidateQueries(['clients']);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload file");
+    }
+  };
+
+  if (!client) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className={`max-w-4xl max-h-[90vh] overflow-y-auto ${isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white'}`}>
                 <DialogHeader className="mb-4">
                     <div className="flex justify-between items-start">
@@ -88,22 +88,22 @@ export default function ClientDetails({ client, open, onClose }) {
                     <TabsContent value="overview" className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card className={isDark ? 'bg-slate-800 border-slate-700' : ''}>
-                                <CardHeader><CardTitle className="text-lg">Client Info</CardTitle></CardHeader>
+                                <CardHeader><CardTitle className="text-slate-50 text-lg font-semibold tracking-tight">Client Info</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
                                         <Mail className="w-4 h-4 text-slate-400" />
-                                        <span>{client.email}</span>
+                                        <span className="text-slate-50">{client.email}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Phone className="w-4 h-4 text-slate-400" />
-                                        <span>{client.phone_number}</span>
+                                        <span className="text-slate-50">{client.phone_number}</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Calendar className="w-4 h-4 text-slate-400" />
-                                        <span>Contract Start: {client.contract_start_date}</span>
+                                        <span className="text-slate-50">Contract Start: {client.contract_start_date}</span>
                                     </div>
                                     <div className="pt-4 border-t border-dashed border-slate-700">
-                                        <p className="text-sm font-semibold mb-2">CS Notes</p>
+                                        <p className="text-slate-50 mb-2 text-sm font-semibold">CS Notes</p>
                                         <p className="text-sm text-slate-400 italic">
                                             {client.cs_notes || "No notes yet..."}
                                         </p>
@@ -112,11 +112,11 @@ export default function ClientDetails({ client, open, onClose }) {
                             </Card>
 
                             <Card className={isDark ? 'bg-slate-800 border-slate-700' : ''}>
-                                <CardHeader><CardTitle className="text-lg">Subscription</CardTitle></CardHeader>
+                                <CardHeader><CardTitle className="text-[#8cf54d] text-lg font-semibold tracking-tight">Subscription</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
                                         <div className="flex justify-between text-sm mb-1">
-                                            <span>Renewal Date</span>
+                                            <span className="text-blue-300">Renewal Date</span>
                                             <span className="font-mono">{client.renewal_date}</span>
                                         </div>
                                         <Progress value={65} className="h-2" />
@@ -135,12 +135,12 @@ export default function ClientDetails({ client, open, onClose }) {
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="font-bold">Client Files</h3>
                             <div>
-                                <Input 
-                                    type="file" 
-                                    id="file-upload" 
-                                    className="hidden" 
-                                    onChange={handleFileUpload}
-                                />
+                                <Input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  onChange={handleFileUpload} />
+
                                 <Label htmlFor="file-upload" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium">
                                     <Plus className="w-4 h-4" /> Upload File
                                 </Label>
@@ -148,8 +148,8 @@ export default function ClientDetails({ client, open, onClose }) {
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {client.documents?.length > 0 ? client.documents.map((doc, idx) => (
-                                <Card key={idx} className={`group relative ${isDark ? 'bg-slate-800 border-slate-700' : ''}`}>
+                            {client.documents?.length > 0 ? client.documents.map((doc, idx) =>
+              <Card key={idx} className={`group relative ${isDark ? 'bg-slate-800 border-slate-700' : ''}`}>
                                     <CardContent className="p-4 flex items-center gap-3">
                                         <div className="p-2 rounded bg-slate-100 dark:bg-slate-900">
                                             <FileText className="w-6 h-6 text-blue-500" />
@@ -163,18 +163,18 @@ export default function ClientDetails({ client, open, onClose }) {
                                         </a>
                                     </CardContent>
                                 </Card>
-                            )) : (
-                                <div className="col-span-2 text-center py-10 text-slate-500 border-2 border-dashed rounded-xl border-slate-300 dark:border-slate-700">
+              ) :
+              <div className="col-span-2 text-center py-10 text-slate-500 border-2 border-dashed rounded-xl border-slate-300 dark:border-slate-700">
                                     No documents found
                                 </div>
-                            )}
+              }
                         </div>
                     </TabsContent>
 
                     <TabsContent value="tasks" className="space-y-4">
                         <div className="space-y-2">
-                            {clientTasks.length > 0 ? clientTasks.map(task => (
-                                <div key={task.id} className={`p-3 rounded-lg border flex items-center gap-3 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+                            {clientTasks.length > 0 ? clientTasks.map((task) =>
+              <div key={task.id} className={`p-3 rounded-lg border flex items-center gap-3 ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                                     <CheckSquare className={`w-5 h-5 ${task.status === 'done' ? 'text-green-500' : 'text-slate-400'}`} />
                                     <div className="flex-1">
                                         <p className={`font-medium ${task.status === 'done' ? 'line-through text-slate-500' : ''}`}>{task.title}</p>
@@ -182,16 +182,16 @@ export default function ClientDetails({ client, open, onClose }) {
                                     </div>
                                     <Badge variant="outline">{task.priority}</Badge>
                                 </div>
-                            )) : (
-                                <p className="text-center text-slate-500 py-4">No tasks found</p>
-                            )}
+              ) :
+              <p className="text-center text-slate-500 py-4">No tasks found</p>
+              }
                         </div>
                     </TabsContent>
 
                     <TabsContent value="activity">
                          <div className="space-y-4">
-                            {clientActivities.length > 0 ? clientActivities.map(act => (
-                                <div key={act.id} className="flex gap-4">
+                            {clientActivities.length > 0 ? clientActivities.map((act) =>
+              <div key={act.id} className="flex gap-4">
                                     <div className="flex flex-col items-center">
                                         <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
                                         <div className="w-0.5 h-full bg-slate-200 dark:bg-slate-800 my-1"></div>
@@ -201,13 +201,13 @@ export default function ClientDetails({ client, open, onClose }) {
                                         <p className="text-xs text-slate-500">{moment(act.date).format("MMM D, HH:mm")}</p>
                                     </div>
                                 </div>
-                            )) : (
-                                <p className="text-center text-slate-500 py-4">No activity history</p>
-                            )}
+              ) :
+              <p className="text-center text-slate-500 py-4">No activity history</p>
+              }
                         </div>
                     </TabsContent>
                 </Tabs>
             </DialogContent>
-        </Dialog>
-    );
+        </Dialog>);
+
 }
