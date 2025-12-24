@@ -235,24 +235,28 @@ export default function TasksPage() {
         setShowTaskForm(open);
         if (!open) setEditingTask(null);
       }}>
-        <DialogContent className={`max-w-lg ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : ''}`} dir="ltr">
-          <DialogHeader>
-            <div className="flex justify-between items-center">
-              <DialogTitle>{editingTask ? "Edit Task" : "New Task"}</DialogTitle>
-            </div>
-          </DialogHeader>
-          <TaskForm
-            task={editingTask}
-            onSubmit={(data) => {
-              if (editingTask) {
-                updateTask.mutate({ id: editingTask.id, data });
-              } else {
-                createTask.mutate(data);
-              }
-            }}
-            onCancel={() => setShowTaskForm(false)}
-            isSubmitting={createTask.isPending || updateTask.isPending}
-          />
+        <DialogContent className={`fixed right-0 top-0 left-auto translate-x-0 translate-y-0 h-full w-full sm:w-[550px] max-w-none p-0 border-l shadow-2xl transition-all duration-300 gap-0 data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right sm:rounded-none ${
+            theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
+        }`} dir="ltr">
+          <div className={`flex items-center justify-between px-6 py-4 border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}>
+              <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  {editingTask ? "Edit Task" : "New Task"}
+              </h2>
+          </div>
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            <TaskForm
+              task={editingTask}
+              onSubmit={(data) => {
+                if (editingTask) {
+                  updateTask.mutate({ id: editingTask.id, data });
+                } else {
+                  createTask.mutate(data);
+                }
+              }}
+              onCancel={() => setShowTaskForm(false)}
+              isSubmitting={createTask.isPending || updateTask.isPending}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
