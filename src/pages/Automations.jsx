@@ -387,14 +387,23 @@ export default function AutomationsPage() {
         setIsDialogOpen(open);
         if (!open) setEditingRule(null);
       }}>
-        <DialogContent className={`fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border shadow-lg duration-200 sm:rounded-lg max-w-2xl max-h-[90vh] overflow-y-auto p-6 ${theme === 'dark' ? 'bg-slate-900 border-slate-800 text-white' : 'bg-slate-50'}`}>
-          <RuleForm 
-            editingRule={editingRule} 
-            onSuccess={() => {
-              setIsDialogOpen(false);
-              setEditingRule(null);
-            }} 
-          />
+        <DialogContent className={`fixed right-0 top-0 left-auto translate-x-0 translate-y-0 h-full w-full sm:w-[550px] max-w-none p-0 border-l shadow-2xl transition-all duration-300 gap-0 data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right sm:rounded-none ${
+            theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
+        }`} dir="ltr">
+          <div className={`flex items-center justify-between px-6 py-4 border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}>
+              <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  {editingRule ? "Edit Rule" : "New Rule"}
+              </h2>
+          </div>
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+            <RuleForm
+              editingRule={editingRule}
+              onSuccess={() => {
+                setIsDialogOpen(false);
+                setEditingRule(null);
+              }}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>);
