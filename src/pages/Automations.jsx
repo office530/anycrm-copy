@@ -560,25 +560,33 @@ function RuleForm({ onSuccess, editingRule }) {
     <form onSubmit={handleSubmit} className="space-y-4" dir="ltr">
             
             {/* AI Generator Section */}
-            <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg mb-8 border border-slate-800 relative overflow-hidden">
+            <div className={`p-6 rounded-2xl shadow-lg mb-8 border relative overflow-hidden transition-colors ${
+                theme === 'dark' 
+                    ? 'bg-slate-900 text-white border-slate-800' 
+                    : 'bg-gradient-to-br from-indigo-50 to-white border-indigo-100 text-slate-900'
+            }`}>
                 
                 <div className="relative z-10 space-y-4">
                     <div className="flex items-center gap-2 font-bold text-lg">
-                        <Sparkles className="w-5 h-5 text-red-500 animate-pulse" />
+                        <Sparkles className={`w-5 h-5 animate-pulse ${theme === 'dark' ? 'text-red-500' : 'text-indigo-600'}`} />
                         <span>Smart AI Automation Generator</span>
                     </div>
-                    <p className="text-slate-400 text-sm">
+                    <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                         Describe the automation in free language, and the AI will build the rule for you.
                     </p>
                     
                     <div className="flex gap-3 pt-2">
                         <div className="flex-1 relative">
                             <Textarea
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="E.g. When a lead becomes 'Sales Ready', send them a welcome email..."
-                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 resize-none h-20 text-sm rounded-xl focus:ring-2 focus:ring-red-900 focus:bg-slate-800 transition-all" />
-
+                                value={aiPrompt}
+                                onChange={(e) => setAiPrompt(e.target.value)}
+                                placeholder="E.g. When a lead becomes 'Sales Ready', send them a welcome email..."
+                                className={`resize-none h-20 text-sm rounded-xl transition-all focus:ring-2 ${
+                                    theme === 'dark' 
+                                        ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:ring-red-900 focus:bg-slate-800' 
+                                        : 'bg-white border-indigo-200 text-slate-900 placeholder:text-slate-400 focus:ring-indigo-200'
+                                }`} 
+                            />
                         </div>
                         <Button
               type="button"
