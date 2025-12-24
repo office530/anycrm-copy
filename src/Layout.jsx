@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe, GitFork, Mail, Building2, Contact
+  LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe, GitFork, Mail
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -23,8 +23,6 @@ function LayoutContent({ children, currentPageName }) {
       items: [
         { name: 'Dashboard', path: 'Dashboard', icon: LayoutDashboard, color: 'cyan' },
         { name: 'Leads', path: 'Leads', icon: Users, color: 'purple' },
-        { name: 'Companies', path: 'Companies', icon: Building2, color: 'blue' },
-        { name: 'Contacts', path: 'Contacts', icon: Contact, color: 'teal' },
         { name: 'Opportunities', path: 'Opportunities', icon: Briefcase, color: 'pink' },
         { name: 'Act Now', path: 'ActNow', icon: Brain, color: 'orange' },
         { name: 'Tasks', path: 'Tasks', icon: CheckSquare, color: 'red' },
@@ -61,7 +59,6 @@ function LayoutContent({ children, currentPageName }) {
       emerald: { active: 'bg-emerald-500/15 text-emerald-400 shadow-emerald-500/10', icon: 'text-emerald-400', indicator: 'bg-emerald-400 shadow-emerald-400/50', hover: 'hover:text-emerald-400' },
       indigo: { active: 'bg-indigo-500/15 text-indigo-400 shadow-indigo-500/10', icon: 'text-indigo-400', indicator: 'bg-indigo-400 shadow-indigo-400/50', hover: 'hover:text-indigo-400' },
       amber: { active: 'bg-amber-500/15 text-amber-400 shadow-amber-500/10', icon: 'text-amber-400', indicator: 'bg-amber-400 shadow-amber-400/50', hover: 'hover:text-amber-400' },
-      teal: { active: 'bg-teal-500/15 text-teal-400 shadow-teal-500/10', icon: 'text-teal-400', indicator: 'bg-teal-400 shadow-teal-400/50', hover: 'hover:text-teal-400' },
   };
 
   // Dynamic Colors based on branding
@@ -255,7 +252,7 @@ function LayoutContent({ children, currentPageName }) {
                 theme === 'dark' 
                     ? (currentPageName === 'Settings' 
                         ? 'text-white' 
-                        : (navigation.find(n => n.path === currentPageName)?.color && darkColors[navigation.find(n => n.path === currentPageName).color]
+                        : (navigation.find(n => n.path === currentPageName)?.color 
                             ? darkColors[navigation.find(n => n.path === currentPageName).color].icon 
                             : 'text-emerald-400'))
                     : 'text-neutral-800'
