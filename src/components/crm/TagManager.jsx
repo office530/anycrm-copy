@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus } from "lucide-react";
+import { useSettings } from "@/components/context/SettingsContext";
 
 export default function TagManager({ tags = [], onChange }) {
+  const { theme } = useSettings();
   const [inputValue, setInputValue] = useState("");
 
   const handleKeyDown = (e) => {
@@ -32,10 +34,14 @@ export default function TagManager({ tags = [], onChange }) {
           <Badge 
             key={index} 
             variant="secondary" 
-            className="bg-slate-100 text-red-700 hover:bg-slate-200 border border-slate-200 px-2 py-1 text-sm font-medium flex items-center gap-1"
+            className={`px-2 py-1 text-sm font-medium flex items-center gap-1 border ${
+                theme === 'dark' 
+                ? 'bg-slate-800 text-cyan-400 hover:bg-slate-700 border-slate-600' 
+                : 'bg-slate-100 text-red-700 hover:bg-slate-200 border-slate-200'
+            }`}
           >
             {tag}
-            <button onClick={() => removeTag(tag)} type="button" className="text-slate-400 hover:text-red-600">
+            <button onClick={() => removeTag(tag)} type="button" className={`${theme === 'dark' ? 'text-slate-500 hover:text-white' : 'text-slate-400 hover:text-red-600'}`}>
               <X className="w-3 h-3" />
             </button>
           </Badge>
@@ -47,12 +53,16 @@ export default function TagManager({ tags = [], onChange }) {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type tag and press Enter..."
-          className="text-slate-900 font-medium placeholder:text-slate-400 border-slate-300 focus:border-red-500 pl-10"
+          className={`font-medium placeholder:text-slate-400 pl-10 ${
+            theme === 'dark'
+            ? 'bg-slate-900 border-slate-700 text-white focus:border-cyan-500'
+            : 'bg-white border-slate-300 text-slate-900 focus:border-red-500'
+          }`}
         />
         <button 
           type="button" 
           onClick={addTag}
-          className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-600"
+          className={`absolute left-2 top-1/2 -translate-y-1/2 ${theme === 'dark' ? 'text-slate-500 hover:text-cyan-400' : 'text-slate-400 hover:text-red-600'}`}
         >
           <Plus className="w-4 h-4" />
         </button>
