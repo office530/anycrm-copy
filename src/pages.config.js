@@ -11,6 +11,7 @@ import SearchResults from './pages/SearchResults';
 import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
 import Automations from './pages/Automations';
+import CSManagement from './pages/CSManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "Settings": Settings,
     "Tasks": Tasks,
     "Automations": Automations,
+    "CSManagement": CSManagement,
 }
 
 export const pagesConfig = {
