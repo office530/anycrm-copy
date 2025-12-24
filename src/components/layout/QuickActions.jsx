@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Plus, UserPlus, Briefcase, CheckSquare, Mail, X, 
-    Sparkles, MessageSquare 
+    Sparkles, MessageSquare, Brain 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useSettings } from '@/components/context/SettingsContext';
@@ -21,6 +21,18 @@ export default function QuickActions() {
     const navigate = useNavigate();
 
     const actions = [
+        { 
+            label: 'Act Now Engine', 
+            icon: Brain, 
+            color: 'bg-indigo-500', 
+            onClick: () => navigate(createPageUrl('ActNow')) 
+        },
+        { 
+            label: 'Import AI Lead', 
+            icon: Sparkles, 
+            color: 'bg-pink-500', 
+            onClick: () => navigate(createPageUrl('Leads') + '?action=ai-import') 
+        },
         { 
             label: 'New Task', 
             icon: CheckSquare, 
@@ -97,8 +109,11 @@ export default function QuickActions() {
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
                     h-16 w-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300
-                    ${isOpen ? 'rotate-45 bg-slate-800' : `bg-${branding.primaryColor}-600`}
-                    text-white border-4 ${theme === 'dark' ? 'border-slate-800' : 'border-white'}
+                    ${isOpen 
+                        ? 'rotate-45 bg-slate-800' 
+                        : (theme === 'dark' ? 'bg-cyan-500 text-slate-900 hover:bg-cyan-400' : 'bg-red-600 text-white hover:bg-red-700')
+                    }
+                    border-4 ${theme === 'dark' ? 'border-slate-800' : 'border-white'}
                 `}
             >
                 <Plus className={`w-8 h-8 transition-transform duration-300 ${isOpen ? 'rotate-90' : ''}`} />
