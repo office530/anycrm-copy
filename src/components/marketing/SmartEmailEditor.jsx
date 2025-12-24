@@ -341,77 +341,68 @@ export default function SmartEmailEditor() {
     const chatTwinBg = theme === 'dark' ? 'bg-blue-900/20 text-blue-200 border-blue-800/30' : 'bg-blue-50 text-blue-800 border-blue-100';
 
     return (
-        <div className={`flex flex-col h-screen overflow-hidden ${bgBase} ${textMain}`}>
-            {/* A. Header */}
-            <header className={`h-16 border-b flex items-center justify-between px-6 shrink-0 z-20 transition-colors ${bgHeader}`}>
-                <div className="flex items-center gap-4 flex-1">
-                    <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className={theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'}>
+        <div className={`flex flex-col h-screen overflow-hidden ${theme === 'dark' ? 'bg-slate-950' : 'bg-slate-100'}`}>
+            {/* Cleaner Header - Minimalist */}
+            <header className={`h-16 flex items-center justify-between px-6 shrink-0 z-20 transition-all ${theme === 'dark' ? 'bg-slate-950 border-b border-slate-800' : 'bg-white border-b border-slate-200 shadow-sm'}`}>
+                <div className="flex items-center gap-3 flex-1">
+                    <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className={`rounded-full ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-800' : 'text-slate-500 hover:bg-slate-100'}`}>
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
+                    <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
                     <Input 
                         value={templateName}
                         onChange={(e) => setTemplateName(e.target.value)}
-                        className={`border-none text-xl font-bold placeholder:text-slate-400 focus-visible:ring-0 px-0 w-96 h-auto ${inputBg}`}
+                        className={`border-none text-base font-medium h-9 w-64 focus-visible:ring-0 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors ${theme === 'dark' ? 'bg-transparent text-slate-200' : 'bg-transparent text-slate-900'}`}
                         placeholder="Template Name..."
                     />
                 </div>
 
-                <div className="flex items-center gap-6">
-                    {/* Traffic Light Badge */}
-                    <div className={`flex items-center gap-3 px-4 py-1.5 rounded-full border transition-all duration-500 ${scoreMeta.badge}`}>
-                        <div className={`w-2.5 h-2.5 rounded-full ${scoreMeta.dot} animate-pulse`} />
-                        <span className={`text-sm font-medium ${scoreMeta.text}`}>{scoreMeta.label} ({resonanceScore})</span>
+                <div className="flex items-center gap-3">
+                    {/* Compact Status Indicator */}
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${scoreMeta.badge}`}>
+                        <div className={`w-2 h-2 rounded-full ${scoreMeta.dot}`} />
+                        <span className={scoreMeta.text}>{resonanceScore}% Score</span>
                     </div>
 
-                    {/* Magic Wand */}
                     <Button 
                         onClick={handleAutoTune}
                         disabled={isGenerating}
-                        className="bg-blue-600 hover:bg-blue-500 text-white border-none shadow-md shadow-blue-500/20 transition-all hover:scale-105"
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-4 shadow-sm"
                     >
-                        {isGenerating ? <Sparkles className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                        {isGenerating ? 'Optimizing...' : 'Auto-Tune'}
+                        {isGenerating ? <Sparkles className="w-3.5 h-3.5 mr-2 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-2" />}
+                        Auto-Tune
                     </Button>
 
-                    <div className={`h-6 w-px mx-2 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`} />
-
-                    {/* Lab Mode Toggle */}
-                    <div className="flex items-center gap-3">
-                        <Label htmlFor="lab-mode" className={`cursor-pointer font-medium flex items-center gap-2 ${isLabMode ? 'text-blue-500' : textSub}`}>
-                            <Split className="w-4 h-4" /> Lab Mode
-                        </Label>
-                        <Switch 
-                            id="lab-mode" 
-                            checked={isLabMode} 
-                            onCheckedChange={setIsLabMode}
-                            className="data-[state=checked]:bg-blue-600"
-                        />
-                    </div>
+                    <Button
+                        variant={isLabMode ? "secondary" : "ghost"}
+                        size="sm"
+                        onClick={() => setIsLabMode(!isLabMode)}
+                        className={`rounded-full gap-2 transition-all ${isLabMode ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'}`}
+                    >
+                        <Split className="w-4 h-4" />
+                        <span className="hidden sm:inline">Lab Mode</span>
+                    </Button>
                 </div>
             </header>
 
-            {/* Main Content Area */}
+            {/* Split Layout Container */}
             <div className="flex-1 flex overflow-hidden">
-                {/* B. Main Editor */}
-                <main className={`flex-1 flex flex-col transition-all duration-500 relative ${isLabMode ? 'w-[70%]' : 'w-full'}`}>
-                    <div className="flex-1 max-w-4xl mx-auto w-full p-6 lg:p-10 flex flex-col h-full">
-                        {/* Integrated Editor Container */}
-                        <div className={`flex-1 rounded-2xl border shadow-xl flex flex-col overflow-hidden transition-all duration-300 ${theme === 'dark' ? 'bg-[#1e293b]/50 border-slate-700/50 shadow-black/20' : 'bg-white border-slate-200 shadow-slate-200/50'}`}>
+                {/* Editor Area - Centered Card */}
+                <main className="flex-1 flex justify-center p-4 lg:p-8 overflow-y-auto">
+                    <div className={`w-full transition-all duration-300 flex flex-col ${isLabMode ? 'max-w-2xl lg:max-w-3xl mr-4' : 'max-w-3xl'}`}>
+                        
+                        {/* Editor Card */}
+                        <div className={`flex-1 rounded-xl shadow-sm border flex flex-col overflow-hidden min-h-[500px] ${theme === 'dark' ? 'bg-[#0f172a] border-slate-800 shadow-black/40' : 'bg-white border-slate-200 shadow-slate-200/50'}`}>
                             
-                            {/* Subject Line Area */}
-                            <div className={`px-8 pt-8 pb-4 border-b ${theme === 'dark' ? 'border-slate-700/30' : 'border-slate-100'}`}>
-                                <div className="relative">
-                                    <Input 
-                                        value={subject}
-                                        onChange={(e) => setSubject(e.target.value)}
-                                        className={`bg-transparent border-none px-0 text-2xl font-semibold placeholder:text-transparent focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}
-                                    />
-                                    {!subject && (
-                                        <span className={`absolute left-0 top-0 text-2xl font-light pointer-events-none transition-opacity ${theme === 'dark' ? 'text-slate-600' : 'text-slate-300'}`}>
-                                            Type your subject here...
-                                        </span>
-                                    )}
-                                </div>
+                            {/* Subject Line */}
+                            <div className="px-6 pt-6 pb-2">
+                                <Input 
+                                    value={subject}
+                                    onChange={(e) => setSubject(e.target.value)}
+                                    placeholder="Subject line..."
+                                    className={`border-none px-0 text-xl font-semibold shadow-none focus-visible:ring-0 h-auto p-0 ${theme === 'dark' ? 'text-white placeholder:text-slate-600' : 'text-slate-900 placeholder:text-slate-300'}`}
+                                />
                             </div>
 
                             <CustomToolbar theme={theme} />
@@ -422,181 +413,148 @@ export default function SmartEmailEditor() {
                                     value={content}
                                     onChange={setContent}
                                     ref={quillRef}
-                                    modules={{
-                                        toolbar: {
-                                            container: "#toolbar"
-                                        }
-                                    }}
-                                    className={`flex-1 flex flex-col bg-transparent overflow-y-auto ${theme === 'dark' ? 'text-slate-100' : 'text-slate-900'}`}
-                                    placeholder="Start writing..."
+                                    modules={{ toolbar: { container: "#toolbar" } }}
+                                    className={`flex-1 flex flex-col bg-transparent ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}
+                                    placeholder="Start writing your campaign..."
                                 />
-                                
-                                {/* "Synergy" Warning Overlay */}
+
+                                {/* Subtle Warning Toast */}
                                 {content.toLowerCase().includes('synergy') && (
-                                    <div className={`absolute bottom-6 left-6 right-6 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 border backdrop-blur-md shadow-lg ${theme === 'dark' ? 'bg-amber-950/40 border-amber-500/20 text-amber-200' : 'bg-amber-50/90 border-amber-200 text-amber-800'}`}>
-                                        <div className="p-2 bg-amber-500/10 rounded-full">
-                                            <AlertTriangle className="w-5 h-5 text-amber-500" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium">Buzzword Detected</p>
-                                            <p className="text-sm opacity-90">
-                                                <span className="font-bold underline decoration-amber-500 decoration-wavy">synergy</span> is often ignored. Try <span className="font-semibold text-emerald-500 bg-emerald-500/10 px-1 rounded">collaboration</span> instead.
+                                    <div className="absolute bottom-4 right-4 animate-in fade-in slide-in-from-bottom-2">
+                                        <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg backdrop-blur-md ${theme === 'dark' ? 'bg-amber-950/80 border-amber-800 text-amber-200' : 'bg-amber-50/90 border-amber-200 text-amber-800'}`}>
+                                            <AlertTriangle className="w-4 h-4 text-amber-500" />
+                                            <p className="text-xs">
+                                                Avoid <span className="font-bold underline">synergy</span>. Try <strong>collaboration</strong>.
                                             </p>
                                         </div>
                                     </div>
                                 )}
                             </div>
                         </div>
+
+                        {/* Footer Info */}
+                        <div className="mt-3 flex justify-between items-center px-2 opacity-60 hover:opacity-100 transition-opacity">
+                            <span className="text-xs text-slate-500">Last saved just now</span>
+                            <div className="text-xs text-slate-500 flex gap-2">
+                                <span>{content.replace(/<[^>]*>?/gm, '').length} chars</span>
+                                <span>~{(content.replace(/<[^>]*>?/gm, '').split(' ').length / 200).toFixed(1)} min read</span>
+                            </div>
+                        </div>
                     </div>
                 </main>
 
-                {/* C. Lab Mode Panel */}
-                <aside className={`border-l transition-all duration-500 ease-in-out flex flex-col ${sidePanelBg} ${isLabMode ? 'w-[30%] translate-x-0 opacity-100' : 'w-0 translate-x-full opacity-0 overflow-hidden'}`}>
-                    <div className={`p-6 border-b ${theme === 'dark' ? 'border-slate-800 bg-slate-900/50' : 'border-slate-200 bg-slate-50/50'}`}>
-                        <div className="flex items-center gap-2 mb-1">
-                            <Zap className="w-4 h-4 text-blue-500" />
-                            <h2 className={`font-bold ${textMain}`}>Psychographic Simulation</h2>
-                        </div>
-                        <p className={`text-xs ${textSub}`}>Test how your content resonates with different personalities.</p>
+                {/* Right Sidebar - Lab Mode */}
+                <aside className={`border-l transition-all duration-300 ease-in-out flex flex-col w-[380px] bg-slate-50 dark:bg-slate-900/50 dark:border-slate-800 ${isLabMode ? 'mr-0' : '-mr-[380px]'}`}>
+                    <div className="p-4 border-b dark:border-slate-800 bg-white dark:bg-slate-900">
+                        <h2 className="font-semibold text-sm flex items-center gap-2 dark:text-slate-100">
+                            <Zap className="w-4 h-4 text-indigo-500" />
+                            Simulation Lab
+                        </h2>
                     </div>
 
-                    <div className="p-6 space-y-6 flex-1 overflow-y-auto">
-                        {/* Section 1: Persona */}
-                        <div className="space-y-3">
-                            <Label className={`text-xs uppercase font-bold tracking-wider ${textSub}`}>Target Persona</Label>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        {/* Persona Config Card */}
+                        <div className={`p-4 rounded-xl border space-y-3 ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                            <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Target Persona</Label>
                             
-                            {/* Source Toggle */}
-                            <div className={`p-1 rounded-lg flex mb-2 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                            {/* Toggle Source */}
+                            <div className={`p-1 rounded-lg flex ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
                                 <button 
                                     onClick={() => setPersonaSource('preset')}
-                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'preset' ? (theme === 'dark' ? 'bg-slate-700 text-white shadow' : 'bg-white text-slate-900 shadow') : 'text-slate-500'}`}
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'preset' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-500'}`}
                                 >
                                     Presets
                                 </button>
                                 <button 
                                     onClick={() => setPersonaSource('crm')}
-                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'crm' ? (theme === 'dark' ? 'bg-slate-700 text-white shadow' : 'bg-white text-slate-900 shadow') : 'text-slate-500'}`}
+                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${personaSource === 'crm' ? 'bg-white dark:bg-slate-700 shadow text-slate-900 dark:text-slate-100' : 'text-slate-500'}`}
                                 >
-                                    From CRM
+                                    CRM Data
                                 </button>
                             </div>
 
-                            {/* Preset Selection */}
-                            {personaSource === 'preset' && (
+                            {/* Dropdowns */}
+                            {personaSource === 'preset' ? (
                                 <Select value={selectedPersona} onValueChange={setSelectedPersona}>
-                                    <SelectTrigger className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
+                                    <SelectTrigger className="h-9 text-sm">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'}`}>
-                                        {MOCK_PERSONAS.map(p => (
-                                            <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                                        ))}
+                                    <SelectContent>
+                                        {MOCK_PERSONAS.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
-                            )}
-
-                            {/* CRM Selection */}
-                            {personaSource === 'crm' && (
-                                <div className="space-y-3 animate-in fade-in slide-in-from-top-1">
+                            ) : (
+                                <div className="space-y-2">
                                     <div className="flex gap-2">
-                                        <Badge 
-                                            variant={crmType === 'lead' ? 'default' : 'outline'} 
-                                            className={`cursor-pointer flex-1 justify-center transition-all ${
-                                                crmType === 'lead' 
-                                                    ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' 
-                                                    : (theme === 'dark' ? 'text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white' : 'text-slate-600 hover:bg-slate-100')
-                                            }`}
-                                            onClick={() => { setCrmType('lead'); setSelectedCrmId(""); }}
-                                        >
-                                            Leads
-                                        </Badge>
-                                        <Badge 
-                                            variant={crmType === 'opportunity' ? 'default' : 'outline'} 
-                                            className={`cursor-pointer flex-1 justify-center transition-all ${
-                                                crmType === 'opportunity' 
-                                                    ? 'bg-purple-600 hover:bg-purple-700 text-white border-purple-600' 
-                                                    : (theme === 'dark' ? 'text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white' : 'text-slate-600 hover:bg-slate-100')
-                                            }`}
-                                            onClick={() => { setCrmType('opportunity'); setSelectedCrmId(""); }}
-                                        >
-                                            Opportunities
-                                        </Badge>
+                                        <Button variant={crmType === 'lead' ? 'secondary' : 'outline'} size="sm" onClick={() => setCrmType('lead')} className="flex-1 text-xs h-7">Leads</Button>
+                                        <Button variant={crmType === 'opportunity' ? 'secondary' : 'outline'} size="sm" onClick={() => setCrmType('opportunity')} className="flex-1 text-xs h-7">Deals</Button>
                                     </div>
-
                                     <select 
                                         value={selectedCrmId}
                                         onChange={(e) => setSelectedCrmId(e.target.value)}
-                                        className={`w-full p-2.5 rounded-md text-sm border focus:ring-2 focus:ring-blue-500 focus:outline-none ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-200'}`}
+                                        className={`w-full p-2 rounded-md text-sm border ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}
                                     >
-                                        <option value="">-- Choose {crmType === 'lead' ? 'Lead' : 'Deal'} --</option>
+                                        <option value="">-- Select --</option>
                                         {crmType === 'lead' 
-                                            ? leads.map(l => (
-                                                <option key={l.id} value={l.id}>{l.full_name} ({l.lead_status})</option>
-                                            ))
-                                            : opportunities.map(o => (
-                                                <option key={o.id} value={o.id}>{o.lead_name} - ${o.amount}</option>
-                                            ))
+                                            ? leads.map(l => <option key={l.id} value={l.id}>{l.full_name}</option>)
+                                            : opportunities.map(o => <option key={o.id} value={o.id}>{o.lead_name}</option>)
                                         }
                                     </select>
                                 </div>
                             )}
-                            
-                            {/* Dynamic Persona Details Card */}
+
+                            {/* Persona Info */}
                             {currentPersona && (
-                                <div className={`rounded-lg p-3 text-xs space-y-2 border mt-4 animate-in fade-in slide-in-from-top-2 ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-slate-50 border-slate-200'}`}>
-                                    <div className="flex justify-between items-center">
-                                        <span className={textSub}>Role:</span>
-                                        <span className={`font-medium ${textMain} truncate max-w-[150px]`}>{currentPersona.role}</span>
+                                <div className={`mt-2 p-3 rounded-lg text-xs space-y-1 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-50'}`}>
+                                    <div className="flex justify-between font-medium">
+                                        <span className="text-slate-500">Role</span>
+                                        <span className="text-slate-700 dark:text-slate-300">{currentPersona.role}</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className={textSub}>DISC/Analysis:</span>
-                                        <span className="text-blue-500 font-medium truncate max-w-[150px]">{currentPersona.disc_profile}</span>
-                                    </div>
-                                    <div className={`mt-2 p-2 rounded ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
-                                        <span className={`block mb-1 font-semibold ${textSub}`}>AI Prompt Preview:</span>
-                                        <p className={`italic line-clamp-3 ${textMain}`}>"{currentPersona.ai_simulation_prompt}"</p>
+                                    <div className="flex justify-between font-medium">
+                                        <span className="text-slate-500">Trait</span>
+                                        <span className="text-blue-500">{currentPersona.disc_profile}</span>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Section 2: Chat Window */}
-                        <div className={`flex-1 flex flex-col rounded-xl border overflow-hidden min-h-[300px] ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-                            <div className={`p-3 border-b flex justify-between items-center ${theme === 'dark' ? 'bg-slate-800/50 border-slate-800' : 'bg-slate-50/50 border-slate-200'}`}>
-                                <span className={`text-xs font-bold ${textSub}`}>Live Simulation</span>
-                                <Badge variant="outline" className="text-[10px] border-blue-500/30 text-blue-500 bg-blue-500/5">Digital Twin Active</Badge>
+                        {/* Chat Interface */}
+                        <div className={`flex flex-col h-[400px] rounded-xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                            <div className="p-3 border-b dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 flex justify-between items-center">
+                                <span className="text-xs font-semibold text-slate-500">AI Feedback</span>
                             </div>
                             
-                            <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+                            <div className="flex-1 p-3 space-y-3 overflow-y-auto bg-slate-50/30 dark:bg-slate-950/30">
                                 {chatHistory.map((msg, i) => (
-                                    <div key={i} className={`flex gap-3 ${msg.role === 'twin' ? '' : 'flex-row-reverse'}`}>
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'twin' ? 'bg-blue-600' : (theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200')}`}>
-                                            {msg.role === 'twin' ? <User className="w-4 h-4 text-white" /> : <Zap className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`} />}
+                                    <div key={i} className={`flex gap-2 ${msg.role === 'twin' ? '' : 'flex-row-reverse'}`}>
+                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'twin' ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                                            {msg.role === 'twin' ? <User className="w-3 h-3 text-white" /> : <Zap className="w-3 h-3 text-slate-500 dark:text-slate-300" />}
                                         </div>
-                                        <div className={`rounded-lg p-3 text-sm max-w-[85%] border ${msg.role === 'twin' ? chatTwinBg : chatUserBg}`}>
+                                        <div className={`rounded-lg p-2.5 text-sm max-w-[90%] shadow-sm ${
+                                            msg.role === 'twin' 
+                                                ? (theme === 'dark' ? 'bg-indigo-900/40 text-indigo-100 border border-indigo-800' : 'bg-indigo-50 text-indigo-900 border border-indigo-100')
+                                                : (theme === 'dark' ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-white text-slate-700 border border-slate-200')
+                                        }`}>
                                             {msg.text}
                                         </div>
                                     </div>
                                 ))}
                                 {isSimulating && (
-                                    <div className="flex gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 animate-pulse">
-                                            <User className="w-4 h-4 text-white" />
-                                        </div>
-                                        <div className={`rounded-lg p-3 text-sm italic ${theme === 'dark' ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
-                                            Thinking...
-                                        </div>
+                                    <div className="flex gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-indigo-600 animate-pulse" />
+                                        <div className="text-xs text-slate-400 italic py-1">Typing...</div>
                                     </div>
                                 )}
                             </div>
 
-                            <div className={`p-3 border-t ${theme === 'dark' ? 'border-slate-800 bg-slate-800/30' : 'border-slate-200 bg-slate-50/50'}`}>
+                            <div className="p-3 border-t dark:border-slate-800 bg-white dark:bg-slate-900">
                                 <Button 
-                                    className={`w-full ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-slate-200' : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'}`}
+                                    size="sm"
+                                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
                                     onClick={handleSimulateReply}
                                     disabled={isSimulating || !content}
                                 >
-                                    <MessageSquare className="w-4 h-4 mr-2" />
+                                    <MessageSquare className="w-3.5 h-3.5 mr-2" />
                                     Simulate Reply
                                 </Button>
                             </div>
@@ -607,8 +565,8 @@ export default function SmartEmailEditor() {
             
             <style>{`
                 .ql-container.ql-snow { border: none !important; }
-                .ql-editor { font-size: 1.125rem; line-height: 1.75; min-height: 300px; }
-                .ql-editor.ql-blank::before { color: ${theme === 'dark' ? '#94a3b8' : '#cbd5e1'}; font-style: normal; }
+                .ql-editor { font-size: 1rem; line-height: 1.6; min-height: 400px; padding: 1.5rem; }
+                .ql-editor.ql-blank::before { color: ${theme === 'dark' ? '#64748b' : '#94a3b8'}; font-style: normal; font-size: 1rem; }
             `}</style>
         </div>
     );
