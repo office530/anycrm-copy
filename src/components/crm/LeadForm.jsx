@@ -14,7 +14,8 @@ import { base44 } from "@/api/base44Client";
 import { useSettings } from "@/components/context/SettingsContext";
 import ActivityLog from "./ActivityLog";
 import DiscoveryScript from "./DiscoveryScript";
-import FileUpload from "../common/FileUpload";
+import LeadOpportunities from "./LeadOpportunities";
+import LeadDocuments from "./LeadDocuments";
 import TagManager from "./TagManager";
 import LeadAiAnalysis from "./LeadAiAnalysis";
 import LastTouchInfo from "./LastTouchInfo";
@@ -45,18 +46,51 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
   });
 
   // Fetch linked opportunities if editing a lead
-  const { data: opportunities } = useQuery({
-    queryKey: ['lead_opportunities', lead?.id],
-    queryFn: () => base44.entities.Opportunity.filter({ lead_id: lead.id }),
-    enabled: !!lead?.id
-  });
+  // Removed opportunities query here as it is moved to LeadOpportunities component
 
   // Fetch users for assignment
   const { data: users } = useQuery({
     queryKey: ['users_list'],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => base44.entities.User.list('full_name', 50), // Added limit
     initialData: []
   });
+
+  // 1. Browser Tab Awareness
+  React.useEffect(() => {
+    if (lead?.full_name) {
+      document.title = `${lead.full_name} | Lead File`;
+    } else {
+      document.title = "New Lead | Base44 App";
+    }
+    return () => {
+      document.title = "Base44 App"; // Reset on unmount
+    };
+  }, [lead?.full_name]);
+
+  // 2. Session Restoration (Drafts)
+  React.useEffect(() => {
+    if (!lead) { // Only for new leads
+        const savedDraft = localStorage.getItem("lead_form_draft");
+        if (savedDraft) {
+            try {
+                const draft = JSON.parse(savedDraft);
+                Object.keys(draft).forEach(key => setValue(key, draft[key]));
+            } catch (e) { console.error("Failed to load draft", e); }
+        }
+    }
+  }, []);
+
+  // Save to local storage on change
+  React.useEffect(() => {
+      if (!lead) {
+          const subscription = watch((value) => {
+              localStorage.setItem("lead_form_draft", JSON.stringify(value));
+          });
+          return () => subscription.unsubscribe();
+      }
+  }, [watch, lead]);
+
+  const clearDraft = () => localStorage.removeItem("lead_form_draft");
 
   // Fetch custom fields
   const { data: customFields } = useQuery({
@@ -98,6 +132,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     numberFields.forEach((f) => {
       if (Number.isNaN(sanitized[f])) sanitized[f] = null;
     });
+    clearDraft();
     onSaveAndClose(sanitized);
   };
 
@@ -107,6 +142,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     numberFields.forEach((f) => {
       if (Number.isNaN(sanitized[f])) sanitized[f] = null;
     });
+    clearDraft();
     onSaveAndStay(sanitized);
   };
 
@@ -458,33 +494,9 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
               </TabsContent>
 
               <TabsContent value="opportunities" className="h-[600px] overflow-y-auto pr-2">
-              {!lead ?
-          <div className="text-center py-10 text-slate-400">Save the lead first</div> :
-          opportunities?.length > 0 ?
-          <div className="space-y-3">
-               {opportunities.map((opp) =>
-            <div key={opp.id} className={`p-4 border rounded-xl shadow-sm flex justify-between items-center transition-colors ${
-              theme === 'dark' 
-                ? 'bg-slate-800 border-slate-700 hover:border-cyan-500' 
-                : 'bg-white border-slate-200 hover:border-red-200'
-            }`}>
-                    <div>
-                       <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{opp.product_type}</h4>
-                       <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Stage: {opp.deal_stage}</p>
-                    </div>
-                    <div className="text-left">
-                       <div className={`font-mono font-bold ${theme === 'dark' ? 'text-cyan-400' : 'text-red-700'}`}>${opp.amount?.toLocaleString()}</div>
-                       <Badge variant="outline" className={`mt-1 ${theme === 'dark' ? 'border-slate-600 text-slate-300' : ''}`}>{opp.probability}% Probability</Badge>
-                    </div>
-                 </div>
-            )}
-              </div> :
-
-          <div className={`text-center py-10 text-slate-400 border-2 border-dashed rounded-xl ${theme === 'dark' ? 'border-slate-700' : ''}`}>
-              <Briefcase className="w-10 h-10 mx-auto mb-2 opacity-50" />
-              <p>No open opportunities for this lead</p>
-              </div>
-          }
+                {!lead ? <div className="text-center py-10 text-slate-400">Save the lead first</div> : 
+                  <LeadOpportunities lead={lead} theme={theme} />
+                }
               </TabsContent>
 
               <TabsContent value="activity" className="h-[600px]">
@@ -495,21 +507,17 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                 {lead ? <RelatedTasks leadId={lead.id} /> : <div className="text-center py-10 text-slate-400">Save the lead first</div>}
               </TabsContent>
 
-              <TabsContent value="documents" className="space-y-6">
-          <div className={`p-6 rounded-xl border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-            <FileUpload
-              files={watch("documents") || []}
-              onFilesChange={(newFiles) => setValue("documents", newFiles)} />
-
-          </div>
-          
-          <div className={`flex justify-end gap-3 pt-4 border-t ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
-             <Button type="button" variant="outline" onClick={onCancel} className={theme === 'dark' ? 'border-slate-600 text-slate-300 hover:bg-slate-700' : ''}>Cancel</Button>
-             <Button onClick={handleSubmit(handleSaveAndClose, onFormError)} className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
-               {lead ? "Save Changes" : "Create Lead"}
-             </Button>
-          </div>
-        </TabsContent>
+              <TabsContent value="documents">
+                <LeadDocuments 
+                  lead={lead}
+                  documents={watch("documents")}
+                  onDocumentsChange={(newFiles) => setValue("documents", newFiles)}
+                  onSave={handleSubmit(handleSaveAndClose, onFormError)}
+                  onCancel={onCancel}
+                  isSubmitting={isSubmitting}
+                  theme={theme}
+                />
+              </TabsContent>
 
         <TabsContent value="discovery">
           {lead ?

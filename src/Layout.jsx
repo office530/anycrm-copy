@@ -12,6 +12,7 @@ import GlobalSearch from '@/components/layout/GlobalSearch';
 import Notifications from '@/components/layout/Notifications';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import QuickActions from '@/components/layout/QuickActions';
+import CommandPalette from '@/components/layout/CommandPalette';
 
 function LayoutContent({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
@@ -74,12 +75,13 @@ function LayoutContent({ children, currentPageName }) {
   return (
     <div className={`min-h-screen font-heebo flex transition-colors duration-300 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0f172a] text-slate-100' : 'bg-slate-50 text-neutral-900'}`} dir="ltr">
 
-      {/* Ambient Background Blobs for Liquid Glass Effect */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-          <div className={`absolute top-[-20%] right-[-10%] w-[800px] h-[800px] rounded-full blur-[120px] opacity-30 animate-pulse ${theme === 'dark' ? 'bg-indigo-600' : 'bg-rose-300'}`} />
-          <div className={`absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[100px] opacity-20 ${theme === 'dark' ? 'bg-cyan-600' : 'bg-blue-300'}`} />
-          <div className={`absolute top-[40%] left-[30%] w-[400px] h-[400px] rounded-full blur-[80px] opacity-20 ${theme === 'dark' ? 'bg-purple-600' : 'bg-violet-300'}`} />
+      {/* Ambient Background Blobs for Liquid Glass Effect - Optimized for Mobile */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className={`absolute top-[-20%] right-[-10%] w-[500px] md:w-[800px] h-[500px] md:h-[800px] rounded-full blur-[60px] md:blur-[120px] opacity-30 animate-pulse ${theme === 'dark' ? 'bg-indigo-600' : 'bg-rose-300'}`} />
+          <div className={`absolute bottom-[-20%] left-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full blur-[50px] md:blur-[100px] opacity-20 ${theme === 'dark' ? 'bg-cyan-600' : 'bg-blue-300'}`} />
+          <div className={`absolute top-[40%] left-[30%] w-[300px] md:w-[400px] h-[300px] md:h-[400px] rounded-full blur-[40px] md:blur-[80px] opacity-20 hidden md:block ${theme === 'dark' ? 'bg-purple-600' : 'bg-violet-300'}`} />
       </div>
+      <CommandPalette />
 
       {/* Global Scrollbar Styles */}
       <style>{`

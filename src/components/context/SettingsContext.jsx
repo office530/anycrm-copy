@@ -74,7 +74,8 @@ export function SettingsProvider({ children }) {
   const { data: orgSettings, isLoading } = useQuery({
     queryKey: ['organization_settings'],
     queryFn: async () => {
-      const res = await base44.entities.OrganizationSettings.list();
+      // Optimized: Limit to 1
+      const res = await base44.entities.OrganizationSettings.list('-updated_date', 1);
       if (res && res.length > 0) return res[0];
       
       // If no settings exist, create default
