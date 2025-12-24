@@ -132,6 +132,10 @@ export default function SmartEmailEditor() {
     const [resonanceScore, setResonanceScore] = useState(0);
     const [isLabMode, setIsLabMode] = useState(false);
     const [selectedPersona, setSelectedPersona] = useState(MOCK_PERSONAS[0].id);
+    const [personaSource, setPersonaSource] = useState('preset'); // 'preset' | 'crm'
+    const [selectedCrmId, setSelectedCrmId] = useState("");
+    const [crmType, setCrmType] = useState("lead"); // 'lead' | 'opportunity'
+    
     const [isGenerating, setIsGenerating] = useState(false);
     const [chatHistory, setChatHistory] = useState([
         { role: "system", text: "Simulation ready." }
@@ -139,6 +143,61 @@ export default function SmartEmailEditor() {
     const [isSimulating, setIsSimulating] = useState(false);
 
     const quillRef = useRef(null);
+
+    // Fetch CRM Data
+    const { data: leads = [] } = useQuery({ 
+        queryKey: ['leads'], 
+        queryFn: () => base44.entities.Lead.list(),
+        enabled: personaSource === 'crm'
+    });
+    
+    const { data: opportunities = [] } = useQuery({ 
+        queryKey: ['opportunities'], 
+        queryFn: () => base44.entities.Opportunity.list(),
+        enabled: personaSource === 'crm'
+    });
+
+    // Derived Current Persona
+    const currentPersona = React.useMemo(() => {
+        if (personaSource === 'preset') {
+            return MOCK_PERSONAS.find(p => p.id === selectedPersona);
+        }
+        
+        if (personaSource === 'crm' && selectedCrmId) {
+            let data = null;
+            let prompt = "";
+            let role = "";
+            
+            if (crmType === 'lead') {
+                data = leads.find(l => l.id === selectedCrmId);
+                if (data) {
+                    role = data.lead_status || "Prospect";
+                    prompt = `You are ${data.full_name}, a ${data.lead_temperature} lead in the ${data.lead_status} stage. Your background: ${data.notes || 'No notes'}. AI Analysis: ${data.ai_analysis || 'None'}. React to this email based on your history.`;
+                }
+            } else {
+                data = opportunities.find(o => o.id === selectedCrmId);
+                if (data) {
+                    role = `Deal: ${data.product_type} ($${data.amount})`;
+                    prompt = `You are a prospect with an active deal for ${data.product_type} worth $${data.amount}. Stage: ${data.deal_stage}. Main pain point: ${data.main_pain_point}. Objection: ${data.current_objection}. Strategy: ${data.ai_sales_strategy}. React accordingly.`;
+                }
+            }
+
+            if (data) {
+                return {
+                    id: data.id,
+                    name: data.full_name || data.lead_name || "Unknown Contact",
+                    role: role,
+                    disc_profile: data.ai_classification || "Unknown",
+                    avatar_initials: (data.full_name || data.lead_name || "??").substring(0,2).toUpperCase(),
+                    ai_simulation_prompt: prompt,
+                    // Synthesize style from data for UI
+                    style: { likes: [], dislikes: [] } 
+                };
+            }
+        }
+        return null;
+    }, [personaSource, selectedPersona, selectedCrmId, crmType, leads, opportunities]);
+
 
     // Initial Load
     useEffect(() => {
@@ -208,27 +267,42 @@ export default function SmartEmailEditor() {
 
     const handleSimulateReply = async () => {
         setIsSimulating(true);
-        await new Promise(r => setTimeout(r, 1200));
+        const persona = currentPersona;
+        if (!persona) return;
+
+        await new Promise(r => setTimeout(r, 1500));
         
-        const persona = MOCK_PERSONAS.find(p => p.id === selectedPersona);
+        // Dynamic Simulation Logic
+        let reply = "";
         
-        // Demo Logic for Steve (p_001)
-        if (persona.id === 'p_001') {
-            const mockReply = MOCK_CHAT_HISTORY.find(m => m.sender === 'ai_persona');
-            setChatHistory(prev => [
-                ...prev, 
-                { role: "system", text: MOCK_CHAT_HISTORY[0].text },
-                { role: "twin", text: mockReply.text }
-            ]);
-        } else {
-            // Fallback generic logic
-            let reply = "I would delete this. You didn't mention pricing upfront.";
-            if (persona.name.includes("Sarah")) {
-                reply = "This feels a bit dry. Can you tell me a story about how you helped others?";
+        if (personaSource === 'crm') {
+            // Simulate AI generating response based on real CRM data
+            const isHot = persona.disc_profile === 'Hot' || persona.ai_simulation_prompt.includes('Hot');
+            const hasObjection = persona.ai_simulation_prompt.includes('Objection');
+            
+            if (isHot) {
+                reply = "Thanks for reaching out. This actually aligns with what we were discussing internally. Do you have time for a quick call?";
+            } else if (hasObjection) {
+                reply = "I'm hesitant. As I mentioned before, our main concern is " + (crmType === 'opportunity' ? "budget and timeline" : "implementation time") + ". Does this email address that?";
+            } else {
+                reply = `[Auto-Generated based on ${crmType} profile]: "This is interesting, but I'm swamped. Can you send me a one-pager instead of a call?"`;
             }
-            setChatHistory(prev => [...prev, { role: "twin", text: reply }]);
+        } else {
+            // Existing Mock Logic
+            if (persona.id === 'p_001') {
+                const mockReply = MOCK_CHAT_HISTORY.find(m => m.sender === 'ai_persona');
+                reply = mockReply.text;
+                // Add system message only for the scripted demo
+                setChatHistory(prev => [...prev, { role: "system", text: MOCK_CHAT_HISTORY[0].text }]);
+            } else {
+                reply = "I would delete this. You didn't mention pricing upfront.";
+                if (persona.name?.includes("Sarah")) {
+                    reply = "This feels a bit dry. Can you tell me a story about how you helped others?";
+                }
+            }
         }
 
+        setChatHistory(prev => [...prev, { role: "twin", text: reply }]);
         setIsSimulating(false);
     };
 
