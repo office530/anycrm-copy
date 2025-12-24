@@ -37,10 +37,80 @@ const CustomToolbar = ({ theme }) => (
     </div>
 );
 
+const MOCK_TEMPLATES = [
+  {
+    "id": "t_001",
+    "name": "Enterprise Value Prop (Optimized)",
+    "subject_line": "Reducing your cloud spend by 12% in Q4",
+    "body_content": "Hi {{First_Name}},<br/><br/>I noticed {{Company_Name}} is expanding its infrastructure. Most CTOs I speak with are struggling to balance scaling costs with performance.<br/><br/>We helped Acme Corp cut AWS spend by 12% in under 30 days without downtime.<br/><br/>Are you open to a 10-minute technical review next Tuesday?",
+    "ai_resonance_score": 92,
+    "status_color": "green", 
+    "tone_analysis": "Professional, Data-Driven",
+    "spam_triggers": []
+  },
+  {
+    "id": "t_002",
+    "name": "Generic Follow Up (Needs Work)",
+    "subject_line": "Just checking in...",
+    "body_content": "Hi {{First_Name}},<br/><br/>I am just bumping this to the top of your inbox.<br/><br/>Did you see my last email? I would love to hop on a quick call and see if there are any synergies we can explore.<br/><br/>Best,<br/>[My Name]",
+    "ai_resonance_score": 35,
+    "status_color": "red",
+    "tone_analysis": "Passive, Generic",
+    "spam_triggers": [
+      { "word": "synergies", "suggestion": "collaboration opportunities" },
+      { "word": "bumping", "suggestion": "following up on" }
+    ]
+  },
+  {
+    "id": "t_003",
+    "name": "Intro - SaaS Founders",
+    "subject_line": "Question about your sales process",
+    "body_content": "Hey {{First_Name}},<br/><br/>Saw you guys are growing fast. Congrats!<br/><br/>I wanted to reach out and see if you need help with your CRM. We have a great tool that is super cheap and easy to use.<br/><br/>Let me know?",
+    "ai_resonance_score": 55,
+    "status_color": "yellow",
+    "tone_analysis": "Too Casual, Vague",
+    "spam_triggers": [
+      { "word": "cheap", "suggestion": "cost-effective" }
+    ]
+  }
+];
+
 const MOCK_PERSONAS = [
-    { id: '1', name: "Steve - Skeptical CTO", job: "CTO", disc: "Dominant", style: { likes: ["brevity", "data"], dislikes: ["fluff", "buzzwords"] } },
-    { id: '2', name: "Linda - Relationship VP", job: "VP Sales", disc: "Influential", style: { likes: ["stories", "connection"], dislikes: ["cold facts", "pressure"] } },
-    { id: '3', name: "Gary - Budget Hawk CFO", job: "CFO", disc: "Conscientious", style: { likes: ["ROI", "security"], dislikes: ["risk", "ambiguity"] } },
+  {
+    "id": "p_001",
+    "name": "Steve - The Skeptical CTO",
+    "role": "Chief Technology Officer",
+    "company_type": "Series B Fintech",
+    "disc_profile": "High Dominance (D)",
+    "avatar_initials": "ST",
+    "ai_simulation_prompt": "You are a busy CTO. You hate sales fluff. If the email doesn't mention security, compliance, or hard ROI numbers immediately, you delete it. You are rude but honest.",
+    "recent_activity": "Posted on LinkedIn about 'SOC2 Compliance Nightmares'"
+  },
+  {
+    "id": "p_002",
+    "name": "Sarah - The Visionary VP",
+    "role": "VP of Marketing",
+    "company_type": "Consumer Brand",
+    "disc_profile": "High Influence (I)",
+    "avatar_initials": "SA",
+    "ai_simulation_prompt": "You are a creative VP. You love emails that feel personal, use emojis, and talk about 'brand values' and 'storytelling'. You dislike cold, robotic data lists.",
+    "recent_activity": "Shared an article about 'The Future of Community'"
+  }
+];
+
+const MOCK_CHAT_HISTORY = [
+  {
+    "sender": "user",
+    "text": "Simulating reply for: 'Generic Follow Up' template...",
+    "timestamp": "10:00 AM"
+  },
+  {
+    "sender": "ai_persona",
+    "persona_name": "Steve (CTO)",
+    "text": "I'm deleting this immediately. 'Just checking in' adds zero value to my day. Also, you used the word 'synergies' - that's a red flag that you don't understand my technical problems. Don't email me again unless you have a specific ROI calculation.",
+    "sentiment": "negative",
+    "timestamp": "10:00 AM"
+  }
 ];
 
 export default function SmartEmailEditor() {
@@ -58,7 +128,7 @@ export default function SmartEmailEditor() {
     const [selectedPersona, setSelectedPersona] = useState(MOCK_PERSONAS[0].id);
     const [isGenerating, setIsGenerating] = useState(false);
     const [chatHistory, setChatHistory] = useState([
-        { role: "system", text: "Simulation started. I am modeling Steve's responses based on his DISC profile." }
+        { role: "system", text: "Simulation ready." }
     ]);
     const [isSimulating, setIsSimulating] = useState(false);
 
@@ -67,24 +137,38 @@ export default function SmartEmailEditor() {
     // Initial Load
     useEffect(() => {
         if (templateId) {
-            base44.entities.MarketingTemplate.read({ id: templateId }).then(res => {
-                if (res && res[0]) {
-                    setTemplateName(res[0].name);
-                    setSubject(res[0].subject_line || "");
-                    setContent(res[0].body_content || "");
-                    setResonanceScore(res[0].ai_resonance_score || 0);
-                }
-            });
+            // Check Mocks first
+            const mock = MOCK_TEMPLATES.find(t => t.id === templateId);
+            if (mock) {
+                setTemplateName(mock.name);
+                setSubject(mock.subject_line);
+                setContent(mock.body_content);
+                setResonanceScore(mock.ai_resonance_score);
+            } else {
+                // Fallback to DB
+                base44.entities.MarketingTemplate.read({ id: templateId }).then(res => {
+                    if (res && res[0]) {
+                        setTemplateName(res[0].name);
+                        setSubject(res[0].subject_line || "");
+                        setContent(res[0].body_content || "");
+                        setResonanceScore(res[0].ai_resonance_score || 0);
+                    }
+                });
+            }
         }
     }, [templateId]);
 
     // Live Resonance Calc
     useEffect(() => {
+        // Only calc if not one of the static mocks to preserve their specific scores for demo
+        const isMock = MOCK_TEMPLATES.find(t => t.id === templateId && t.body_content === content);
+        if (isMock) return;
+
         const calculateResonance = (text) => {
             if (!text || text.length < 10) return 0;
             const base = 50;
             const randomVar = Math.floor(Math.random() * 40) - 20; 
-            const hasBuzzword = text.toLowerCase().includes('synergy');
+            const hasBuzzword = text.toLowerCase().includes('synergy') || text.toLowerCase().includes('bumping');
             const penalty = hasBuzzword ? 15 : 0;
             return Math.min(100, Math.max(0, base + randomVar - penalty));
         };
@@ -94,15 +178,25 @@ export default function SmartEmailEditor() {
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [content]);
+    }, [content, templateId]);
 
     const handleAutoTune = async () => {
         setIsGenerating(true);
         await new Promise(r => setTimeout(r, 1500));
         
-        setContent(`Hi {{FirstName}},<br/><br/>I reviewed your Q3 goals and believe we can help you reduce churn by 12%.<br/><br/>Do you have 10 mins this Tuesday?`);
-        setResonanceScore(92);
-        toast.success("Content optimized for higher resonance!");
+        // Demo Logic: If on the bad template (t_002), swap to good one (t_001)
+        if (templateId === 't_002') {
+            const goodTemplate = MOCK_TEMPLATES.find(t => t.id === 't_001');
+            setContent(goodTemplate.body_content);
+            setSubject(goodTemplate.subject_line);
+            setResonanceScore(goodTemplate.ai_resonance_score);
+            toast.success("✨ Optimization complete! Spam triggers removed.");
+        } else {
+            // Generic fallback
+            setContent(`Hi {{FirstName}},<br/><br/>I reviewed your Q3 goals and believe we can help you reduce churn by 12%.<br/><br/>Do you have 10 mins this Tuesday?`);
+            setResonanceScore(92);
+            toast.success("Content optimized for higher resonance!");
+        }
         setIsGenerating(false);
     };
 
@@ -111,15 +205,24 @@ export default function SmartEmailEditor() {
         await new Promise(r => setTimeout(r, 1200));
         
         const persona = MOCK_PERSONAS.find(p => p.id === selectedPersona);
-        let reply = "I would delete this. You didn't mention pricing upfront.";
         
-        if (persona.name.includes("Linda")) {
-            reply = "A bit too abrupt for me. Ask about my team first?";
-        } else if (persona.name.includes("Gary")) {
-            reply = "What's the ROI? This feels like fluff.";
+        // Demo Logic for Steve (p_001)
+        if (persona.id === 'p_001') {
+            const mockReply = MOCK_CHAT_HISTORY.find(m => m.sender === 'ai_persona');
+            setChatHistory(prev => [
+                ...prev, 
+                { role: "system", text: MOCK_CHAT_HISTORY[0].text },
+                { role: "twin", text: mockReply.text }
+            ]);
+        } else {
+            // Fallback generic logic
+            let reply = "I would delete this. You didn't mention pricing upfront.";
+            if (persona.name.includes("Sarah")) {
+                reply = "This feels a bit dry. Can you tell me a story about how you helped others?";
+            }
+            setChatHistory(prev => [...prev, { role: "twin", text: reply }]);
         }
 
-        setChatHistory(prev => [...prev, { role: "twin", text: reply }]);
         setIsSimulating(false);
     };
 
@@ -264,27 +367,17 @@ export default function SmartEmailEditor() {
                             {/* Persona Details Card */}
                             {selectedPersona && (
                                 <div className={`rounded-lg p-3 text-xs space-y-2 border ${theme === 'dark' ? 'bg-slate-800/50 border-slate-700/50' : 'bg-slate-50 border-slate-200'}`}>
-                                    <div className="flex justify-between">
-                                        <span className={textSub}>DISC:</span>
-                                        <span className="text-blue-500 font-medium">{MOCK_PERSONAS.find(p => p.id === selectedPersona).disc}</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className={textSub}>Role:</span>
+                                        <span className={textMain}>{MOCK_PERSONAS.find(p => p.id === selectedPersona).role}</span>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <div className="flex-1">
-                                            <span className="text-emerald-500 block mb-1">Likes</span>
-                                            <div className="flex flex-wrap gap-1">
-                                                {MOCK_PERSONAS.find(p => p.id === selectedPersona).style.likes.map(l => (
-                                                    <span key={l} className={`px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-700'}`}>{l}</span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div className="flex-1">
-                                            <span className="text-red-400 block mb-1">Dislikes</span>
-                                            <div className="flex flex-wrap gap-1">
-                                                {MOCK_PERSONAS.find(p => p.id === selectedPersona).style.dislikes.map(l => (
-                                                    <span key={l} className={`px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-red-500/10 text-red-400' : 'bg-red-50 text-red-700'}`}>{l}</span>
-                                                ))}
-                                            </div>
-                                        </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className={textSub}>DISC:</span>
+                                        <span className="text-blue-500 font-medium">{MOCK_PERSONAS.find(p => p.id === selectedPersona).disc_profile}</span>
+                                    </div>
+                                    <div className={`mt-2 p-2 rounded ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
+                                        <span className={`block mb-1 font-semibold ${textSub}`}>AI Prompt:</span>
+                                        <p className={`italic ${textMain}`}>"{MOCK_PERSONAS.find(p => p.id === selectedPersona).ai_simulation_prompt}"</p>
                                     </div>
                                 </div>
                             )}
