@@ -301,7 +301,7 @@ export default function GalaxyScene({ opportunities }) {
                     GALAXY
                 </h1>
                 <p className="text-white/30 text-sm font-mono tracking-[0.5em] uppercase ml-1 mt-2">
-                    System Mass: ${(totalWonAmount + activeDeals.reduce((a,b)=>a+(b.amount||0),0)).toLocaleString()}
+                    System Mass: ${totalWonAmount.toLocaleString()}
                 </p>
             </div>
 
