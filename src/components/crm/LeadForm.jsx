@@ -376,7 +376,7 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
 
               {/* Custom Fields Section */}
               {customFields?.length > 0 && (
-                <div className="col-span-1 md:col-span-2 pt-4 border-t border-slate-100 dark:border-slate-700 mt-2">
+                <div className={`col-span-1 md:col-span-2 pt-4 border-t mt-2 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
                     <h3 className={`text-sm font-bold uppercase tracking-wider mb-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Additional Info</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {customFields.map((field) => (
