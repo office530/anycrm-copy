@@ -203,7 +203,15 @@ function LayoutContent({ children, currentPageName }) {
                 ? 'bg-[#0B1121]/80 border-[#1E293B]' 
                 : 'bg-white/80 border-neutral-200/60'
         }`}>
-            <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400' : 'text-neutral-800'}`}>
+            <h1 className={`text-2xl font-bold ${
+                theme === 'dark' 
+                    ? (currentPageName === 'Settings' 
+                        ? 'text-white' 
+                        : (navigation.find(n => n.path === currentPageName)?.color 
+                            ? darkColors[navigation.find(n => n.path === currentPageName).color].icon 
+                            : 'text-emerald-400'))
+                    : 'text-neutral-800'
+            }`}>
                 {navigation.find(n => n.path === currentPageName)?.name || (currentPageName === 'Settings' ? 'Settings' : 'Overview')}
             </h1>
             <div className="flex items-center gap-2 md:gap-4">
