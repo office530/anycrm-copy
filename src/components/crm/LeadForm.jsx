@@ -22,6 +22,8 @@ import QuickTaskCreator from "./QuickTaskCreator";
 import RelatedTasks from "./RelatedTasks";
 import CompanyPicker from "./CompanyPicker";
 import EmbeddedCompanyCard from "./EmbeddedCompanyCard";
+import ContactPicker from "./ContactPicker";
+import EmbeddedContactCard from "./EmbeddedContactCard";
 
 export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel, isSubmitting }) {
   const { theme } = useSettings();
@@ -43,7 +45,8 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
     lead_temperature: "Cold",
     tags: [],
     custom_data: {},
-    company_id: "" 
+    company_id: "",
+    contact_id: ""
     }
   });
 
@@ -187,6 +190,13 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                     <EmbeddedCompanyCard companyId={lead.company_id} />
                 </div>
             )}
+
+            {/* Embedded Contact Info if linked */}
+            {lead?.contact_id && (
+                <div className="mb-4">
+                    <EmbeddedContactCard contactId={lead.contact_id} />
+                </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
@@ -228,6 +238,14 @@ export default function LeadForm({ lead, onSaveAndClose, onSaveAndStay, onCancel
                 <CompanyPicker 
                     value={watch("company_id")} 
                     onChange={(id) => setValue("company_id", id)} 
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label className={labelClass}>Primary Contact</Label>
+                <ContactPicker 
+                    value={watch("contact_id")} 
+                    onChange={(id) => setValue("contact_id", id)} 
                 />
               </div>
 
