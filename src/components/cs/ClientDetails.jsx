@@ -7,12 +7,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { FileIcon, FileText, CheckSquare, Plus, Mail, Phone, Calendar, Download, Trash2, ExternalLink } from "lucide-react";
+import { FileIcon, FileText, CheckSquare, Plus, Mail, Phone, Calendar, Download, Trash2, ExternalLink, ListChecks } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function ClientDetails({ client, open, onClose }) {
   const { theme } = useSettings();
@@ -125,11 +127,12 @@ export default function ClientDetails({ client, open, onClose }) {
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className={`w-full grid grid-cols-4 mb-6 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                    <TabsList className={`w-full grid grid-cols-5 mb-6 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
                         <TabsTrigger value="overview">Overview</TabsTrigger>
+                        <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
                         <TabsTrigger value="documents">Documents</TabsTrigger>
-                        <TabsTrigger value="tasks">Tasks & Plan</TabsTrigger>
-                        <TabsTrigger value="activity">Activity Log</TabsTrigger>
+                        <TabsTrigger value="tasks">Tasks</TabsTrigger>
+                        <TabsTrigger value="activity">Activity</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-6">
