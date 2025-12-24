@@ -21,24 +21,24 @@ import { useQuery } from '@tanstack/react-query';
 
 // Custom Toolbar for Quill
 const CustomToolbar = ({ theme }) => (
-    <div id="toolbar" className={`flex items-center gap-1 border-b px-4 py-3 sticky top-0 backdrop-blur-md z-10 transition-colors ${theme === 'dark' ? 'border-slate-700/50 bg-[#0f172a]/80' : 'border-slate-100 bg-white/80'}`}>
-        <div className={`flex items-center gap-1 p-1 rounded-lg ${theme === 'dark' ? 'bg-slate-800/50 border border-slate-700/50' : 'bg-slate-100/50 border border-slate-200/50'}`}>
-            <button className={`ql-bold p-1.5 rounded-md transition-all ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-white hover:shadow-sm hover:text-slate-900'}`}>
+    <div id="toolbar" className={`flex items-center gap-1 border-b px-6 py-2 sticky top-0 z-10 transition-colors ${theme === 'dark' ? 'border-slate-800 bg-[#0f172a]' : 'border-slate-100 bg-white'}`}>
+        <div className="flex items-center gap-1">
+            <button className={`ql-bold p-1.5 rounded-md transition-all ${theme === 'dark' ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'}`}>
                 <Bold className="w-4 h-4" />
             </button>
-            <button className={`ql-italic p-1.5 rounded-md transition-all ${theme === 'dark' ? 'text-slate-400 hover:bg-slate-700 hover:text-white' : 'text-slate-500 hover:bg-white hover:shadow-sm hover:text-slate-900'}`}>
+            <button className={`ql-italic p-1.5 rounded-md transition-all ${theme === 'dark' ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'}`}>
                 <Italic className="w-4 h-4" />
             </button>
         </div>
         
-        <div className={`w-px h-5 mx-2 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'}`} />
+        <div className={`w-px h-4 mx-2 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`} />
         
-        <div className={`flex items-center gap-1 p-1 rounded-lg ${theme === 'dark' ? 'bg-slate-800/50 border border-slate-700/50' : 'bg-slate-100/50 border border-slate-200/50'}`}>
-            <button className="ql-list" value="bullet">
-                <List className="w-4 h-4" />
+        <div className="flex items-center gap-1">
+            <button className="ql-list p-1.5 rounded-md transition-all hover:bg-slate-100 dark:hover:bg-slate-800" value="bullet">
+                <List className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
             </button>
-            <button className="ql-link">
-                <LinkIcon className="w-4 h-4" />
+            <button className="ql-link p-1.5 rounded-md transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
+                <LinkIcon className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
             </button>
         </div>
     </div>
