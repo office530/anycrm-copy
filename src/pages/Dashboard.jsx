@@ -234,8 +234,8 @@ export default function Dashboard() {
                   theme === 'dark' ? 'bg-indigo-600' : 'bg-indigo-200'
               }`}></div>
               {/* Watermark Logo Text */}
-              <div className={`absolute top-1/2 -translate-y-1/2 right-8 md:right-16 opacity-[0.07] transform -rotate-6 transition-all duration-700 group-hover:rotate-0 group-hover:scale-105 group-hover:opacity-10 pointer-events-none select-none`}>
-                  <span className="text-6xl md:text-[7rem] font-black text-transparent leading-none whitespace-nowrap" style={{ WebkitTextStroke: theme === 'dark' ? '2px rgba(255,255,255,0.9)' : '2px rgba(15, 23, 42, 0.8)' }}>
+              <div className={`absolute bottom-8 right-8 md:right-12 opacity-[0.07] transform -rotate-3 transition-all duration-700 group-hover:rotate-0 group-hover:scale-105 group-hover:opacity-10 pointer-events-none select-none`}>
+                  <span className="text-4xl md:text-6xl font-black text-transparent leading-none whitespace-nowrap" style={{ WebkitTextStroke: theme === 'dark' ? '1.5px rgba(255,255,255,0.9)' : '1.5px rgba(15, 23, 42, 0.8)' }}>
                       {branding.companyName}
                   </span>
               </div>
