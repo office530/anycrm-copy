@@ -174,11 +174,21 @@ export default function OpportunityForm({ opportunity, initialLead, onSubmit, on
           </div>
           <div>
             <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>
-              {title || (opportunity ? "Manage Opportunity" : "New Opportunity")}
+              {title || (opportunity ? `${opportunity.product_type || 'Sales'} Deal` : "New Opportunity")}
             </h2>
-            <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>
-              {selectedLead ? `For Client: ${selectedLead.full_name}` : "Manage opportunity details"}
-            </p>
+            <div className={`text-sm mt-1 flex items-center gap-1.5 ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-600'}`}>
+              {(selectedLead || originalLeadData || opportunity?.lead_name) ? (
+                 <>
+                   <User className="w-3.5 h-3.5" />
+                   <span>Client:</span>
+                   <span className={`font-semibold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'}`}>
+                     {selectedLead?.full_name || originalLeadData?.full_name || opportunity?.lead_name || "Unknown Client"}
+                   </span>
+                 </>
+               ) : (
+                 "Link a client to start tracking this deal"
+               )}
+            </div>
           </div>
         </div>
         <Button variant="ghost" size="icon" onClick={onCancel} className={theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-700' : 'text-slate-400 hover:text-slate-600'}>
