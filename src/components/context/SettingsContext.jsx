@@ -116,8 +116,16 @@ export function SettingsProvider({ children }) {
   const branding = {
     companyName: orgSettings?.company_name || defaultBranding.companyName,
     logoUrl: orgSettings?.logo_url || defaultBranding.logoUrl,
+    faviconUrl: orgSettings?.favicon_url || "",
     primaryColor: orgSettings?.primary_color || defaultBranding.primaryColor,
-    currency: orgSettings?.currency || defaultBranding.currency
+    secondaryColor: orgSettings?.secondary_color || "",
+    fontFamily: orgSettings?.font_family || "Inter",
+    currency: orgSettings?.currency || defaultBranding.currency,
+    address: orgSettings?.address || "",
+    supportPhone: orgSettings?.support_phone || "",
+    industry: orgSettings?.industry || "",
+    timezone: orgSettings?.timezone || "",
+    supportEmail: orgSettings?.support_email || ""
   };
 
   const pipelineStages = orgSettings?.pipeline_stages || defaultPipelineStages;
