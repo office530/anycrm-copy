@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { 
     Users, Mail, MessageSquare, CalendarCheck, TrendingUp, 
     AlertTriangle, PauseCircle, PlayCircle, MoreHorizontal,
-    ArrowRight, Filter, Download, Plus, Loader2
+    ArrowRight, Filter, Download, Plus
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,55 +11,41 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGri
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useSettings } from '@/components/context/SettingsContext';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
 
 export default function MarketingDashboard() {
     const navigate = useNavigate();
     const { theme } = useSettings();
-    const queryClient = useQueryClient();
 
-    // Fetch Sequences
-    const { data: sequences = [], isLoading } = useQuery({
-        queryKey: ['marketing_sequences'],
-        queryFn: () => base44.entities.MarketingSequence.list(),
-    });
-
-    // Mock KPI Data Calculation (Replace with real aggregation when available)
-    const kpiData = useMemo(() => {
-        const totalActive = sequences.filter(s => s.status === 'ACTIVE').length;
-        // In a real app, we'd sum up enrollments from a SequenceEnrollment query
-        return [
-            { title: "Active Sequences", value: totalActive, icon: Users, color: "text-blue-500", bg: "bg-blue-100" },
-            { title: "Total Campaigns", value: sequences.length, icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-100" },
-            { title: "Meetings Booked", value: "0", icon: CalendarCheck, color: "text-purple-500", bg: "bg-purple-100" }, // Placeholder
-            { title: "Pipeline Generated", value: "$0.00", icon: AlertTriangle, color: "text-amber-500", bg: "bg-amber-100" }, // Placeholder
-        ];
-    }, [sequences]);
-
-    const funnelData = [
-        { name: 'Sent', value: 0, fill: '#94a3b8' },
-        { name: 'Opened', value: 0, fill: '#60a5fa' },
-        { name: 'Replied', value: 0, fill: '#818cf8' },
-        { name: 'Booked', value: 0, fill: '#34d399' },
+    // Mock Data
+    const kpiData = [
+        { title: "Active Prospects", value: "1,250", icon: Users, color: "text-blue-500", bg: "bg-blue-100" },
+        { title: "Engagement Rate", value: "34%", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-100" },
+        { title: "Meetings Booked", value: "42", icon: CalendarCheck, color: "text-purple-500", bg: "bg-purple-100" },
+        { title: "Pipeline Generated", value: "$1.2M", icon: AlertTriangle, color: "text-amber-500", bg: "bg-amber-100" },
     ];
 
-    const toggleStatusMutation = useMutation({
-        mutationFn: async ({ id, currentStatus }) => {
-            const newStatus = currentStatus === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
-            return base44.entities.MarketingSequence.update(id, { status: newStatus });
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries(['marketing_sequences']);
-        }
-    });
+    const funnelData = [
+        { name: 'Sent', value: 5000, fill: '#94a3b8' },
+        { name: 'Opened', value: 2250, fill: '#60a5fa' },
+        { name: 'Replied', value: 600, fill: '#818cf8' },
+        { name: 'Booked', value: 150, fill: '#34d399' },
+    ];
+
+    const sequences = [
+        { id: 1, name: "SaaS CEO Cold Outreach", owner: "Sarah J.", persona: "CEO", replyRate: "12%", booked: 15, status: "Active" },
+        { id: 2, name: "Webinar Follow-up", owner: "Mike T.", persona: "Marketing VP", replyRate: "8%", booked: 5, status: "Active" },
+        { id: 3, name: "Q4 Closing Push", owner: "Sarah J.", persona: "Founder", replyRate: "4%", booked: 2, status: "Paused" },
+        { id: 4, name: "Lost Leads Reactivation", owner: "John D.", persona: "Any", replyRate: "2%", booked: 0, status: "Active" },
+    ];
+
+    const negativeSentiments = [
+        { id: 1, text: "Stop emailing me immediately.", email: "alex@corp.com", date: "2 mins ago" },
+        { id: 2, text: "Unsubscribe", email: "lisa@studio.io", date: "1 hour ago" },
+        { id: 3, text: "Not interested, remove me.", email: "jim@tech.net", date: "4 hours ago" },
+    ];
 
     const cardClass = theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900';
     const subTextClass = theme === 'dark' ? 'text-slate-400' : 'text-slate-500';
-
-    if (isLoading) {
-        return <div className="flex h-96 items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>;
-    }
 
     return (
         <div className="space-y-6">
@@ -99,7 +85,7 @@ export default function MarketingDashboard() {
                 {/* Funnel Fallout Chart */}
                 <Card className={`lg:col-span-2 ${cardClass}`}>
                     <CardHeader>
-                        <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Funnel Fallout (Aggregate)</CardTitle>
+                        <CardTitle className={theme === 'dark' ? 'text-white' : ''}>Funnel Fallout</CardTitle>
                     </CardHeader>
                     <CardContent className="h-[300px]">
                          <ResponsiveContainer width="100%" height="100%">
@@ -131,7 +117,15 @@ export default function MarketingDashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            <div className="text-sm text-slate-500 italic text-center py-4">No negative sentiment detected recently.</div>
+                            {negativeSentiments.map((item) => (
+                                <div key={item.id} className={`p-3 rounded-lg border ${theme === 'dark' ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50/50 border-red-100'}`}>
+                                    <div className="flex justify-between items-start mb-1">
+                                        <span className={`text-xs font-semibold ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>{item.email}</span>
+                                        <span className="text-[10px] text-red-400">{item.date}</span>
+                                    </div>
+                                    <p className={`text-sm italic ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>"{item.text}"</p>
+                                </div>
+                            ))}
                         </div>
                     </CardContent>
                 </Card>
@@ -149,47 +143,34 @@ export default function MarketingDashboard() {
                                 <tr>
                                     <th className="px-4 py-3 rounded-l-lg">Sequence Name</th>
                                     <th className="px-4 py-3">Owner</th>
-                                    <th className="px-4 py-3">Status</th>
-                                    <th className="px-4 py-3">Created</th>
+                                    <th className="px-4 py-3">Target Persona</th>
+                                    <th className="px-4 py-3">Reply Rate</th>
+                                    <th className="px-4 py-3">Meetings</th>
                                     <th className="px-4 py-3 text-right rounded-r-lg">Action</th>
                                 </tr>
                             </thead>
                             <tbody className={`divide-y ${theme === 'dark' ? 'divide-slate-700' : 'divide-slate-100'}`}>
-                                {sequences.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="5" className="px-4 py-8 text-center text-slate-500">
-                                            No sequences found. Create your first one!
+                                {sequences.map((seq) => (
+                                    <tr key={seq.id} className={theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/50'}>
+                                        <td className={`px-4 py-3 font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}`}>{seq.name}</td>
+                                        <td className={`px-4 py-3 ${subTextClass}`}>{seq.owner}</td>
+                                        <td className="px-4 py-3">
+                                            <Badge variant="secondary" className={theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}>{seq.persona}</Badge>
+                                        </td>
+                                        <td className="px-4 py-3 font-semibold text-emerald-600">{seq.replyRate}</td>
+                                        <td className="px-4 py-3 font-semibold text-purple-600">{seq.booked}</td>
+                                        <td className="px-4 py-3 text-right">
+                                            <Button 
+                                                size="sm" 
+                                                variant="ghost" 
+                                                className={seq.status === 'Active' ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20" : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"}
+                                            >
+                                                {seq.status === 'Active' ? <PauseCircle className="w-4 h-4 mr-1" /> : <PlayCircle className="w-4 h-4 mr-1" />}
+                                                {seq.status === 'Active' ? 'Pause' : 'Resume'}
+                                            </Button>
                                         </td>
                                     </tr>
-                                ) : (
-                                    sequences.map((seq) => (
-                                        <tr key={seq.id} className={`${theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-50/50'} cursor-pointer`} onClick={() => navigate(createPageUrl('SequenceBuilder') + `?id=${seq.id}`)}>
-                                            <td className={`px-4 py-3 font-medium ${theme === 'dark' ? 'text-slate-200' : 'text-slate-900'}`}>{seq.name}</td>
-                                            <td className={`px-4 py-3 ${subTextClass}`}>{seq.created_by || 'Unknown'}</td>
-                                            <td className="px-4 py-3">
-                                                <Badge variant="secondary" className={`${
-                                                    seq.status === 'ACTIVE' 
-                                                        ? (theme === 'dark' ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-100 text-emerald-700')
-                                                        : (theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600')
-                                                }`}>
-                                                    {seq.status}
-                                                </Badge>
-                                            </td>
-                                            <td className={`px-4 py-3 ${subTextClass}`}>{new Date(seq.created_date).toLocaleDateString()}</td>
-                                            <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                                                <Button 
-                                                    size="sm" 
-                                                    variant="ghost" 
-                                                    onClick={() => toggleStatusMutation.mutate({ id: seq.id, currentStatus: seq.status })}
-                                                    className={seq.status === 'ACTIVE' ? "text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20" : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"}
-                                                >
-                                                    {seq.status === 'ACTIVE' ? <PauseCircle className="w-4 h-4 mr-1" /> : <PlayCircle className="w-4 h-4 mr-1" />}
-                                                    {seq.status === 'ACTIVE' ? 'Pause' : 'Activate'}
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
