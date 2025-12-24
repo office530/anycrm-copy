@@ -12,9 +12,14 @@ Deno.serve(async (req) => {
         const leads = await adminClient.entities.Lead.list();
         const existingClients = await adminClient.entities.Client.list();
 
+        // Debug log
+        console.log(`Found ${opportunities.length} opps, ${leads.length} leads, ${existingClients.length} clients`);
+
         const wonOpportunities = opportunities.filter(o => 
             (o.deal_stage && (o.deal_stage.includes('Won') || o.deal_stage === 'Closed Won'))
         );
+
+        console.log(`Found ${wonOpportunities.length} won opportunities to check`);
 
         let processedCount = 0;
         let skippedCount = 0;
@@ -32,6 +37,7 @@ Deno.serve(async (req) => {
                 const existingClient = existingClients.find(c => c.crm_opportunity_id === opportunity.id);
                 if (existingClient) {
                      // Update opportunity with link if missing
+                     console.log(`Linking existing client ${existingClient.id} to opp ${opportunity.id}`);
                      await adminClient.entities.Opportunity.update(opportunity.id, { client_id: existingClient.id });
                      skippedCount++;
                      continue;
@@ -39,14 +45,14 @@ Deno.serve(async (req) => {
 
                 const lead = leads.find(l => l.id === opportunity.lead_id);
                 if (!lead) {
-                    // errors.push(`Lead not found for opportunity ${opportunity.id}`);
-                    // Don't fail, just skip or create with minimal data? Skip for now.
+                    console.log(`Lead not found for opp ${opportunity.id}, skipping`);
                     continue;
                 }
 
                 // Prepare Client Data
                 const leadDocs = lead.documents || [];
                 const oppDocs = opportunity.documents || [];
+                // Unique documents by url
                 const allDocs = [...leadDocs, ...oppDocs].filter((doc, index, self) => 
                     index === self.findIndex((d) => (d.url === doc.url))
                 );
@@ -55,10 +61,10 @@ Deno.serve(async (req) => {
                     crm_lead_id: lead.id,
                     crm_opportunity_id: opportunity.id,
                     full_name: lead.full_name,
-                    email: lead.email || opportunity.email,
+                    email: lead.email || opportunity.email || "unknown@example.com", // Fallback to avoid schema errors if email required
                     phone_number: lead.phone_number || opportunity.phone_number,
-                    product_type: opportunity.product_type,
-                    initial_amount: opportunity.amount,
+                    product_type: opportunity.product_type || "Unknown",
+                    initial_amount: opportunity.amount || 0,
                     contract_start_date: opportunity.updated_date ? opportunity.updated_date.split('T')[0] : new Date().toISOString().split('T')[0],
                     onboarding_status: "Not Started",
                     customer_segment: (opportunity.amount || 0) > 50000 ? "Key Account" : (opportunity.amount || 0) > 10000 ? "Enterprise" : "SMB",
@@ -67,6 +73,8 @@ Deno.serve(async (req) => {
                     renewal_date: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
                     documents: allDocs
                 };
+
+                console.log(`Creating client for opp ${opportunity.id}: ${clientData.full_name}`);
 
                 // Create Client
                 const newClient = await adminClient.entities.Client.create(clientData);
@@ -96,6 +104,7 @@ Deno.serve(async (req) => {
         });
 
     } catch (error) {
+        console.error("Global error:", error);
         return Response.json({ error: error.message }, { status: 500 });
     }
 });
