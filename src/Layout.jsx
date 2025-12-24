@@ -128,13 +128,6 @@ function LayoutContent({ children, currentPageName }) {
             {/* Logo Area */}
             <div className={`p-6 lg:p-6 border-b flex flex-col items-center lg:items-start mt-10 lg:mt-0 ${theme === 'dark' ? 'border-[#1E293B]' : 'border-neutral-50'}`}>
                 <Link to={createPageUrl('Dashboard')} onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 text-2xl lg:text-2xl font-bold tracking-tight hover:opacity-80 transition-opacity">
-                    {branding.logoUrl ? (
-                        <img src={branding.logoUrl} alt="Logo" className={`w-16 h-16 lg:w-10 lg:h-10 object-contain rounded-full p-1 ${theme === 'dark' ? 'bg-[#0B1121]' : 'bg-white'}`} />
-                    ) : (
-                        <div className={`rounded-full lg:rounded-lg p-4 lg:p-2 shadow-lg ${theme === 'dark' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-red-700 shadow-red-900/20'}`}>
-                            <Database className="w-8 h-8 lg:w-6 lg:h-6 text-white" />
-                        </div>
-                    )}
                     <span className="hidden lg:inline truncate">{branding.companyName}</span>
                 </Link>
                 <p className="lg:hidden text-xl font-bold mt-4">{branding.companyName}</p>
