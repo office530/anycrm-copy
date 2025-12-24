@@ -167,12 +167,12 @@ export default function ClientDetails({ client, open, onClose }) {
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className={`w-full grid grid-cols-5 mb-6 ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
-                        <TabsTrigger value="overview">Overview</TabsTrigger>
-                        <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
-                        <TabsTrigger value="documents">Documents</TabsTrigger>
-                        <TabsTrigger value="tasks">Tasks</TabsTrigger>
-                        <TabsTrigger value="activity">Activity</TabsTrigger>
+                    <TabsList className={`w-full grid grid-cols-5 mb-6 p-1 rounded-xl ${isDark ? 'bg-[#151E32]' : 'bg-slate-100'}`}>
+                        <TabsTrigger value="overview" className={`rounded-lg ${isDark ? 'data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400' : ''}`}>Overview</TabsTrigger>
+                        <TabsTrigger value="onboarding" className={`rounded-lg ${isDark ? 'data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400' : ''}`}>Onboarding</TabsTrigger>
+                        <TabsTrigger value="documents" className={`rounded-lg ${isDark ? 'data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400' : ''}`}>Documents</TabsTrigger>
+                        <TabsTrigger value="tasks" className={`rounded-lg ${isDark ? 'data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400' : ''}`}>Tasks</TabsTrigger>
+                        <TabsTrigger value="activity" className={`rounded-lg ${isDark ? 'data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400' : ''}`}>Activity</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="overview" className="space-y-6">
@@ -345,16 +345,21 @@ export default function ClientDetails({ client, open, onClose }) {
                                     <div key={phase} className="space-y-3">
                                         <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">{phase}</h4>
                                         {items.map((item) => (
-                                            <div key={item.id} className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
-                                                item.is_completed 
-                                                    ? (isDark ? 'bg-slate-800/50 border-slate-700 opacity-60' : 'bg-slate-50 border-slate-200 opacity-60')
-                                                    : (isDark ? 'bg-slate-800 border-slate-600' : 'bg-white border-slate-200 shadow-sm')
-                                            }`}>
-                                                <Checkbox 
-                                                    checked={item.is_completed} 
-                                                    onCheckedChange={() => toggleOnboardingItem(item.id, item.is_completed)}
-                                                    className="mt-1"
-                                                />
+                                            <div 
+                                                key={item.id} 
+                                                onClick={() => toggleOnboardingItem(item.id, item.is_completed)}
+                                                className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer group select-none ${
+                                                    item.is_completed 
+                                                        ? (isDark ? 'bg-slate-800/50 border-slate-700 opacity-60' : 'bg-slate-50 border-slate-200 opacity-60')
+                                                        : (isDark ? 'bg-slate-800 border-slate-600 hover:bg-slate-700 hover:border-slate-500' : 'bg-white border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-md')
+                                                }`}
+                                            >
+                                                <div onClick={(e) => e.stopPropagation()} className="mt-1">
+                                                    <Checkbox 
+                                                        checked={item.is_completed} 
+                                                        onCheckedChange={() => toggleOnboardingItem(item.id, item.is_completed)}
+                                                    />
+                                                </div>
                                                 <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2">
                                                     <div className="md:col-span-6">
                                                         <p className={`text-sm font-medium ${item.is_completed ? 'line-through text-slate-500' : ''}`}>
