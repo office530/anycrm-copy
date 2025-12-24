@@ -233,8 +233,10 @@ export default function Dashboard() {
               <div className={`absolute -right-20 -bottom-32 w-96 h-96 rounded-full blur-[100px] opacity-60 pointer-events-none transition-transform duration-[10s] ease-in-out group-hover:scale-110 ${
                   theme === 'dark' ? 'bg-indigo-600' : 'bg-indigo-200'
               }`}></div>
-              <div className={`absolute top-0 right-0 p-8 opacity-20 transform rotate-12 transition-transform group-hover:rotate-0 duration-700`}>
-                  <img src={branding.logoUrl} className="w-64 h-64 object-contain grayscale" alt="" />
+              <div className={`absolute top-4 right-8 opacity-10 transform rotate-12 transition-transform group-hover:rotate-0 duration-700 pointer-events-none select-none`}>
+                  <span className="text-[7rem] font-black text-transparent leading-none" style={{ WebkitTextStroke: theme === 'dark' ? '2px rgba(255,255,255,0.8)' : '2px rgba(100,116,139,0.3)' }}>
+                      {branding.companyName}
+                  </span>
               </div>
           </div>
 
