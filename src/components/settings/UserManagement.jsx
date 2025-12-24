@@ -93,10 +93,13 @@ export default function UserManagement() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>User Permissions</h2>
-                <div className={`text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                    Total Users: {users.length}
+                <div>
+                    <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>User Permissions</h2>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Manage system access and roles</p>
                 </div>
+                <Button onClick={() => setShowInviteDialog(true)} className="bg-slate-900 text-white">
+                    <Plus className="w-4 h-4 mr-2" /> Invite User
+                </Button>
             </div>
 
             <div className={`rounded-xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
