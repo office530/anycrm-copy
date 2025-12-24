@@ -13,9 +13,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useSettings } from '@/components/context/SettingsContext';
 
 // --- Node Component ---
 const FlowNode = ({ node, isSelected, onClick, onDragStart, onDrag, onDragEnd }) => {
+    const { theme } = useSettings();
     const getIcon = () => {
         switch(node.type) {
             case 'EMAIL': return <Mail className="w-4 h-4 text-blue-500" />;
