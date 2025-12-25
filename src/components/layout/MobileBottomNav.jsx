@@ -54,6 +54,15 @@ export default function MobileBottomNav({ activePage }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center" side="top" className={`mb-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : ''}`}>
                         <DropdownMenuItem asChild>
+                             <button 
+                                 onClick={() => openAssistant()} 
+                                 className="cursor-pointer flex items-center gap-2 w-full"
+                             >
+                                <Bot className="w-4 h-4" /> Ask AI Assistant
+                             </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
                              <Link to={createPageUrl('ActNow')} className={`cursor-pointer flex items-center gap-2 font-bold ${
                                  theme === 'dark' 
                                  ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' 

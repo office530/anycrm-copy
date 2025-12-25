@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { 
     LayoutDashboard, Users, Briefcase, CheckSquare, 
-    Settings, Brain, Plus, UserPlus, Search 
+    Settings, Brain, Plus, UserPlus, Search, Bot
 } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
+import { useAssistant } from "@/components/context/AssistantContext";
 
 export default function CommandPalette() {
     const [open, setOpen] = useState(false);
@@ -38,6 +39,10 @@ export default function CommandPalette() {
                     <CommandEmpty>No results found.</CommandEmpty>
                     
                     <CommandGroup heading="Quick Actions">
+                        <CommandItem onSelect={() => runCommand(() => openAssistant())}>
+                            <Bot className="mr-2 h-4 w-4" />
+                            <span>Ask AI Assistant</span>
+                        </CommandItem>
                         <CommandItem onSelect={() => runCommand(() => navigate(createPageUrl('Leads') + '?action=new'))}>
                             <UserPlus className="mr-2 h-4 w-4" />
                             <span>Add New Lead</span>

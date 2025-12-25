@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Plus, UserPlus, Briefcase, CheckSquare, Mail, X, 
-    Sparkles, MessageSquare, Brain 
+    Sparkles, MessageSquare, Brain, Bot 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useSettings } from '@/components/context/SettingsContext';
+import { useAssistant } from '@/components/context/AssistantContext';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
@@ -19,8 +20,15 @@ export default function QuickActions() {
     const [isOpen, setIsOpen] = useState(false);
     const { theme, branding } = useSettings();
     const navigate = useNavigate();
+    const { openAssistant } = useAssistant();
 
     const actions = [
+        { 
+            label: 'Ask AI Assistant', 
+            icon: Bot, 
+            color: 'bg-indigo-600', 
+            onClick: () => openAssistant() 
+        },
         { 
             label: 'Act Now Engine', 
             icon: Brain, 
