@@ -326,7 +326,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-auto md:h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-180px)] md:h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Smart Filter Bar & Actions */}
       <div className="mb-6 z-40 relative">
