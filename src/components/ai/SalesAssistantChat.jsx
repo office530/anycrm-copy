@@ -20,19 +20,20 @@ function MessageBubble({ message, isUser, theme }) {
                 </div>
             )}
             
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-md shadow-sm ${
+            <div className={`max-w-[85%] rounded-[1.5rem] px-5 py-3.5 backdrop-blur-md shadow-sm ${
                 isUser 
                     ? (theme === 'dark' 
-                        ? 'bg-indigo-600/80 text-white border border-indigo-500/50' 
-                        : 'bg-indigo-600/80 text-white border border-indigo-500/50')
+                        ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white border border-indigo-500/30' 
+                        : 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white border border-indigo-400/30')
                     : (theme === 'dark' 
-                        ? 'bg-slate-800/60 text-slate-100 border border-white/10' 
-                        : 'bg-white/40 text-slate-800 border border-white/40')
+                        ? 'bg-slate-800/80 text-slate-100 border border-white/5' 
+                        : 'bg-white/60 text-slate-700 border border-white/40')
             }`}>
                 <ReactMarkdown 
-                    className={`text-sm prose ${theme === 'dark' ? 'prose-invert' : ''} max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0`}
+                    className={`text-[0.95rem] font-sans tracking-wide leading-relaxed prose ${theme === 'dark' ? 'prose-invert' : 'prose-slate'} max-w-none prose-p:mb-2 prose-p:last:mb-0 prose-headings:font-bold prose-headings:text-sm prose-a:text-indigo-400 prose-a:underline hover:prose-a:text-indigo-300 transition-colors`}
                     components={{
-                        p: ({children}) => <p className="mb-1 last:mb-0 leading-relaxed">{children}</p>
+                        p: ({children}) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                        strong: ({children}) => <span className="font-bold text-indigo-200">{children}</span>
                     }}
                 >
                     {message.content}
@@ -75,7 +76,7 @@ export default function SalesAssistantChat() {
                 // Initial greeting
                 setMessages([{
                     role: 'assistant',
-                    content: "Hi! I'm your AI Sales Assistant. I can help you write emails, analyze your pipeline, or suggest next steps for your deals. How can I help you today?"
+                    content: "Hi there! I'm Anny, your personal sales assistant. ✨\n\nI can help you craft emails, analyze your deals, or just keep you organized. What's on your mind today?"
                 }]);
             } catch (error) {
                 console.error("Failed to init chat:", error);
@@ -134,7 +135,7 @@ export default function SalesAssistantChat() {
                         <div className={`p-6 rounded-full backdrop-blur-xl shadow-xl ${theme === 'dark' ? 'bg-white/5' : 'bg-white/30'}`}>
                              <Sparkles className={`h-12 w-12 ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`} />
                         </div>
-                        <p className={`font-medium ${theme === 'dark' ? 'text-indigo-200' : 'text-indigo-800'}`}>How can I help accelerate your sales?</p>
+                        <p className={`font-medium text-lg ${theme === 'dark' ? 'text-indigo-200' : 'text-indigo-800'}`}>How can I help you today?</p>
                     </div>
                 )}
                 

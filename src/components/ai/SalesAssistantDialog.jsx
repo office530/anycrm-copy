@@ -66,8 +66,8 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                                     <Bot className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h2 className={`font-bold text-lg leading-tight ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
-                                        AI Assistant
+                                    <h2 className={`font-bold text-xl leading-tight tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
+                                        Anny
                                     </h2>
                                     <AnimatePresence mode="wait">
                                         <motion.p 
