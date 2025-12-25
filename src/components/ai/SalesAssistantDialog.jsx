@@ -32,17 +32,27 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                     <div ref={constraintsRef} className="fixed inset-0 z-[100] pointer-events-none" />
                     
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20, x: 0 }}
+                        initial={{ 
+                            opacity: 0, 
+                            scale: 0.9, 
+                            y: isMobile ? "-45%" : 20, 
+                            x: isMobile ? "-50%" : 0 
+                        }}
                         animate={{ 
                             opacity: 1, 
                             scale: 1, 
-                            y: 0, 
-                            x: 0,
+                            y: isMobile ? "-50%" : 0, 
+                            x: isMobile ? "-50%" : 0,
                             height: isMinimized ? 80 : (isMobile ? '65vh' : 600),
                             width: isMinimized ? (isMobile ? '90vw' : 300) : (isMobile ? '85vw' : 450),
                             transition: { type: "spring", damping: 25, stiffness: 300 }
                         }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        exit={{ 
+                            opacity: 0, 
+                            scale: 0.9, 
+                            y: isMobile ? "-45%" : 20,
+                            x: isMobile ? "-50%" : 0 
+                        }}
                         drag={!isMobile}
                         dragConstraints={constraintsRef}
                         dragElastic={0.1}
