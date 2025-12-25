@@ -330,10 +330,10 @@ export default function LeadsPage() {
       
       <div className="flex-shrink-0 space-y-4 mb-4">
         {/* Top Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 md:gap-4">
             <StatCard icon={Users} label="Total Leads" value={stats.total} color="bg-red-100 text-red-700" />
-            <StatCard icon={CheckCircle2} label="Converted to Opportunity" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
-            <StatCard icon={Activity} label="Active in Pipeline" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
+            <StatCard icon={CheckCircle2} label="Converted" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
+            <StatCard icon={Activity} label="Active" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
         </div>
 
         {/* Smart Filter Bar */}
@@ -670,18 +670,17 @@ export default function LeadsPage() {
 function StatCard({ icon: Icon, label, value, color }) {
   const { theme } = useSettings();
   return (
-    <Card className={`border shadow-lg backdrop-blur-xl transition-colors ${
+    <Card className={`border shadow-lg backdrop-blur-xl transition-colors overflow-hidden ${
       theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
     }`}>
-            <CardContent className="p-4 flex items-center gap-4">
-                <div className={`p-3 rounded-xl ${color}`}><Icon className="w-5 h-5" /></div>
-                <div>
-                    <p className={`text-sm font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
-                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
+            <CardContent className="p-2 md:p-4 flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-4 text-center md:text-left h-full">
+                <div className={`p-1.5 md:p-3 rounded-xl flex-shrink-0 ${color}`}><Icon className="w-4 h-4 md:w-5 md:h-5" /></div>
+                <div className="min-w-0">
+                    <p className={`text-[10px] md:text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
+                    <p className={`text-sm md:text-2xl font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
                 </div>
             </CardContent>
         </Card>);
-
 }
 
 function WhatsAppBtn({ phone }) {
