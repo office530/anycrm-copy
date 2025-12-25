@@ -116,7 +116,7 @@ function LayoutContent({ children, currentPageName }) {
         fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-2xl backdrop-blur-2xl
         ${theme === 'dark' 
           ? 'bg-[#0B1121]/60 text-slate-200 border-white/10 shadow-black/40 supports-[backdrop-filter]:bg-[#0B1121]/40' 
-          : 'bg-white/80 text-slate-800 border-white/40 shadow-2xl shadow-indigo-100/40 supports-[backdrop-filter]:bg-white/70'}
+          : 'bg-gradient-to-br from-blue-50/90 via-white/80 to-rose-50/90 text-slate-700 border-white/40 shadow-2xl shadow-indigo-200/20 supports-[backdrop-filter]:bg-white/60'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative z-10">
@@ -163,10 +163,10 @@ function LayoutContent({ children, currentPageName }) {
                                   ${isActive 
                                   ? theme === 'dark' 
                                     ? `${themeColor.active} font-bold shadow-sm` 
-                                    : 'bg-gradient-to-br from-white/90 to-white/50 text-red-600 font-bold shadow-[0_8px_16px_rgba(220,38,38,0.1)] border border-white/60 backdrop-blur-md'
+                                    : 'bg-gradient-to-r from-blue-500/10 to-rose-500/10 text-indigo-700 font-bold shadow-sm border border-white/50 backdrop-blur-md'
                                   : theme === 'dark'
                                     ? `text-slate-400 hover:bg-[#1E293B] ${themeColor.hover}`
-                                    : 'text-slate-600 hover:bg-white/40 hover:text-red-600 hover:shadow-sm transition-all'}
+                                    : 'text-slate-600 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-rose-50/50 hover:text-indigo-600 transition-all'}
                               `}
                               >
                               <item.icon className={`w-5 h-5 transition-colors ${
@@ -175,7 +175,7 @@ function LayoutContent({ children, currentPageName }) {
                                   : theme === 'dark' ? `text-slate-500 group-${themeColor.hover}` : 'text-neutral-400 group-hover:text-red-600'
                               }`} />
                               <span className="relative z-10">{item.name}</span>
-                              {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full ${theme === 'dark' ? `${themeColor.indicator} shadow-lg` : 'bg-red-600'}`} />}
+                              {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full ${theme === 'dark' ? `${themeColor.indicator} shadow-lg` : 'bg-gradient-to-b from-blue-500 to-rose-500'}`} />}
                               </Link>
                           );
                         })
