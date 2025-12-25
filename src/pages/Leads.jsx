@@ -366,7 +366,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Stats Header (New!) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-6">
            <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
                theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
            }`}>
