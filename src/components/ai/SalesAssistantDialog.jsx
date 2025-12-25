@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, X, GripHorizontal } from 'lucide-react';
+import { Bot, X, GripHorizontal, Minus, Maximize2 } from 'lucide-react';
 import SalesAssistantChat from './SalesAssistantChat';
 import { useSettings } from '@/components/context/SettingsContext';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,12 @@ import { Button } from '@/components/ui/button';
 export default function SalesAssistantDialog({ open, onOpenChange }) {
     const { theme } = useSettings();
     const constraintsRef = useRef(null);
+    const [isMinimized, setIsMinimized] = useState(false);
+
+    // Reset minimized state when opened
+    React.useEffect(() => {
+        if (open) setIsMinimized(false);
+    }, [open]);
 
     return (
         <AnimatePresence>
@@ -17,15 +23,22 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                     <div ref={constraintsRef} className="fixed inset-0 z-[100] pointer-events-none" />
                     
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
-                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        initial={{ opacity: 0, scale: 0.9, y: 20, x: 0 }}
+                        animate={{ 
+                            opacity: 1, 
+                            scale: 1, 
+                            y: 0, 
+                            x: 0,
+                            height: isMinimized ? 80 : 600,
+                            width: isMinimized ? 300 : 450,
+                            transition: { type: "spring", damping: 25, stiffness: 300 }
+                        }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
                         drag
                         dragConstraints={constraintsRef}
                         dragElastic={0.1}
                         dragMomentum={false}
-                        className={`fixed bottom-24 right-4 md:right-8 z-[101] w-[90vw] md:w-[450px] h-[600px] max-h-[80vh] rounded-[2rem] overflow-hidden flex flex-col pointer-events-auto backdrop-blur-2xl border shadow-2xl ${
+                        className={`fixed bottom-24 right-4 md:right-8 z-[101] max-w-[90vw] max-h-[80vh] rounded-[2rem] overflow-hidden flex flex-col pointer-events-auto backdrop-blur-2xl border shadow-2xl ${
                             theme === 'dark' 
                                 ? 'bg-[#0B1121]/60 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]' 
                                 : 'bg-white/60 border-white/40 shadow-[0_8px_32px_rgba(31,38,135,0.15)]'
@@ -38,11 +51,14 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                         }}
                     >
                         {/* Glass Header */}
-                        <div className={`px-6 py-4 flex items-center justify-between cursor-move shrink-0 ${
-                            theme === 'dark' ? 'bg-white/5 border-b border-white/5' : 'bg-white/30 border-b border-white/20'
-                        }`}>
+                        <div 
+                            className={`px-6 py-4 flex items-center justify-between cursor-move shrink-0 h-20 ${
+                                theme === 'dark' ? 'bg-white/5 border-b border-white/5' : 'bg-white/30 border-b border-white/20'
+                            }`}
+                            onDoubleClick={() => setIsMinimized(!isMinimized)}
+                        >
                             <div className="flex items-center gap-3">
-                                <div className={`h-10 w-10 rounded-2xl flex items-center justify-center text-white shadow-lg backdrop-blur-md ${
+                                <div className={`h-10 w-10 rounded-2xl flex items-center justify-center text-white shadow-lg backdrop-blur-md transition-colors ${
                                     theme === 'dark' 
                                         ? 'bg-gradient-to-br from-indigo-500/80 to-purple-600/80 shadow-indigo-500/20' 
                                         : 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-indigo-500/30'
@@ -53,13 +69,29 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                                     <h2 className={`font-bold text-lg leading-tight ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>
                                         AI Assistant
                                     </h2>
-                                    <p className={`text-xs font-medium ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'}`}>
-                                        Online & Ready
-                                    </p>
+                                    <AnimatePresence mode="wait">
+                                        <motion.p 
+                                            key={isMinimized ? 'min' : 'full'}
+                                            initial={{ opacity: 0, y: 5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className={`text-xs font-medium ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'}`}
+                                        >
+                                            {isMinimized ? 'Click to expand' : 'Online & Ready'}
+                                        </motion.p>
+                                    </AnimatePresence>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <GripHorizontal className={`w-5 h-5 opacity-50 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                            <div className="flex items-center gap-1">
+                                <Button 
+                                    size="icon" 
+                                    variant="ghost" 
+                                    onClick={() => setIsMinimized(!isMinimized)}
+                                    className={`rounded-full h-8 w-8 hover:bg-white/20 transition-colors ${
+                                        theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                                    }`}
+                                >
+                                    {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minus className="h-4 w-4" />}
+                                </Button>
                                 <Button 
                                     size="icon" 
                                     variant="ghost" 
@@ -74,7 +106,12 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                         </div>
 
                         {/* Content */}
-                        <div className="flex-1 overflow-hidden relative">
+                        <motion.div 
+                            className="flex-1 overflow-hidden relative"
+                            animate={{ opacity: isMinimized ? 0 : 1 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ pointerEvents: isMinimized ? 'none' : 'auto' }}
+                        >
                             {/* Ambient liquid blobs inside */}
                             <div className={`absolute top-[-20%] left-[-20%] w-[300px] h-[300px] rounded-full blur-[80px] opacity-30 pointer-events-none animate-pulse ${
                                 theme === 'dark' ? 'bg-indigo-600' : 'bg-indigo-300'
@@ -84,7 +121,7 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                             }`} style={{ animationDelay: '2s' }} />
                             
                             <SalesAssistantChat />
-                        </div>
+                        </motion.div>
                     </motion.div>
                 </>
             )}
