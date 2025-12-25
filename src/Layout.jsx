@@ -68,7 +68,7 @@ function LayoutContent({ children, currentPageName }) {
 
   // Dynamic Colors based on branding
   // New "Clean Luxury Red" styling
-  const activeClass = `bg-red-50 text-red-700 font-bold`;
+  const activeClass = `bg-red-50/50 text-red-600 font-semibold`;
 
   // Custom Deep Theme for Dark Mode
   // Background: #0B1121 (Very dark blue/slate)
@@ -117,7 +117,7 @@ function LayoutContent({ children, currentPageName }) {
         fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-2xl backdrop-blur-lg md:backdrop-blur-2xl
         ${theme === 'dark' 
           ? 'bg-[#0B1121]/80 md:bg-[#0B1121]/60 text-slate-200 border-white/10 shadow-black/40 supports-[backdrop-filter]:bg-[#0B1121]/40' 
-          : 'bg-white/95 md:bg-gradient-to-br md:from-blue-50/90 md:via-white/80 md:to-rose-50/90 text-slate-700 border-white/40 shadow-2xl shadow-indigo-200/20 supports-[backdrop-filter]:bg-white/60'}
+          : 'bg-white/40 backdrop-blur-2xl md:bg-gradient-to-br md:from-blue-100/40 md:via-white/60 md:to-pink-100/40 text-slate-600 border-white/20 shadow-xl shadow-indigo-100/10'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative z-10">
@@ -167,7 +167,7 @@ function LayoutContent({ children, currentPageName }) {
                                     : 'bg-gradient-to-r from-blue-500/10 to-rose-500/10 text-indigo-700 font-bold shadow-sm border border-white/50 backdrop-blur-md'
                                   : theme === 'dark'
                                     ? `text-slate-400 hover:bg-[#1E293B] ${themeColor.hover}`
-                                    : 'text-slate-600 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-rose-50/50 hover:text-indigo-600 transition-all'}
+                                    : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600 transition-all'}
                               `}
                               >
                               <item.icon className={`w-5 h-5 transition-colors ${

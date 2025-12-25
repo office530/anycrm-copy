@@ -7,10 +7,39 @@ import { Search, ChevronRight, MoreHorizontal } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import moment from "moment";
 
+import { ChevronLeft } from "lucide-react";
+
 export default function ClientList({ clients, onSelectClient }) {
     const { theme } = useSettings();
     const isDark = theme === 'dark';
     const [search, setSearch] = useState("");
+    
+    // Scroll Logic
+    const scrollContainerRef = React.useRef(null);
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(false);
+
+    const checkScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setShowLeftArrow(scrollLeft > 0);
+            setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
+        }
+    };
+
+    React.useEffect(() => {
+        checkScroll();
+        window.addEventListener('resize', checkScroll);
+        return () => window.removeEventListener('resize', checkScroll);
+    }, [clients]);
+
+    const scroll = (direction) => {
+        if (scrollContainerRef.current) {
+            const amount = 200;
+            scrollContainerRef.current.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
+            setTimeout(checkScroll, 300);
+        }
+    };
 
     const filteredClients = clients.filter(c => 
         c.full_name?.toLowerCase().includes(search.toLowerCase()) || 
