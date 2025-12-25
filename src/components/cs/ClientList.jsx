@@ -66,7 +66,40 @@ export default function ClientList({ clients, onSelectClient }) {
                     />
                 </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="relative group/table">
+                {showLeftArrow && (
+                    <Button 
+                        variant="secondary" 
+                        size="icon" 
+                        className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 h-12 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
+                            isDark 
+                            ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
+                            : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                        }`}
+                        onClick={() => scroll('left')}
+                    >
+                        <ChevronLeft className="w-5 h-5" />
+                    </Button>
+                )}
+                {showRightArrow && (
+                    <Button 
+                        variant="secondary" 
+                        size="icon" 
+                        className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 h-12 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
+                            isDark 
+                            ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
+                            : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                        }`}
+                        onClick={() => scroll('right')}
+                    >
+                        <ChevronRight className="w-5 h-5" />
+                    </Button>
+                )}
+                <div 
+                    ref={scrollContainerRef}
+                    onScroll={checkScroll}
+                    className="overflow-x-auto scroll-smooth"
+                >
                 <Table>
                     <TableHeader className={isDark ? 'bg-slate-900/50' : 'bg-slate-50'}>
                         <TableRow className={isDark ? 'border-slate-700' : ''}>
