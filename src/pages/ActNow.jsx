@@ -138,7 +138,44 @@ export default function ActNowPage() {
             });
 
             if (res && res.recommendations) {
-                setInsights(res.recommendations);
+                // Validate and hydrate recommendations to ensure IDs and Names match real data
+                const validatedInsights = res.recommendations.map(rec => {
+                    let realRecord = null;
+                    
+                    // 1. Try to match by ID first (Priority)
+                    if (rec.type === 'Lead') {
+                        realRecord = leads.find(l => l.id === rec.id);
+                    } else if (rec.type === 'Opportunity') {
+                        realRecord = opportunities.find(o => o.id === rec.id);
+                    }
+
+                    // If found by ID, correct the name to ensure consistency
+                    if (realRecord) {
+                         const realName = rec.type === 'Lead' ? realRecord.full_name : (realRecord.lead_name || "Unknown Opportunity");
+                         return { ...rec, target: realName };
+                    }
+
+                    // 2. If ID match failed, try to match by Name (Fallback)
+                    // This handles cases where LLM hallucinated the ID but got the name right
+                    if (!realRecord) {
+                        if (rec.type === 'Lead') {
+                            realRecord = leads.find(l => l.full_name && l.full_name.toLowerCase() === rec.target.toLowerCase());
+                        } else if (rec.type === 'Opportunity') {
+                            realRecord = opportunities.find(o => o.lead_name && o.lead_name.toLowerCase() === rec.target.toLowerCase());
+                        }
+                        
+                        // If found by Name, correct the ID
+                        if (realRecord) {
+                            return { ...rec, id: realRecord.id };
+                        }
+                    }
+
+                    // 3. If neither found, it might be a hallucination or stale data
+                    // We keep it as is, but it might result in a broken link
+                    return rec;
+                });
+
+                setInsights(validatedInsights);
             }
 
         } catch (error) {
