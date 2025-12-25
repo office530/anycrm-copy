@@ -16,7 +16,7 @@ export default function SecurityInfoModal() {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className={`max-w-md border-0 shadow-2xl overflow-hidden p-0 rounded-2xl ${
+            <DialogContent className={`max-w-md border-0 shadow-2xl overflow-hidden p-0 rounded-2xl [&>button]:hidden ${
                 theme === 'dark' ? 'bg-slate-900 text-white ring-1 ring-white/10' : 'bg-white text-slate-900 ring-1 ring-black/5'
             }`}>
                 {/* Header Graphic Area */}
@@ -94,17 +94,6 @@ export default function SecurityInfoModal() {
                     </div>
                 </div>
                 
-                {/* Close Button Absolute */}
-                <button 
-                    onClick={() => setIsOpen(false)}
-                    className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${
-                        theme === 'dark' 
-                        ? 'text-white/50 hover:bg-white/10 hover:text-white' 
-                        : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
-                    }`}
-                >
-                    <X className="w-5 h-5" />
-                </button>
             </DialogContent>
         </Dialog>
     );
