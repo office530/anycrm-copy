@@ -3,7 +3,7 @@ import {
     ArrowLeft, MoreHorizontal, Sparkles, Zap, 
     MessageSquare, User, Send, X, ChevronDown,
     Bold, Italic, List, Link as LinkIcon, AlertTriangle,
-    CheckCircle2, AlertCircle, Info, Split
+    CheckCircle2, AlertCircle, Info, Split, Save
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -142,8 +142,37 @@ export default function SmartEmailEditor() {
         { role: "system", text: "Simulation ready." }
     ]);
     const [isSimulating, setIsSimulating] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const quillRef = useRef(null);
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const templateData = {
+                name: templateName,
+                subject_line: subject,
+                body_content: content,
+                ai_resonance_score: resonanceScore,
+                channel: 'EMAIL' // Default for now
+            };
+
+            if (templateId && !templateId.startsWith('t_')) {
+                await base44.entities.MarketingTemplate.update(templateId, templateData);
+                toast.success("Template updated successfully");
+            } else {
+                const newTemplate = await base44.entities.MarketingTemplate.create(templateData);
+                toast.success("Template created successfully");
+                // Optional: redirect to edit mode with new ID, but for now just stay or go back
+                // navigate(`${createPageUrl('TemplateEditor')}?id=${newTemplate.id}`, { replace: true });
+            }
+        } catch (error) {
+            console.error("Failed to save template:", error);
+            toast.error("Failed to save template");
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     // Fetch CRM Data
     const { data: leads = [] } = useQuery({ 
@@ -363,6 +392,16 @@ export default function SmartEmailEditor() {
                         <div className={`w-2 h-2 rounded-full ${scoreMeta.dot}`} />
                         <span className={scoreMeta.text}>{resonanceScore}% Score</span>
                     </div>
+
+                    <Button 
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        size="sm"
+                        className={`rounded-full px-4 shadow-sm text-white ${theme === 'dark' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-emerald-600 hover:bg-emerald-700'}`}
+                    >
+                        {isSaving ? <Save className="w-3.5 h-3.5 mr-2 animate-spin" /> : <Save className="w-3.5 h-3.5 mr-2" />}
+                        Save
+                    </Button>
 
                     <Button 
                         onClick={handleAutoTune}

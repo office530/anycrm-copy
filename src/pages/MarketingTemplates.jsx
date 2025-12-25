@@ -2,11 +2,12 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
-import { Plus, Mail, MessageSquare, Edit2, Trash2, LayoutTemplate } from 'lucide-react';
+import { Plus, Mail, MessageSquare, Edit2, Trash2, LayoutTemplate, Filter, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSettings } from '@/components/context/SettingsContext';
 
 const MOCK_TEMPLATES = [
@@ -49,12 +50,23 @@ export default function MarketingTemplates() {
     const navigate = useNavigate();
     const { theme } = useSettings();
 
+    const [selectedUser, setSelectedUser] = React.useState('all');
+
     const { data: dbTemplates = [], isLoading } = useQuery({
         queryKey: ['marketing_templates'],
         queryFn: () => base44.entities.MarketingTemplate.list(),
     });
 
-    const templates = [...MOCK_TEMPLATES, ...dbTemplates];
+    const { data: users = [] } = useQuery({
+        queryKey: ['users'],
+        queryFn: () => base44.entities.User.list(),
+    });
+
+    const templates = [...MOCK_TEMPLATES, ...dbTemplates].filter(t => {
+        if (selectedUser === 'all') return true;
+        if (t.id.startsWith('t_')) return false; 
+        return t.created_by === selectedUser;
+    });
 
     // Theme Variables
     const textMain = theme === 'dark' ? 'text-white' : 'text-slate-900';
@@ -71,9 +83,25 @@ export default function MarketingTemplates() {
                     <h1 className={`text-3xl font-bold ${textMain}`}>Marketing Templates</h1>
                     <p className={textSub}>Manage your email and message templates.</p>
                 </div>
-                <Button onClick={() => navigate(createPageUrl('TemplateEditor'))} className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="w-4 h-4 mr-2" /> New Template
-                </Button>
+                <div className="flex items-center gap-3">
+                    <div className="w-[200px]">
+                        <Select value={selectedUser} onValueChange={setSelectedUser}>
+                            <SelectTrigger className={theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : 'bg-white border-slate-200'}>
+                                <User className="w-4 h-4 mr-2 opacity-50" />
+                                <SelectValue placeholder="Filter by user" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Users</SelectItem>
+                                {users.map(u => (
+                                    <SelectItem key={u.id} value={u.email}>{u.full_name || u.email}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Button onClick={() => navigate(createPageUrl('TemplateEditor'))} className="bg-blue-600 hover:bg-blue-700">
+                        <Plus className="w-4 h-4 mr-2" /> New Template
+                    </Button>
+                </div>
             </div>
 
             {isLoading ? (
