@@ -12,6 +12,7 @@ export default function CommandPalette() {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const { theme } = useSettings();
+    const { openAssistant } = useAssistant();
 
     useEffect(() => {
         const down = (e) => {
