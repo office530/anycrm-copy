@@ -66,49 +66,47 @@ export default function MobileBottomNav({ activePage }) {
                             }`} />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center" side="top" className={`mb-4 ${theme === 'dark' ? 'bg-slate-900/95 border-slate-700 text-slate-200 backdrop-blur-xl' : 'bg-white/95 backdrop-blur-xl'}`}>
+                    <DropdownMenuContent align="center" side="top" className={`mb-4 w-60 p-2 ${theme === 'dark' ? 'bg-slate-900/95 border-slate-700 text-slate-200 backdrop-blur-xl' : 'bg-white/95 backdrop-blur-xl border-slate-200'}`}>
                         <DropdownMenuItem asChild>
                              <button 
                                  onClick={() => openAssistant()} 
-                                 className={`cursor-pointer flex items-center gap-2 w-full font-bold ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`}
+                                 className={`cursor-pointer flex items-center gap-3 w-full p-2.5 rounded-lg font-medium transition-all ${theme === 'dark' ? 'text-indigo-300 hover:bg-indigo-500/10' : 'text-indigo-600 hover:bg-indigo-50'}`}
                              >
-                                <Bot className="w-4 h-4" /> Ask AI Assistant
+                                <Bot className="w-5 h-5" /> Ask AI Assistant
                              </button>
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        
+                        <DropdownMenuSeparator className={theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'} />
+                        
                         <DropdownMenuItem asChild>
-                             <button 
-                                 onClick={() => openAssistant()} 
-                                 className="cursor-pointer flex items-center gap-2 w-full"
-                             >
-                                <Bot className="w-4 h-4" /> Ask AI Assistant
-                             </button>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                             <Link to={createPageUrl('ActNow')} className={`cursor-pointer flex items-center gap-2 font-bold ${
+                             <Link to={createPageUrl('ActNow')} className={`cursor-pointer flex items-center gap-3 w-full p-2.5 rounded-lg font-medium transition-all ${
                                  theme === 'dark' 
-                                 ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400' 
-                                 : 'text-indigo-600'
+                                 ? 'text-cyan-400 hover:bg-cyan-500/10' 
+                                 : 'text-cyan-600 hover:bg-cyan-50'
                              }`}>
-                                <Brain className={`w-4 h-4 ${theme === 'dark' ? 'text-cyan-400' : 'text-indigo-600'}`} /> Act Now Engine
+                                <Brain className="w-5 h-5" /> Act Now Engine
                              </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        
+                        <DropdownMenuSeparator className={theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'} />
+                        
                         <DropdownMenuItem asChild>
-                             <Link to={`${createPageUrl('Leads')}?action=new`} className="cursor-pointer flex items-center gap-2">
-                                <Users className="w-4 h-4" /> New Lead
+                             <Link to={`${createPageUrl('Leads')}?action=new`} className={`cursor-pointer flex items-center gap-3 w-full p-2.5 rounded-lg font-medium transition-all ${theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-slate-50 text-slate-700'}`}>
+                                <Users className="w-5 h-5 opacity-70" /> New Lead
                              </Link>
                         </DropdownMenuItem>
+                        
                         <DropdownMenuItem asChild>
-                             <Link to={`${createPageUrl('Opportunities')}?action=new`} className="cursor-pointer flex items-center gap-2">
-                                <Briefcase className="w-4 h-4" /> New Opportunity
+                             <Link to={`${createPageUrl('Opportunities')}?action=new`} className={`cursor-pointer flex items-center gap-3 w-full p-2.5 rounded-lg font-medium transition-all ${theme === 'dark' ? 'hover:bg-slate-800' : 'hover:bg-slate-50 text-slate-700'}`}>
+                                <Briefcase className="w-5 h-5 opacity-70" /> New Opportunity
                              </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        
+                        <DropdownMenuSeparator className={theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'} />
+                        
                         <DropdownMenuItem asChild>
-                             <Link to={`${createPageUrl('Leads')}?action=ai-import`} className="cursor-pointer flex items-center gap-2 text-purple-700 bg-gradient-to-r from-purple-50 to-blue-50">
-                                <Sparkles className="w-4 h-4" /> Import AI Lead
+                             <Link to={`${createPageUrl('Leads')}?action=ai-import`} className={`cursor-pointer flex items-center gap-3 w-full p-2.5 rounded-lg font-medium transition-all ${theme === 'dark' ? 'text-purple-300 hover:bg-purple-500/10' : 'text-purple-600 hover:bg-purple-50'}`}>
+                                <Sparkles className="w-5 h-5" /> Import AI Lead
                              </Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
