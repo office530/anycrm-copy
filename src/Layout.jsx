@@ -116,7 +116,7 @@ function LayoutContent({ children, currentPageName }) {
         fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-2xl backdrop-blur-2xl
         ${theme === 'dark' 
           ? 'bg-[#0B1121]/60 text-slate-200 border-white/10 shadow-black/40 supports-[backdrop-filter]:bg-[#0B1121]/40' 
-          : 'bg-white/60 text-neutral-800 border-white/60 shadow-xl shadow-rose-100/30 supports-[backdrop-filter]:bg-white/40'}
+          : 'bg-white/80 text-slate-800 border-white/40 shadow-2xl shadow-indigo-100/40 supports-[backdrop-filter]:bg-white/70'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative z-10">
@@ -163,10 +163,10 @@ function LayoutContent({ children, currentPageName }) {
                                   ${isActive 
                                   ? theme === 'dark' 
                                     ? `${themeColor.active} font-bold shadow-sm` 
-                                    : 'bg-red-50 text-red-700 font-bold shadow-sm'
+                                    : 'bg-gradient-to-br from-white/90 to-white/50 text-red-600 font-bold shadow-[0_8px_16px_rgba(220,38,38,0.1)] border border-white/60 backdrop-blur-md'
                                   : theme === 'dark'
                                     ? `text-slate-400 hover:bg-[#1E293B] ${themeColor.hover}`
-                                    : 'text-neutral-600 hover:bg-red-50 hover:text-red-600 bg-neutral-50/50 lg:bg-transparent'}
+                                    : 'text-slate-600 hover:bg-white/40 hover:text-red-600 hover:shadow-sm transition-all'}
                               `}
                               >
                               <item.icon className={`w-5 h-5 transition-colors ${
