@@ -4,6 +4,7 @@ import { createPageUrl } from '@/utils';
 import { 
   LayoutDashboard, Users, Briefcase, Menu, X, Search, Bell, Zap, BarChart3, LogOut, Settings as SettingsIcon, Sun, Moon, Database, CheckSquare, Sparkles, Brain, Globe, GitFork, Mail
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SettingsProvider, useSettings } from '@/components/context/SettingsContext';
@@ -285,7 +286,24 @@ function LayoutContent({ children, currentPageName }) {
         {/* Page Content Scrollable Area - Transparent for blobs */}
         <main className={`flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth transition-colors duration-300 bg-transparent`}>
             <div className="max-w-7xl mx-auto">
-                {children}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentPageName}
+                        initial={{ opacity: 0, y: 10, scale: 0.98, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, y: -10, scale: 0.98, filter: 'blur(10px)' }}
+                        transition={{ 
+                            type: "spring", 
+                            stiffness: 100, 
+                            damping: 20, 
+                            mass: 0.5,
+                            duration: 0.4
+                        }}
+                        className="h-full"
+                    >
+                        {children}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </main>
         
