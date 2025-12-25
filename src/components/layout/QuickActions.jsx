@@ -24,7 +24,7 @@ export default function QuickActions() {
 
     const actions = [
         { 
-            label: 'Ask AI Assistant', 
+            label: 'Ask Anny', 
             icon: Bot, 
             // Neon Cyan - Super Bright
             neonClass: 'text-cyan-300 drop-shadow-[0_0_10px_rgba(34,211,238,1)] filter',
