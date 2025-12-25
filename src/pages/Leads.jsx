@@ -326,7 +326,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`flex flex-col h-full md:h-[calc(100vh-140px)] font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       <div className="flex-shrink-0 space-y-4 mb-4">
         {/* Top Stats Cards */}
