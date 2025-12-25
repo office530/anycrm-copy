@@ -33,7 +33,7 @@ export default function LeadsPage() {
   const { canCreate, canEdit, canDelete } = usePermissions();
   const { leadStatuses, theme } = useSettings();
   const location = useLocation();
-
+  
   // Custom statuses to match LeadForm exactly - with Neon support for Dark Mode
   const displayStatuses = useMemo(() => {
     if (theme === 'dark') {
@@ -55,8 +55,8 @@ export default function LeadsPage() {
       { value: "Lost / Unqualified", label: "Lost / Unqualified", color: "bg-slate-100 text-slate-500 border-slate-200" }
     ];
   }, [theme]);
-
-
+  
+  
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [viewMode, setViewMode] = useState('kanban'); // Default to kanban view
@@ -166,7 +166,7 @@ export default function LeadsPage() {
              Action Required 
              {actionRequiredCount > 0 && <span className="flex h-2 w-2 rounded-full bg-red-500" />}
           </span>
-      ) }
+      ) },
   ];
 
   const handleViewChange = (viewId) => {
@@ -326,7 +326,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)] overflow-hidden' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       <div className="flex-shrink-0 space-y-4 mb-4">
         {/* Top Stats Cards */}
