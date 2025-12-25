@@ -26,77 +26,77 @@ export default function QuickActions() {
         { 
             label: 'Ask AI Assistant', 
             icon: Bot, 
-            // Neon Cyan
-            neonClass: 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]',
-            borderClass: 'border-cyan-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(34,211,238,0.3)]',
-            bgClass: 'bg-cyan-400/10',
+            // Neon Cyan - Super Bright
+            neonClass: 'text-cyan-300 drop-shadow-[0_0_10px_rgba(34,211,238,1)] filter',
+            borderClass: 'border-cyan-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(34,211,238,0.5),inset_0_0_20px_rgba(34,211,238,0.2)]',
+            bgClass: 'bg-cyan-400/20',
             lightClass: 'text-cyan-600',
             onClick: () => openAssistant() 
         },
         { 
             label: 'Act Now Engine', 
             icon: Brain, 
-            // Neon Violet
-            neonClass: 'text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.8)]',
-            borderClass: 'border-violet-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(167,139,250,0.3)]',
-            bgClass: 'bg-violet-400/10',
+            // Neon Violet - Super Bright
+            neonClass: 'text-violet-300 drop-shadow-[0_0_10px_rgba(167,139,250,1)] filter',
+            borderClass: 'border-violet-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(167,139,250,0.5),inset_0_0_20px_rgba(167,139,250,0.2)]',
+            bgClass: 'bg-violet-400/20',
             lightClass: 'text-violet-600',
             onClick: () => navigate(createPageUrl('ActNow')) 
         },
         { 
             label: 'Import AI Lead', 
             icon: Sparkles, 
-            // Neon Pink
-            neonClass: 'text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]',
-            borderClass: 'border-fuchsia-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(232,121,249,0.3)]',
-            bgClass: 'bg-fuchsia-400/10',
+            // Neon Pink - Super Bright
+            neonClass: 'text-fuchsia-300 drop-shadow-[0_0_10px_rgba(232,121,249,1)] filter',
+            borderClass: 'border-fuchsia-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(232,121,249,0.5),inset_0_0_20px_rgba(232,121,249,0.2)]',
+            bgClass: 'bg-fuchsia-400/20',
             lightClass: 'text-fuchsia-600',
             onClick: () => navigate(createPageUrl('Leads') + '?action=ai-import') 
         },
         { 
             label: 'New Task', 
             icon: CheckSquare, 
-            // Neon Emerald/Lime
-            neonClass: 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]',
-            borderClass: 'border-emerald-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(52,211,153,0.3)]',
-            bgClass: 'bg-emerald-400/10',
+            // Neon Emerald/Lime - Super Bright
+            neonClass: 'text-emerald-300 drop-shadow-[0_0_10px_rgba(52,211,153,1)] filter',
+            borderClass: 'border-emerald-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(52,211,153,0.5),inset_0_0_20px_rgba(52,211,153,0.2)]',
+            bgClass: 'bg-emerald-400/20',
             lightClass: 'text-emerald-600',
             onClick: () => navigate(createPageUrl('Tasks') + '?action=new') 
         },
         { 
             label: 'Send Campaign', 
             icon: Mail, 
-            // Neon Purple
-            neonClass: 'text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]',
-            borderClass: 'border-purple-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(192,132,252,0.3)]',
-            bgClass: 'bg-purple-400/10',
+            // Neon Purple - Super Bright
+            neonClass: 'text-purple-300 drop-shadow-[0_0_10px_rgba(192,132,252,1)] filter',
+            borderClass: 'border-purple-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(192,132,252,0.5),inset_0_0_20px_rgba(192,132,252,0.2)]',
+            bgClass: 'bg-purple-400/20',
             lightClass: 'text-purple-600',
             onClick: () => navigate(createPageUrl('SequenceBuilder')) 
         },
         { 
             label: 'New Opportunity', 
             icon: Briefcase, 
-            // Neon Amber/Orange
-            neonClass: 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]',
-            borderClass: 'border-amber-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(251,191,36,0.3)]',
-            bgClass: 'bg-amber-400/10',
+            // Neon Amber - Super Bright
+            neonClass: 'text-amber-300 drop-shadow-[0_0_10px_rgba(251,191,36,1)] filter',
+            borderClass: 'border-amber-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(251,191,36,0.5),inset_0_0_20px_rgba(251,191,36,0.2)]',
+            bgClass: 'bg-amber-400/20',
             lightClass: 'text-amber-600',
             onClick: () => navigate(createPageUrl('Opportunities') + '?action=new') 
         },
         { 
             label: 'Add Lead', 
             icon: UserPlus, 
-            // Neon Blue
-            neonClass: 'text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]',
-            borderClass: 'border-blue-400/50',
-            glowClass: 'shadow-[0_0_20px_rgba(96,165,250,0.3)]',
-            bgClass: 'bg-blue-400/10',
+            // Neon Blue - Super Bright
+            neonClass: 'text-blue-300 drop-shadow-[0_0_10px_rgba(96,165,250,1)] filter',
+            borderClass: 'border-blue-300/80',
+            glowClass: 'shadow-[0_0_30px_rgba(96,165,250,0.5),inset_0_0_20px_rgba(96,165,250,0.2)]',
+            bgClass: 'bg-blue-400/20',
             lightClass: 'text-blue-600',
             onClick: () => navigate(createPageUrl('Leads') + '?action=new') 
         },
@@ -142,14 +142,14 @@ export default function QuickActions() {
                                         action.onClick();
                                         setIsOpen(false);
                                     }}
-                                    className={`h-14 w-14 rounded-[1.2rem] backdrop-blur-3xl transition-all duration-300 group-hover:scale-110 relative overflow-hidden ${
+                                    className={`h-14 w-14 rounded-[1.2rem] backdrop-blur-3xl transition-all duration-300 group-hover:scale-110 relative overflow-visible ${
                                         theme === 'dark' 
-                                            ? `bg-[#0B1121] ${action.borderClass} border-2 ${action.glowClass}` 
+                                            ? `bg-[#0B1121]/80 ${action.borderClass} border-2 ${action.glowClass}` 
                                             : `bg-white border-2 border-slate-100 shadow-xl`
                                     }`}
                                 >
                                     {/* Inner Color Background */}
-                                    <div className={`absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500 ${action.bgClass}`} />
+                                    <div className={`absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500 ${action.bgClass}`} />
                                     
                                     {/* Icon with specific neon color */}
                                     <action.icon className={`w-6 h-6 relative z-10 ${
