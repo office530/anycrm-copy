@@ -20,6 +20,7 @@ import ForecastWidget from '@/components/dashboard/ForecastWidget';
 import LeaderboardWidget from '@/components/dashboard/LeaderboardWidget';
 import StagnantDealsWidget from '@/components/dashboard/StagnantDealsWidget';
 import AddWidgetDialog from '@/components/dashboard/AddWidgetDialog';
+import SecurityInfoModal from '@/components/dashboard/SecurityInfoModal';
 import { useSettings } from '@/components/context/SettingsContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -452,6 +453,8 @@ export default function Dashboard() {
           setShowAddWidget(false);
         }} 
       />
+
+      <SecurityInfoModal />
     </div>);
 
 }
