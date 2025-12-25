@@ -85,14 +85,14 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
+                className={`absolute -right-4 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full shadow-xl border transition-all ${
                   theme === 'dark' 
                     ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
-                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                    : 'bg-white/80 backdrop-blur-md border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-white'
                 }`}
                 onClick={() => scroll('right')}
             >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-6 h-6" />
             </Button>
           )}
           
@@ -100,14 +100,14 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
+                className={`absolute -left-4 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full shadow-xl border transition-all ${
                   theme === 'dark' 
                     ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
-                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                    : 'bg-white/80 backdrop-blur-md border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-white'
                 }`}
                 onClick={() => scroll('left')}
             >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-6 h-6" />
             </Button>
           )}
 
@@ -144,7 +144,7 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] transition-colors rounded-xl ${
+                    className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] transition-colors rounded-xl custom-scrollbar ${
                       snapshot.isDraggingOver
                         ? theme === 'dark' ? 'bg-slate-800/50 ring-2 ring-dashed ring-slate-600' : 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' 
                         : ''
