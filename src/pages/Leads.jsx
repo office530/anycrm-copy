@@ -326,7 +326,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100dvh-180px)] md:h-[calc(100vh-140px)]' : 'min-h-full pb-24 md:pb-0'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'min-h-[calc(100dvh-100px)] md:h-[calc(100vh-140px)]' : 'min-h-full pb-24 md:pb-0'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Smart Filter Bar & Actions */}
       <div className="mb-6 z-40 relative">
@@ -366,7 +366,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Stats Header (New!) */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
            <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
                theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
            }`}>
@@ -414,7 +414,7 @@ export default function LeadsPage() {
 
       {/* --- תצוגת קאנבן --- */}
       {viewMode === 'kanban' && (
-        <div className="flex-1 min-h-0">
+        <div className="h-[75vh] md:h-auto md:flex-1 md:min-h-0 w-full overflow-hidden">
             <LeadsKanban 
                 leads={filteredLeads} 
                 statuses={displayStatuses}
