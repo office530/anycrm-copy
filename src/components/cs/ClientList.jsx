@@ -149,5 +149,6 @@ export default function ClientList({ clients, onSelectClient }) {
                 </Table>
             </div>
         </div>
+        </div>
     );
 }
