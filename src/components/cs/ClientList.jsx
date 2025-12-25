@@ -3,11 +3,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronRight, MoreHorizontal } from "lucide-react";
+import { Search, ChevronRight, ChevronLeft, MoreHorizontal } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import moment from "moment";
-
-import { ChevronLeft } from "lucide-react";
 
 export default function ClientList({ clients, onSelectClient }) {
     const { theme } = useSettings();
