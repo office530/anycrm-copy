@@ -328,71 +328,88 @@ export default function LeadsPage() {
   return (
     <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)] overflow-hidden' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
-      <div className="flex-shrink-0 space-y-4 mb-4">
-        {/* Top Stats Cards */}
-        <div className="grid grid-cols-3 gap-2 md:gap-4">
-            <StatCard icon={Users} label="Total Leads" value={stats.total} color="bg-red-100 text-red-700" />
-            <StatCard icon={CheckCircle2} label="Converted" value={`${stats.conversionRate}%`} color="bg-emerald-100 text-emerald-700" />
-            <StatCard icon={Activity} label="Active" value={leads.filter((l) => !l.lead_status.includes('Converted')).length} color="bg-slate-100 text-slate-700" />
-        </div>
-
-        {/* Smart Filter Bar */}
-        <div className="z-40 mx-2 md:mx-0">
-                <SmartFilterBar 
-                    views={views}
-                    activeView={activeView}
-                    onViewChange={handleViewChange}
-                    schema={filterSchema}
-                    filters={activeFilters}
-                    onFilterChange={setActiveFilters}
-                    search={search}
-                    onSearchChange={setSearch}
+      {/* Smart Filter Bar & Actions */}
+      <div className="mb-6 z-40 relative">
+        <SmartFilterBar 
+            views={views}
+            activeView={activeView}
+            onViewChange={handleViewChange}
+            schema={filterSchema}
+            filters={activeFilters}
+            onFilterChange={setActiveFilters}
+            search={search}
+            onSearchChange={setSearch}
+        >
+            {canCreate && (
+            <div className="flex gap-2">
+                <Button 
+                    onClick={() => setShowAiImport(true)}
+                    size="sm"
+                    className={`h-8 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
+                        theme === 'dark' ? 'text-purple-300' : ''
+                    }`}
                 >
-                {/* View Toggle */}
-                <div className={`h-8 p-0.5 rounded-lg flex border shadow-sm backdrop-blur-md ${
-                    theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
-                    }`}>
-                    <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={`h-full rounded-md px-2 ${
-                        viewMode === 'kanban' 
-                        ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                        : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
-                    }`}>
-                        <LayoutGrid className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={`h-full rounded-md px-2 ${
-                        viewMode === 'list' 
-                        ? theme === 'dark' ? 'bg-slate-700 text-cyan-400' : 'bg-slate-100 text-slate-900'
-                        : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500'
-                    }`}>
-                        <ListIcon className="w-3.5 h-3.5" />
-                    </Button>
-                    </div>
+                    <Sparkles className="w-3.5 h-3.5 md:mr-2" />
+                    <span className="hidden md:inline text-xs font-medium">AI Import</span>
+                </Button>
+                <Button size="sm" onClick={() => setShowLeadForm(true)} className={`h-8 rounded-lg shadow-lg shadow-indigo-500/20 ${
+                    theme === 'dark' 
+                    ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
+                    : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                }`}>
+                    <Plus className="w-4 h-4 md:mr-1" />
+                    <span className="hidden md:inline text-xs font-medium">New</span>
+                </Button>
+            </div>
+            )}
+        </SmartFilterBar>
+      </div>
 
-                {/* Actions */}
-                {canCreate && (
-                <div className="flex gap-2">
-                    <Button 
-                        onClick={() => setShowAiImport(true)}
-                        size="sm"
-                        className={`h-8 rounded-lg border border-transparent bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-purple-600 hover:from-purple-500/20 hover:to-blue-500/20 ${
-                            theme === 'dark' ? 'text-purple-300' : ''
-                        }`}
-                    >
-                        <Sparkles className="w-3.5 h-3.5 md:mr-2" />
-                        <span className="hidden md:inline text-xs font-medium">AI Import</span>
-                    </Button>
-                    <Button size="sm" onClick={() => setShowLeadForm(true)} className={`h-8 rounded-lg shadow-lg shadow-indigo-500/20 ${
-                        theme === 'dark' 
-                        ? 'bg-indigo-600 hover:bg-indigo-500 text-white' 
-                        : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                    }`}>
-                        <Plus className="w-4 h-4 md:mr-1" />
-                        <span className="hidden md:inline text-xs font-medium">New</span>
-                    </Button>
-                </div>
-                )}
-                </SmartFilterBar>
-        </div>
+      {/* Stats Header (New!) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+           <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
+               theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
+           }`}>
+              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-600'}`}><Users className="w-5 h-5"/></div>
+              <div>
+                  <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Total Leads</div>
+                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.total}</div>
+              </div>
+           </div>
+           <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
+               theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
+           }`}>
+              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-600'}`}><CheckCircle2 className="w-5 h-5"/></div>
+              <div>
+                  <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Converted</div>
+                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{stats.conversionRate}%</div>
+              </div>
+           </div>
+           <div className={`p-4 rounded-2xl border flex items-center gap-3 shadow-lg backdrop-blur-xl transition-colors ${
+               theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
+           }`}>
+              <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-100 text-purple-600'}`}><Activity className="w-5 h-5"/></div>
+              <div>
+                  <div className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'}`}>Active</div>
+                  <div className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-neutral-900'}`}>{leads.filter((l) => !l.lead_status.includes('Converted')).length}</div>
+              </div>
+           </div>
+           <div className="flex items-center justify-end gap-2">
+             <div className={`p-1 rounded-xl border shadow-sm flex gap-1 h-fit transition-colors ${
+                 theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-neutral-200'
+             }`}>
+                 <Button variant="ghost" size="sm" onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' 
+                     ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
+                     : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
+                     <LayoutGrid className="w-4 h-4 mr-2" /> Board
+                 </Button>
+                 <Button variant="ghost" size="sm" onClick={() => setViewMode('list')} className={viewMode === 'list' 
+                     ? theme === 'dark' ? 'bg-slate-700 text-cyan-400 shadow-sm' : 'bg-neutral-100 text-neutral-900 shadow-sm'
+                     : theme === 'dark' ? 'text-slate-400 hover:text-cyan-400' : 'text-neutral-500'}>
+                     <ListIcon className="w-4 h-4 mr-2" /> List
+                 </Button>
+             </div>
+           </div>
       </div>
 
       {/* --- תצוגת קאנבן --- */}

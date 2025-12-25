@@ -169,65 +169,62 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                             <div className={`absolute top-0 right-0 w-1 h-full ${colorClass}`} />
                             
                             <CardContent className="p-3 space-y-2">
-                              <div className="flex justify-between items-start">
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] ${
-                                      theme === 'dark' 
-                                        ? status.color.includes('red') ? 'bg-red-900/50 text-red-200' : 'bg-slate-700 text-slate-300'
-                                        : status.color.includes('red') ? 'bg-red-50 text-red-700' : 'bg-slate-100 text-slate-600'
-                                    }`}>
-                                        {lead.full_name?.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <h4 className={`font-bold text-sm line-clamp-1 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{lead.full_name}</h4>
-                                        <p className={`text-[10px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{lead.city || 'No address'}</p>
-                                        
-                                        {/* Activity & Stale Indicators */}
-                                        <div className="flex flex-col gap-0.5 mt-1">
-                                            {getLastActivityDate(lead.id) ? (
-                                              <div className="text-[10px] text-emerald-600 flex items-center gap-1">
-                                                ✓ Activity: {moment(getLastActivityDate(lead.id)).format('DD/MM')}
-                                              </div>
-                                            ) : (
-                                              <div className={`text-[10px] flex items-center gap-1 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
-                                                <Clock className="w-3 h-3" /> No activity
-                                              </div>
-                                            )}
-                                            
-                                            {/* Stale Warning: Not updated in 7 days & not converted/lost */}
-                                            {moment(lead.updated_date).isBefore(moment().subtract(7, 'days')) && 
-                                             !['Converted', 'Lost / Unqualified'].includes(lead.lead_status) && (
-                                                <div className="text-[10px] text-amber-500 flex items-center gap-1 font-medium animate-pulse">
-                                                    <AlertCircle className="w-3 h-3" /> Stale ({moment(lead.updated_date).fromNow(true)})
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                                {lead.phone_number && (
-                                    <a href={`tel:${lead.phone_number}`} onClick={(e) => e.stopPropagation()} className="p-2 bg-green-50 text-green-600 rounded-full hover:bg-green-100">
-                                        <Phone className="w-4 h-4" />
-                                    </a>
-                                )}
-                              </div>
-                              
-                              {/* Quick Actions */}
-                              <div className={`flex justify-between items-center pt-2 border-t mt-2 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-50'}`}>
-                                 <div className="flex gap-1">
-                                    <Button variant="ghost" size="icon" className={`h-7 w-7 hover:text-red-600 ${theme === 'dark' ? 'text-slate-500 hover:bg-slate-700' : 'text-slate-400'}`}
-                                        onClick={(e) => { e.stopPropagation(); onDelete(lead.id); }}>
+                                <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex gap-1">
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if(window.confirm('Are you sure you want to delete this lead?')) onDelete(lead.id);
+                                        }}
+                                    >
                                         <Trash2 className="w-3 h-3" />
                                     </Button>
-                                 </div>
-                                 
-                                 {status.value !== 'Converted' && (
-                                     <Button size="sm" variant="ghost" className="h-7 text-xs text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 gap-1"
-                                        onClick={(e) => { e.stopPropagation(); onConvert(lead); }}>
-                                        <CheckCircle2 className="w-3 h-3" />
-                                        Convert
-                                     </Button>
-                                 )}
-                              </div>
+                                    {status.value !== 'Converted' && (
+                                      <Button variant="ghost" size="icon" className="h-6 w-6 text-neutral-400 hover:text-emerald-600 hover:bg-emerald-50"
+                                          onClick={(e) => {
+                                              e.stopPropagation();
+                                              onConvert(lead);
+                                          }}
+                                          title="Convert"
+                                      >
+                                          <CheckCircle2 className="w-3 h-3" />
+                                      </Button>
+                                    )}
+                                </div>
+
+                                <div className={`text-sm font-bold transition-colors truncate ${theme === 'dark' ? 'text-white group-hover:text-teal-400' : 'text-neutral-800 group-hover:text-teal-600'}`}>
+                                  {lead.full_name || "Unnamed Lead"}
+                                </div>
+
+                                {lead.phone_number && (
+                                  <div className={`flex items-center gap-1.5 text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-700'}`}>
+                                    <Phone className={`w-3 h-3 ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`} />
+                                    {lead.phone_number}
+                                  </div>
+                                )}
+
+                                {(lead.city || lead.notes) && (
+                                  <div className={`text-[10px] p-1.5 rounded-md line-clamp-2 leading-tight ${theme === 'dark' ? 'text-slate-400 bg-slate-900/50' : 'text-neutral-600 bg-neutral-50'}`}>
+                                    {lead.notes || lead.city}
+                                  </div>
+                                )}
+
+                                {getLastActivityDate(lead.id) ? (
+                                  <div className={`flex items-center gap-1.5 text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-500'}`}>
+                                    <Clock className="w-3 h-3" />
+                                    <span>Last Activity: {moment(getLastActivityDate(lead.id)).format('DD/MM')}</span>
+                                  </div>
+                                ) : (
+                                  <div className={`flex items-center gap-1.5 text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`}>
+                                    <Clock className="w-3 h-3" /> No activity
+                                  </div>
+                                )}
+                                
+                                {moment(lead.updated_date).isBefore(moment().subtract(7, 'days')) && 
+                                 !['Converted', 'Lost / Unqualified'].includes(lead.lead_status) && (
+                                    <div className="text-[10px] text-amber-500 flex items-center gap-1 font-medium mt-1">
+                                        <AlertCircle className="w-3 h-3" /> Stale ({moment(lead.updated_date).fromNow(true)})
+                                    </div>
+                                )}
                             </CardContent>
                           </Card>
                         )}
