@@ -326,7 +326,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`flex flex-col h-[calc(100vh-140px)] font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col h-full md:h-[calc(100vh-140px)] font-sans transition-colors ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       <div className="flex-shrink-0 space-y-4 mb-4">
         {/* Top Stats Cards */}
@@ -412,7 +412,7 @@ export default function LeadsPage() {
 
       {/* --- תצוגת רשימה (דסקטופ + מובייל) --- */}
       {viewMode === 'list' && (
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-y-auto flex-1 custom-scrollbar">
       {/* --- תצוגת דסקטופ (טבלה) --- */}
       <div className={`hidden md:block rounded-xl border shadow-lg overflow-hidden transition-colors backdrop-blur-xl ${
         theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
