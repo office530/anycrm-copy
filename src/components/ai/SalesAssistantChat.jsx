@@ -165,7 +165,7 @@ export default function SalesAssistantChat() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Draft an email, analyze deal..."
-                        className={`flex-1 transition-all ${
+                        className={`flex-1 transition-all text-base md:text-sm ${
                             theme === 'dark' 
                                 ? 'bg-white/10 border-white/10 text-white placeholder:text-white/40 focus:bg-white/20' 
                                 : 'bg-white/50 border-white/40 text-slate-800 placeholder:text-slate-500 focus:bg-white/70'

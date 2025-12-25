@@ -111,12 +111,12 @@ function LayoutContent({ children, currentPageName }) {
         }
       `}</style>
 
-      {/* Sidebar / Drawer - Enhanced Liquid Glass */}
+      {/* Sidebar / Drawer - Enhanced Liquid Glass (Optimized Blur for Mobile) */}
       <aside className={`
-        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-2xl backdrop-blur-2xl
+        fixed inset-0 z-[60] transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-72 lg:border-r lg:shadow-2xl backdrop-blur-lg md:backdrop-blur-2xl
         ${theme === 'dark' 
-          ? 'bg-[#0B1121]/60 text-slate-200 border-white/10 shadow-black/40 supports-[backdrop-filter]:bg-[#0B1121]/40' 
-          : 'bg-gradient-to-br from-blue-50/90 via-white/80 to-rose-50/90 text-slate-700 border-white/40 shadow-2xl shadow-indigo-200/20 supports-[backdrop-filter]:bg-white/60'}
+          ? 'bg-[#0B1121]/80 md:bg-[#0B1121]/60 text-slate-200 border-white/10 shadow-black/40 supports-[backdrop-filter]:bg-[#0B1121]/40' 
+          : 'bg-white/95 md:bg-gradient-to-br md:from-blue-50/90 md:via-white/80 md:to-rose-50/90 text-slate-700 border-white/40 shadow-2xl shadow-indigo-200/20 supports-[backdrop-filter]:bg-white/60'}
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full relative z-10">

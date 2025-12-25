@@ -27,10 +27,10 @@ export default function MobileBottomNav({ activePage }) {
   // Removed simple classes to use inline gradient logic
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 border-t h-16 px-6 flex items-center justify-between z-50 lg:hidden transition-all duration-300 pb-safe backdrop-blur-2xl ${
+    <div className={`fixed bottom-0 left-0 right-0 border-t h-[calc(4rem+env(safe-area-inset-bottom))] px-6 flex items-start pt-3 justify-between z-50 lg:hidden transition-all duration-300 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:backdrop-blur-2xl ${
         theme === 'dark' 
-        ? 'bg-[#0B1121]/70 border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.4)]' 
-        : 'bg-white/70 border-white/50 shadow-[0_-8px_30px_rgba(0,0,0,0.05)]'
+        ? 'bg-[#0B1121]/80 border-white/10 shadow-[0_-8px_30px_rgba(0,0,0,0.4)]' 
+        : 'bg-white/80 border-white/50 shadow-[0_-8px_30px_rgba(0,0,0,0.05)]'
     }`}>
             <Link to={createPageUrl('Dashboard')} className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all ${isActive('Dashboard') ? (theme === 'dark' ? 'bg-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-red-50') : ''}`}>
                 <LayoutDashboard className={`w-6 h-6 ${isActive('Dashboard') ? (theme === 'dark' ? 'text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`} />
@@ -42,19 +42,31 @@ export default function MobileBottomNav({ activePage }) {
                 <span className={`text-[10px] font-bold ${isActive('Leads') ? (theme === 'dark' ? 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]' : 'text-red-700') : (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')}`}>Leads</span>
             </Link>
 
-            {/* Center FAB for Quick Actions */}
-            <div className="relative -top-5">
+            {/* Center FAB for Quick Actions - Liquid Glass Style */}
+            <div className="relative -top-6">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center p-0 transition-all duration-300 backdrop-blur-sm border ${
+                        <Button className={`w-16 h-16 rounded-[1.5rem] shadow-2xl flex items-center justify-center p-0 transition-all duration-300 backdrop-blur-2xl border-2 relative overflow-hidden group ${
                             theme === 'dark'
-                            ? 'bg-cyan-500/90 hover:bg-cyan-400 border-white/20 shadow-[0_0_20px_rgba(34,211,238,0.5)] text-slate-900'
-                            : 'bg-red-600/90 hover:bg-red-700 border-white/20 shadow-red-600/40 text-white'
+                            ? 'bg-[#0B1121]/80 border-cyan-400/30 shadow-[0_0_30px_rgba(34,211,238,0.4)]'
+                            : 'bg-white/80 border-white/60 shadow-[0_8px_32px_rgba(220,38,38,0.25)]'
                         }`}>
-                            <Plus className="w-8 h-8" />
+                            {/* Inner Liquid Gradient */}
+                            <div className={`absolute inset-0 opacity-60 ${
+                                theme === 'dark' 
+                                    ? 'bg-gradient-to-br from-cyan-500/30 via-blue-500/20 to-purple-500/30' 
+                                    : 'bg-gradient-to-br from-red-500/20 via-orange-500/20 to-amber-500/20'
+                            }`} />
+                            
+                            {/* Icon */}
+                            <Plus className={`w-8 h-8 relative z-10 transition-transform duration-300 group-hover:rotate-90 ${
+                                theme === 'dark' 
+                                    ? 'text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' 
+                                    : 'text-red-600 drop-shadow-[0_2px_4px_rgba(220,38,38,0.2)]'
+                            }`} />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center" side="top" className={`mb-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : ''}`}>
+                    <DropdownMenuContent align="center" side="top" className={`mb-4 ${theme === 'dark' ? 'bg-slate-900/95 border-slate-700 text-slate-200 backdrop-blur-xl' : 'bg-white/95 backdrop-blur-xl'}`}>
                         <DropdownMenuItem asChild>
                              <button 
                                  onClick={() => openAssistant()} 
