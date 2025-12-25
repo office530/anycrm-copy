@@ -129,7 +129,8 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
               <div className="mb-3 px-1">
                 <div className="flex items-center justify-between mb-2">
                     <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${lightClass} border border-transparent bg-opacity-20`}>
-                        {status.label}
+                        <span className="md:hidden">{status.mobileLabel || status.label}</span>
+                        <span className="hidden md:inline">{status.label}</span>
                     </span>
                     <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-400'}`}>{statusLeads.length}</span>
                 </div>

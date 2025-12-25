@@ -39,7 +39,7 @@ export default function LeadsPage() {
     if (theme === 'dark') {
       return [
         { value: "New", label: "New", color: "bg-cyan-950/40 text-cyan-300 border-cyan-800 ring-1 ring-cyan-500/50 shadow-[0_0_8px_rgba(34,211,238,0.2)]" },
-        { value: "Attempting Contact", label: "Attempting Contact", color: "bg-violet-950/40 text-violet-300 border-violet-800 ring-1 ring-violet-500/50 shadow-[0_0_8px_rgba(167,139,250,0.2)]" },
+        { value: "Attempting Contact", label: "Attempting Contact", mobileLabel: "Attempting", color: "bg-violet-950/40 text-violet-300 border-violet-800 ring-1 ring-violet-500/50 shadow-[0_0_8px_rgba(167,139,250,0.2)]" },
         { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-950/40 text-fuchsia-300 border-fuchsia-800 ring-1 ring-fuchsia-500/50 shadow-[0_0_8px_rgba(232,121,249,0.2)]" },
         { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-950/40 text-yellow-300 border-yellow-800 ring-1 ring-yellow-500/50 shadow-[0_0_8px_rgba(250,204,21,0.2)]" },
         { value: "Converted", label: "Converted", color: "bg-emerald-950/40 text-emerald-300 border-emerald-800 ring-1 ring-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.2)]" },
@@ -48,7 +48,7 @@ export default function LeadsPage() {
     }
     return [
       { value: "New", label: "New", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
-      { value: "Attempting Contact", label: "Attempting Contact", color: "bg-violet-50 text-violet-700 border-violet-200" },
+      { value: "Attempting Contact", label: "Attempting Contact", mobileLabel: "Attempting", color: "bg-violet-50 text-violet-700 border-violet-200" },
       { value: "Contacted - Qualifying", label: "Qualifying", color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200" },
       { value: "Sales Ready", label: "Sales Ready", color: "bg-yellow-50 text-yellow-700 border-yellow-200" },
       { value: "Converted", label: "Converted", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
