@@ -53,78 +53,7 @@ export default function ClientDetails({ client, open, onClose }) {
 
   const clientActivities = activities?.filter((a) => a.related_client_id === activeClient?.id) || [];
 
-  // Onboarding Logic
-  const { data: onboardingTemplates } = useQuery({
-      queryKey: ['onboarding_templates'],
-      queryFn: () => base44.entities.OnboardingTemplate.list(),
-      initialData: []
-  });
-
-  const [isAssigning, setIsAssigning] = useState(false);
-  const [selectedTemplateId, setSelectedTemplateId] = useState("");
-
-  const assignTemplate = async () => {
-      if (!selectedTemplateId) return;
-      setIsAssigning(true);
-      try {
-          const template = onboardingTemplates.find(t => t.id === selectedTemplateId);
-          if (!template) return;
-
-          const startDate = new Date();
-          const newItems = template.items.map(item => {
-              const dueDate = new Date(startDate);
-              dueDate.setDate(dueDate.getDate() + (item.relative_due_days || 0));
-
-              return {
-                  id: Math.random().toString(36).substr(2, 9),
-                  text: item.text,
-                  phase: item.phase || 'General',
-                  assigned_to: item.default_assignee || 'CSM',
-                  due_date: dueDate.toISOString().split('T')[0],
-                  is_completed: false,
-                  completed_at: null
-              };
-          });
-
-          await base44.entities.Client.update(activeClient.id, { 
-              onboarding_items: newItems,
-              onboarding_status: 'In Progress' 
-          });
-          queryClient.invalidateQueries(['clients']);
-          queryClient.invalidateQueries(['client', activeClient.id]);
-      } catch (e) {
-          console.error(e);
-          alert("Failed to assign template");
-      } finally {
-          setIsAssigning(false);
-      }
-  };
-
-  const toggleOnboardingItem = async (itemId, currentStatus) => {
-      const updatedItems = (activeClient.onboarding_items || []).map(item => {
-          if (item.id === itemId) {
-              return {
-                  ...item,
-                  is_completed: !currentStatus,
-                  completed_at: !currentStatus ? new Date().toISOString() : null
-              };
-          }
-          return item;
-      });
-
-      // Auto update status if all done
-      const allDone = updatedItems.every(i => i.is_completed);
-      const updates = { onboarding_items: updatedItems };
-      if (allDone && activeClient.onboarding_status !== 'Completed') {
-          updates.onboarding_status = 'Completed';
-      } else if (!allDone && updatedItems.some(i => i.is_completed) && activeClient.onboarding_status === 'Not Started') {
-          updates.onboarding_status = 'In Progress';
-      }
-
-      await base44.entities.Client.update(activeClient.id, updates);
-      queryClient.invalidateQueries(['clients']);
-      queryClient.invalidateQueries(['client', activeClient.id]);
-  };
+  // Onboarding logic moved to OnboardingWidget component
 
   // File Upload Handler (Simulated for UI)
   const handleFileUpload = async (e) => {
