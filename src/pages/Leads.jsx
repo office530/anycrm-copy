@@ -326,7 +326,7 @@ export default function LeadsPage() {
   }, [leads, currentUser, activeView, activeFilters, search, sortConfig]);
 
   return (
-    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+    <div className={`flex flex-col transition-colors duration-300 ${viewMode === 'kanban' ? 'h-auto md:h-[calc(100vh-140px)]' : 'h-full'} ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
       
       {/* Smart Filter Bar & Actions */}
       <div className="mb-6 z-40 relative">
@@ -690,11 +690,11 @@ function StatCard({ icon: Icon, label, value, color }) {
     <Card className={`border shadow-lg backdrop-blur-xl transition-colors overflow-hidden ${
       theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50' : 'bg-white/60 border-white/50'
     }`}>
-            <CardContent className="p-2 md:p-4 flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-4 text-center md:text-left h-full">
-                <div className={`p-1.5 md:p-3 rounded-xl flex-shrink-0 ${color}`}><Icon className="w-4 h-4 md:w-5 md:h-5" /></div>
+            <CardContent className="p-4 flex flex-row items-center justify-start gap-4 text-left h-full">
+                <div className={`p-3 rounded-xl flex-shrink-0 ${color}`}><Icon className="w-5 h-5" /></div>
                 <div className="min-w-0">
-                    <p className={`text-[10px] md:text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
-                    <p className={`text-sm md:text-2xl font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
+                    <p className={`text-xs md:text-sm font-medium truncate ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{label}</p>
+                    <p className={`text-lg md:text-2xl font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{value}</p>
                 </div>
             </CardContent>
         </Card>);
