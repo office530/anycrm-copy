@@ -107,17 +107,21 @@ export default function QuickActions() {
                                         action.onClick();
                                         setIsOpen(false);
                                     }}
-                                    className={`h-14 w-14 rounded-[1.2rem] shadow-xl border border-white/20 backdrop-blur-2xl transition-all duration-300 group-hover:scale-110 relative overflow-hidden group-hover:shadow-2xl ${
+                                    className={`h-14 w-14 rounded-[1.2rem] shadow-xl border backdrop-blur-3xl transition-all duration-300 group-hover:scale-110 relative overflow-hidden group-hover:shadow-2xl ${
                                         theme === 'dark' 
-                                            ? 'bg-slate-800/40 text-white hover:bg-slate-700/60 hover:shadow-cyan-500/20' 
-                                            : 'bg-white/60 text-slate-700 hover:bg-white/80 hover:shadow-indigo-500/20'
+                                            ? 'bg-slate-900/90 border-white/20 text-white hover:border-white/40' 
+                                            : 'bg-white/95 border-slate-200 hover:border-slate-300'
                                     }`}
                                 >
-                                    {/* Inner Color Glow */}
-                                    <div className={`absolute inset-0 opacity-20 group-hover:opacity-100 transition-opacity duration-500 ${action.color}`} />
+                                    {/* Inner Color Background - Visible but subtle by default */}
+                                    <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500 ${action.color}`} />
                                     
-                                    {/* Icon */}
-                                    <action.icon className="w-6 h-6 relative z-10" />
+                                    {/* Icon with specific color */}
+                                    <action.icon className={`w-6 h-6 relative z-10 ${
+                                        theme === 'dark' 
+                                            ? 'text-white drop-shadow-md' 
+                                            : action.color.replace('bg-', 'text-')
+                                    }`} />
                                 </Button>
                             </motion.div>
                         ))}
