@@ -85,31 +85,31 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
+                className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-l-xl rounded-r-none shadow-lg border transition-all ${
                   theme === 'dark' 
-                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
-                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                    ? 'bg-slate-800/90 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700 backdrop-blur-sm' 
+                    : 'bg-white/90 border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 backdrop-blur-sm'
                 }`}
                 onClick={() => scroll('right')}
             >
                 <ChevronRight className="w-5 h-5" />
             </Button>
-          )}
-          
-          {showLeftArrow && (
+            )}
+
+            {showLeftArrow && (
             <Button 
                 variant="secondary" 
                 size="icon" 
-                className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
+                className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 h-16 w-8 rounded-r-xl rounded-l-none shadow-lg border transition-all ${
                   theme === 'dark' 
-                    ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
-                    : 'bg-white border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                    ? 'bg-slate-800/90 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700 backdrop-blur-sm' 
+                    : 'bg-white/90 border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 backdrop-blur-sm'
                 }`}
                 onClick={() => scroll('left')}
             >
                 <ChevronLeft className="w-5 h-5" />
             </Button>
-          )}
+            )}
 
       <div 
         ref={scrollContainerRef}
