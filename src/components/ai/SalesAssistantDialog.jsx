@@ -38,8 +38,8 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                             scale: 1, 
                             y: 0, 
                             x: 0,
-                            height: isMinimized ? 80 : (isMobile ? '100dvh' : 600),
-                            width: isMinimized ? (isMobile ? '92vw' : 300) : (isMobile ? '100vw' : 450),
+                            height: isMinimized ? 80 : (isMobile ? '65vh' : 600),
+                            width: isMinimized ? (isMobile ? '90vw' : 300) : (isMobile ? '85vw' : 450),
                             transition: { type: "spring", damping: 25, stiffness: 300 }
                         }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -47,7 +47,7 @@ export default function SalesAssistantDialog({ open, onOpenChange }) {
                         dragConstraints={constraintsRef}
                         dragElastic={0.1}
                         dragMomentum={false}
-                        className={`fixed bottom-0 md:bottom-24 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-8 z-[101] max-w-[100vw] ${isMobile && !isMinimized ? 'rounded-none' : 'rounded-t-[2rem]'} md:rounded-[2rem] overflow-hidden flex flex-col pointer-events-auto backdrop-blur-2xl border shadow-2xl ${
+                        className={`fixed ${isMobile ? 'top-1/2 -translate-y-1/2' : 'bottom-0'} md:top-auto md:bottom-24 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:translate-y-0 md:right-8 z-[101] max-w-[100vw] rounded-[2rem] overflow-hidden flex flex-col pointer-events-auto backdrop-blur-2xl border shadow-2xl ${
                             theme === 'dark' 
                                 ? 'bg-[#0B1121]/60 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]' 
                                 : 'bg-white/60 border-white/40 shadow-[0_8px_32px_rgba(31,38,135,0.15)]'
