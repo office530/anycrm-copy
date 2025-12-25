@@ -26,43 +26,78 @@ export default function QuickActions() {
         { 
             label: 'Ask AI Assistant', 
             icon: Bot, 
-            color: 'bg-indigo-600', 
+            // Neon Cyan
+            neonClass: 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]',
+            borderClass: 'border-cyan-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(34,211,238,0.3)]',
+            bgClass: 'bg-cyan-400/10',
+            lightClass: 'text-cyan-600',
             onClick: () => openAssistant() 
         },
         { 
             label: 'Act Now Engine', 
             icon: Brain, 
-            color: 'bg-indigo-500', 
+            // Neon Violet
+            neonClass: 'text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.8)]',
+            borderClass: 'border-violet-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(167,139,250,0.3)]',
+            bgClass: 'bg-violet-400/10',
+            lightClass: 'text-violet-600',
             onClick: () => navigate(createPageUrl('ActNow')) 
         },
         { 
             label: 'Import AI Lead', 
             icon: Sparkles, 
-            color: 'bg-pink-500', 
+            // Neon Pink
+            neonClass: 'text-fuchsia-400 drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]',
+            borderClass: 'border-fuchsia-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(232,121,249,0.3)]',
+            bgClass: 'bg-fuchsia-400/10',
+            lightClass: 'text-fuchsia-600',
             onClick: () => navigate(createPageUrl('Leads') + '?action=ai-import') 
         },
         { 
             label: 'New Task', 
             icon: CheckSquare, 
-            color: 'bg-emerald-500', 
+            // Neon Emerald/Lime
+            neonClass: 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]',
+            borderClass: 'border-emerald-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(52,211,153,0.3)]',
+            bgClass: 'bg-emerald-400/10',
+            lightClass: 'text-emerald-600',
             onClick: () => navigate(createPageUrl('Tasks') + '?action=new') 
         },
         { 
             label: 'Send Campaign', 
             icon: Mail, 
-            color: 'bg-purple-500', 
+            // Neon Purple
+            neonClass: 'text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]',
+            borderClass: 'border-purple-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(192,132,252,0.3)]',
+            bgClass: 'bg-purple-400/10',
+            lightClass: 'text-purple-600',
             onClick: () => navigate(createPageUrl('SequenceBuilder')) 
         },
         { 
             label: 'New Opportunity', 
             icon: Briefcase, 
-            color: 'bg-amber-500', 
+            // Neon Amber/Orange
+            neonClass: 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]',
+            borderClass: 'border-amber-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(251,191,36,0.3)]',
+            bgClass: 'bg-amber-400/10',
+            lightClass: 'text-amber-600',
             onClick: () => navigate(createPageUrl('Opportunities') + '?action=new') 
         },
         { 
             label: 'Add Lead', 
             icon: UserPlus, 
-            color: 'bg-blue-500', 
+            // Neon Blue
+            neonClass: 'text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]',
+            borderClass: 'border-blue-400/50',
+            glowClass: 'shadow-[0_0_20px_rgba(96,165,250,0.3)]',
+            bgClass: 'bg-blue-400/10',
+            lightClass: 'text-blue-600',
             onClick: () => navigate(createPageUrl('Leads') + '?action=new') 
         },
     ];
@@ -107,20 +142,20 @@ export default function QuickActions() {
                                         action.onClick();
                                         setIsOpen(false);
                                     }}
-                                    className={`h-14 w-14 rounded-[1.2rem] shadow-xl border backdrop-blur-3xl transition-all duration-300 group-hover:scale-110 relative overflow-hidden group-hover:shadow-2xl ${
+                                    className={`h-14 w-14 rounded-[1.2rem] backdrop-blur-3xl transition-all duration-300 group-hover:scale-110 relative overflow-hidden ${
                                         theme === 'dark' 
-                                            ? 'bg-slate-900/90 border-white/20 text-white hover:border-white/40' 
-                                            : 'bg-white/95 border-slate-200 hover:border-slate-300'
+                                            ? `bg-[#0B1121] ${action.borderClass} border-2 ${action.glowClass}` 
+                                            : `bg-white border-2 border-slate-100 shadow-xl`
                                     }`}
                                 >
-                                    {/* Inner Color Background - Visible but subtle by default */}
-                                    <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500 ${action.color}`} />
+                                    {/* Inner Color Background */}
+                                    <div className={`absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500 ${action.bgClass}`} />
                                     
-                                    {/* Icon with specific color */}
+                                    {/* Icon with specific neon color */}
                                     <action.icon className={`w-6 h-6 relative z-10 ${
                                         theme === 'dark' 
-                                            ? 'text-white drop-shadow-md' 
-                                            : action.color.replace('bg-', 'text-')
+                                            ? action.neonClass 
+                                            : action.lightClass
                                     }`} />
                                 </Button>
                             </motion.div>
