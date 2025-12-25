@@ -153,7 +153,7 @@ export default function ReportsPage() {
 
                 <span className={`text-sm font-medium hidden md:inline-block ${theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'}`}>Time Range:</span>
                 <Select value={timeRange} onValueChange={setTimeRange}>
-                <SelectTrigger className={`w-[180px] ${
+                <SelectTrigger className={`w-[130px] sm:w-[180px] ${
                     theme === 'dark' ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-neutral-200'
                 }`}>
                     <SelectValue placeholder="Time Range" />
