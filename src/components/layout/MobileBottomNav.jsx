@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { LayoutDashboard, Users, Briefcase, Plus, Menu, Sparkles, Brain } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, Plus, Menu, Sparkles, Brain, Bot } from 'lucide-react';
+import { useAssistant } from '@/components/context/AssistantContext';
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/components/context/SettingsContext";
 import {
@@ -15,6 +16,7 @@ import {
 export default function MobileBottomNav({ activePage }) {
   const location = useLocation();
   const { theme } = useSettings();
+  const { openAssistant } = useAssistant();
   // Use activePage prop if available, otherwise fallback to URL parsing (handling trailing slashes)
   const urlPath = location.pathname.replace(/\/$/, '').split('/').pop() || 'Dashboard';
   const currentPath = activePage || urlPath;
@@ -53,6 +55,15 @@ export default function MobileBottomNav({ activePage }) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center" side="top" className={`mb-2 ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-200' : ''}`}>
+                        <DropdownMenuItem asChild>
+                             <button 
+                                 onClick={() => openAssistant()} 
+                                 className={`cursor-pointer flex items-center gap-2 w-full font-bold ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`}
+                             >
+                                <Bot className="w-4 h-4" /> Ask AI Assistant
+                             </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                              <button 
                                  onClick={() => openAssistant()} 
