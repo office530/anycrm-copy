@@ -3,8 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ChevronRight, MoreHorizontal, ChevronLeft } from "lucide-react";
-import { useRef, useEffect } from "react";
+import { Search, ChevronRight, MoreHorizontal } from "lucide-react";
 import { useSettings } from "@/components/context/SettingsContext";
 import moment from "moment";
 
@@ -12,36 +11,6 @@ export default function ClientList({ clients, onSelectClient }) {
     const { theme } = useSettings();
     const isDark = theme === 'dark';
     const [search, setSearch] = useState("");
-
-    // Scroll Logic
-    const scrollContainerRef = useRef(null);
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(false);
-
-    const checkScroll = () => {
-        if (scrollContainerRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-            setShowLeftArrow(scrollLeft > 5);
-            setShowRightArrow(Math.abs(scrollLeft) < scrollWidth - clientWidth - 5);
-        }
-    };
-
-    useEffect(() => {
-        checkScroll();
-        window.addEventListener('resize', checkScroll);
-        return () => window.removeEventListener('resize', checkScroll);
-    }, [clients]);
-
-    const scroll = (direction) => {
-        if (scrollContainerRef.current) {
-            const scrollAmount = 300;
-            scrollContainerRef.current.scrollBy({ 
-                left: direction === 'left' ? -scrollAmount : scrollAmount, 
-                behavior: 'smooth' 
-            });
-            setTimeout(checkScroll, 300);
-        }
-    };
 
     const filteredClients = clients.filter(c => 
         c.full_name?.toLowerCase().includes(search.toLowerCase()) || 
@@ -68,43 +37,8 @@ export default function ClientList({ clients, onSelectClient }) {
                     />
                 </div>
             </div>
-            <div className="relative group/table">
-                 {showRightArrow && (
-                    <Button 
-                        variant="secondary" 
-                        size="icon" 
-                        className={`absolute -right-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full shadow-lg border transition-all ${
-                          isDark 
-                            ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
-                            : 'bg-white/90 backdrop-blur border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-white'
-                        }`}
-                        onClick={() => scroll('right')}
-                    >
-                        <ChevronRight className="w-5 h-5" />
-                    </Button>
-                  )}
-                  
-                  {showLeftArrow && (
-                    <Button 
-                        variant="secondary" 
-                        size="icon" 
-                        className={`absolute -left-4 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full shadow-lg border transition-all ${
-                          isDark 
-                            ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:bg-slate-700' 
-                            : 'bg-white/90 backdrop-blur border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-white'
-                        }`}
-                        onClick={() => scroll('left')}
-                    >
-                        <ChevronLeft className="w-5 h-5" />
-                    </Button>
-                  )}
-
-            <div 
-                ref={scrollContainerRef}
-                onScroll={checkScroll}
-                className="overflow-x-auto"
-            >
-                <Table className="min-w-[800px]">
+            <div className="overflow-x-auto">
+                <Table>
                     <TableHeader className={isDark ? 'bg-slate-900/50' : 'bg-slate-50'}>
                         <TableRow className={isDark ? 'border-slate-700' : ''}>
                             <TableHead className={isDark ? 'text-slate-400' : ''}>Client Name</TableHead>
@@ -148,7 +82,6 @@ export default function ClientList({ clients, onSelectClient }) {
                     </TableBody>
                 </Table>
             </div>
-        </div>
         </div>
     );
 }
