@@ -171,27 +171,32 @@ export default function ReportsPage() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 items-start">
-              {/* Mobile Navigation (Dropdown) */}
-              <div className="col-span-12 lg:hidden mb-4">
-                  <Select value={activeReport} onValueChange={setActiveReport}>
-                      <SelectTrigger className={`w-full ${
-                        theme === 'dark' 
-                          ? 'bg-slate-800 border-slate-700 text-white' 
-                          : 'bg-white border-neutral-200'
-                      }`}>
-                          <SelectValue placeholder="Select Report" />
-                      </SelectTrigger>
-                      <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white'}`}>
-                          {reports.map((report) => (
-                              <SelectItem key={report.id} value={report.id}>
-                                  <div className="flex items-center gap-2">
-                                      <report.icon className="w-4 h-4" />
-                                      {report.name}
-                                  </div>
-                              </SelectItem>
-                          ))}
-                      </SelectContent>
-                  </Select>
+              {/* Mobile Navigation (Horizontal Scrollable Tabs) */}
+              <div className="col-span-12 lg:hidden mb-2">
+                  <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide -mx-6 px-6">
+                      {reports.map((report) => {
+                          const isActive = activeReport === report.id;
+                          return (
+                              <button
+                                  key={report.id}
+                                  onClick={() => setActiveReport(report.id)}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border
+                                      ${isActive 
+                                          ? theme === 'dark'
+                                              ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50'
+                                              : 'bg-red-50 text-red-600 border-red-200'
+                                          : theme === 'dark'
+                                              ? 'bg-slate-800 text-slate-400 border-slate-700'
+                                              : 'bg-white text-slate-600 border-slate-200'
+                                      }
+                                  `}
+                              >
+                                  <report.icon className="w-3.5 h-3.5" />
+                                  {report.name}
+                              </button>
+                          );
+                      })}
+                  </div>
               </div>
 
               {/* Sidebar Navigation (Desktop) */}
