@@ -300,7 +300,7 @@ function LayoutContent({ children, currentPageName }) {
                             mass: 0.5,
                             duration: 0.4
                         }}
-                        className="h-full"
+                        className="min-h-full"
                     >
                         {children}
                     </motion.div>
