@@ -32,8 +32,6 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
       const isAtStart = scrollAbs < 5;
       const isAtEnd = scrollAbs >= maxScroll - 5;
 
-      // LTR: Start (Left) -> Can scroll Right (Show Right Arrow)
-      // End (Right) -> Can scroll Left (Show Left Arrow)
       setShowLeftArrow(!isAtStart);
       setShowRightArrow(!isAtEnd);
     }
@@ -43,11 +41,11 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
     checkScroll();
     window.addEventListener('resize', checkScroll);
     return () => window.removeEventListener('resize', checkScroll);
-  }, [leads, statuses]); // Re-check when data changes
+  }, [leads, statuses]);
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 320;
+      const scrollAmount = 200;
       scrollContainerRef.current.scrollBy({ 
         left: direction === 'left' ? -scrollAmount : scrollAmount, 
         behavior: 'smooth' 
@@ -116,22 +114,28 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
       <div 
         ref={scrollContainerRef}
         onScroll={checkScroll}
-        className="flex gap-4 overflow-x-auto pb-4 h-full items-start scrollbar-hide px-2 scroll-smooth"
+        className="flex gap-4 overflow-x-auto pb-6 h-full items-start px-1 scroll-smooth"
       >
         {statuses.map((status) => {
           const statusLeads = getLeadsByStatus(status.value);
           
+          // Style extraction to match Opportunities minimalism
+          const colorClass = status.color.split(' ').find(c => c.startsWith('text-'))?.replace('text-', 'bg-') || 'bg-slate-400';
+          const lightClass = status.color.split(' ').filter(c => c.startsWith('bg-') || c.startsWith('text-')).join(' ');
+
           return (
-            <div key={status.value} className="flex-shrink-0 w-[40vw] sm:w-[40vw] md:w-48 lg:w-52 flex flex-col h-full">
-              {/* Stage Header */}
-              <div className={`mb-3 p-3 rounded-xl border-b-4 flex justify-between items-center shadow-sm transition-colors ${
-                  // Use the text color (neon) for the border to match
-                  status.color.split(' ').find(c => c.startsWith('text-'))?.replace('text-', 'border-') || 'border-slate-200'
-              } ${
-                theme === 'dark' ? 'bg-slate-800' : 'bg-white'
-              }`}>
-                <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-800'}`}>{status.label}</span>
-                <Badge variant="secondary" className={`${theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>{statusLeads.length}</Badge>
+            <div key={status.value} className="flex-shrink-0 w-[40vw] sm:w-[40vw] md:w-48 lg:w-52 flex flex-col max-h-full">
+              {/* Stage Header - Matched to Opportunities */}
+              <div className="mb-3 px-1">
+                <div className="flex items-center justify-between mb-2">
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${lightClass} border border-transparent bg-opacity-20`}>
+                        {status.label}
+                    </span>
+                    <span className={`text-xs font-medium ${theme === 'dark' ? 'text-slate-400' : 'text-neutral-400'}`}>{statusLeads.length}</span>
+                </div>
+                <div className={`h-1 w-full rounded-full overflow-hidden ${theme === 'dark' ? 'bg-slate-700' : 'bg-neutral-200'}`}>
+                    <div className={`h-full ${colorClass}`} style={{ width: '100%' }}></div>
+                </div>
               </div>
 
               {/* Droppable Area */}
@@ -140,9 +144,9 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] rounded-xl transition-colors pb-20 ${
+                    className={`flex-1 overflow-y-auto px-1 space-y-3 min-h-[150px] transition-colors rounded-xl ${
                       snapshot.isDraggingOver
-                        ? theme === 'dark' ? 'bg-[#151E32]/50 ring-2 ring-dashed ring-[#1E293B]' : 'bg-slate-100/50 ring-2 ring-dashed ring-slate-300' 
+                        ? theme === 'dark' ? 'bg-slate-800/50 ring-2 ring-dashed ring-slate-600' : 'bg-neutral-100/50 ring-2 ring-dashed ring-neutral-200' 
                         : ''
                     }`}
                   >
@@ -154,13 +158,16 @@ export default function LeadsKanban({ leads, statuses, onStatusChange, onEdit, o
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`
-                              cursor-grab active:cursor-grabbing border shadow-sm relative overflow-hidden group transition-all backdrop-blur-md
+                              cursor-grab active:cursor-grabbing hover:shadow-lg transition-all border shadow-sm group relative overflow-hidden backdrop-blur-md
                               ${snapshot.isDragging 
                                 ? 'shadow-2xl rotate-2 scale-105 z-50 ring-2 ring-blue-500' 
                                 : theme === 'dark' ? 'bg-slate-800/60 border-slate-700/50 hover:bg-slate-700/80' : 'bg-white/60 border-white/50 hover:bg-white/80'}
                             `}
                             onClick={() => onEdit(lead)}
                           >
+                             {/* Side Indicator */}
+                            <div className={`absolute top-0 right-0 w-1 h-full ${colorClass}`} />
+                            
                             <CardContent className="p-3 space-y-2">
                               <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
