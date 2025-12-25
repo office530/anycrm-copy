@@ -43,6 +43,7 @@ function LayoutContent({ children, currentPageName }) {
     },
     {
       title: 'Marketing',
+      className: 'hidden lg:block', 
       items: [
         { name: 'Sequences', path: 'MarketingSequences', icon: GitFork, color: 'blue' },
         { name: 'Templates', path: 'MarketingTemplates', icon: Mail, color: 'purple' }
@@ -139,7 +140,7 @@ function LayoutContent({ children, currentPageName }) {
             {/* Nav */}
             <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
                 {navigationGroups.map((group, idx) => (
-                  <div key={idx}>
+                  <div key={idx} className={group.className || ''}>
                     <h3 className={`px-4 mb-3 text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'}`}>
                       {group.title}
                     </h3>
