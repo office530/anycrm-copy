@@ -9,19 +9,25 @@ import { useSettings } from '@/components/context/SettingsContext';
 
 function MessageBubble({ message, isUser, theme }) {
     return (
-        <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-in fade-in slide-in-from-bottom-2`}>
+        <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-in fade-in slide-in-from-bottom-2 relative z-10`}>
             {!isUser && (
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    theme === 'dark' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-100 text-indigo-600'
+                <div className={`h-8 w-8 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-md shadow-sm ${
+                    theme === 'dark' 
+                        ? 'bg-white/10 text-indigo-300 border border-white/10' 
+                        : 'bg-white/40 text-indigo-600 border border-white/40'
                 }`}>
                     <Bot className="h-5 w-5" />
                 </div>
             )}
             
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
+            <div className={`max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-md shadow-sm ${
                 isUser 
-                    ? (theme === 'dark' ? 'bg-indigo-600 text-white' : 'bg-indigo-600 text-white')
-                    : (theme === 'dark' ? 'bg-slate-800 text-slate-100' : 'bg-white border border-slate-100 text-slate-800')
+                    ? (theme === 'dark' 
+                        ? 'bg-indigo-600/80 text-white border border-indigo-500/50' 
+                        : 'bg-indigo-600/80 text-white border border-indigo-500/50')
+                    : (theme === 'dark' 
+                        ? 'bg-slate-800/60 text-slate-100 border border-white/10' 
+                        : 'bg-white/40 text-slate-800 border border-white/40')
             }`}>
                 <ReactMarkdown 
                     className={`text-sm prose ${theme === 'dark' ? 'prose-invert' : ''} max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0`}
@@ -34,8 +40,10 @@ function MessageBubble({ message, isUser, theme }) {
             </div>
 
             {isUser && (
-                <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    theme === 'dark' ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'
+                <div className={`h-8 w-8 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-md shadow-sm ${
+                    theme === 'dark' 
+                        ? 'bg-white/10 text-slate-300 border border-white/10' 
+                        : 'bg-white/40 text-slate-600 border border-white/40'
                 }`}>
                     <User className="h-5 w-5" />
                 </div>
@@ -118,13 +126,15 @@ export default function SalesAssistantChat() {
     };
 
     return (
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col h-full overflow-hidden relative z-10">
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={scrollRef}>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth" ref={scrollRef}>
                 {messages.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-full opacity-50 space-y-4">
-                        <Sparkles className="h-12 w-12 text-indigo-400" />
-                        <p>Start a conversation...</p>
+                    <div className="flex flex-col items-center justify-center h-full opacity-60 space-y-4 animate-in fade-in zoom-in duration-500">
+                        <div className={`p-6 rounded-full backdrop-blur-xl shadow-xl ${theme === 'dark' ? 'bg-white/5' : 'bg-white/30'}`}>
+                             <Sparkles className={`h-12 w-12 ${theme === 'dark' ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                        </div>
+                        <p className={`font-medium ${theme === 'dark' ? 'text-indigo-200' : 'text-indigo-800'}`}>How can I help accelerate your sales?</p>
                     </div>
                 )}
                 
@@ -138,24 +148,39 @@ export default function SalesAssistantChat() {
                 ))}
                 
                 {isLoading && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground p-4">
+                    <div className={`flex items-center gap-3 text-sm p-4 animate-pulse rounded-xl backdrop-blur-md mx-4 w-fit ${
+                        theme === 'dark' ? 'bg-white/5 text-indigo-300' : 'bg-white/40 text-indigo-700'
+                    }`}>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Thinking...
+                        <span>Analyzing pipeline data...</span>
                     </div>
                 )}
             </div>
 
             {/* Input Area */}
-            <div className={`p-4 border-t ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50' : 'border-slate-100 bg-white'}`}>
+            <div className={`p-4 border-t backdrop-blur-xl ${theme === 'dark' ? 'border-white/10 bg-[#0B1121]/40' : 'border-white/30 bg-white/40'}`}>
                 <form onSubmit={handleSend} className="flex gap-2">
                     <Input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Ask me to draft an email or check your pipeline..."
-                        className={`flex-1 ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'}`}
+                        placeholder="Draft an email, analyze deal..."
+                        className={`flex-1 transition-all ${
+                            theme === 'dark' 
+                                ? 'bg-white/10 border-white/10 text-white placeholder:text-white/40 focus:bg-white/20' 
+                                : 'bg-white/50 border-white/40 text-slate-800 placeholder:text-slate-500 focus:bg-white/70'
+                        }`}
                         autoFocus
                     />
-                    <Button type="submit" size="icon" disabled={isLoading || !input.trim()} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                    <Button 
+                        type="submit" 
+                        size="icon" 
+                        disabled={isLoading || !input.trim()} 
+                        className={`transition-all shadow-lg hover:scale-105 ${
+                            theme === 'dark' 
+                                ? 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/30' 
+                                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-500/30'
+                        }`}
+                    >
                         <Send className="h-4 w-4" />
                     </Button>
                 </form>
