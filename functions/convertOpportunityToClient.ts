@@ -16,16 +16,15 @@ Deno.serve(async (req) => {
              return Response.json({ error: 'Missing opportunityId' }, { status: 400 });
         }
 
+        // Authorization check: Ensure user has access to this opportunity
+        const authorizedOpps = await base44.entities.Opportunity.filter({ id: opportunityId });
+        if (!authorizedOpps || authorizedOpps.length === 0) {
+             return Response.json({ error: 'Opportunity not found or access denied' }, { status: 403 });
+        }
+        const opportunity = authorizedOpps[0];
+
         // Use service role for consistent behavior and permission bypass for system actions
         const adminClient = base44.asServiceRole;
-
-        // 1. Fetch Opportunity
-        const opportunities = await adminClient.entities.Opportunity.list();
-        const opportunity = opportunities.find(o => o.id === opportunityId);
-
-        if (!opportunity) {
-             return Response.json({ error: 'Opportunity not found' }, { status: 404 });
-        }
 
         if (opportunity.client_id) {
              return Response.json({ message: 'Client already exists for this opportunity', clientId: opportunity.client_id });
