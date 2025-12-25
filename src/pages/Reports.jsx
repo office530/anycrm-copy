@@ -158,7 +158,7 @@ export default function ReportsPage() {
                 }`}>
                     <SelectValue placeholder="Time Range" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white'}`}>
                     <SelectItem value="all">All Time</SelectItem>
                     <SelectItem value="today">Today</SelectItem>
                     <SelectItem value="this_week">This Week</SelectItem>
@@ -181,7 +181,7 @@ export default function ReportsPage() {
                       }`}>
                           <SelectValue placeholder="Select Report" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className={`${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white'}`}>
                           {reports.map((report) => (
                               <SelectItem key={report.id} value={report.id}>
                                   <div className="flex items-center gap-2">
